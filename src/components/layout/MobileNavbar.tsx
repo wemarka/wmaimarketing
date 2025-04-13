@@ -12,11 +12,11 @@ import {
   FileQuestion
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const MobileNavbar = () => {
-  const { isMobile } = useMobile();
+  const isMobile = useIsMobile();
 
   if (!isMobile) {
     return null;
@@ -24,7 +24,7 @@ const MobileNavbar = () => {
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 border-t bg-background lg:hidden">
-      <ScrollArea orientation="horizontal" className="w-full">
+      <ScrollArea className="w-full">
         <nav className="flex h-14 items-center justify-between px-4">
           <NavItem to="/" icon={<LayoutDashboard className="h-5 w-5" />} />
           <NavItem to="/image-upload" icon={<Upload className="h-5 w-5" />} />

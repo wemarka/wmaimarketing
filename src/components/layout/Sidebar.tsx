@@ -14,10 +14,10 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Sidebar = () => {
-  const { isMobile } = useMobile();
+  const isMobile = useIsMobile();
   
   if (isMobile) {
     return null;
