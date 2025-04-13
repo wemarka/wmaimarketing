@@ -45,7 +45,7 @@ const TimelineTab: React.FC = () => {
             endDate="٣٠ أبريل ٢٠٢٥"
             tasks={[
               { name: "إنشاء واجهة إدارة المستخدمين", status: "complete", assignee: "سارة" },
-              { name: "تحديد وتنفيذ نظام الأدوار", status: "in-progress", assignee: "علي", priority: "high" },
+              { name: "تحديد وتنفيذ نظام الأدوار", status: "complete", assignee: "علي", priority: "high" },
               { name: "إنشاء سجل نشاط المستخدمين", status: "in-progress", assignee: "محمد" },
               { name: "تطوير صفحة الملف الشخصي", status: "pending", priority: "medium" },
               { name: "تنفيذ إعدادات المستخدم", status: "pending" },

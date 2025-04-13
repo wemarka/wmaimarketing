@@ -13,8 +13,15 @@ interface User {
   created_at: string;
 }
 
+interface Permission {
+  id: string;
+  name: string;
+  description: string | null;
+}
+
 export const useUserManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [permissions, setPermissions] = useState<Permission[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
@@ -31,6 +38,7 @@ export const useUserManagement = () => {
   // Fetch users
   useEffect(() => {
     fetchUsers();
+    fetchPermissions();
   }, []);
 
   const fetchUsers = async () => {
@@ -79,6 +87,22 @@ export const useUserManagement = () => {
     }
   };
 
+  const fetchPermissions = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("permissions")
+        .select("id, name, description");
+
+      if (error) throw error;
+
+      if (data) {
+        setPermissions(data);
+      }
+    } catch (error) {
+      console.error("Error fetching permissions:", error);
+    }
+  };
+
   const handleAddUser = async () => {
     try {
       // Register the user
@@ -101,6 +125,13 @@ export const useUserManagement = () => {
           .eq("id", data.user.id);
 
         if (profileError) throw profileError;
+
+        // Log this activity
+        await supabase.from("user_activity_log").insert({
+          user_id: data.user.id,
+          activity_type: "account_creation",
+          description: `تم إنشاء حساب جديد بدور ${newUser.role}`
+        });
 
         toast({
           title: "تم إضافة المستخدم",
@@ -132,6 +163,16 @@ export const useUserManagement = () => {
     if (!selectedUser) return;
 
     try {
+      // Get the old role before updating
+      const { data: oldRoleData } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", selectedUser.id)
+        .single();
+      
+      const oldRole = oldRoleData?.role || "user";
+
+      // Update the role
       const { error } = await supabase
         .from("profiles")
         .update({
@@ -140,6 +181,13 @@ export const useUserManagement = () => {
         .eq("id", selectedUser.id);
 
       if (error) throw error;
+
+      // Log this activity
+      await supabase.from("user_activity_log").insert({
+        user_id: selectedUser.id,
+        activity_type: "role_update",
+        description: `تم تغيير الدور من ${oldRole} إلى ${selectedUser.role}`
+      });
 
       toast({
         title: "تم تحديث الدور",
@@ -160,6 +208,7 @@ export const useUserManagement = () => {
 
   return {
     users,
+    permissions,
     loading,
     searchTerm,
     setSearchTerm,
