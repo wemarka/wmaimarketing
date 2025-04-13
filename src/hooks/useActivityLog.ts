@@ -34,7 +34,7 @@ export const useActivityLog = () => {
 
         if (error) throw error;
 
-        const formattedActivities: Activity[] = data.map((item) => ({
+        const formattedActivities: Activity[] = data.map((item: any) => ({
           id: item.id,
           type: item.activity_type as Activity["type"],
           description: item.description,
@@ -49,6 +49,8 @@ export const useActivityLog = () => {
           description: "حدث خطأ أثناء جلب سجل النشاط",
           variant: "destructive",
         });
+        // Set empty activities to prevent UI issues
+        setActivities([]);
       } finally {
         setLoading(false);
       }
@@ -57,7 +59,10 @@ export const useActivityLog = () => {
     fetchActivities();
   }, [user]);
 
-  const logActivity = async (type: Activity["type"], description: string) => {
+  const logActivity = async (
+    type: Activity["type"], 
+    description: string
+  ) => {
     if (!user) return;
 
     try {

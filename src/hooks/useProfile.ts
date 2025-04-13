@@ -26,10 +26,33 @@ export const useProfile = () => {
           .single();
 
         if (error) {
-          throw error;
-        }
+          // If the error is that no rows were returned, create a profile
+          if (error.code === "PGRST116") {
+            // Create a new profile
+            const { data: newProfile, error: createError } = await supabase
+              .from("profiles")
+              .insert({
+                id: user.id,
+                first_name: "",
+                last_name: "",
+                updated_at: new Date().toISOString(),
+                created_at: new Date().toISOString(),
+              })
+              .select("*")
+              .single();
 
-        if (profile) {
+            if (createError) {
+              throw createError;
+            }
+
+            if (newProfile) {
+              setProfileData(newProfile as ProfileData);
+              console.log("Created new profile:", newProfile);
+            }
+          } else {
+            throw error;
+          }
+        } else if (profile) {
           setProfileData(profile as ProfileData);
         }
       } catch (error) {
@@ -116,11 +139,30 @@ export const useProfile = () => {
   };
 
   // Update avatar URL
-  const updateAvatarUrl = (url: string) => {
-    if (profileData) {
+  const updateAvatarUrl = async (url: string) => {
+    if (!profileData || !user) return;
+    
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          avatar_url: url,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", user.id);
+      
+      if (error) throw error;
+      
       setProfileData({
         ...profileData,
         avatar_url: url,
+      });
+    } catch (error) {
+      console.error("Error updating avatar URL:", error);
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء تحديث الصورة الشخصية",
+        variant: "destructive",
       });
     }
   };

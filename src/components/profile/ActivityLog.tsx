@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Clock, FileEdit, LogIn, LogOut, User, UserCog, FileText, Image, Video } from "lucide-react";
+import { Clock, FileEdit, LogIn, LogOut, User, UserCog, FileText } from "lucide-react";
 import { Activity } from "@/hooks/useActivityLog";
 
 interface ActivityLogProps {
@@ -94,7 +94,7 @@ const ActivityLog = ({ activities, isLoading }: ActivityLogProps) => {
           <ScrollArea className="h-64 w-full pr-4">
             <div className="space-y-4">
               {activities.map((activity) => (
-                <div key={activity.id} className="flex items-start space-x-4 space-x-reverse">
+                <div key={activity.id} className="flex items-start space-x-4 space-x-reverse rtl:space-x-reverse">
                   <div className={`flex-shrink-0 rounded-full p-2 ${getActivityBadgeColor(activity.type).split(" ").slice(0, 1).join(" ")}`}>
                     {getActivityIcon(activity.type)}
                   </div>

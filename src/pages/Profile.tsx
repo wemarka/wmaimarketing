@@ -66,6 +66,12 @@ const Profile = () => {
     logActivity("password_change", "تم تغيير كلمة المرور");
   };
 
+  // Handle avatar change with activity logging
+  const handleAvatarChange = async (url: string) => {
+    await updateAvatarUrl(url);
+    logActivity("profile_update", "تم تحديث الصورة الشخصية");
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -94,7 +100,7 @@ const Profile = () => {
             firstName={profileData?.first_name}
             lastName={profileData?.last_name}
             role={profileData?.role}
-            onAvatarChange={updateAvatarUrl}
+            onAvatarChange={handleAvatarChange}
           />
 
           {/* Profile content */}

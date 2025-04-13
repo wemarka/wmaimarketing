@@ -46,6 +46,22 @@ const ProfilePicture = ({ avatarUrl, userInitials, onAvatarChange }: ProfilePict
     try {
       setIsUploading(true);
 
+      // Check if profile_pictures bucket exists, if not, create it
+      const { data: buckets } = await supabase.storage.listBuckets();
+      const bucketExists = buckets?.some(bucket => bucket.name === 'profile_pictures');
+      
+      if (!bucketExists) {
+        const { error: bucketError } = await supabase.storage.createBucket('profile_pictures', {
+          public: true,
+          fileSizeLimit: 2097152 // 2MB
+        });
+        
+        if (bucketError) {
+          console.error("Error creating storage bucket:", bucketError);
+          throw bucketError;
+        }
+      }
+
       // Generate a unique file name
       const fileExt = file.name.split(".").pop();
       const fileName = `${user.id}/${Date.now()}.${fileExt}`;
@@ -67,18 +83,7 @@ const ProfilePicture = ({ avatarUrl, userInitials, onAvatarChange }: ProfilePict
 
       if (!publicUrlData.publicUrl) throw new Error("Failed to get public URL");
 
-      // Update profile with new avatar URL
-      const { error: updateError } = await supabase
-        .from("profiles")
-        .update({
-          avatar_url: publicUrlData.publicUrl,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", user.id);
-
-      if (updateError) throw updateError;
-
-      // Update local state
+      // Call the parent component's handler to update the avatar URL
       onAvatarChange(publicUrlData.publicUrl);
 
       toast({

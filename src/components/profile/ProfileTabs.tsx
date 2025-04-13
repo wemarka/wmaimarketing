@@ -36,7 +36,7 @@ const ProfileTabs = ({
   activitiesLoading
 }: ProfileTabsProps) => {
   return (
-    <Tabs defaultValue="account" className="w-full">
+    <Tabs defaultValue="account" className="w-full" dir="rtl">
       <TabsList className="grid grid-cols-3">
         <TabsTrigger value="account">معلومات الحساب</TabsTrigger>
         <TabsTrigger value="security">الأمان</TabsTrigger>
