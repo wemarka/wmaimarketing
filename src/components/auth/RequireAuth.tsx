@@ -11,17 +11,14 @@ interface RequireAuthProps {
 const RequireAuth = ({ children }: RequireAuthProps) => {
   const { user, loading } = useAuth();
   const location = useLocation();
-  const { t, i18n } = useTranslation();
-  const currentLanguage = i18n.language;
+  const { t } = useTranslation();
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 rounded-full border-4 border-t-beauty-purple border-beauty-lightpurple border-t-transparent animate-spin"></div>
-          <p className="mt-4 text-muted-foreground">
-            {currentLanguage === "ar" ? "جاري التحقق من المستخدم..." : "Verifying user..."}
-          </p>
+          <p className="mt-4 text-muted-foreground">{t('auth.verifyingUser')}</p>
         </div>
       </div>
     );

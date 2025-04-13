@@ -11,8 +11,7 @@ interface ProfileAuthGuardProps {
 const ProfileAuthGuard = ({ children }: ProfileAuthGuardProps) => {
   const { user, loading } = useAuth();
   const location = useLocation();
-  const { t, i18n } = useTranslation();
-  const currentLanguage = i18n.language;
+  const { t } = useTranslation();
 
   if (loading) {
     return (
@@ -20,7 +19,7 @@ const ProfileAuthGuard = ({ children }: ProfileAuthGuardProps) => {
         <div className="text-center">
           <div className="mx-auto h-12 w-12 rounded-full border-4 border-t-beauty-purple border-beauty-lightpurple border-t-transparent animate-spin"></div>
           <p className="mt-4 text-muted-foreground">
-            {currentLanguage === "ar" ? "جاري التحقق من المستخدم..." : "Verifying user..."}
+            {t('auth.verifyingUser')}
           </p>
         </div>
       </div>

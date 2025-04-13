@@ -1,4 +1,3 @@
-
 {
   "common": {
     "actions": {
@@ -172,5 +171,34 @@
         "total": "Total"
       }
     }
+  },
+  "profile": {
+    "title": "Profile",
+    "description": "Manage your account details and preferences",
+    "personalInfo": "Personal Information",
+    "security": "Security",
+    "activity": "Activity",
+    "sessions": "Sessions",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "saveChanges": "Save Changes",
+    "updating": "Updating...",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "changePassword": "Change Password",
+    "changing": "Changing...",
+    "logoutOtherSessions": "Logout from other sessions",
+    "loggingOut": "Logging out...",
+    "securityTest": "Security Test",
+    "runSecurityTest": "Run Security Test",
+    "activityLog": "Activity Log",
+    "noActivity": "No activity recorded yet",
+    "sessionInfo": "Sessions Information",
+    "currentSession": "Current Session",
+    "device": "Device",
+    "browser": "Browser",
+    "lastActive": "Last Active"
   }
 }

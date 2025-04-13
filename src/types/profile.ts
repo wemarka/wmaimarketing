@@ -7,6 +7,9 @@ export interface ProfileData {
   role: string | null;
   updated_at: string;
   created_at: string;
+  app_metadata?: {
+    language?: string;
+  };
 }
 
 export interface ProfileFormValues {
