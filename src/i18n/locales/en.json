@@ -94,5 +94,52 @@
     "toggle": "Toggle language",
     "changed": "Language Changed",
     "changedTo": "Changed to English"
+  },
+  "adDesigner": {
+    "title": "Ad Designer",
+    "description": "Create compelling advertisements for beauty and skincare products",
+    "tabs": {
+      "content": "Content",
+      "design": "Design",
+      "platform": "Platform"
+    },
+    "headline": "Headline",
+    "headlinePlaceholder": "Enter ad headline",
+    "description": "Description",
+    "descriptionPlaceholder": "Enter ad description",
+    "imagePrompt": "Image Description",
+    "imagePlaceholder": "Describe the image you want to generate",
+    "callToAction": "Call to Action",
+    "selectCTA": "Select a call to action",
+    "cta": {
+      "shop_now": "Shop Now",
+      "learn_more": "Learn More",
+      "sign_up": "Sign Up",
+      "contact_us": "Contact Us",
+      "book_now": "Book Now"
+    },
+    "style": "Style",
+    "styles": {
+      "modern": "Modern",
+      "minimal": "Minimal",
+      "bold": "Bold",
+      "elegant": "Elegant"
+    },
+    "color": "Primary Color",
+    "platform": "Platform",
+    "platforms": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "pinterest": "Pinterest"
+    },
+    "generateAd": "Generate Ad",
+    "generating": "Generating...",
+    "preview": "Preview",
+    "noPreview": "Generate an ad to preview",
+    "download": "Download",
+    "generationSuccess": "Ad Generated",
+    "adReady": "Your ad is ready to preview",
+    "downloadStarted": "Download Started",
+    "downloadDescription": "Your ad is being downloaded"
   }
 }

@@ -10,6 +10,7 @@ import UserManagement from "./pages/UserManagement";
 import ImageUpload from "./pages/ImageUpload";
 import ContentCreator from "./pages/ContentCreator";
 import AdGenerator from "./pages/AdGenerator";
+import AdDesigner from "./pages/AdDesigner";
 import VideoGenerator from "./pages/VideoGenerator";
 import Analytics from "./pages/Analytics";
 import Scheduler from "./pages/Scheduler";
@@ -31,6 +32,7 @@ function App() {
           <Route path="/image-upload" element={<ImageUpload />} />
           <Route path="/content-creator" element={<ContentCreator />} />
           <Route path="/ad-generator" element={<AdGenerator />} />
+          <Route path="/ad-designer" element={<AdDesigner />} />
           <Route path="/video-generator" element={<VideoGenerator />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/scheduler" element={<Scheduler />} />

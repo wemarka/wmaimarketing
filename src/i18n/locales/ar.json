@@ -94,5 +94,52 @@
     "toggle": "تغيير اللغة",
     "changed": "تم تغيير اللغة",
     "changedTo": "تم التغيير إلى العربية"
+  },
+  "adDesigner": {
+    "title": "مصمم الإعلانات",
+    "description": "صمم إعلانات جذابة لمنتجات التجميل والعناية بالبشرة",
+    "tabs": {
+      "content": "المحتوى",
+      "design": "التصميم",
+      "platform": "المنصة"
+    },
+    "headline": "العنوان الرئيسي",
+    "headlinePlaceholder": "أدخل عنوان الإعلان",
+    "description": "الوصف",
+    "descriptionPlaceholder": "أدخل وصف الإعلان",
+    "imagePrompt": "وصف الصورة",
+    "imagePlaceholder": "صف الصورة التي ترغب في إنشائها",
+    "callToAction": "دعوة للعمل",
+    "selectCTA": "اختر دعوة للعمل",
+    "cta": {
+      "shop_now": "تسوق الآن",
+      "learn_more": "اكتشف المزيد",
+      "sign_up": "سجل الآن",
+      "contact_us": "اتصل بنا",
+      "book_now": "احجز الآن"
+    },
+    "style": "النمط",
+    "styles": {
+      "modern": "عصري",
+      "minimal": "بسيط",
+      "bold": "جريء",
+      "elegant": "أنيق"
+    },
+    "color": "اللون الرئيسي",
+    "platform": "المنصة",
+    "platforms": {
+      "instagram": "انستغرام",
+      "facebook": "فيسبوك",
+      "pinterest": "بينترست"
+    },
+    "generateAd": "إنشاء الإعلان",
+    "generating": "جاري الإنشاء...",
+    "preview": "معاينة",
+    "noPreview": "قم بإنشاء إعلان للمعاينة",
+    "download": "تنزيل",
+    "generationSuccess": "تم إنشاء الإعلان",
+    "adReady": "الإعلان جاهز للمعاينة",
+    "downloadStarted": "بدأ التنزيل",
+    "downloadDescription": "جاري تنزيل الإعلان"
   }
 }
