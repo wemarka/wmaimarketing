@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,6 +10,7 @@ import { useActivityLog, Activity } from "@/hooks/useActivityLog";
 // Import components
 import ProfileSidebar from "@/components/profile/ProfileSidebar";
 import ProfileTabs from "@/components/profile/ProfileTabs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -84,18 +86,26 @@ const Profile = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center h-[60vh]">
-          <p className="text-lg">جاري تحميل البيانات...</p>
-        </div>
-      </Layout>
-    );
-  }
+        <div className="max-w-5xl mx-auto">
+          <div className="space-y-2 mb-8">
+            <h1>الملف الشخصي</h1>
+            <p className="text-muted-foreground">
+              إدارة حسابك ومعلوماتك الشخصية
+            </p>
+          </div>
 
-  if (!profileData) {
-    return (
-      <Layout>
-        <div className="flex justify-center items-center h-[60vh]">
-          <p className="text-lg">تعذر تحميل بيانات الملف الشخصي. يرجى المحاولة مرة أخرى.</p>
+          <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8">
+            <div className="space-y-6">
+              <Skeleton className="h-32 w-32 rounded-full mx-auto" />
+              <Skeleton className="h-6 w-40 mx-auto" />
+              <Skeleton className="h-4 w-20 mx-auto" />
+            </div>
+
+            <div className="space-y-6">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-[300px] w-full" />
+            </div>
+          </div>
         </div>
       </Layout>
     );
@@ -114,18 +124,26 @@ const Profile = () => {
         <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8">
           {/* Profile sidebar */}
           <ProfileSidebar
-            avatarUrl={profileData?.avatar_url}
+            avatarUrl={profileData?.avatar_url || null}
             userInitials={getUserInitials()}
-            firstName={profileData?.first_name}
-            lastName={profileData?.last_name}
-            role={profileData?.role}
+            firstName={profileData?.first_name || ''}
+            lastName={profileData?.last_name || ''}
+            role={profileData?.role || 'مستخدم'}
             onAvatarChange={handleAvatarChange}
           />
 
           {/* Profile content */}
           <div className="space-y-6">
             <ProfileTabs
-              profileData={profileData}
+              profileData={profileData || { 
+                id: user.id, 
+                first_name: '', 
+                last_name: '', 
+                avatar_url: null, 
+                role: 'مستخدم',
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString() 
+              }}
               userEmail={user?.email || ""}
               onUpdateProfile={handleUpdateProfile}
               onChangePassword={handleChangePassword}

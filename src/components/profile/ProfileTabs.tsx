@@ -35,10 +35,7 @@ const ProfileTabs = ({
   activities,
   activitiesLoading
 }: ProfileTabsProps) => {
-  if (!profileData) {
-    return null; // Don't render if profileData is missing
-  }
-  
+  // All fields are now guaranteed by the parent component
   return (
     <Tabs defaultValue="account" className="w-full" dir="rtl">
       <TabsList className="grid grid-cols-3">

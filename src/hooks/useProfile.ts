@@ -20,44 +20,65 @@ export const useProfile = () => {
       try {
         setLoading(true);
         
-        // Get profile data - use maybeSingle() instead of single() to handle cases where profile might not exist
-        const { data: profile, error } = await supabase
+        // First try to get the profile using select (avoid insert attempts)
+        const { data: profile, error: selectError } = await supabase
           .from("profiles")
           .select("*")
           .eq("id", user.id)
-          .maybeSingle();
+          .limit(1);
 
-        if (error) {
-          throw error;
+        if (selectError) {
+          throw selectError;
         }
 
-        // If profile doesn't exist, create it
-        if (!profile) {
-          const newProfile = {
-            id: user.id,
-            first_name: "",
-            last_name: "",
-            avatar_url: null,
-            role: "user",
-            updated_at: new Date().toISOString(),
-            created_at: new Date().toISOString()
-          };
-          
-          const { data: createdProfile, error: createError } = await supabase
+        // If profile exists, use the first one
+        if (profile && profile.length > 0) {
+          setProfileData(profile[0] as ProfileData);
+          console.log("Fetched existing profile:", profile[0]);
+          return;
+        }
+
+        // If profile doesn't exist, try to create it
+        console.log("Profile not found, attempting to create one");
+        const newProfile = {
+          id: user.id,
+          first_name: "",
+          last_name: "",
+          avatar_url: null,
+          role: "user",
+          updated_at: new Date().toISOString(),
+          created_at: new Date().toISOString()
+        };
+        
+        const { data: createdProfile, error: createError } = await supabase
+          .from("profiles")
+          .insert(newProfile)
+          .select()
+          .limit(1);
+
+        if (createError) {
+          console.error("Error creating profile:", createError);
+          // Even if creation fails, still try to fetch the profile one more time
+          // In case it was created by the database trigger
+          const { data: retryProfile } = await supabase
             .from("profiles")
-            .insert(newProfile)
             .select("*")
-            .single();
-
-          if (createError) {
-            throw createError;
+            .eq("id", user.id)
+            .limit(1);
+            
+          if (retryProfile && retryProfile.length > 0) {
+            setProfileData(retryProfile[0] as ProfileData);
+            return;
           }
+          
+          throw createError;
+        }
 
-          setProfileData(createdProfile as ProfileData);
-          console.log("Created new profile:", createdProfile);
+        if (createdProfile && createdProfile.length > 0) {
+          setProfileData(createdProfile[0] as ProfileData);
+          console.log("Created new profile:", createdProfile[0]);
         } else {
-          setProfileData(profile as ProfileData);
-          console.log("Fetched existing profile:", profile);
+          throw new Error("Failed to create or retrieve profile");
         }
       } catch (error) {
         console.error("Error fetching profile data:", error);

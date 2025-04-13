@@ -46,11 +46,7 @@ export const useActivityLog = () => {
         setActivities(formattedActivities);
       } catch (error) {
         console.error("Error fetching activity logs:", error);
-        toast({
-          title: "خطأ",
-          description: "حدث خطأ أثناء جلب سجل النشاط",
-          variant: "destructive",
-        });
+        // Don't show toast for this error as it's not critical
         // Set empty activities to prevent UI issues
         setActivities([]);
       } finally {
@@ -76,29 +72,29 @@ export const useActivityLog = () => {
           activity_type: type,
           description: description,
         })
-        .select()
-        .single();
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error logging activity:", error);
+        return;
+      }
 
-      // Update local state with the new activity
-      const newActivity: Activity = {
-        id: data.id,
-        type: data.activity_type as Activity["type"],
-        description: data.description,
-        timestamp: data.created_at,
-      };
+      if (data && data.length > 0) {
+        // Update local state with the new activity
+        const newActivity: Activity = {
+          id: data[0].id,
+          type: data[0].activity_type as Activity["type"],
+          description: data[0].description,
+          timestamp: data[0].created_at,
+        };
 
-      setActivities([newActivity, ...activities]);
-      
-      return newActivity;
+        setActivities([newActivity, ...activities]);
+        
+        return newActivity;
+      }
     } catch (error) {
       console.error("Error logging activity:", error);
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء تسجيل النشاط",
-        variant: "destructive",
-      });
+      // Don't show toast for this error as it's not critical
     }
   };
 
