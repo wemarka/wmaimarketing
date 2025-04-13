@@ -55,28 +55,28 @@ const RecentActivity = () => {
   // Default activities to show if there are no database activities
   const defaultActivities = [
     {
-      id: 1,
+      id: "1",
       type: "image",
       title: "تم إنشاء صورة إعلانية",
       time: "منذ ساعتين",
       icon: <Image className="h-4 w-4" />,
     },
     {
-      id: 2,
+      id: "2",
       type: "content",
       title: "تم إنشاء محتوى لمنشور أحمر الشفاه",
       time: "منذ 5 ساعات",
       icon: <FileText className="h-4 w-4" />,
     },
     {
-      id: 3,
+      id: "3",
       type: "video",
       title: "تم إنشاء فيديو ترويجي",
       time: "أمس",
       icon: <Video className="h-4 w-4" />,
     },
     {
-      id: 4,
+      id: "4",
       type: "schedule",
       title: "تمت جدولة 3 منشورات على انستجرام",
       time: "منذ يومين",

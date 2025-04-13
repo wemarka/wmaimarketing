@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
-interface Activity {
+export interface Activity {
   id: string;
   type: "login" | "logout" | "profile_update" | "password_change" | "role_change" | "content_create" | "content_edit";
   description: string;
@@ -76,7 +76,7 @@ export const useActivityLog = () => {
       // Update local state with the new activity
       const newActivity: Activity = {
         id: data.id,
-        type: data.activity_type,
+        type: data.activity_type as Activity["type"],
         description: data.description,
         timestamp: data.created_at,
       };
