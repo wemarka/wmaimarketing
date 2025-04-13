@@ -1,4 +1,3 @@
-
 export interface CalendarPost {
   id: number;
   title: string;
@@ -95,4 +94,33 @@ export interface ProductPerformance {
   clicks: number;
   conversions: number;
   revenue: number;
+}
+
+export interface PostStatus {
+  scheduled: number;
+  published: number;
+  pending: number;
+  draft: number;
+}
+
+export interface ProductionCost {
+  id: number;
+  campaignName: string;
+  productionCost: number;
+  marketingBudget: number;
+  actualSpent: number;
+  revenue: number;
+  roi: number;
+  impressions: number;
+  conversions: number;
+}
+
+export interface ContentRecommendation {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  priority: "high" | "medium" | "low";
+  implementationDifficulty: "easy" | "medium" | "hard";
+  expectedImpact: number; // percentage
 }

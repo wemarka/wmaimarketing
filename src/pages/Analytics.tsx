@@ -6,6 +6,9 @@ import AnalyticsDashboard from "@/components/analytics/AnalyticsDashboard";
 import CampaignPerformance from "@/components/analytics/CampaignPerformance";
 import ProductPerformance from "@/components/analytics/ProductPerformance";
 import PostPerformance from "@/components/analytics/PostPerformance";
+import PostStatusTracker from "@/components/analytics/PostStatusTracker";
+import ProductionCostAnalysis from "@/components/analytics/ProductionCostAnalysis";
+import ContentRecommendations from "@/components/analytics/ContentRecommendations";
 
 const Analytics = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -28,6 +31,9 @@ const Analytics = () => {
             <TabsTrigger value="campaigns">الحملات</TabsTrigger>
             <TabsTrigger value="products">المنتجات</TabsTrigger>
             <TabsTrigger value="posts">المنشورات</TabsTrigger>
+            <TabsTrigger value="status">حالة المنشورات</TabsTrigger>
+            <TabsTrigger value="costs">تكلفة الإنتاج</TabsTrigger>
+            <TabsTrigger value="recommendations">التوصيات</TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview">
@@ -44,6 +50,18 @@ const Analytics = () => {
           
           <TabsContent value="posts">
             <PostPerformance />
+          </TabsContent>
+          
+          <TabsContent value="status">
+            <PostStatusTracker />
+          </TabsContent>
+          
+          <TabsContent value="costs">
+            <ProductionCostAnalysis />
+          </TabsContent>
+          
+          <TabsContent value="recommendations">
+            <ContentRecommendations />
           </TabsContent>
         </Tabs>
       </div>
