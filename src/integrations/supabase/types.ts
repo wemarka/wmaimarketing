@@ -9,6 +9,96 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      campaigns: {
+        Row: {
+          budget: number
+          created_at: string
+          description: string
+          end_date: string
+          id: string
+          name: string
+          start_date: string
+          status: string
+          target_audience: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          budget?: number
+          created_at?: string
+          description: string
+          end_date: string
+          id?: string
+          name: string
+          start_date: string
+          status: string
+          target_audience?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          budget?: number
+          created_at?: string
+          description?: string
+          end_date?: string
+          id?: string
+          name?: string
+          start_date?: string
+          status?: string
+          target_audience?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      media_assets: {
+        Row: {
+          created_at: string
+          dimensions: Json | null
+          duration: number | null
+          folder_id: string | null
+          format: string
+          id: string
+          name: string
+          size: number
+          tags: string[] | null
+          type: string
+          updated_at: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dimensions?: Json | null
+          duration?: number | null
+          folder_id?: string | null
+          format: string
+          id?: string
+          name: string
+          size: number
+          tags?: string[] | null
+          type: string
+          updated_at?: string
+          url: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dimensions?: Json | null
+          duration?: number | null
+          folder_id?: string | null
+          format?: string
+          id?: string
+          name?: string
+          size?: number
+          tags?: string[] | null
+          type?: string
+          updated_at?: string
+          url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       permissions: {
         Row: {
           created_at: string | null
@@ -27,6 +117,87 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string
+        }
+        Relationships: []
+      }
+      posts: {
+        Row: {
+          campaign_id: string | null
+          content: string
+          created_at: string
+          id: string
+          media_url: string[] | null
+          platform: string
+          published_at: string | null
+          scheduled_at: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          campaign_id?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          media_url?: string[] | null
+          platform: string
+          published_at?: string | null
+          scheduled_at: string
+          status: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          campaign_id?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          media_url?: string[] | null
+          platform?: string
+          published_at?: string | null
+          scheduled_at?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          image_url: string[] | null
+          name: string
+          price: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          image_url?: string[] | null
+          name: string
+          price?: number
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string[] | null
+          name?: string
+          price?: number
+          status?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -88,6 +259,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      social_accounts: {
+        Row: {
+          access_token: string | null
+          account_name: string
+          created_at: string
+          id: string
+          insights: Json | null
+          platform: string
+          profile_name: string
+          refresh_token: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          account_name: string
+          created_at?: string
+          id?: string
+          insights?: Json | null
+          platform: string
+          profile_name: string
+          refresh_token?: string | null
+          status: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string | null
+          account_name?: string
+          created_at?: string
+          id?: string
+          insights?: Json | null
+          platform?: string
+          profile_name?: string
+          refresh_token?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_activity_log: {
         Row: {

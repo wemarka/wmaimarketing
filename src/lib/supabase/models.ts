@@ -1,67 +1,13 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { Tables } from "@/integrations/supabase/types";
+import type { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 
-// Extend the existing types from Supabase types
-export interface Post extends Tables<"posts"> {
-  title: string;
-  content: string;
-  media_url: string[];
-  platform: "instagram" | "facebook" | "tiktok" | "twitter";
-  status: "draft" | "scheduled" | "published" | "failed";
-  scheduled_at: string;
-  published_at: string | null;
-  user_id: string;
-  campaign_id: string | null;
-}
-
-export interface Campaign extends Tables<"campaigns"> {
-  name: string;
-  description: string;
-  start_date: string;
-  end_date: string;
-  status: "active" | "pending" | "completed" | "archived";
-  budget: number;
-  target_audience: string[];
-  user_id: string;
-}
-
-export interface Product extends Tables<"products"> {
-  name: string;
-  description: string;
-  category: string;
-  image_url: string[];
-  price: number;
-  status: "active" | "inactive" | "archived";
-}
-
-export interface SocialAccount extends Tables<"social_accounts"> {
-  platform: "instagram" | "facebook" | "tiktok" | "twitter";
-  account_name: string;
-  profile_name: string;
-  status: "connected" | "disconnected" | "error";
-  user_id: string;
-  access_token: string | null;
-  refresh_token: string | null;
-  insights: {
-    followers: number;
-    engagement: number;
-    postCount: number;
-  };
-}
-
-export interface MediaAsset extends Tables<"media_assets"> {
-  name: string;
-  url: string;
-  type: "image" | "video" | "audio";
-  format: string;
-  size: number;
-  dimensions?: { width: number; height: number };
-  duration?: number;
-  folder_id: string | null;
-  tags: string[];
-  user_id: string;
-}
+// Define types using the imported Tables type
+export interface Post extends Tables<"posts"> {}
+export interface Campaign extends Tables<"campaigns"> {}
+export interface Product extends Tables<"products"> {}
+export interface SocialAccount extends Tables<"social_accounts"> {}
+export interface MediaAsset extends Tables<"media_assets"> {}
 
 // Fetch functions for each model
 export const fetchPosts = async (userId: string, status?: string) => {
@@ -125,4 +71,17 @@ export const fetchMediaAssets = async (userId: string, folderId?: string) => {
   
   if (error) throw new Error(error.message);
   return data as MediaAsset[];
+};
+
+// Add insert and update functions if needed
+export const createPost = async (post: TablesInsert<"posts">) => {
+  const { data, error } = await supabase.from("posts").insert(post).select().single();
+  if (error) throw new Error(error.message);
+  return data as Post;
+};
+
+export const updatePost = async (id: string, post: TablesUpdate<"posts">) => {
+  const { data, error } = await supabase.from("posts").update(post).eq("id", id).select().single();
+  if (error) throw new Error(error.message);
+  return data as Post;
 };

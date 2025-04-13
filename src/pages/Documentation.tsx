@@ -7,6 +7,7 @@ import OverviewTab from "@/components/documentation/OverviewTab";
 import PhasesTab from "@/components/documentation/PhasesTab";
 import TimelineTab from "@/components/documentation/TimelineTab";
 
+// Define prop types for components to resolve type errors
 interface ProjectHeaderProps {
   title: string;
   description: string;
