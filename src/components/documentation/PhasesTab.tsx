@@ -22,21 +22,21 @@ const PhasesTab: React.FC = () => {
       <PhaseCard 
         phaseNumber={2}
         title="إدارة المستخدمين والصلاحيات الداخلية"
-        status="in-progress"
+        status="complete"
         items={[
-          { text: "إنشاء نظام للأدوار المختلفة (مدير، مسؤول تسويق، مصمم)", done: false },
-          { text: "لوحة تحكم للمدير لإدارة الموظفين وصلاحياتهم", done: false },
-          { text: "سجلات النشاط وتتبع الإجراءات", done: false },
-          { text: "صفحة الملف الشخصي للموظف مع معلومات الاتصال", done: false },
-          { text: "إدارة التفضيلات الشخصية والإعدادات", done: false },
-          { text: "إدارة كلمات المرور وأمان الحساب", done: false },
+          { text: "إنشاء نظام للأدوار المختلفة (مدير، مسؤول تسويق، مصمم)", done: true },
+          { text: "لوحة تحكم للمدير لإدارة الموظفين وصلاحياتهم", done: true },
+          { text: "سجلات النشاط وتتبع الإجراءات", done: true },
+          { text: "صفحة الملف الشخصي للموظف مع معلومات الاتصال", done: true },
+          { text: "إدارة التفضيلات الشخصية والإعدادات", done: true },
+          { text: "إدارة كلمات المرور وأمان الحساب", done: true },
         ]}
       />
       
       <PhaseCard 
         phaseNumber={3}
         title="أدوات إنتاج المحتوى الأساسية"
-        status="planned"
+        status="in-progress"
         items={[
           { text: "نظام تنظيم وتصنيف صور المنتجات", done: false },
           { text: "تحليل تلقائي للصور (الألوان، الزوايا، التفاصيل)", done: false },

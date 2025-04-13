@@ -38,30 +38,30 @@ const TimelineTab: React.FC = () => {
           
           <TimelineItem 
             phase="المرحلة الثانية: إدارة المستخدمين والصلاحيات الداخلية" 
-            duration="1-2 أسابيع" 
-            status="in-progress"
-            description="تطوير نظام إدارة المستخدمين، وإعداد صلاحيات الوصول للأدوار المختلفة، وتتبع نشاط المستخدمين" 
+            duration="مكتملة" 
+            status="complete"
+            description="تم تطوير نظام إدارة المستخدمين، وإعداد صلاحيات الوصول للأدوار المختلفة، وتتبع نشاط المستخدمين" 
             startDate="١٥ أبريل ٢٠٢٥"
             endDate="٣٠ أبريل ٢٠٢٥"
             tasks={[
               { name: "إنشاء واجهة إدارة المستخدمين", status: "complete", assignee: "سارة" },
               { name: "تحديد وتنفيذ نظام الأدوار", status: "complete", assignee: "علي", priority: "high" },
-              { name: "إنشاء سجل نشاط المستخدمين", status: "in-progress", assignee: "محمد" },
-              { name: "تطوير صفحة الملف الشخصي", status: "pending", priority: "medium" },
-              { name: "تنفيذ إعدادات المستخدم", status: "pending" },
-              { name: "اختبارات أمان الحسابات", status: "pending", priority: "high" },
+              { name: "إنشاء سجل نشاط المستخدمين", status: "complete", assignee: "محمد" },
+              { name: "تطوير صفحة الملف الشخصي", status: "complete", priority: "medium" },
+              { name: "تنفيذ إعدادات المستخدم", status: "complete" },
+              { name: "اختبارات أمان الحسابات", status: "complete", priority: "high" },
             ]}
           />
           
           <TimelineItem 
             phase="المرحلة الثالثة: أدوات إنتاج المحتوى الأساسية" 
             duration="2-3 أسابيع" 
-            status="planned"
+            status="in-progress"
             description="تطوير واجهات لتحليل وتنظيم الصور، إنشاء إعلانات، وإدارة الأصول البصرية" 
             startDate="١ مايو ٢٠٢٥"
             endDate="٢٢ مايو ٢٠٢٥"
             tasks={[
-              { name: "تطوير نظام تنظيم وتصنيف الصور", status: "pending", priority: "high" },
+              { name: "تطوير نظام تنظيم وتصنيف الصور", status: "in-progress", priority: "high" },
               { name: "إنشاء محرك التحليل التلقائي للصور", status: "pending", priority: "medium" },
               { name: "تطوير مكتبة الأصول البصرية", status: "pending" },
               { name: "إنشاء واجهة تصميم الإعلانات", status: "pending", priority: "high" },

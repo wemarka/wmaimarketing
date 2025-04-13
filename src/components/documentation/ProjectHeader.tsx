@@ -32,27 +32,27 @@ const ProjectHeader: React.FC = () => {
       </div>
 
       <div className="bg-white p-3 rounded-lg border border-slate-100 flex items-center gap-3">
-        <div className="bg-green-100 text-green-700 p-2 rounded-full">
-          <CheckCircle2 className="h-5 w-5" />
+        <div className="bg-amber-100 text-amber-700 p-2 rounded-full">
+          <Clock className="h-5 w-5" />
         </div>
         <div>
-          <h3 className="font-medium">المرحلة الحالية: إدارة المستخدمين والصلاحيات الداخلية</h3>
-          <p className="text-sm text-muted-foreground">تطوير نظام إدارة المستخدمين، وإعداد صلاحيات الوصول للأدوار المختلفة</p>
+          <h3 className="font-medium">المرحلة الحالية: أدوات إنتاج المحتوى الأساسية</h3>
+          <p className="text-sm text-muted-foreground">تطوير نظام لتنظيم وتحليل صور المنتجات، وإنشاء مكتبة مركزية للأصول البصرية</p>
         </div>
       </div>
       
       <div className="space-y-1">
         <div className="flex justify-between text-sm mb-1">
           <span className="text-muted-foreground">تقدم المشروع</span>
-          <span className="font-medium">٣٠٪</span>
+          <span className="font-medium">٤٠٪</span>
         </div>
         <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" style={{ width: "30%" }}></div>
+          <div className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" style={{ width: "40%" }}></div>
         </div>
         <div className="flex justify-between text-xs text-muted-foreground mt-1">
-          <span>المرحلة ١ (مكتملة)</span>
-          <span>المرحلة ٢ (قيد التنفيذ)</span>
-          <span>المراحل ٣-٧ (مخطط لها)</span>
+          <span>المرحلتان ١-٢ (مكتملتان)</span>
+          <span>المرحلة ٣ (قيد التنفيذ)</span>
+          <span>المراحل ٤-٧ (مخطط لها)</span>
         </div>
       </div>
     </div>
