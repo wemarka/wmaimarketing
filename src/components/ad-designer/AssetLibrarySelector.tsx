@@ -14,33 +14,48 @@ interface AssetLibrarySelectorProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   onSelectImage: (url: string) => void;
+  selectedPlatform?: string; // إضافة معلومات المنصة المحددة
 }
 
 const AssetLibrarySelector: React.FC<AssetLibrarySelectorProps> = ({
   isOpen,
   setIsOpen,
-  onSelectImage
+  onSelectImage,
+  selectedPlatform
 }) => {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("all");
 
   const categories = Array.from(new Set(sampleAssets.map(asset => asset.category)));
 
-  const filteredAssets = sampleAssets.filter(asset => {
-    // Filter by type (only images)
-    if (!asset.type.includes("image")) return false;
-    
-    // Filter by search query
-    const matchesSearch = !searchQuery || 
-      asset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      asset.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    // Filter by category
-    const matchesCategory = !selectedCategory || asset.category === selectedCategory;
-    
-    return matchesSearch && matchesCategory;
-  });
+  const getFilteredAssets = (tab: string) => {
+    return sampleAssets.filter(asset => {
+      // أساسيات التصفية للصور
+      if (!asset.type.includes("image")) return false;
+      
+      // تصفية حسب البحث
+      const matchesSearch = !searchQuery || 
+        asset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        asset.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+      
+      // تصفية حسب الفئة
+      const matchesCategory = !selectedCategory || asset.category === selectedCategory;
+      
+      // تصفية حسب علامة التبويب
+      const matchesTab = tab === "all" || 
+        (tab === "recommended" && asset.tags.some(tag => 
+          // توصيات تستند إلى المنصة المختارة
+          (selectedPlatform && tag.toLowerCase().includes(selectedPlatform.toLowerCase())) ||
+          tag.toLowerCase().includes("recommended")
+        ));
+      
+      return matchesSearch && matchesCategory && matchesTab;
+    });
+  };
+
+  const filteredAssets = getFilteredAssets(activeTab);
 
   const handleSelectAsset = (asset: typeof sampleAssets[0]) => {
     onSelectImage(asset.thumbnail);
@@ -55,7 +70,7 @@ const AssetLibrarySelector: React.FC<AssetLibrarySelectorProps> = ({
         </DialogHeader>
         
         <div className="flex h-full space-x-4">
-          {/* Sidebar */}
+          {/* الشريط الجانبي */}
           <div className="w-[200px] border-r pr-4">
             <div className="mb-4">
               <Button 
@@ -84,7 +99,7 @@ const AssetLibrarySelector: React.FC<AssetLibrarySelectorProps> = ({
             </div>
           </div>
           
-          {/* Main content */}
+          {/* المحتوى الرئيسي */}
           <div className="flex-1 flex flex-col">
             <div className="flex items-center space-x-2 mb-4">
               <Search className="h-4 w-4 text-muted-foreground" />
@@ -95,6 +110,17 @@ const AssetLibrarySelector: React.FC<AssetLibrarySelectorProps> = ({
                 className="flex-1"
               />
             </div>
+            
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-4">
+              <TabsList>
+                <TabsTrigger value="all">{t('adDesigner.assetSelector.allImages')}</TabsTrigger>
+                <TabsTrigger value="recommended">
+                  {selectedPlatform 
+                    ? t('adDesigner.assetSelector.recommendedPlatform', { platform: selectedPlatform }) 
+                    : t('adDesigner.assetSelector.recommended')}
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
             
             <ScrollArea className="flex-1">
               <div className="grid grid-cols-3 gap-4">
@@ -111,6 +137,11 @@ const AssetLibrarySelector: React.FC<AssetLibrarySelectorProps> = ({
                           alt={asset.name}
                           className="w-full h-full object-cover"
                         />
+                        {selectedPlatform && asset.tags.some(tag => tag.toLowerCase().includes(selectedPlatform.toLowerCase())) && (
+                          <div className="absolute top-2 right-2 bg-primary text-white text-xs px-2 py-1 rounded-full">
+                            {t('adDesigner.assetSelector.bestFor', { platform: selectedPlatform })}
+                          </div>
+                        )}
                       </div>
                       <div className="p-2">
                         <p className="text-sm font-medium truncate">{asset.name}</p>
@@ -133,4 +164,3 @@ const AssetLibrarySelector: React.FC<AssetLibrarySelectorProps> = ({
 };
 
 export default AssetLibrarySelector;
-
