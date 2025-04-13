@@ -10,10 +10,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Loader2, Download, Image as ImageIcon, Sparkles, Instagram, Facebook, Share2, LayoutTemplate } from "lucide-react";
+import { Loader2, Download, Image as ImageIcon, Sparkles, Instagram, Facebook, Share2, LayoutTemplate, Settings, Library } from "lucide-react";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { useToast } from "@/hooks/use-toast";
 import TemplateSelector from "@/components/ad-designer/TemplateSelector";
+import AssetLibrarySelector from "@/components/ad-designer/AssetLibrarySelector";
+import AdvancedOptions from "@/components/ad-designer/AdvancedOptions";
 
 const AdDesigner = () => {
   const { t } = useTranslation();
@@ -28,10 +30,20 @@ const AdDesigner = () => {
     style: "modern",
     color: "#9b87f5",
     imagePrompt: "",
+    imageUrl: "",
+    adSize: "square",
+    effectStyle: "none",
+    fontSize: 100,
+    overlayOpacity: 0,
+    showLogo: true,
+    brandPosition: "bottom",
+    customFont: "default",
+    textShadow: false
   });
   const [generatedAd, setGeneratedAd] = useState<string | null>(null);
+  const [isAssetLibraryOpen, setIsAssetLibraryOpen] = useState(false);
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: any) => {
     setAdContent({ ...adContent, [field]: value });
   };
 
@@ -40,8 +52,8 @@ const AdDesigner = () => {
     
     // Simulate ad generation
     setTimeout(() => {
-      // Use a placeholder image for demo
-      setGeneratedAd("https://images.unsplash.com/photo-1596704017254-9b5e2a025acf?q=80&w=1080&auto=format&fit=crop");
+      // Use a selected image or a placeholder
+      setGeneratedAd(adContent.imageUrl || "https://images.unsplash.com/photo-1596704017254-9b5e2a025acf?q=80&w=1080&auto=format&fit=crop");
       setLoading(false);
       
       toast({
@@ -60,7 +72,91 @@ const AdDesigner = () => {
   };
 
   const handleApplyTemplate = (templateContent: typeof adContent) => {
-    setAdContent(templateContent);
+    setAdContent({ ...adContent, ...templateContent });
+  };
+
+  const handleSelectImage = (imageUrl: string) => {
+    setAdContent({ ...adContent, imageUrl });
+    setGeneratedAd(imageUrl);
+  };
+
+  // Get aspect ratio based on selected ad size
+  const getAspectRatio = () => {
+    switch(adContent.adSize) {
+      case "square": return "aspect-square"; // 1:1
+      case "portrait": return "aspect-4/5"; // 4:5
+      case "landscape": return "aspect-video"; // 16:9
+      case "story": return "aspect-9/16"; // 9:16
+      case "wide": return "aspect-2/1"; // 2:1
+      default: return "aspect-square"; // Default to 1:1
+    }
+  };
+
+  // Get text style based on settings
+  const getTextStyle = () => {
+    let style: React.CSSProperties = {
+      fontFamily: getFontFamily(),
+      fontSize: `${adContent.fontSize}%`
+    };
+    
+    if (adContent.textShadow) {
+      style.textShadow = "0 2px 4px rgba(0,0,0,0.3)";
+    }
+    
+    return style;
+  };
+  
+  // Get font family based on custom font setting
+  const getFontFamily = () => {
+    switch (adContent.customFont) {
+      case "elegant": return "serif";
+      case "bold": return "system-ui";
+      case "playful": return "cursive";
+      case "minimal": return "monospace";
+      default: return "sans-serif";
+    }
+  };
+  
+  // Get background style based on effect settings
+  const getBackgroundStyle = () => {
+    if (!generatedAd) return {};
+    
+    let style: React.CSSProperties = {
+      backgroundImage: `url(${generatedAd})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center"
+    };
+    
+    switch (adContent.effectStyle) {
+      case "gradient":
+        style.backgroundImage = `linear-gradient(to bottom, transparent, rgba(0,0,0,0.7)), url(${generatedAd})`;
+        break;
+      case "blur": 
+        style.filter = "blur(3px)";
+        break;
+      case "overlay":
+        style.boxShadow = `inset 0 0 0 2000px rgba(0, 0, 0, ${adContent.overlayOpacity / 100})`;
+        break;
+      case "duotone":
+        // A simplified duotone effect
+        style.filter = "grayscale(100%) sepia(20%) brightness(90%) hue-rotate(45deg)";
+        break;
+      default:
+        break;
+    }
+    
+    return style;
+  };
+  
+  // Get content positioning based on brand position
+  const getContentPosition = () => {
+    switch (adContent.brandPosition) {
+      case "top": return "justify-start";
+      case "bottom": return "justify-end";
+      case "center": return "justify-center";
+      case "none": return "hidden";
+      default: return "justify-end";
+    }
   };
 
   return (
@@ -71,10 +167,10 @@ const AdDesigner = () => {
 
         <ResizablePanelGroup
           direction="horizontal"
-          className="min-h-[500px]"
+          className="min-h-[600px]"
         >
           {/* Editor Panel */}
-          <ResizablePanel defaultSize={40}>
+          <ResizablePanel defaultSize={40} minSize={30}>
             <Card className="h-full">
               <CardContent className="p-6">
                 <Tabs defaultValue="content" className="w-full">
@@ -86,6 +182,10 @@ const AdDesigner = () => {
                     <TabsTrigger value="content">{t("adDesigner.tabs.content")}</TabsTrigger>
                     <TabsTrigger value="design">{t("adDesigner.tabs.design")}</TabsTrigger>
                     <TabsTrigger value="platform">{t("adDesigner.tabs.platform")}</TabsTrigger>
+                    <TabsTrigger value="advanced">
+                      <Settings className="h-4 w-4 mr-2" />
+                      {t("adDesigner.tabs.advanced")}
+                    </TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="templates">
@@ -116,13 +216,36 @@ const AdDesigner = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor="imagePrompt">{t("adDesigner.imagePrompt")}</Label>
+                      <div className="flex justify-between items-center mb-2">
+                        <Label htmlFor="imagePrompt">{t("adDesigner.imagePrompt")}</Label>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => setIsAssetLibraryOpen(true)}
+                        >
+                          <Library className="h-4 w-4 mr-2" />
+                          {t("adDesigner.selectFromLibrary")}
+                        </Button>
+                      </div>
                       <Textarea 
                         id="imagePrompt" 
                         value={adContent.imagePrompt}
                         onChange={(e) => handleInputChange("imagePrompt", e.target.value)}
                         placeholder={t("adDesigner.imagePlaceholder")}
+                        disabled={!!adContent.imageUrl}
                       />
+                      {adContent.imageUrl && (
+                        <div className="flex items-center justify-between mt-2">
+                          <p className="text-sm text-muted-foreground">{t("adDesigner.usingSelectedImage")}</p>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => handleInputChange("imageUrl", "")}
+                          >
+                            {t("adDesigner.clearImage")}
+                          </Button>
+                        </div>
+                      )}
                     </div>
 
                     <div>
@@ -222,6 +345,11 @@ const AdDesigner = () => {
                       </div>
                     </div>
                   </TabsContent>
+
+                  <TabsContent value="advanced">
+                    <h3 className="text-lg font-medium mb-4">{t("adDesigner.advancedOptions.title")}</h3>
+                    <AdvancedOptions adContent={adContent} onUpdate={handleInputChange} />
+                  </TabsContent>
                 </Tabs>
 
                 <Button 
@@ -248,7 +376,7 @@ const AdDesigner = () => {
           <ResizableHandle withHandle />
 
           {/* Preview Panel */}
-          <ResizablePanel defaultSize={60}>
+          <ResizablePanel defaultSize={60} minSize={30}>
             <Card className="h-full">
               <CardContent className="p-6">
                 <div className="mb-4 flex justify-between items-center">
@@ -261,20 +389,32 @@ const AdDesigner = () => {
                   )}
                 </div>
 
-                <div className="bg-gray-50 rounded-lg h-[400px] flex items-center justify-center border">
+                <div className={`bg-gray-50 rounded-lg ${generatedAd ? '' : 'h-[400px]'} flex items-center justify-center border overflow-hidden`}>
                   {generatedAd ? (
-                    <div className="relative w-full h-full">
-                      <img 
-                        src={generatedAd} 
-                        alt="Generated Ad" 
-                        className="w-full h-full object-contain"
-                      />
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white">
-                        {adContent.headline && <h3 className="text-xl font-bold mb-1">{adContent.headline}</h3>}
-                        {adContent.description && <p className="text-sm mb-2">{adContent.description}</p>}
-                        <Button size="sm" style={{backgroundColor: adContent.color}}>
-                          {t(`adDesigner.cta.${adContent.callToAction}`)}
-                        </Button>
+                    <div className={`relative w-full ${getAspectRatio()}`}>
+                      <div className="absolute inset-0" style={getBackgroundStyle()}></div>
+                      
+                      {/* Content overlay */}
+                      <div className={`absolute inset-0 flex flex-col p-4 ${getContentPosition()}`}>
+                        <div className={`${adContent.effectStyle === "overlay" ? "text-white" : ""}`} style={getTextStyle()}>
+                          {adContent.headline && <h3 className="text-xl font-bold mb-1">{adContent.headline}</h3>}
+                          {adContent.description && <p className="text-sm mb-2">{adContent.description}</p>}
+                          <Button size="sm" style={{backgroundColor: adContent.color}}>
+                            {t(`adDesigner.cta.${adContent.callToAction}`)}
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      {/* Logo if enabled */}
+                      {adContent.showLogo && (
+                        <div className="absolute top-2 left-2 bg-white/80 rounded-full p-1 w-8 h-8 flex items-center justify-center">
+                          <div className="w-6 h-6 rounded-full bg-gray-800"></div>
+                        </div>
+                      )}
+                      
+                      {/* Platform indicator */}
+                      <div className="absolute bottom-2 right-2 text-xs px-2 py-1 bg-black/50 text-white rounded-full">
+                        {adContent.platform}
                       </div>
                     </div>
                   ) : (
@@ -288,6 +428,13 @@ const AdDesigner = () => {
             </Card>
           </ResizablePanel>
         </ResizablePanelGroup>
+        
+        {/* Asset Library Selector Dialog */}
+        <AssetLibrarySelector 
+          isOpen={isAssetLibraryOpen}
+          setIsOpen={setIsAssetLibraryOpen}
+          onSelectImage={handleSelectImage}
+        />
       </div>
     </Layout>
   );

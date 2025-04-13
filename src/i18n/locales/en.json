@@ -102,7 +102,8 @@
       "content": "Content",
       "design": "Design",
       "platform": "Platform",
-      "templates": "Templates"
+      "templates": "Templates",
+      "advanced": "Advanced"
     },
     "headline": "Headline",
     "headlinePlaceholder": "Enter ad headline",
@@ -151,9 +152,66 @@
       "seasonal": "Seasonal Campaign",
       "testimonial": "Customer Testimonial",
       "newArrival": "New Arrival",
+      "storyAd": "Story Ad",
+      "cleanMinimal": "Clean Minimal",
+      "tutorial": "Tutorial & Guide",
       "applyTemplate": "Apply Template",
       "templateApplied": "Template Applied",
       "templateAppliedDescription": "Template has been applied"
+    },
+    "selectFromLibrary": "Select from Library",
+    "usingSelectedImage": "Using selected image from library",
+    "clearImage": "Clear image",
+    "advancedOptions": {
+      "title": "Advanced Options",
+      "adSize": "Ad Size",
+      "selectSize": "Select ad size",
+      "sizes": {
+        "square": "Square",
+        "portrait": "Portrait",
+        "landscape": "Landscape",
+        "story": "Story",
+        "wide": "Wide"
+      },
+      "effectStyle": "Effect Style",
+      "selectEffect": "Select effect style",
+      "effects": {
+        "none": "None",
+        "gradient": "Gradient Overlay",
+        "blur": "Background Blur",
+        "overlay": "Dark Overlay",
+        "duotone": "Duotone"
+      },
+      "fontSize": "Font Size",
+      "overlayOpacity": "Overlay Opacity",
+      "customFont": "Font Style",
+      "selectFont": "Select font style",
+      "fonts": {
+        "default": "Default",
+        "elegant": "Elegant",
+        "bold": "Bold",
+        "playful": "Playful",
+        "minimal": "Minimal"
+      },
+      "brandPosition": "Brand Position",
+      "selectPosition": "Select brand position",
+      "positions": {
+        "top": "Top",
+        "bottom": "Bottom",
+        "left": "Left",
+        "right": "Right",
+        "center": "Center",
+        "none": "None"
+      },
+      "showLogo": "Show Logo",
+      "textShadow": "Text Shadow"
+    },
+    "assetSelector": {
+      "title": "Select Image from Library",
+      "allImages": "All Images",
+      "categories": "Categories",
+      "search": "Search images...",
+      "noResults": "No images match your search"
     }
   }
 }
