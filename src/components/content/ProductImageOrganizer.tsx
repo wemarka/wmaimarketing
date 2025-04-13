@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import ImageGallery from "./ImageGallery";
 import ImageColorAnalysis from "./ImageColorAnalysis";
 import AssetsLibrary from "./AssetsLibrary";
+import AutoImageAnalyzer from "./AutoImageAnalyzer";
 
 const ProductImageOrganizer: React.FC = () => {
   return (
@@ -28,6 +29,7 @@ const ProductImageOrganizer: React.FC = () => {
             <TabsList className="mb-4">
               <TabsTrigger value="gallery">معرض الصور</TabsTrigger>
               <TabsTrigger value="analysis">تحليل الألوان</TabsTrigger>
+              <TabsTrigger value="auto-analysis">التحليل التلقائي</TabsTrigger>
               <TabsTrigger value="library">مكتبة الأصول</TabsTrigger>
             </TabsList>
             
@@ -37,6 +39,10 @@ const ProductImageOrganizer: React.FC = () => {
             
             <TabsContent value="analysis">
               <ImageColorAnalysis />
+            </TabsContent>
+            
+            <TabsContent value="auto-analysis">
+              <AutoImageAnalyzer />
             </TabsContent>
             
             <TabsContent value="library">
