@@ -21,9 +21,10 @@ export interface PhaseData {
 export interface TimelineTabProps {
   phases: PhaseData[];
   onAddPhase?: (phase: Omit<PhaseData, "id">) => void;
+  onEditPhase?: (phase: PhaseData) => void;
 }
 
-const TimelineTab: React.FC<TimelineTabProps> = ({ phases, onAddPhase }) => {
+const TimelineTab: React.FC<TimelineTabProps> = ({ phases, onAddPhase, onEditPhase }) => {
   const [displayPhases, setDisplayPhases] = useState<PhaseData[]>(phases);
   const [filterActive, setFilterActive] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -34,6 +35,11 @@ const TimelineTab: React.FC<TimelineTabProps> = ({ phases, onAddPhase }) => {
     description: "",
   });
   const { toast } = useToast();
+
+  // Update displayPhases when phases prop changes
+  React.useEffect(() => {
+    setDisplayPhases(filterActive ? phases.filter(phase => phase.status === "in-progress") : phases);
+  }, [phases, filterActive]);
 
   const showActiveOnly = () => {
     if (filterActive) {
@@ -171,7 +177,8 @@ const TimelineTab: React.FC<TimelineTabProps> = ({ phases, onAddPhase }) => {
               <TimelineItem 
                 key={phase.id} 
                 phase={phase} 
-                isLast={index === displayPhases.length - 1} 
+                isLast={index === displayPhases.length - 1}
+                onEdit={onEditPhase} 
               />
             ))
           ) : (

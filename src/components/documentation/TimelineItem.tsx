@@ -3,8 +3,6 @@ import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Circle, CheckCircle, AlertCircle, Edit2 } from "lucide-react";
 import { PhaseData } from "./TimelineTab";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface TimelineItemProps {
@@ -56,14 +54,12 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ phase, isLast, onEdit }) =>
             <div className="flex items-center gap-2">
               {getStatusBadge()}
               {onEdit && isHovered && (
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="h-7 w-7" 
+                <button 
+                  className="p-1 rounded-md hover:bg-muted transition-colors"
                   onClick={() => onEdit(phase)}
                 >
-                  <Edit2 className="h-3.5 w-3.5" />
-                </Button>
+                  <Edit2 className="h-3.5 w-3.5 text-muted-foreground" />
+                </button>
               )}
             </div>
           </div>

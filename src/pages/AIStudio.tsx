@@ -129,7 +129,8 @@ const AIStudio = () => {
           <TabsContent value="timeline">
             <TimelineTab 
               phases={demoPhases} 
-              onAddPhase={handleAddPhase} 
+              onAddPhase={handleAddPhase}
+              onEditPhase={handleEditPhase}
             />
           </TabsContent>
           
