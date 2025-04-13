@@ -1,10 +1,11 @@
 
 import React from 'react';
 import { Link } from "react-router-dom";
-import { Bell, Settings, User, LogOut, UserCog, UserPlus } from "lucide-react";
+import { Bell, Settings, LogOut, UserCog, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import LanguageToggle from "@/components/common/LanguageToggle";
+import NavigationMenu from "./NavigationMenu";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,11 +27,13 @@ const Header = () => {
   return (
     <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <Link to="/" className="flex items-center">
             <div className="h-8 w-8 rounded-full bg-gradient-to-br from-beauty-pink to-beauty-lightpurple"></div>
             <span className="ml-2 text-xl font-semibold">Beauty AI</span>
           </Link>
+          
+          <NavigationMenu />
         </div>
         
         <div className="flex items-center gap-4">
