@@ -64,9 +64,25 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      const errorData = await response.text();
-      console.error('OpenAI API error:', errorData);
-      throw new Error('Error from OpenAI API');
+      const errorData = await response.json();
+      console.error('OpenAI API error:', JSON.stringify(errorData, null, 2));
+      
+      // Handle common OpenAI API errors with clear messages
+      if (errorData.error?.type === "insufficient_quota" || 
+          errorData.error?.code === "insufficient_quota" ||
+          errorData.error?.code === "billing_hard_limit_reached") {
+        return new Response(
+          JSON.stringify({ 
+            error: "OpenAI API key has insufficient credits or has reached its billing limit. Please check your OpenAI account billing details." 
+          }),
+          {
+            status: 402, // Payment Required
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+      
+      throw new Error('Error from OpenAI API: ' + (errorData.error?.message || 'Unknown error'));
     }
 
     const data = await response.json();

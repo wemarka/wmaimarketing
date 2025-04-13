@@ -6,3 +6,6 @@ verify_jwt = true
 
 [functions.ai-image-generator]
 verify_jwt = true
+
+[functions.ai-video-ideas]
+verify_jwt = true

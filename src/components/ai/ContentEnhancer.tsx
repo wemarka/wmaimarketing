@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Wand2, Check, Copy, Loader2, Languages, Sparkles } from "lucide-react";
+import { Wand2, Check, Copy, Loader2, Languages, Sparkles, AlertCircle } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface ContentEnhancerProps {
   initialContent?: string;
@@ -20,6 +21,7 @@ const ContentEnhancer: React.FC<ContentEnhancerProps> = ({ initialContent = "", 
   const [isLoading, setIsLoading] = useState(false);
   const [action, setAction] = useState<"improve" | "summarize" | "hashtags" | "translate">("improve");
   const [language, setLanguage] = useState("Arabic");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { toast } = useToast();
 
   const enhanceContent = async () => {
@@ -33,6 +35,7 @@ const ContentEnhancer: React.FC<ContentEnhancerProps> = ({ initialContent = "", 
     }
 
     setIsLoading(true);
+    setErrorMessage(null);
 
     try {
       const { data, error } = await supabase.functions.invoke('ai-content-enhancer', {
@@ -43,13 +46,23 @@ const ContentEnhancer: React.FC<ContentEnhancerProps> = ({ initialContent = "", 
         throw error;
       }
 
-      setEnhancedContent(data.enhancedContent);
-      toast({
-        title: "تم تحسين المحتوى",
-        description: "تم تحسين المحتوى بنجاح باستخدام الذكاء الاصطناعي",
-      });
+      if (data.error) {
+        setErrorMessage(data.error);
+        toast({
+          title: "خطأ",
+          description: data.error,
+          variant: "destructive"
+        });
+      } else {
+        setEnhancedContent(data.enhancedContent);
+        toast({
+          title: "تم تحسين المحتوى",
+          description: "تم تحسين المحتوى بنجاح باستخدام الذكاء الاصطناعي",
+        });
+      }
     } catch (error) {
       console.error("Error enhancing content:", error);
+      setErrorMessage(error instanceof Error ? error.message : 'حدث خطأ غير متوقع');
       toast({
         title: "خطأ",
         description: `حدث خطأ أثناء تحسين المحتوى: ${error instanceof Error ? error.message : 'خطأ غير معروف'}`,
@@ -88,6 +101,16 @@ const ContentEnhancer: React.FC<ContentEnhancerProps> = ({ initialContent = "", 
         <CardDescription>استخدم الذكاء الاصطناعي لتحسين محتوى التسويق الخاص بك</CardDescription>
       </CardHeader>
       <CardContent>
+        {errorMessage && errorMessage.includes("billing") && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>خطأ في مفتاح API</AlertTitle>
+            <AlertDescription>
+              مفتاح OpenAI API غير صالح أو استنفد الرصيد المتاح. يرجى التحقق من حساب OpenAI الخاص بك وتحديث المفتاح.
+            </AlertDescription>
+          </Alert>
+        )}
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -166,8 +189,10 @@ const ContentEnhancer: React.FC<ContentEnhancerProps> = ({ initialContent = "", 
               )}
             </div>
             
-            <div className={`border rounded-md p-3 bg-muted/20 h-[200px] overflow-y-auto ${!enhancedContent && 'flex items-center justify-center'}`}>
-              {enhancedContent ? (
+            <div className={`border rounded-md p-3 bg-muted/20 h-[200px] overflow-y-auto ${!enhancedContent && !errorMessage && 'flex items-center justify-center'}`}>
+              {errorMessage ? (
+                <div className="text-sm text-destructive">{errorMessage}</div>
+              ) : enhancedContent ? (
                 <div className="text-sm whitespace-pre-wrap">{enhancedContent}</div>
               ) : (
                 <p className="text-muted-foreground text-center">المحتوى المحسن سيظهر هنا</p>

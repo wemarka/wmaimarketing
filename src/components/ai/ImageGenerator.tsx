@@ -7,8 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Download, Image as ImageIcon, Loader2, RefreshCw } from "lucide-react";
+import { Download, Image as ImageIcon, Loader2, RefreshCw, AlertCircle } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface ImageGeneratorProps {
   onImageGenerated?: (imageUrl: string) => void;
@@ -20,6 +21,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onImageGenerated }) => 
   const [style, setStyle] = useState<"glamour" | "natural" | "vibrant">("glamour");
   const [isLoading, setIsLoading] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { toast } = useToast();
 
   const generateImage = async () => {
@@ -33,6 +35,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onImageGenerated }) => 
     }
 
     setIsLoading(true);
+    setErrorMessage(null);
 
     try {
       const { data, error } = await supabase.functions.invoke('ai-image-generator', {
@@ -43,18 +46,28 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onImageGenerated }) => 
         throw error;
       }
 
-      setGeneratedImage(data.imageUrl);
-      
-      if (onImageGenerated) {
-        onImageGenerated(data.imageUrl);
+      if (data.error) {
+        setErrorMessage(data.error);
+        toast({
+          title: "خطأ",
+          description: data.error,
+          variant: "destructive"
+        });
+      } else {
+        setGeneratedImage(data.imageUrl);
+        
+        if (onImageGenerated) {
+          onImageGenerated(data.imageUrl);
+        }
+        
+        toast({
+          title: "تم إنشاء الصورة",
+          description: "تم إنشاء الصورة بنجاح باستخدام الذكاء الاصطناعي",
+        });
       }
-      
-      toast({
-        title: "تم إنشاء الصورة",
-        description: "تم إنشاء الصورة بنجاح باستخدام الذكاء الاصطناعي",
-      });
     } catch (error) {
       console.error("Error generating image:", error);
+      setErrorMessage(error instanceof Error ? error.message : 'حدث خطأ غير متوقع');
       toast({
         title: "خطأ",
         description: `حدث خطأ أثناء إنشاء الصورة: ${error instanceof Error ? error.message : 'خطأ غير معروف'}`,
@@ -91,6 +104,16 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onImageGenerated }) => 
         <CardDescription>إنشاء صور جذابة لمنتجات التجميل باستخدام تقنية DALL-E 3</CardDescription>
       </CardHeader>
       <CardContent>
+        {errorMessage && errorMessage.includes("billing") && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>خطأ في مفتاح API</AlertTitle>
+            <AlertDescription>
+              مفتاح OpenAI API غير صالح أو استنفد الرصيد المتاح. يرجى التحقق من حساب OpenAI الخاص بك وتحديث المفتاح.
+            </AlertDescription>
+          </Alert>
+        )}
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
@@ -170,6 +193,11 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onImageGenerated }) => 
                   <div className="w-full h-full flex flex-col items-center justify-center bg-muted/20">
                     <Loader2 className="h-8 w-8 animate-spin mb-2 text-beauty-purple" />
                     <p className="text-sm text-muted-foreground">جارٍ إنشاء الصورة...</p>
+                  </div>
+                ) : errorMessage ? (
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-muted/20 p-4">
+                    <AlertCircle className="h-8 w-8 text-destructive mb-2" />
+                    <p className="text-sm text-destructive text-center">{errorMessage}</p>
                   </div>
                 ) : generatedImage ? (
                   <img 
