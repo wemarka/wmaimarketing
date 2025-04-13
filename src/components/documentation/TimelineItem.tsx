@@ -15,7 +15,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ phase, isLast }) => {
       case "completed":
         return <CheckCircle className="h-6 w-6 text-green-500" />;
       case "in-progress":
-        return <Circle className="h-6 w-6 text-beauty-purple" />;
+        return <Circle className="h-6 w-6 text-beauty-purple animate-pulse" />;
       case "not-started":
         return <AlertCircle className="h-6 w-6 text-muted-foreground" />;
       default:
@@ -53,7 +53,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ phase, isLast }) => {
                   phase.status === "completed"
                     ? "bg-green-500"
                     : "bg-beauty-purple"
-                }`}
+                } transition-all duration-500 ease-in-out`}
                 style={{ width: `${phase.progress}%` }}
               ></div>
             </div>
