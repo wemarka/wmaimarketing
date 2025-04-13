@@ -1,16 +1,6 @@
+
 import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Shield, UserCog, Clock, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
@@ -18,11 +8,8 @@ import { useProfile } from "@/hooks/useProfile";
 import { useActivityLog, Activity } from "@/hooks/useActivityLog";
 
 // Import components
-import ProfilePicture from "@/components/profile/ProfilePicture";
-import PersonalInfoForm from "@/components/profile/PersonalInfoForm";
-import ChangePasswordForm from "@/components/profile/ChangePasswordForm";
-import SessionsInfo from "@/components/profile/SessionsInfo";
-import ActivityLog from "@/components/profile/ActivityLog";
+import ProfileSidebar from "@/components/profile/ProfileSidebar";
+import ProfileTabs from "@/components/profile/ProfileTabs";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -101,101 +88,29 @@ const Profile = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8">
           {/* Profile sidebar */}
-          <div className="space-y-6">
-            <ProfilePicture 
-              avatarUrl={profileData?.avatar_url} 
-              userInitials={getUserInitials()} 
-              onAvatarChange={updateAvatarUrl}
-            />
-            
-            <div className="flex flex-col items-center">
-              <h3 className="font-medium text-lg">{`${profileData?.first_name || ''} ${profileData?.last_name || ''}`}</h3>
-              <p className="text-sm text-muted-foreground">{profileData?.role || 'مستخدم'}</p>
-            </div>
-            
-            <Separator />
-            
-            <nav className="flex flex-col space-y-1">
-              <Button variant="ghost" className="justify-start">
-                <User className="ml-2 h-4 w-4" />
-                <span>معلومات الحساب</span>
-              </Button>
-              <Button variant="ghost" className="justify-start">
-                <Shield className="ml-2 h-4 w-4" />
-                <span>الأمان</span>
-              </Button>
-              <Button variant="ghost" className="justify-start">
-                <Clock className="ml-2 h-4 w-4" />
-                <span>سجل النشاط</span>
-              </Button>
-              <Button variant="ghost" className="justify-start">
-                <UserCog className="ml-2 h-4 w-4" />
-                <span>التفضيلات</span>
-              </Button>
-              <Button variant="ghost" className="justify-start">
-                <FileText className="ml-2 h-4 w-4" />
-                <span>التوثيق</span>
-              </Button>
-            </nav>
-          </div>
+          <ProfileSidebar
+            avatarUrl={profileData?.avatar_url}
+            userInitials={getUserInitials()}
+            firstName={profileData?.first_name}
+            lastName={profileData?.last_name}
+            role={profileData?.role}
+            onAvatarChange={updateAvatarUrl}
+          />
 
           {/* Profile content */}
           <div className="space-y-6">
-            <Tabs defaultValue="account" className="w-full">
-              <TabsList className="grid grid-cols-3">
-                <TabsTrigger value="account">معلومات الحساب</TabsTrigger>
-                <TabsTrigger value="security">الأمان</TabsTrigger>
-                <TabsTrigger value="activity">سجل النشاط</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="account" className="space-y-6 pt-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>المعلومات الشخصية</CardTitle>
-                    <CardDescription>
-                      قم بتحديث معلومات الملف الشخصي الخاص بك
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <PersonalInfoForm 
-                      profileData={profileData!} 
-                      userEmail={user?.email || ""} 
-                      onUpdateProfile={handleUpdateProfile} 
-                      isUpdating={updating}
-                    />
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              <TabsContent value="security" className="space-y-6 pt-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>تغيير كلمة المرور</CardTitle>
-                    <CardDescription>
-                      قم بتغيير كلمة المرور الخاصة بك للحفاظ على أمان حسابك
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ChangePasswordForm 
-                      onChangePassword={handleChangePassword} 
-                      isChangingPassword={changingPassword}
-                    />
-                  </CardContent>
-                </Card>
-                
-                <SessionsInfo 
-                  onLogoutOtherSessions={handleLogoutOtherSessions}
-                  isLoading={loggingOut}
-                />
-              </TabsContent>
-
-              <TabsContent value="activity" className="space-y-6 pt-4">
-                <ActivityLog 
-                  activities={activities} 
-                  isLoading={activitiesLoading} 
-                />
-              </TabsContent>
-            </Tabs>
+            <ProfileTabs
+              profileData={profileData!}
+              userEmail={user?.email || ""}
+              onUpdateProfile={handleUpdateProfile}
+              onChangePassword={handleChangePassword}
+              onLogoutOtherSessions={handleLogoutOtherSessions}
+              updating={updating}
+              changingPassword={changingPassword}
+              loggingOut={loggingOut}
+              activities={activities}
+              activitiesLoading={activitiesLoading}
+            />
           </div>
         </div>
       </div>
