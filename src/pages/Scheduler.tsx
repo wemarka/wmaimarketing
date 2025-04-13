@@ -1,4 +1,3 @@
-
 import React from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -221,7 +220,7 @@ const Scheduler = () => {
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Tiktok className="h-5 w-5 text-slate-600" />
+                        <MessageSquare className="h-5 w-5 text-slate-600" />
                         <span className="font-medium">TikTok</span>
                       </div>
                       <div className="text-sm">
