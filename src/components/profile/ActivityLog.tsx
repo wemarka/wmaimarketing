@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Clock, FileEdit, LogIn, LogOut, User, UserCog, FileText, Loader2, Filter } from "lucide-react";
+import { Clock, FileEdit, LogIn, LogOut, User, UserCog, FileText, Loader2, Filter, Shield } from "lucide-react";
 import { Activity } from "@/hooks/useActivityLog";
 import { motion, AnimatePresence } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -34,6 +34,8 @@ const ActivityLog = ({ activities, isLoading }: ActivityLogProps) => {
         return <FileText className="h-4 w-4" />;
       case "content_edit":
         return <FileEdit className="h-4 w-4" />;
+      case "security_check":
+        return <Shield className="h-4 w-4" />;
       default:
         return <Clock className="h-4 w-4" />;
     }
@@ -55,6 +57,8 @@ const ActivityLog = ({ activities, isLoading }: ActivityLogProps) => {
         return "bg-teal-50 text-teal-700 border-teal-200";
       case "content_edit":
         return "bg-cyan-50 text-cyan-700 border-cyan-200";
+      case "security_check":
+        return "bg-violet-50 text-violet-700 border-violet-200";
       default:
         return "bg-gray-50 text-gray-700 border-gray-200";
     }
@@ -76,6 +80,8 @@ const ActivityLog = ({ activities, isLoading }: ActivityLogProps) => {
         return "إنشاء محتوى";
       case "content_edit":
         return "تحرير محتوى";
+      case "security_check":
+        return "فحص أمان";
       default:
         return type;
     }
@@ -116,7 +122,7 @@ const ActivityLog = ({ activities, isLoading }: ActivityLogProps) => {
               <DropdownMenuItem onClick={() => setFilter(null)}>
                 عرض الكل
               </DropdownMenuItem>
-              {activityTypes.map(type => (
+              {[...new Set(activities.map(a => a.type))].map(type => (
                 <DropdownMenuItem key={type} onClick={() => setFilter(type)}>
                   {getActivityLabel(type)}
                 </DropdownMenuItem>

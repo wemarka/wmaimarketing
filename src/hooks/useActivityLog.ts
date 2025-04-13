@@ -6,7 +6,7 @@ import { toast } from "@/hooks/use-toast";
 
 export interface Activity {
   id: string;
-  type: "login" | "logout" | "profile_update" | "password_change" | "role_change" | "content_create" | "content_edit";
+  type: "login" | "logout" | "profile_update" | "password_change" | "role_change" | "content_create" | "content_edit" | "security_check";
   description: string;
   timestamp: string;
 }

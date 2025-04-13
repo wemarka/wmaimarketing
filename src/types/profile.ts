@@ -32,7 +32,7 @@ export interface UserSession {
 export interface ActivityLog {
   id: string;
   userId: string;
-  activityType: "login" | "logout" | "profile_update" | "password_change" | "role_change" | "content_create" | "content_edit";
+  activityType: "login" | "logout" | "profile_update" | "password_change" | "role_change" | "content_create" | "content_edit" | "security_check";
   description: string;
   timestamp: string;
 }
