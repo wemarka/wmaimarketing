@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Function to fetch user profile
   const fetchProfile = async (userId: string) => {
     try {
+      console.log("Fetching profile for user:", userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -44,6 +45,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return null;
       }
       
+      console.log("Fetched profile:", data);
       return data as ProfileData;
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -69,31 +71,43 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {
+        console.log("Auth state change event:", event);
         setSession(newSession);
         setUser(newSession?.user ?? null);
         
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
           if (newSession?.user) {
+            console.log("User signed in:", newSession.user);
             const profileData = await fetchProfile(newSession.user.id);
             setProfile(profileData);
             
+            const language = profileData?.app_metadata?.language || 'en';
             toast({
-              title: newSession.user.app_metadata?.language === 'ar' ? "تم تسجيل الدخول بنجاح" : "Successfully signed in",
-              description: newSession.user.app_metadata?.language === 'ar' ? "مرحباً بعودتك إلى التطبيق" : "Welcome back to the application",
+              title: language === 'ar' ? "تم تسجيل الدخول بنجاح" : "Successfully signed in",
+              description: language === 'ar' ? "مرحباً بعودتك إلى التطبيق" : "Welcome back to the application",
             });
           }
         } else if (event === 'SIGNED_OUT') {
+          console.log("User signed out");
           setProfile(null);
+          const language = profile?.app_metadata?.language || 'en';
           toast({
-            title: profile?.app_metadata?.language === 'ar' ? "تم تسجيل الخروج" : "Signed out",
-            description: profile?.app_metadata?.language === 'ar' ? "نتمنى رؤيتك مرة أخرى قريباً" : "We hope to see you again soon",
+            title: language === 'ar' ? "تم تسجيل الخروج" : "Signed out",
+            description: language === 'ar' ? "نتمنى رؤيتك مرة أخرى قريباً" : "We hope to see you again soon",
           });
+        }
+        
+        // Important: Mark loading as false after handling auth state
+        if (event) {
+          setLoading(false);
         }
       }
     );
 
     // THEN check for existing session
+    console.log("Checking for existing session...");
     supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
+      console.log("Current session:", currentSession ? "exists" : "none");
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       
@@ -102,6 +116,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setProfile(profileData);
       }
       
+      // Important: Always mark loading as false after the initial check
       setLoading(false);
     });
 
@@ -112,6 +127,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signIn = async (email: string, password: string) => {
     try {
+      console.log("Signing in user:", email);
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       navigate('/dashboard');
@@ -128,6 +144,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
     try {
+      console.log("Signing up user:", email);
       const { error: signUpError } = await supabase.auth.signUp({ 
         email, 
         password,
@@ -159,6 +176,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signOut = async () => {
     try {
+      console.log("Signing out user");
       await supabase.auth.signOut();
       navigate('/auth');
     } catch (error: any) {

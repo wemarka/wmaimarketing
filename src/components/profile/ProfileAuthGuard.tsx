@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
@@ -12,6 +12,11 @@ const ProfileAuthGuard = ({ children }: ProfileAuthGuardProps) => {
   const { user, loading } = useAuth();
   const location = useLocation();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    console.log("ProfileAuthGuard - Loading:", loading);
+    console.log("ProfileAuthGuard - User:", user ? "authenticated" : "not authenticated");
+  }, [loading, user]);
 
   if (loading) {
     return (
@@ -27,9 +32,11 @@ const ProfileAuthGuard = ({ children }: ProfileAuthGuardProps) => {
   }
 
   if (!user) {
+    console.log("ProfileAuthGuard - Redirecting to auth page");
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
+  console.log("ProfileAuthGuard - Rendering protected content");
   return <>{children}</>;
 };
 

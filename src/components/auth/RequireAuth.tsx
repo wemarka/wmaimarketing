@@ -1,5 +1,5 @@
 
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +12,11 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
   const { user, loading } = useAuth();
   const location = useLocation();
   const { t } = useTranslation();
+  
+  useEffect(() => {
+    console.log("RequireAuth - Loading:", loading);
+    console.log("RequireAuth - User:", user ? "authenticated" : "not authenticated");
+  }, [loading, user]);
 
   if (loading) {
     return (
@@ -25,10 +30,12 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
   }
 
   if (!user) {
+    console.log("RequireAuth - Redirecting to auth page");
     // Redirect to login page but save the current location
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
+  console.log("RequireAuth - Rendering protected content");
   return <>{children}</>;
 };
 
