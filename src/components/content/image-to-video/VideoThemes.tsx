@@ -2,8 +2,10 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
-import { VideoSettingsType, VIDEO_THEMES } from "./types";
+import { VideoSettingsType, VIDEO_THEMES, STYLE_PRESETS, StylePresetType } from "./types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { motion } from "framer-motion";
+import { Check } from "lucide-react";
 
 interface VideoThemesProps {
   videoSettings: VideoSettingsType;
@@ -21,56 +23,93 @@ const VideoThemes: React.FC<VideoThemesProps> = ({
     handleInputChange("textColor", theme.textColor);
     handleInputChange("backgroundColor", theme.backgroundColor);
     handleInputChange("overlayOpacity", theme.overlayOpacity);
+    handleInputChange("theme", theme.name);
+  };
+  
+  const handleSelectStylePreset = (preset: StylePresetType) => {
+    handleInputChange("stylePreset", preset);
+  };
+  
+  const isThemeSelected = (theme: typeof VIDEO_THEMES[0]) => {
+    return videoSettings.textColor === theme.textColor && 
+           videoSettings.backgroundColor === theme.backgroundColor;
   };
   
   return (
     <div className="space-y-6">
       <div>
         <Label className="mb-3 block">سمات الفيديو</Label>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {VIDEO_THEMES.map((theme, index) => (
-            <button
+            <motion.button
               key={theme.name}
               type="button"
-              className={`relative p-4 border rounded-lg transition-all ${
-                videoSettings.textColor === theme.textColor && 
-                videoSettings.backgroundColor === theme.backgroundColor ? 
-                'ring-2 ring-primary' : 'hover:border-primary/50'
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className={`relative overflow-hidden p-4 border rounded-lg transition-all ${
+                isThemeSelected(theme) ? 'ring-2 ring-primary' : 'hover:border-primary/50'
               }`}
               onClick={() => handleSelectTheme(index)}
             >
               <div 
-                className="h-12 rounded-md mb-2"
+                className="h-16 rounded-md mb-2"
                 style={{ 
-                  background: theme.backgroundColor || 'transparent',
-                  boxShadow: `inset 0 0 0 2000px rgba(0, 0, 0, ${theme.overlayOpacity / 100})` 
+                  background: theme.preview || theme.backgroundColor || 'transparent',
                 }}
               ></div>
-              <div className="text-sm font-medium">{theme.name}</div>
-            </button>
+              <div className="flex items-center justify-between">
+                <div className="text-sm font-medium">{theme.name}</div>
+                {isThemeSelected(theme) && (
+                  <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                    <Check className="h-3 w-3 text-primary-foreground" />
+                  </div>
+                )}
+              </div>
+            </motion.button>
           ))}
         </div>
       </div>
       
       <div>
         <Label className="mb-3 block">أنماط العرض</Label>
-        <Tabs defaultValue="classic" className="w-full">
+        <Tabs 
+          value={videoSettings.stylePreset || "classic"} 
+          onValueChange={(value) => handleSelectStylePreset(value as StylePresetType)}
+          className="w-full"
+        >
           <TabsList className="grid grid-cols-3 mb-3">
-            <TabsTrigger value="classic">كلاسيكي</TabsTrigger>
-            <TabsTrigger value="modern">عصري</TabsTrigger>
-            <TabsTrigger value="minimal">بسيط</TabsTrigger>
+            <TabsTrigger value="classic">{STYLE_PRESETS.classic.name}</TabsTrigger>
+            <TabsTrigger value="modern">{STYLE_PRESETS.modern.name}</TabsTrigger>
+            <TabsTrigger value="minimal">{STYLE_PRESETS.minimal.name}</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="classic" className="p-3 border rounded-md">
-            <p className="text-sm text-muted-foreground">شكل كلاسيكي مع نص واضح ومساحات متوازنة للأقسام المختلفة في الفيديو</p>
+          <TabsContent value="classic" className="p-4 border rounded-md">
+            <p className="text-sm text-muted-foreground">{STYLE_PRESETS.classic.description}</p>
+            <div className="mt-3 h-24 bg-muted rounded-md flex items-end justify-center overflow-hidden">
+              <div className="w-full p-3 bg-gradient-to-t from-black/70 to-transparent text-white">
+                <h4 className="font-bold text-sm mb-1">اسم المنتج</h4>
+                <p className="text-xs opacity-90">وصف مختصر للمنتج</p>
+              </div>
+            </div>
           </TabsContent>
           
-          <TabsContent value="modern" className="p-3 border rounded-md">
-            <p className="text-sm text-muted-foreground">تصميم عصري مع تأثيرات انتقالية سلسة وعناصر متحركة</p>
+          <TabsContent value="modern" className="p-4 border rounded-md">
+            <p className="text-sm text-muted-foreground">{STYLE_PRESETS.modern.description}</p>
+            <div className="mt-3 h-24 bg-muted rounded-md flex items-center justify-center overflow-hidden">
+              <div className="bg-black/40 backdrop-blur-sm p-3 rounded-md text-white">
+                <h4 className="font-bold text-sm mb-1">اسم المنتج</h4>
+                <p className="text-xs opacity-90">وصف مختصر</p>
+              </div>
+            </div>
           </TabsContent>
           
-          <TabsContent value="minimal" className="p-3 border rounded-md">
-            <p className="text-sm text-muted-foreground">تصميم بسيط يركز على المنتج مع الحد الأدنى من العناصر النصية</p>
+          <TabsContent value="minimal" className="p-4 border rounded-md">
+            <p className="text-sm text-muted-foreground">{STYLE_PRESETS.minimal.description}</p>
+            <div className="mt-3 h-24 bg-muted rounded-md flex items-center justify-center overflow-hidden">
+              <div className="text-center text-white">
+                <h4 className="font-bold text-sm">اسم المنتج</h4>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

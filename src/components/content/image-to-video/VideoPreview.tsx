@@ -4,7 +4,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Video, Share2 } from "lucide-react";
-import { TemplateType, VideoSettingsType } from "./types";
+import { TemplateType, VideoSettingsType, StylePresetType } from "./types";
 import { motion } from "framer-motion";
 
 interface VideoPreviewProps {
@@ -60,6 +60,18 @@ const VideoPreview: React.FC<VideoPreviewProps> = ({
       case "center": return "top-1/2 transform -translate-y-1/2";
       case "bottom": 
       default: return "bottom-0 pb-4";
+    }
+  };
+  
+  const getStylePresetClasses = (preset: StylePresetType = 'classic') => {
+    switch (preset) {
+      case 'modern':
+        return "bg-black/40 backdrop-blur-sm p-4 rounded-lg mx-4";
+      case 'minimal':
+        return "text-center p-4";
+      case 'classic':
+      default:
+        return "p-4";
     }
   };
 
@@ -128,31 +140,33 @@ const VideoPreview: React.FC<VideoPreviewProps> = ({
             ></div>
             
             <div 
-              className={`absolute inset-x-0 p-4 text-white ${getTextPosition()}`}
+              className={`absolute inset-x-0 ${getTextPosition()} ${videoSettings.stylePreset === 'modern' ? '' : 'bg-gradient-to-t from-black/50 to-transparent'}`}
               style={{ color: videoSettings.textColor || '#ffffff' }}
             >
-              {videoSettings.title && (
-                <h3 className="text-xl font-bold mb-1">
-                  {renderText(videoSettings.title)}
-                </h3>
-              )}
-              
-              {videoSettings.subtitle && (
-                <p className="mb-4 text-sm opacity-90">
-                  {renderText(videoSettings.subtitle)}
-                </p>
-              )}
-              
-              {videoSettings.cta && (
-                <motion.div 
-                  initial={{ scale: 0.95 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 0.3, delay: 1 }}
-                  className="inline-block bg-beauty-pink text-white px-4 py-1.5 rounded-full text-sm font-medium"
-                >
-                  {videoSettings.cta}
-                </motion.div>
-              )}
+              <div className={`${getStylePresetClasses(videoSettings.stylePreset)}`}>
+                {videoSettings.title && (
+                  <h3 className="text-xl font-bold mb-1">
+                    {renderText(videoSettings.title)}
+                  </h3>
+                )}
+                
+                {videoSettings.subtitle && videoSettings.stylePreset !== 'minimal' && (
+                  <p className="mb-4 text-sm opacity-90">
+                    {renderText(videoSettings.subtitle)}
+                  </p>
+                )}
+                
+                {videoSettings.cta && (
+                  <motion.div 
+                    initial={{ scale: 0.95 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.3, delay: 1 }}
+                    className="inline-block bg-beauty-pink text-white px-4 py-1.5 rounded-full text-sm font-medium"
+                  >
+                    {videoSettings.cta}
+                  </motion.div>
+                )}
+              </div>
             </div>
             
             {videoSettings.watermark !== false && (
@@ -179,7 +193,7 @@ const VideoPreview: React.FC<VideoPreviewProps> = ({
           <div className="flex justify-between items-center">
             <div>
               <p className="font-medium">{videoSettings.title || "فيديو المنتج"}</p>
-              <p className="text-xs text-muted-foreground">{duration[0]} ثوانٍ • قالب {selectedTemplate}</p>
+              <p className="text-xs text-muted-foreground">{duration[0]} ثوانٍ • {videoSettings.theme || "كلاسيكي"}</p>
             </div>
             <div className="flex gap-2">
               <Button variant="outline" size="sm">

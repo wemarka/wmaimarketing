@@ -9,7 +9,7 @@ import VideoPreview from "./image-to-video/VideoPreview";
 import TemplateSuggestions from "./image-to-video/TemplateSuggestions";
 import VideoTextEffects from "./image-to-video/VideoTextEffects";
 import VideoThemes from "./image-to-video/VideoThemes";
-import { VideoSettingsType, TemplateType, TextEffectType, TextPositionType } from "./image-to-video/types";
+import { VideoSettingsType, TemplateType, TextEffectType, TextPositionType, StylePresetType } from "./image-to-video/types";
 
 const ImageToVideoConverter: React.FC = () => {
   const { t } = useTranslation();
@@ -27,12 +27,15 @@ const ImageToVideoConverter: React.FC = () => {
     cta: "اطلبيه الآن",
     textPosition: "bottom",
     textColor: "#ffffff",
+    backgroundColor: "transparent",
     overlayOpacity: 50,
     textEffect: "none",
-    watermark: true
+    watermark: true,
+    stylePreset: "classic",
+    theme: "كلاسيكي"
   });
   
-  const handleInputChange = (field: string, value: string | boolean | TextEffectType | TextPositionType | number) => {
+  const handleInputChange = (field: string, value: string | boolean | TextEffectType | TextPositionType | number | StylePresetType) => {
     setVideoSettings(prev => ({
       ...prev,
       [field]: value
