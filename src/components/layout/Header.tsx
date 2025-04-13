@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Bell, Settings, User, LogOut, UserCog, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
+import LanguageToggle from "@/components/common/LanguageToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,6 +34,8 @@ const Header = () => {
         </div>
         
         <div className="flex items-center gap-4">
+          <LanguageToggle />
+          
           {user ? (
             <>
               <Button variant="ghost" size="icon" className="relative">

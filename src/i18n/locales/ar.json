@@ -53,5 +53,10 @@
     "tagsUpdated": "تم تحديث الوسوم",
     "tagsUpdatedDescription": "تم تحديث وسوم",
     "items": "عناصر بنجاح"
+  },
+  "language": {
+    "toggle": "تغيير اللغة",
+    "changed": "تم تغيير اللغة",
+    "changedTo": "تم التغيير إلى العربية"
   }
 }

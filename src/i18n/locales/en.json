@@ -53,5 +53,10 @@
     "tagsUpdated": "Tags Updated",
     "tagsUpdatedDescription": "Successfully updated tags for",
     "items": "items"
+  },
+  "language": {
+    "toggle": "Toggle language",
+    "changed": "Language Changed",
+    "changedTo": "Changed to English"
   }
 }
