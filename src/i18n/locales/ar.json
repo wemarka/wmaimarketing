@@ -43,6 +43,15 @@
     "fileTypes": "جميع أنواع الملفات (الحد الأقصى 10 ميجابايت)",
     "upload": "تحميل",
     "sortAndFilter": "ترتيب وفلترة",
-    "clearSelection": "إلغاء التحديد"
+    "clearSelection": "إلغاء التحديد",
+    "deleted": "تم الحذف",
+    "deletedDescription": "تم حذف",
+    "downloading": "جاري التحميل",
+    "downloadingDescription": "جاري تحميل",
+    "moved": "تم النقل",
+    "movedDescription": "تم نقل",
+    "tagsUpdated": "تم تحديث الوسوم",
+    "tagsUpdatedDescription": "تم تحديث وسوم",
+    "items": "عناصر بنجاح"
   }
 }

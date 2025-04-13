@@ -43,6 +43,15 @@
     "fileTypes": "All file types (Max 10MB)",
     "upload": "Upload",
     "sortAndFilter": "Sort & Filter",
-    "clearSelection": "Clear Selection"
+    "clearSelection": "Clear Selection",
+    "deleted": "Deleted",
+    "deletedDescription": "Successfully deleted",
+    "downloading": "Downloading",
+    "downloadingDescription": "Downloading",
+    "moved": "Moved",
+    "movedDescription": "Successfully moved",
+    "tagsUpdated": "Tags Updated",
+    "tagsUpdatedDescription": "Successfully updated tags for",
+    "items": "items"
   }
 }

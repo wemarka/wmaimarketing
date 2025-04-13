@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FilePlus2, FolderPlus } from "lucide-react";
@@ -26,8 +25,8 @@ const AssetsLibrary: React.FC = () => {
   const [sortBy, setSortBy] = useState<SortOption>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [selectedAssets, setSelectedAssets] = useState<Set<string>>(new Set());
-  const { toast } = useTranslation();
-  const { toast: showToast } = useToast();
+  const { t } = useTranslation();
+  const { toast } = useToast();
 
   const toggleAssetSelection = (assetId: string) => {
     const newSelectedAssets = new Set(selectedAssets);
@@ -44,32 +43,32 @@ const AssetsLibrary: React.FC = () => {
   };
 
   const handleBulkDelete = () => {
-    showToast({
-      title: "تم الحذف",
-      description: `تم حذف ${selectedAssets.size} عناصر بنجاح`,
+    toast({
+      title: t('assetsLibrary.deleted'),
+      description: `${t('assetsLibrary.deletedDescription')} ${selectedAssets.size} ${t('assetsLibrary.items')}`,
     });
     clearSelectedAssets();
   };
 
   const handleBulkDownload = () => {
-    showToast({
-      title: "جاري التحميل",
-      description: `جاري تحميل ${selectedAssets.size} عناصر`,
+    toast({
+      title: t('assetsLibrary.downloading'),
+      description: `${t('assetsLibrary.downloadingDescription')} ${selectedAssets.size} ${t('assetsLibrary.items')}`,
     });
   };
 
   const handleBulkMove = () => {
-    showToast({
-      title: "تم النقل",
-      description: `تم نقل ${selectedAssets.size} عناصر بنجاح`,
+    toast({
+      title: t('assetsLibrary.moved'),
+      description: `${t('assetsLibrary.movedDescription')} ${selectedAssets.size} ${t('assetsLibrary.items')}`,
     });
     clearSelectedAssets();
   };
 
   const handleBulkTag = () => {
-    showToast({
-      title: "تم تحديث الوسوم",
-      description: `تم تحديث وسوم ${selectedAssets.size} عناصر بنجاح`,
+    toast({
+      title: t('assetsLibrary.tagsUpdated'),
+      description: `${t('assetsLibrary.tagsUpdatedDescription')} ${selectedAssets.size} ${t('assetsLibrary.items')}`,
     });
     clearSelectedAssets();
   };
@@ -135,7 +134,6 @@ const AssetsLibrary: React.FC = () => {
     }
   };
 
-  const { t } = useTranslation();
   const folderName = selectedFolder ? assetFolders.find(f => f.id === selectedFolder)?.name : undefined;
 
   return (
@@ -158,7 +156,6 @@ const AssetsLibrary: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col lg:flex-row gap-6">
-            {/* Sidebar */}
             <div className="w-full lg:w-64">
               <AssetsSidebar
                 searchQuery={searchQuery}
@@ -167,8 +164,6 @@ const AssetsLibrary: React.FC = () => {
                 handleFolderClick={handleFolderClick}
               />
             </div>
-
-            {/* Main Content */}
             <div className="flex-1">
               <AssetsToolbar
                 selectedFolder={selectedFolder}
@@ -189,7 +184,6 @@ const AssetsLibrary: React.FC = () => {
                 setIsNewFolderDialogOpen={setIsNewFolderDialogOpen}
                 setIsNewAssetDialogOpen={setIsNewAssetDialogOpen}
               />
-
               {sortedAssets.length > 0 ? (
                 viewMode === "grid" ? (
                   <AssetsGridView
@@ -216,18 +210,15 @@ const AssetsLibrary: React.FC = () => {
           </div>
         </CardContent>
       </Card>
-
       <AssetDetailsDialog
         isOpen={isDetailDialogOpen}
         setIsOpen={setIsDetailDialogOpen}
         selectedAsset={selectedAsset}
       />
-
       <NewFolderDialog
         isOpen={isNewFolderDialogOpen}
         setIsOpen={setIsNewFolderDialogOpen}
       />
-
       <NewAssetDialog
         isOpen={isNewAssetDialogOpen}
         setIsOpen={setIsNewAssetDialogOpen}
