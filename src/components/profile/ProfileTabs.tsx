@@ -3,8 +3,6 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity } from "@/hooks/useActivityLog";
 import { ProfileData } from "@/types/profile";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle } from "lucide-react";
 
 // Import components
 import PersonalInfoCard from "./PersonalInfoCard";
@@ -38,7 +36,7 @@ const ProfileTabs = ({
   activitiesLoading
 }: ProfileTabsProps) => {
   return (
-    <Tabs defaultValue="account" className="w-full" dir="rtl">
+    <Tabs defaultValue="account" className="w-full">
       <TabsList className="grid grid-cols-3">
         <TabsTrigger value="account">معلومات الحساب</TabsTrigger>
         <TabsTrigger value="security">الأمان</TabsTrigger>

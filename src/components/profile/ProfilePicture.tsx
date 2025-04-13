@@ -46,22 +46,6 @@ const ProfilePicture = ({ avatarUrl, userInitials, onAvatarChange }: ProfilePict
     try {
       setIsUploading(true);
 
-      // Check if profile_pictures bucket exists, if not, create it
-      const { data: buckets } = await supabase.storage.listBuckets();
-      const bucketExists = buckets?.some(bucket => bucket.name === 'profile_pictures');
-      
-      if (!bucketExists) {
-        const { error: bucketError } = await supabase.storage.createBucket('profile_pictures', {
-          public: true,
-          fileSizeLimit: 2097152 // 2MB
-        });
-        
-        if (bucketError) {
-          console.error("Error creating storage bucket:", bucketError);
-          throw bucketError;
-        }
-      }
-
       // Generate a unique file name
       const fileExt = file.name.split(".").pop();
       const fileName = `${user.id}/${Date.now()}.${fileExt}`;
@@ -74,7 +58,10 @@ const ProfilePicture = ({ avatarUrl, userInitials, onAvatarChange }: ProfilePict
           upsert: false,
         });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error("Error uploading profile picture:", uploadError);
+        throw uploadError;
+      }
 
       // Get the public URL
       const { data: publicUrlData } = supabase.storage
