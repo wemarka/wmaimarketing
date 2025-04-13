@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -11,6 +11,8 @@ import { useActivityLog, Activity } from "@/hooks/useActivityLog";
 import ProfileSidebar from "@/components/profile/ProfileSidebar";
 import ProfileTabs from "@/components/profile/ProfileTabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -22,11 +24,30 @@ const Profile = () => {
     onUpdateProfile,
     onChangePassword,
     updateAvatarUrl,
-    getUserInitials
+    getUserInitials,
+    createProfile
   } = useProfile();
   
   const { activities, loading: activitiesLoading, logActivity } = useActivityLog();
   const [loggingOut, setLoggingOut] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Ensure profile exists
+  useEffect(() => {
+    if (!loading && !profileData && user) {
+      const ensureProfile = async () => {
+        try {
+          await createProfile();
+          setError(null);
+        } catch (err) {
+          console.error("Failed to create profile:", err);
+          setError("فشل إنشاء الملف الشخصي. يرجى تحديث الصفحة أو تسجيل الدخول مرة أخرى.");
+        }
+      };
+      
+      ensureProfile();
+    }
+  }, [loading, profileData, user, createProfile]);
 
   // Handle logout other sessions
   const handleLogoutOtherSessions = async () => {
@@ -57,20 +78,34 @@ const Profile = () => {
 
   // Handle profile update with activity logging
   const handleUpdateProfile = async (data: any) => {
-    await onUpdateProfile(data);
-    logActivity("profile_update", "تم تحديث معلومات الملف الشخصي");
+    try {
+      await onUpdateProfile(data);
+      logActivity("profile_update", "تم تحديث معلومات الملف الشخصي");
+      setError(null);
+    } catch (err) {
+      console.error("Profile update failed:", err);
+    }
   };
 
   // Handle password change with activity logging
   const handleChangePassword = async (data: any) => {
-    await onChangePassword(data);
-    logActivity("password_change", "تم تغيير كلمة المرور");
+    try {
+      await onChangePassword(data);
+      logActivity("password_change", "تم تغيير كلمة المرور");
+    } catch (err) {
+      console.error("Password change failed:", err);
+    }
   };
 
   // Handle avatar change with activity logging
   const handleAvatarChange = async (url: string) => {
-    await updateAvatarUrl(url);
-    logActivity("profile_update", "تم تحديث الصورة الشخصية");
+    try {
+      await updateAvatarUrl(url);
+      logActivity("profile_update", "تم تحديث الصورة الشخصية");
+      setError(null);
+    } catch (err) {
+      console.error("Avatar update failed:", err);
+    }
   };
 
   if (!user) {
@@ -111,6 +146,16 @@ const Profile = () => {
     );
   }
 
+  const emptyProfile = { 
+    id: user.id, 
+    first_name: '', 
+    last_name: '', 
+    avatar_url: null, 
+    role: 'مستخدم',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString() 
+  };
+
   return (
     <Layout>
       <div className="max-w-5xl mx-auto">
@@ -120,6 +165,14 @@ const Profile = () => {
             إدارة حسابك ومعلوماتك الشخصية
           </p>
         </div>
+
+        {error && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>خطأ</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8">
           {/* Profile sidebar */}
@@ -135,15 +188,7 @@ const Profile = () => {
           {/* Profile content */}
           <div className="space-y-6">
             <ProfileTabs
-              profileData={profileData || { 
-                id: user.id, 
-                first_name: '', 
-                last_name: '', 
-                avatar_url: null, 
-                role: 'مستخدم',
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString() 
-              }}
+              profileData={profileData || emptyProfile}
               userEmail={user?.email || ""}
               onUpdateProfile={handleUpdateProfile}
               onChangePassword={handleChangePassword}

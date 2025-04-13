@@ -3,6 +3,8 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity } from "@/hooks/useActivityLog";
 import { ProfileData } from "@/types/profile";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertTriangle } from "lucide-react";
 
 // Import components
 import PersonalInfoCard from "./PersonalInfoCard";
@@ -35,7 +37,6 @@ const ProfileTabs = ({
   activities,
   activitiesLoading
 }: ProfileTabsProps) => {
-  // All fields are now guaranteed by the parent component
   return (
     <Tabs defaultValue="account" className="w-full" dir="rtl">
       <TabsList className="grid grid-cols-3">

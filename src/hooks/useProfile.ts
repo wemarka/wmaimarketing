@@ -15,73 +15,39 @@ export const useProfile = () => {
   // Fetch profile data
   useEffect(() => {
     const getProfile = async () => {
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
       try {
         setLoading(true);
+        console.log("Fetching profile for user:", user.id);
         
-        // First try to get the profile using select (avoid insert attempts)
+        // Get profile using select
         const { data: profile, error: selectError } = await supabase
           .from("profiles")
           .select("*")
           .eq("id", user.id)
-          .limit(1);
+          .single();
 
         if (selectError) {
-          throw selectError;
-        }
-
-        // If profile exists, use the first one
-        if (profile && profile.length > 0) {
-          setProfileData(profile[0] as ProfileData);
-          console.log("Fetched existing profile:", profile[0]);
-          return;
-        }
-
-        // If profile doesn't exist, try to create it
-        console.log("Profile not found, attempting to create one");
-        const newProfile = {
-          id: user.id,
-          first_name: "",
-          last_name: "",
-          avatar_url: null,
-          role: "user",
-          updated_at: new Date().toISOString(),
-          created_at: new Date().toISOString()
-        };
-        
-        const { data: createdProfile, error: createError } = await supabase
-          .from("profiles")
-          .insert(newProfile)
-          .select()
-          .limit(1);
-
-        if (createError) {
-          console.error("Error creating profile:", createError);
-          // Even if creation fails, still try to fetch the profile one more time
-          // In case it was created by the database trigger
-          const { data: retryProfile } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", user.id)
-            .limit(1);
-            
-          if (retryProfile && retryProfile.length > 0) {
-            setProfileData(retryProfile[0] as ProfileData);
+          console.error("Error fetching profile:", selectError);
+          
+          // If profile doesn't exist, create it
+          if (selectError.code === 'PGRST116') {
+            console.log("Profile not found, attempting to create one");
+            await createProfile();
             return;
           }
           
-          throw createError;
+          throw selectError;
         }
 
-        if (createdProfile && createdProfile.length > 0) {
-          setProfileData(createdProfile[0] as ProfileData);
-          console.log("Created new profile:", createdProfile[0]);
-        } else {
-          throw new Error("Failed to create or retrieve profile");
-        }
+        console.log("Fetched profile:", profile);
+        setProfileData(profile as ProfileData);
       } catch (error) {
-        console.error("Error fetching profile data:", error);
+        console.error("Error in profile operation:", error);
         toast({
           title: "خطأ",
           description: "حدث خطأ أثناء جلب بيانات الملف الشخصي",
@@ -95,12 +61,72 @@ export const useProfile = () => {
     getProfile();
   }, [user]);
 
+  // Create profile function
+  const createProfile = async () => {
+    if (!user) return null;
+    
+    try {
+      const newProfile = {
+        id: user.id,
+        first_name: "",
+        last_name: "",
+        avatar_url: null,
+        role: "user",
+        updated_at: new Date().toISOString(),
+        created_at: new Date().toISOString()
+      };
+      
+      console.log("Creating new profile:", newProfile);
+      
+      const { data, error } = await supabase
+        .from("profiles")
+        .insert(newProfile)
+        .select()
+        .single();
+        
+      if (error) {
+        console.error("Error creating profile:", error);
+        throw error;
+      }
+      
+      console.log("Created profile:", data);
+      setProfileData(data as ProfileData);
+      return data;
+    } catch (error) {
+      console.error("Error creating profile:", error);
+      // Even on error, try one more time to fetch profile in case it was created by trigger
+      try {
+        const { data } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+          
+        if (data) {
+          console.log("Found profile on retry:", data);
+          setProfileData(data as ProfileData);
+          return data;
+        }
+      } catch (retryError) {
+        console.error("Error on retry fetch:", retryError);
+      }
+      return null;
+    }
+  };
+
   // Update profile handler
   const onUpdateProfile = async (data: ProfileFormValues) => {
     if (!user) return;
 
     setUpdating(true);
     try {
+      // If no profile exists yet, create one first
+      if (!profileData) {
+        await createProfile();
+      }
+      
+      console.log("Updating profile with data:", data);
+      
       const { error } = await supabase
         .from("profiles")
         .update({
@@ -165,9 +191,14 @@ export const useProfile = () => {
 
   // Update avatar URL
   const updateAvatarUrl = async (url: string) => {
-    if (!profileData || !user) return;
+    if (!user) return;
     
     try {
+      // If no profile exists yet, create one first
+      if (!profileData) {
+        await createProfile();
+      }
+      
       const { error } = await supabase
         .from("profiles")
         .update({
@@ -178,10 +209,12 @@ export const useProfile = () => {
       
       if (error) throw error;
       
-      setProfileData({
-        ...profileData,
+      setProfileData(prev => prev ? {
+        ...prev,
         avatar_url: url,
-      });
+      } : null);
+      
+      console.log("Avatar URL updated successfully");
     } catch (error) {
       console.error("Error updating avatar URL:", error);
       toast({
@@ -193,7 +226,7 @@ export const useProfile = () => {
   };
 
   const getUserInitials = () => {
-    if (!profileData) return "U";
+    if (!profileData) return user?.email?.substring(0, 1).toUpperCase() || "U";
     const firstName = profileData.first_name || "";
     const lastName = profileData.last_name || "";
     return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || user?.email?.substring(0, 1).toUpperCase() || "U";
@@ -207,6 +240,7 @@ export const useProfile = () => {
     onUpdateProfile,
     onChangePassword,
     updateAvatarUrl,
-    getUserInitials
+    getUserInitials,
+    createProfile
   };
 };

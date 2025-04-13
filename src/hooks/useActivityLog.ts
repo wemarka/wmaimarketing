@@ -25,6 +25,7 @@ export const useActivityLog = () => {
 
       try {
         setLoading(true);
+        console.log("Fetching activity logs for user:", user.id);
         
         // Fetch real activity logs from Supabase
         const { data, error } = await supabase
@@ -34,8 +35,13 @@ export const useActivityLog = () => {
           .order("created_at", { ascending: false })
           .limit(10);
 
-        if (error) throw error;
+        if (error) {
+          console.error("Error fetching activity logs:", error);
+          throw error;
+        }
 
+        console.log("Fetched activity logs:", data?.length || 0, "entries");
+        
         const formattedActivities: Activity[] = data ? data.map((item: any) => ({
           id: item.id,
           type: item.activity_type as Activity["type"],
@@ -64,6 +70,8 @@ export const useActivityLog = () => {
     if (!user) return;
 
     try {
+      console.log("Logging activity:", { type, description });
+      
       // Create new activity entry in Supabase
       const { data, error } = await supabase
         .from("user_activity_log")
@@ -80,6 +88,8 @@ export const useActivityLog = () => {
       }
 
       if (data && data.length > 0) {
+        console.log("Activity logged successfully:", data[0]);
+        
         // Update local state with the new activity
         const newActivity: Activity = {
           id: data[0].id,
@@ -88,7 +98,7 @@ export const useActivityLog = () => {
           timestamp: data[0].created_at,
         };
 
-        setActivities([newActivity, ...activities]);
+        setActivities(prev => [newActivity, ...prev]);
         
         return newActivity;
       }
