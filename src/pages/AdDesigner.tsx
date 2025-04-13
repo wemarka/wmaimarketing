@@ -10,10 +10,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Slider } from "@/components/ui/slider";
-import { Loader2, Download, Image as ImageIcon, Sparkles, Instagram, Facebook, Share2 } from "lucide-react";
+import { Loader2, Download, Image as ImageIcon, Sparkles, Instagram, Facebook, Share2, LayoutTemplate } from "lucide-react";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { useToast } from "@/hooks/use-toast";
+import TemplateSelector from "@/components/ad-designer/TemplateSelector";
 
 const AdDesigner = () => {
   const { t } = useTranslation();
@@ -59,6 +59,10 @@ const AdDesigner = () => {
     });
   };
 
+  const handleApplyTemplate = (templateContent: typeof adContent) => {
+    setAdContent(templateContent);
+  };
+
   return (
     <Layout>
       <div className="max-w-6xl mx-auto">
@@ -75,10 +79,19 @@ const AdDesigner = () => {
               <CardContent className="p-6">
                 <Tabs defaultValue="content" className="w-full">
                   <TabsList className="mb-4 w-full">
+                    <TabsTrigger value="templates">
+                      <LayoutTemplate className="h-4 w-4 mr-2" />
+                      {t("adDesigner.tabs.templates")}
+                    </TabsTrigger>
                     <TabsTrigger value="content">{t("adDesigner.tabs.content")}</TabsTrigger>
                     <TabsTrigger value="design">{t("adDesigner.tabs.design")}</TabsTrigger>
                     <TabsTrigger value="platform">{t("adDesigner.tabs.platform")}</TabsTrigger>
                   </TabsList>
+
+                  <TabsContent value="templates">
+                    <h3 className="text-lg font-medium mb-2">{t("adDesigner.templates.title")}</h3>
+                    <TemplateSelector onSelectTemplate={handleApplyTemplate} />
+                  </TabsContent>
 
                   <TabsContent value="content" className="space-y-4">
                     <div>
@@ -122,11 +135,11 @@ const AdDesigner = () => {
                           <SelectValue placeholder={t("adDesigner.selectCTA")} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="shop_now">{t("adDesigner.cta.shopNow")}</SelectItem>
-                          <SelectItem value="learn_more">{t("adDesigner.cta.learnMore")}</SelectItem>
-                          <SelectItem value="sign_up">{t("adDesigner.cta.signUp")}</SelectItem>
-                          <SelectItem value="contact_us">{t("adDesigner.cta.contactUs")}</SelectItem>
-                          <SelectItem value="book_now">{t("adDesigner.cta.bookNow")}</SelectItem>
+                          <SelectItem value="shop_now">{t("adDesigner.cta.shop_now")}</SelectItem>
+                          <SelectItem value="learn_more">{t("adDesigner.cta.learn_more")}</SelectItem>
+                          <SelectItem value="sign_up">{t("adDesigner.cta.sign_up")}</SelectItem>
+                          <SelectItem value="contact_us">{t("adDesigner.cta.contact_us")}</SelectItem>
+                          <SelectItem value="book_now">{t("adDesigner.cta.book_now")}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

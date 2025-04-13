@@ -101,7 +101,8 @@
     "tabs": {
       "content": "Content",
       "design": "Design",
-      "platform": "Platform"
+      "platform": "Platform",
+      "templates": "Templates"
     },
     "headline": "Headline",
     "headlinePlaceholder": "Enter ad headline",
@@ -140,6 +141,19 @@
     "generationSuccess": "Ad Generated",
     "adReady": "Your ad is ready to preview",
     "downloadStarted": "Download Started",
-    "downloadDescription": "Your ad is being downloaded"
+    "downloadDescription": "Your ad is being downloaded",
+    "templates": {
+      "title": "Templates",
+      "description": "Choose from our pre-designed templates",
+      "select": "Select Template",
+      "product": "Product Showcase",
+      "promotion": "Special Promotion",
+      "seasonal": "Seasonal Campaign",
+      "testimonial": "Customer Testimonial",
+      "newArrival": "New Arrival",
+      "applyTemplate": "Apply Template",
+      "templateApplied": "Template Applied",
+      "templateAppliedDescription": "Template has been applied"
+    }
   }
 }

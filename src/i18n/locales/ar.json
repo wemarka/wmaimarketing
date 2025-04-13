@@ -101,7 +101,8 @@
     "tabs": {
       "content": "المحتوى",
       "design": "التصميم",
-      "platform": "المنصة"
+      "platform": "المنصة",
+      "templates": "القوالب"
     },
     "headline": "العنوان الرئيسي",
     "headlinePlaceholder": "أدخل عنوان الإعلان",
@@ -140,6 +141,19 @@
     "generationSuccess": "تم إنشاء الإعلان",
     "adReady": "الإعلان جاهز للمعاينة",
     "downloadStarted": "بدأ التنزيل",
-    "downloadDescription": "جاري تنزيل الإعلان"
+    "downloadDescription": "جاري تنزيل الإعلان",
+    "templates": {
+      "title": "القوالب",
+      "description": "اختر من قوالبنا المصممة مسبقاً",
+      "select": "اختر قالباً",
+      "product": "عرض المنتج",
+      "promotion": "عرض خاص",
+      "seasonal": "حملة موسمية",
+      "testimonial": "شهادة العملاء",
+      "newArrival": "وصول جديد",
+      "applyTemplate": "تطبيق القالب",
+      "templateApplied": "تم تطبيق القالب",
+      "templateAppliedDescription": "تم تطبيق القالب بنجاح"
+    }
   }
 }
