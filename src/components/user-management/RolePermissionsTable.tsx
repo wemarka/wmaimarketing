@@ -9,13 +9,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Check, X } from "lucide-react";
+import { Check, X, Edit } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { useActivityLog } from "@/hooks/useActivityLog";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 
 interface RolePermissionTableProps {
   onEditRole?: (role: string) => void;
 }
 
 const RolePermissionsTable: React.FC<RolePermissionTableProps> = ({ onEditRole }) => {
+  const { user } = useAuth();
+  const { logActivity } = useActivityLog();
+  
   const roles = [
     {
       name: "admin",
@@ -66,6 +73,20 @@ const RolePermissionsTable: React.FC<RolePermissionTableProps> = ({ onEditRole }
   const hasPermission = (role: string, permissionId: number) => {
     return permissionMap[role as keyof typeof permissionMap].includes(permissionId);
   };
+  
+  const handleEditRole = (role: string) => {
+    if (onEditRole) {
+      // Log the activity when editing a role
+      logActivity("role_change", `تم بدء تحرير دور ${roles.find(r => r.name === role)?.title || role}`);
+      
+      toast({
+        title: "تحرير الدور",
+        description: `بدء تحرير صلاحيات دور ${roles.find(r => r.name === role)?.title}`,
+      });
+      
+      onEditRole(role);
+    }
+  };
 
   return (
     <Table className="border rounded-md">
@@ -74,7 +95,20 @@ const RolePermissionsTable: React.FC<RolePermissionTableProps> = ({ onEditRole }
           <TableHead className="w-1/4">الصلاحية</TableHead>
           {roles.map((role) => (
             <TableHead key={role.name} className="text-center">
-              <Badge className={role.badge}>{role.title}</Badge>
+              <div className="flex flex-col items-center gap-2">
+                <Badge className={role.badge}>{role.title}</Badge>
+                {onEditRole && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="h-7 px-2 text-xs" 
+                    onClick={() => handleEditRole(role.name)}
+                  >
+                    <Edit className="h-3 w-3 ml-1" />
+                    تحرير
+                  </Button>
+                )}
+              </div>
             </TableHead>
           ))}
         </TableRow>
@@ -82,7 +116,12 @@ const RolePermissionsTable: React.FC<RolePermissionTableProps> = ({ onEditRole }
       <TableBody>
         {permissions.map((permission) => (
           <TableRow key={permission.id}>
-            <TableCell className="font-medium">{permission.name}</TableCell>
+            <TableCell className="font-medium">
+              <div>
+                <div>{permission.name}</div>
+                <div className="text-xs text-muted-foreground">{permission.group}</div>
+              </div>
+            </TableCell>
             {roles.map((role) => (
               <TableCell key={`${role.name}-${permission.id}`} className="text-center">
                 {hasPermission(role.name, permission.id) ? (

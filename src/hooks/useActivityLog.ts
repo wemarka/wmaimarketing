@@ -6,7 +6,7 @@ import { toast } from "@/hooks/use-toast";
 
 interface Activity {
   id: string;
-  type: "login" | "logout" | "profile_update" | "password_change" | "role_change";
+  type: "login" | "logout" | "profile_update" | "password_change" | "role_change" | "content_create" | "content_edit";
   description: string;
   timestamp: string;
 }
@@ -22,42 +22,25 @@ export const useActivityLog = () => {
 
       try {
         setLoading(true);
-        // In a real application, we would fetch this from the database
-        // For now, we'll use mock data
-        const mockActivities: Activity[] = [
-          {
-            id: "1",
-            type: "login",
-            description: "تم تسجيل الدخول من متصفح Chrome على نظام Windows",
-            timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(), // 5 minutes ago
-          },
-          {
-            id: "2",
-            type: "profile_update",
-            description: "تم تحديث معلومات الملف الشخصي",
-            timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
-          },
-          {
-            id: "3",
-            type: "password_change",
-            description: "تم تغيير كلمة المرور",
-            timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
-          },
-          {
-            id: "4",
-            type: "login",
-            description: "تم تسجيل الدخول من متصفح Safari على نظام iOS",
-            timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(), // 2 days ago
-          },
-          {
-            id: "5",
-            type: "logout",
-            description: "تم تسجيل الخروج",
-            timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString(), // 3 days ago
-          },
-        ];
+        
+        // Fetch real activity logs from Supabase
+        const { data, error } = await supabase
+          .from("user_activity_log")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(10);
 
-        setActivities(mockActivities);
+        if (error) throw error;
+
+        const formattedActivities: Activity[] = data.map((item) => ({
+          id: item.id,
+          type: item.activity_type as Activity["type"],
+          description: item.description,
+          timestamp: item.created_at,
+        }));
+
+        setActivities(formattedActivities);
       } catch (error) {
         console.error("Error fetching activity logs:", error);
         toast({
@@ -76,33 +59,39 @@ export const useActivityLog = () => {
   const logActivity = async (type: Activity["type"], description: string) => {
     if (!user) return;
 
-    const newActivity = {
-      id: Date.now().toString(),
-      type,
-      description,
-      timestamp: new Date().toISOString(),
-    };
-
-    // In a real application, we would save this to the database
-    // For now, we'll just update the local state
-    setActivities([newActivity, ...activities]);
-
-    // Example of how we would save this to the database in a real app:
-    /*
     try {
-      const { error } = await supabase
+      // Create new activity entry in Supabase
+      const { data, error } = await supabase
         .from("user_activity_log")
         .insert({
           user_id: user.id,
           activity_type: type,
           description: description,
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
+
+      // Update local state with the new activity
+      const newActivity: Activity = {
+        id: data.id,
+        type: data.activity_type,
+        description: data.description,
+        timestamp: data.created_at,
+      };
+
+      setActivities([newActivity, ...activities]);
+      
+      return newActivity;
     } catch (error) {
       console.error("Error logging activity:", error);
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء تسجيل النشاط",
+        variant: "destructive",
+      });
     }
-    */
   };
 
   return {
