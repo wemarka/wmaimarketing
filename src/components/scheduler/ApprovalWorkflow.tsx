@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, X, Clock, ArrowRight, Users, CheckCircle2 } from "lucide-react";
+import { Check, X, Clock, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -115,7 +115,6 @@ const ApprovalCard: React.FC<{ item: ApprovalItem }> = ({ item }) => {
       
       <div className="mt-3 pt-3 border-t">
         <div className="flex items-center mb-2">
-          <Users className="h-4 w-4 mr-1" />
           <span className="text-sm font-medium">المراجعون</span>
         </div>
         

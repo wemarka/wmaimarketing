@@ -4,7 +4,8 @@ import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CalendarPlus, Settings } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { CalendarPlus, Settings, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import NewPostDialog from "@/components/scheduler/NewPostDialog";
 import ScheduledPosts from "@/components/scheduler/ScheduledPosts";
@@ -17,8 +18,62 @@ import AccountsManager from "@/components/scheduler/AccountsManager";
 import ApprovalWorkflow from "@/components/scheduler/ApprovalWorkflow";
 import ContentOrganizer from "@/components/scheduler/ContentOrganizer";
 
+// Type definitions for our data
+interface ScheduledPost {
+  id: number;
+  title: string;
+  type: string;
+  platform: string;
+  date: string;
+  time: string;
+}
+
+interface CalendarPost {
+  id: number;
+  title: string;
+  date: Date;
+  platform: "instagram" | "facebook" | "tiktok";
+  status: "draft" | "pending" | "scheduled" | "published";
+}
+
+interface SocialAccount {
+  id: string;
+  platform: "instagram" | "facebook" | "tiktok" | "twitter";
+  accountName: string;
+  profileName: string;
+  status: string;
+  insights: {
+    followers: number;
+    engagement: number;
+    postCount: number;
+  }
+}
+
+interface ApprovalItem {
+  id: number;
+  title: string;
+  submittedBy: string;
+  submittedAt: string;
+  type: string;
+  reviewers: {
+    name: string;
+    status: "pending" | "approved" | "rejected";
+  }[];
+}
+
+interface ContentItem {
+  id: number;
+  title: string;
+  type: string;
+  campaign: string;
+  product: string;
+  status: string;
+  created: string;
+  scheduled: string | null;
+}
+
 // Sample data for scheduled posts
-const scheduledPosts = [
+const scheduledPosts: ScheduledPost[] = [
   {
     id: 1,
     title: "Summer makeup collection launch",
@@ -54,7 +109,7 @@ const scheduledPosts = [
 ];
 
 // Sample data for completed posts
-const completedPosts = [
+const completedPosts: ScheduledPost[] = [
   {
     id: 101,
     title: "Spring collection preview",
@@ -74,7 +129,7 @@ const completedPosts = [
 ];
 
 // Sample data for calendar
-const calendarPosts = [
+const calendarPosts: CalendarPost[] = [
   {
     id: 1,
     title: "Summer makeup collection launch",
@@ -106,7 +161,7 @@ const calendarPosts = [
 ];
 
 // Sample data for social accounts
-const socialAccounts = [
+const socialAccounts: SocialAccount[] = [
   {
     id: "1",
     platform: "instagram",
@@ -146,7 +201,7 @@ const socialAccounts = [
 ];
 
 // Sample data for approval workflow
-const approvalItems = [
+const approvalItems: ApprovalItem[] = [
   {
     id: 1,
     title: "Summer Glow Makeup Tutorial",
@@ -174,7 +229,7 @@ const approvalItems = [
 ];
 
 // Sample data for content organizer
-const contentItems = [
+const contentItems: ContentItem[] = [
   {
     id: 1,
     title: "Summer Glow Makeup Tutorial",

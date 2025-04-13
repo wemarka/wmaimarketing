@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DayContent } from "react-day-picker";
 
 interface CalendarPost {
   id: number;
@@ -40,10 +41,10 @@ const MarketingCalendar = ({ posts = [] }: MarketingCalendarProps) => {
   const selectedDayPosts = getPostsForDay(date);
 
   // Function to render calendar day content
-  const renderDay = (day: Date, cell: React.ReactNode) => {
+  const renderDay = (dayContent: React.ReactNode, day: Date) => {
     const dayPosts = getPostsForDay(day);
     
-    if (dayPosts.length === 0) return cell;
+    if (dayPosts.length === 0) return dayContent;
     
     const statusColors = {
       draft: "bg-slate-200",
@@ -57,7 +58,7 @@ const MarketingCalendar = ({ posts = [] }: MarketingCalendarProps) => {
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="relative w-full h-full">
-              {cell}
+              {dayContent}
               <div className="absolute right-1 top-1 flex gap-0.5">
                 {dayPosts.length <= 3 ? (
                   dayPosts.map((post) => (
@@ -135,11 +136,9 @@ const MarketingCalendar = ({ posts = [] }: MarketingCalendarProps) => {
               day_today: "bg-accent text-accent-foreground",
             }}
             components={{
-              Day: ({ day, ...props }) => (
-                <button {...props}>
-                  {renderDay(day, props.children)}
-                </button>
-              ),
+              DayContent: (props) => {
+                return renderDay(props.children, props.date);
+              },
             }}
           />
         </div>
