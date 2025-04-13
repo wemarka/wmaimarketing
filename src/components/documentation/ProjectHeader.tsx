@@ -1,61 +1,39 @@
 
 import React from "react";
-import { Calendar, Clock, CheckCircle2, Users, AlertCircle } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
-const ProjectHeader: React.FC = () => {
+export interface ProjectHeaderProps {
+  title: string;
+  description: string;
+  version: string;
+  lastUpdated: string;
+}
+
+const ProjectHeader: React.FC<ProjectHeaderProps> = ({ 
+  title, 
+  description, 
+  version, 
+  lastUpdated 
+}) => {
   return (
-    <div className="space-y-4 mb-8">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">خطة تطوير مشروع Beauty AI</h1>
-        <p className="text-xl text-muted-foreground max-w-3xl">
-          منصة الذكاء الاصطناعي المتكاملة لتسويق منتجات التجميل
-        </p>
-      </div>
-      
-      <div className="flex flex-wrap gap-4 items-center text-sm text-muted-foreground">
-        <div className="flex items-center gap-1.5">
-          <Calendar className="h-4 w-4" />
-          <span>تاريخ البدء: ١ أبريل ٢٠٢٥</span>
+    <Card className="shadow-lg rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+      <CardContent className="p-6">
+        <div className="flex justify-between flex-col md:flex-row gap-4">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">{title}</h1>
+            <p className="text-gray-500 dark:text-gray-400 text-lg">{description}</p>
+          </div>
+          <div className="text-right">
+            <div className="bg-gray-200 dark:bg-gray-700 rounded-md px-3 py-1 inline-block mb-2">
+              <span className="text-sm font-medium">v{version}</span>
+            </div>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              آخر تحديث: {lastUpdated}
+            </p>
+          </div>
         </div>
-        <div className="flex items-center gap-1.5">
-          <Clock className="h-4 w-4" />
-          <span>المدة المقدرة: ١٢-١٥ أسبوع</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <Users className="h-4 w-4" />
-          <span>فريق التطوير: ٤ مطورين</span>
-        </div>
-        <div className="flex items-center gap-1.5 bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full">
-          <AlertCircle className="h-4 w-4" />
-          <span>أولوية المشروع: عالية</span>
-        </div>
-      </div>
-
-      <div className="bg-white p-3 rounded-lg border border-slate-100 flex items-center gap-3">
-        <div className="bg-amber-100 text-amber-700 p-2 rounded-full">
-          <Clock className="h-5 w-5" />
-        </div>
-        <div>
-          <h3 className="font-medium">المرحلة الحالية: التكامل والتوسع</h3>
-          <p className="text-sm text-muted-foreground">ربط المنصة بأنظمة الشركة الأخرى وتوسيع نطاق تطبيقها وتخصيصها</p>
-        </div>
-      </div>
-      
-      <div className="space-y-1">
-        <div className="flex justify-between text-sm mb-1">
-          <span className="text-muted-foreground">تقدم المشروع</span>
-          <span className="font-medium">٩٣٪</span>
-        </div>
-        <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" style={{ width: "93%" }}></div>
-        </div>
-        <div className="flex justify-between text-xs text-muted-foreground mt-1">
-          <span>المراحل ١-٦ (مكتملة)</span>
-          <span>المرحلة ٧ (قيد التنفيذ)</span>
-          <span>الإطلاق النهائي (قريباً)</span>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

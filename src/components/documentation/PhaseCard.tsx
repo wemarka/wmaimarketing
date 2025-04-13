@@ -1,58 +1,63 @@
 
 import React from "react";
-import { CheckCircle2, Clock } from "lucide-react";
-import { 
-  Card,
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { PhaseData } from "./PhasesTab";
 
 interface PhaseCardProps {
-  phaseNumber: number;
-  title: string;
-  status: "complete" | "in-progress" | "planned";
-  items: { text: string; done: boolean }[];
+  phase: PhaseData;
 }
 
-const PhaseCard: React.FC<PhaseCardProps> = ({ phaseNumber, title, status, items }) => {
+const PhaseCard: React.FC<PhaseCardProps> = ({ phase }) => {
+  // Status badge color
+  const getStatusBadgeClass = () => {
+    switch (phase.status) {
+      case "completed":
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+      case "in-progress":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+      case "planned":
+        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200";
+    }
+  };
+
+  // Status text
+  const getStatusText = () => {
+    switch (phase.status) {
+      case "completed":
+        return "مكتمل";
+      case "in-progress":
+        return "قيد التنفيذ";
+      case "planned":
+        return "مخطط";
+      default:
+        return phase.status;
+    }
+  };
+
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
-          <div>
-            <CardTitle>المرحلة {phaseNumber}: {title}</CardTitle>
-            <CardDescription>
-              {status === "complete" && "مكتملة"}
-              {status === "in-progress" && "قيد التنفيذ"}
-              {status === "planned" && "مخطط لها"}
-            </CardDescription>
-          </div>
-          <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
-            status === "complete" ? "bg-green-100 text-green-600" : 
-            status === "in-progress" ? "bg-amber-100 text-amber-600" : 
-            "bg-slate-100 text-slate-500"
-          }`}>
-            {status === "complete" && <CheckCircle2 className="h-6 w-6" />}
-            {status === "in-progress" && <Clock className="h-6 w-6" />}
-            {status === "planned" && <span className="font-semibold">{phaseNumber}</span>}
-          </div>
+          <CardTitle className="text-xl">{phase.name}</CardTitle>
+          <span className={`px-2 py-1 text-xs font-medium rounded ${getStatusBadgeClass()}`}>
+            {getStatusText()}
+          </span>
         </div>
       </CardHeader>
       <CardContent>
-        <ul className="space-y-2">
-          {items.map((item, index) => (
-            <li key={index} className="flex items-start gap-2">
-              <div className={`mt-0.5 h-5 w-5 rounded-full flex items-center justify-center ${
-                item.done ? "bg-green-100 text-green-600" : "bg-slate-100 text-slate-400"
-              }`}>
-                {item.done ? <CheckCircle2 className="h-4 w-4" /> : <span className="text-xs">•</span>}
-              </div>
-              <span className={item.done ? "line-through text-muted-foreground" : ""}>{item.text}</span>
-            </li>
-          ))}
-        </ul>
+        <div className="mb-4">
+          <p className="text-gray-500 dark:text-gray-400">{phase.description}</p>
+        </div>
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium">التقدم</span>
+            <span className="text-sm font-medium">{phase.progress}%</span>
+          </div>
+          <Progress value={phase.progress} className="h-2" />
+        </div>
       </CardContent>
     </Card>
   );
