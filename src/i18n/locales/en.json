@@ -1,288 +1,156 @@
 
 {
   "common": {
-    "textDirection": "ltr",
-    "copy": "Copy",
-    "save": "Save"
-  },
-  "aiStudio": {
-    "title": "AI Studio",
-    "description": "Create, enhance, and analyze content with AI",
-    "tabs": {
-      "overview": "Overview",
-      "images": "Generate Images",
-      "content": "Enhance Content",
-      "video": "Video Ideas",
-      "analyzer": "Content Analyzer"
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "create": "Create",
+      "upload": "Upload",
+      "download": "Download",
+      "search": "Search",
+      "reset": "Reset",
+      "apply": "Apply",
+      "confirm": "Confirm",
+      "back": "Back",
+      "next": "Next",
+      "submit": "Submit"
     },
-    "overview": {
-      "welcome": "Welcome to AI Studio",
-      "subtitle": "Use AI capabilities to accelerate and improve marketing content creation for beauty products"
-    },
-    "common": {
-      "popular": "Popular",
-      "comingSoon": "Coming Soon",
-      "copy": "Copy",
-      "generate": "Generate",
-      "processing": "Processing..."
-    },
-    "capabilities": {
-      "contentEnhancement": {
-        "title": "Content Enhancement",
-        "description": "Improve, summarize, and translate marketing text for beauty products"
-      },
-      "imageGeneration": {
-        "title": "Image Generation",
-        "description": "Create professional images for beauty products using AI"
-      },
-      "videoIdeas": {
-        "title": "Video Ideas",
-        "description": "Generate ideas and scripts for promotional video content"
-      },
-      "performanceAnalysis": {
-        "title": "Performance Analysis",
-        "description": "Analyze marketing content performance and provide improvement recommendations"
-      }
-    },
-    "videoIdeas": {
-      "ideaTitle": "Video Idea",
-      "copied": "Copied",
-      "copiedDescription": "Video idea copied to clipboard",
-      "placeholder": "Video idea will appear here"
-    },
-    "contentEnhancer": {
-      "enhancedContent": "Enhanced Content",
-      "copied": "Copied",
-      "copiedDescription": "Enhanced content copied to clipboard",
-      "use": "Use",
-      "placeholder": "Enhanced content will appear here"
-    },
-    "contentAnalyzer": {
-      "analysisResult": "Analysis Result",
-      "copied": "Copied",
-      "copiedDescription": "Analysis result copied to clipboard",
-      "analyzing": "Analyzing content...",
-      "placeholder": "Analysis result will appear here"
-    },
-    "errors": {
-      "apiKeyError": "API Key Error",
-      "apiKeyErrorDescription": "OpenAI API key is invalid or has exhausted its quota. Please check your OpenAI account and update the key.",
-      "systemError": "System Error",
-      "serverErrorDescription": "A server error occurred. Please try again later or check the system configuration."
+    "status": {
+      "loading": "Loading...",
+      "error": "Error occurred",
+      "success": "Success",
+      "empty": "No data found",
+      "pending": "Pending",
+      "completed": "Completed",
+      "processing": "Processing"
     }
   },
-  "assetsLibrary": {
-    "title": "Visual Assets Library",
-    "description": "Organize, analyze and manage visual assets",
-    "newFolder": "New Folder",
-    "addFile": "Add File",
-    "search": "Search...",
-    "sortBy": "Sort by",
-    "name": "Name",
-    "date": "Date",
-    "size": "Size",
-    "type": "Type",
-    "ascending": "Ascending",
-    "descending": "Descending",
-    "noFiles": "No files match your search criteria",
-    "selected": "selected items",
-    "bulkActions": "Bulk Actions",
-    "download": "Download Files",
-    "move": "Move to Folder",
-    "manageTags": "Manage Tags",
-    "delete": "Delete",
-    "cancel": "Cancel",
-    "fileDetails": "File Details",
-    "fileName": "File Name",
-    "fileType": "Type",
-    "fileSize": "Size",
-    "creationDate": "Creation Date",
-    "tags": "Tags",
-    "preview": "Preview",
-    "usage": "Usage",
-    "history": "History",
-    "usageDescription": "This file is used in 3 posts and 2 ads",
-    "created": "Created",
-    "lastModified": "Last Modified",
-    "edit": "Edit",
-    "createFolder": "Create New Folder",
-    "folderName": "Folder Name",
-    "enterFolderName": "Enter folder name",
-    "create": "Create",
-    "uploadFile": "Upload File",
-    "dragDrop": "Click or drag files to upload",
-    "fileTypes": "All file types (Max 10MB)",
-    "upload": "Upload",
-    "sortAndFilter": "Sort & Filter",
-    "clearSelection": "Clear Selection",
-    "deleted": "Deleted",
-    "deletedDescription": "Successfully deleted",
-    "downloading": "Downloading",
-    "downloadingDescription": "Downloading",
-    "moved": "Moved",
-    "movedDescription": "Successfully moved",
-    "tagsUpdated": "Tags Updated",
-    "tagsUpdatedDescription": "Successfully updated tags for",
-    "items": "items",
-    "bulkOperations": "Bulk Operations",
-    "renameFiles": "Rename Files",
-    "transformImages": "Transform Images",
-    "selectedItems": "Selected items",
-    "replaceFilename": "Replace filename",
-    "appendToFilename": "Append to filename",
-    "prependToFilename": "Prepend to filename",
-    "searchFor": "Search for",
-    "replaceWith": "Replace with",
-    "searchTextPlaceholder": "Text to search for",
-    "replaceTextPlaceholder": "Text to replace with",
-    "patternToApply": "Pattern to apply",
-    "leaveSearchEmptyToReplace": "Leave search empty to replace entire filename",
-    "andMore": "and {count} more",
-    "processing": "Processing...",
-    "applyRenaming": "Apply Renaming",
-    "operationComplete": "Operation Complete",
-    "filesRenamed": "Successfully renamed {count} files",
-    "rotate": "Rotate",
-    "flip": "Flip",
-    "horizontal": "Horizontal",
-    "vertical": "Vertical",
-    "resize": "Resize",
-    "quality": "Quality",
-    "convertTo": "Convert to",
-    "selectFormat": "Select format",
-    "keepOriginal": "Keep original format",
-    "scaleByPercentage": "Scale by percentage",
-    "setFixedWidth": "Set fixed width",
-    "setFixedHeight": "Set fixed height",
-    "selectResizeOption": "Select resize option",
-    "maintainAspectRatio": "Maintain aspect ratio",
-    "noImagesSelected": "No images selected. Please select image files to transform.",
-    "applyTransformations": "Apply Transformations",
-    "imagesTransformed": "Successfully transformed {count} images",
-    "allFiles": "All Files"
+  "sidebar": {
+    "groups": {
+      "main": "Main",
+      "mediaAnalytics": "Media & Analytics",
+      "management": "Management",
+      "documentation": "Documentation & Features"
+    },
+    "navigation": {
+      "dashboard": "Dashboard",
+      "imageAnalysis": "Image Analysis",
+      "adGenerator": "Ad Generator",
+      "contentCreator": "Content Creator",
+      "videoGenerator": "Video Generator",
+      "scheduler": "Schedule & Publish",
+      "analytics": "Analytics",
+      "profile": "Profile",
+      "userManagement": "User Management",
+      "integrations": "Integrations",
+      "projectPlan": "Project Plan",
+      "aiStudio": "AI Studio"
+    },
+    "tooltip": {
+      "dashboard": "Home Page",
+      "imageAnalysis": "Analyze Product Images",
+      "adGenerator": "Create Compelling Ads",
+      "contentCreator": "Create Outstanding Content",
+      "videoGenerator": "Create Professional Videos",
+      "scheduler": "Schedule and Publish Content",
+      "analytics": "Analyze Content Performance",
+      "profile": "Manage Your Account",
+      "userManagement": "Manage Your Team",
+      "integrations": "Connect with Other Services",
+      "projectPlan": "Project Plan & Documentation",
+      "aiStudio": "AI Studio"
+    },
+    "badge": {
+      "new": "New"
+    },
+    "trialUser": "Trial User",
+    "upgradeAccess": "Upgrade to access all features",
+    "upgradeNow": "Upgrade Now",
+    "signOut": "Sign Out"
   },
-  "language": {
-    "toggle": "Toggle language",
-    "changed": "Language Changed",
-    "changedTo": "Changed to English"
-  },
-  "adDesigner": {
-    "title": "Ad Designer",
-    "description": "Create compelling advertisements for beauty and skincare products",
+  "scheduler": {
+    "title": "Schedule & Publish",
+    "description": "Manage and publish content across social media platforms",
+    "newPost": "New Post",
+    "postsList": "Posts List",
+    "views": {
+      "list": "Posts List",
+      "calendar": "Calendar",
+      "organize": "Organize Content",
+      "workflow": "Workflow"
+    },
     "tabs": {
-      "content": "Content",
-      "design": "Design",
-      "platform": "Platform",
-      "templates": "Templates",
-      "advanced": "Advanced"
+      "upcoming": "Upcoming",
+      "completed": "Completed",
+      "drafts": "Drafts"
     },
-    "headline": "Headline",
-    "headlinePlaceholder": "Enter ad headline",
-    "description": "Description",
-    "descriptionPlaceholder": "Enter ad description",
-    "imagePrompt": "Image Description",
-    "imagePlaceholder": "Describe the image you want to generate",
-    "callToAction": "Call to Action",
-    "selectCTA": "Select a call to action",
-    "cta": {
-      "shop_now": "Shop Now",
-      "learn_more": "Learn More",
-      "sign_up": "Sign Up",
-      "contact_us": "Contact Us",
-      "book_now": "Book Now"
+    "empty": {
+      "upcoming": "No upcoming scheduled posts. Create a new post to get started.",
+      "completed": "No completed posts yet.",
+      "drafts": "No draft posts."
     },
-    "style": "Style",
-    "styles": {
-      "modern": "Modern",
-      "minimal": "Minimal",
-      "bold": "Bold",
-      "elegant": "Elegant"
+    "workflow": {
+      "activeApprovers": "Active Approvers",
+      "stats": "Workflow Statistics",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "approvalRate": "Approval Rate"
     },
-    "color": "Primary Color",
-    "platform": "Platform",
-    "platforms": {
-      "instagram": "Instagram",
-      "facebook": "Facebook",
-      "pinterest": "Pinterest"
+    "organize": {
+      "checklists": "Checklists",
+      "task1": "Organize products by collections",
+      "task2": "Create campaign for skincare products",
+      "task3": "Review scheduled posts for next week",
+      "task4": "Update new product categories",
+      "suggestedContent": "Suggested Content",
+      "productImages": "New Product Images",
+      "imagesAvailable": "15 images available to publish",
+      "tutorials": "Tutorial Videos",
+      "videosReady": "3 videos ready to schedule",
+      "exploreMore": "Explore More Content"
+    }
+  },
+  "analytics": {
+    "title": "Analytics Dashboard",
+    "description": "Track marketing performance and understand audience insights",
+    "periods": {
+      "7days": "Last 7 days",
+      "30days": "Last 30 days",
+      "3months": "Last 3 months",
+      "year": "This year"
     },
-    "generateAd": "Generate Ad",
-    "generating": "Generating...",
-    "preview": "Preview",
-    "noPreview": "Generate an ad to preview",
-    "download": "Download",
-    "generationSuccess": "Ad Generated",
-    "adReady": "Your ad is ready to preview",
-    "downloadStarted": "Download Started",
-    "downloadDescription": "Your ad is being downloaded",
-    "templates": {
-      "title": "Templates",
-      "description": "Choose from our pre-designed templates",
-      "select": "Select Template",
-      "product": "Product Showcase",
-      "promotion": "Special Promotion",
-      "seasonal": "Seasonal Campaign",
-      "testimonial": "Customer Testimonial",
-      "newArrival": "New Arrival",
-      "storyAd": "Story Ad",
-      "cleanMinimal": "Clean Minimal",
-      "tutorial": "Tutorial & Guide",
-      "applyTemplate": "Apply Template",
-      "templateApplied": "Template Applied",
-      "templateAppliedDescription": "Template has been applied"
+    "metrics": {
+      "impressions": "Total Impressions",
+      "engagement": "Engagement Rate",
+      "clicks": "Click Rate",
+      "conversions": "Conversions",
+      "weekChange": "from last week"
     },
-    "selectFromLibrary": "Select from Library",
-    "usingSelectedImage": "Using selected image from library",
-    "clearImage": "Clear image",
-    "advancedOptions": {
-      "title": "Advanced Options",
-      "adSize": "Ad Size",
-      "selectSize": "Select ad size",
-      "sizes": {
-        "square": "Square",
-        "portrait": "Portrait",
-        "landscape": "Landscape",
-        "story": "Story",
-        "wide": "Wide"
+    "audienceGrowth": {
+      "title": "Audience Growth",
+      "description": "Daily impressions over the past seven days"
+    },
+    "platformBreakdown": {
+      "title": "Platform Breakdown",
+      "description": "Content performance by platform"
+    },
+    "engagementMetrics": {
+      "title": "Engagement Metrics",
+      "description": "Likes, comments, and shares over time",
+      "tabs": {
+        "chart": "Chart",
+        "detail": "Details"
       },
-      "effectStyle": "Effect Style",
-      "selectEffect": "Select effect style",
-      "effects": {
-        "none": "None",
-        "gradient": "Gradient Overlay",
-        "blur": "Background Blur",
-        "overlay": "Dark Overlay",
-        "duotone": "Duotone"
-      },
-      "fontSize": "Font Size",
-      "overlayOpacity": "Overlay Opacity",
-      "customFont": "Font Style",
-      "selectFont": "Select font style",
-      "fonts": {
-        "default": "Default",
-        "elegant": "Elegant",
-        "bold": "Bold",
-        "playful": "Playful",
-        "minimal": "Minimal"
-      },
-      "brandPosition": "Brand Position",
-      "selectPosition": "Select brand position",
-      "positions": {
-        "top": "Top",
-        "bottom": "Bottom",
-        "left": "Left",
-        "right": "Right",
-        "center": "Center",
-        "none": "None"
-      },
-      "showLogo": "Show Logo",
-      "textShadow": "Text Shadow"
-    },
-    "assetSelector": {
-      "title": "Select Image from Library",
-      "allImages": "All Images",
-      "categories": "Categories",
-      "search": "Search images...",
-      "noResults": "No images match your search"
+      "table": {
+        "date": "Date",
+        "likes": "Likes",
+        "comments": "Comments",
+        "shares": "Shares",
+        "total": "Total"
+      }
     }
   }
 }
