@@ -1,78 +1,38 @@
 
 import React from "react";
 import { PhaseData } from "./PhasesTab";
+import { Check, Clock } from "lucide-react";
 
 interface TimelineItemProps {
   phase: PhaseData;
+  isLast: boolean;
 }
 
-const TimelineItem: React.FC<TimelineItemProps> = ({ phase }) => {
-  // Status circle color
-  const getStatusCircleClass = () => {
-    switch (phase.status) {
-      case "completed":
-        return "bg-green-500";
-      case "in-progress":
-        return "bg-blue-500";
-      case "planned":
-        return "bg-gray-300 dark:bg-gray-600";
-      default:
-        return "bg-gray-300 dark:bg-gray-600";
-    }
-  };
-
-  // Status text
-  const getStatusText = () => {
-    switch (phase.status) {
-      case "completed":
-        return "مكتمل";
-      case "in-progress":
-        return "قيد التنفيذ";
-      case "planned":
-        return "مخطط";
-      default:
-        return phase.status;
-    }
-  };
-
+const TimelineItem: React.FC<TimelineItemProps> = ({ phase, isLast }) => {
+  const isCompleted = phase.status === "completed";
+  
   return (
-    <div className="flex items-start">
-      {/* Status circle */}
-      <div className={`flex-shrink-0 w-8 h-8 rounded-full ${getStatusCircleClass()} flex items-center justify-center mr-4 z-10`}>
-        {phase.status === "completed" && (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        )}
+    <div className="relative flex">
+      <div className="mr-4 flex flex-col items-center">
+        <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
+          isCompleted ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-500"
+        }`}>
+          {isCompleted ? <Check className="h-4 w-4" /> : <Clock className="h-4 w-4" />}
+        </div>
+        {!isLast && <div className="h-full w-0.5 bg-gray-200" />}
       </div>
-      
-      {/* Content */}
-      <div className="flex-1 pb-4">
-        <div className="flex justify-between items-center mb-2">
-          <h3 className="text-lg font-semibold">{phase.name}</h3>
-          <span className="text-sm text-gray-500 dark:text-gray-400">
-            {phase.progress}%
+      <div className="pb-8">
+        <div className="flex items-center space-x-2">
+          <h4 className="font-medium text-gray-900">{phase.name}</h4>
+          <span className={`px-2 py-0.5 rounded-full text-xs ${
+            isCompleted 
+              ? "bg-green-100 text-green-600" 
+              : "bg-yellow-100 text-yellow-600"
+          }`}>
+            {isCompleted ? "مكتمل" : "مخطط"}
           </span>
         </div>
-        
-        <p className="text-gray-500 dark:text-gray-400 mb-2">
-          {phase.description}
-        </p>
-        
-        <span className="text-xs font-medium inline-block bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded px-2 py-1">
-          {getStatusText()}
-        </span>
+        <p className="mt-1 text-sm text-gray-500">{phase.description}</p>
       </div>
     </div>
   );

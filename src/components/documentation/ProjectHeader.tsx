@@ -1,6 +1,8 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Clock } from "lucide-react";
 
 export interface ProjectHeaderProps {
   title: string;
@@ -9,27 +11,26 @@ export interface ProjectHeaderProps {
   lastUpdated: string;
 }
 
-const ProjectHeader: React.FC<ProjectHeaderProps> = ({ 
-  title, 
-  description, 
-  version, 
-  lastUpdated 
+const ProjectHeader: React.FC<ProjectHeaderProps> = ({
+  title,
+  description,
+  version,
+  lastUpdated,
 }) => {
   return (
-    <Card className="shadow-lg rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      <CardContent className="p-6">
-        <div className="flex justify-between flex-col md:flex-row gap-4">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">{title}</h1>
-            <p className="text-gray-500 dark:text-gray-400 text-lg">{description}</p>
+    <Card className="mb-6">
+      <CardContent className="pt-6">
+        <div className="flex flex-col space-y-2">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold">{title}</h1>
+            <Badge variant="outline" className="text-sm">
+              الإصدار {version}
+            </Badge>
           </div>
-          <div className="text-right">
-            <div className="bg-gray-200 dark:bg-gray-700 rounded-md px-3 py-1 inline-block mb-2">
-              <span className="text-sm font-medium">v{version}</span>
-            </div>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
-              آخر تحديث: {lastUpdated}
-            </p>
+          <p className="text-muted-foreground">{description}</p>
+          <div className="flex items-center text-sm text-muted-foreground">
+            <Clock className="h-4 w-4 mr-1" />
+            <span>آخر تحديث: {lastUpdated}</span>
           </div>
         </div>
       </CardContent>

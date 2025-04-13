@@ -88,7 +88,7 @@ export const fetchPosts = async (userId: string, status?: string) => {
   const { data, error } = await query.order("created_at", { ascending: false });
   
   if (error) throw new Error(error.message);
-  return data as Post[];
+  return data as unknown as Post[];
 };
 
 export const fetchCampaigns = async (userId: string, status?: string) => {
@@ -104,7 +104,7 @@ export const fetchCampaigns = async (userId: string, status?: string) => {
   const { data, error } = await query.order("created_at", { ascending: false });
   
   if (error) throw new Error(error.message);
-  return data as Campaign[];
+  return data as unknown as Campaign[];
 };
 
 export const fetchProducts = async (status?: string) => {
@@ -119,7 +119,7 @@ export const fetchProducts = async (status?: string) => {
   const { data, error } = await query.order("created_at", { ascending: false });
   
   if (error) throw new Error(error.message);
-  return data as Product[];
+  return data as unknown as Product[];
 };
 
 export const fetchSocialAccounts = async (userId: string) => {
@@ -130,7 +130,7 @@ export const fetchSocialAccounts = async (userId: string) => {
     .order("created_at", { ascending: false });
   
   if (error) throw new Error(error.message);
-  return data as SocialAccount[];
+  return data as unknown as SocialAccount[];
 };
 
 export const fetchMediaAssets = async (userId: string, folderId?: string) => {
@@ -146,7 +146,7 @@ export const fetchMediaAssets = async (userId: string, folderId?: string) => {
   const { data, error } = await query.order("created_at", { ascending: false });
   
   if (error) throw new Error(error.message);
-  return data as MediaAsset[];
+  return data as unknown as MediaAsset[];
 };
 
 // Add insert and update functions if needed
@@ -160,4 +160,36 @@ export const updatePost = async (id: string, post: Partial<Omit<Post, 'id' | 'cr
   const { data, error } = await supabase.from("posts").update(post).eq("id", id).select().single();
   if (error) throw new Error(error.message);
   return data as Post;
+};
+
+// OpenAI related functions
+export interface AIContentEnhancerParams {
+  content: string;
+  action: 'improve' | 'summarize' | 'hashtags' | 'translate';
+  language?: string;
+}
+
+export interface AIImageGeneratorParams {
+  prompt: string;
+  size?: '1024x1024' | '1024x1792' | '1792x1024';
+  style?: 'glamour' | 'natural' | 'vibrant';
+  productImage?: string;
+}
+
+export const enhanceContent = async (params: AIContentEnhancerParams) => {
+  const { data, error } = await supabase.functions.invoke('ai-content-enhancer', {
+    body: params
+  });
+  
+  if (error) throw new Error(error.message);
+  return data;
+};
+
+export const generateImage = async (params: AIImageGeneratorParams) => {
+  const { data, error } = await supabase.functions.invoke('ai-image-generator', {
+    body: params
+  });
+  
+  if (error) throw new Error(error.message);
+  return data;
 };
