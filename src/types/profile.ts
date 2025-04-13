@@ -1,41 +1,33 @@
 
+import { z } from "zod";
+
 export interface ProfileData {
   id: string;
-  first_name: string | null;
-  last_name: string | null;
+  first_name: string;
+  last_name: string;
   avatar_url: string | null;
-  role: string | null;
+  role: string;
   updated_at: string;
   created_at: string;
-  app_metadata: {
+  app_metadata?: {
     language?: string;
+    [key: string]: any;
   };
 }
 
-export interface ProfileFormValues {
-  first_name: string;
-  last_name: string;
-  email: string;
-}
+export const profileFormSchema = z.object({
+  first_name: z.string().min(1, "الاسم الأول مطلوب"),
+  last_name: z.string().min(1, "الاسم الأخير مطلوب"),
+});
 
-export interface PasswordFormValues {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-}
+export const passwordFormSchema = z.object({
+  currentPassword: z.string().min(6, "كلمة المرور الحالية يجب أن تحتوي على 6 أحرف على الأقل"),
+  newPassword: z.string().min(6, "كلمة المرور الجديدة يجب أن تحتوي على 6 أحرف على الأقل"),
+  confirmPassword: z.string().min(6, "تأكيد كلمة المرور يجب أن يتطابق مع كلمة المرور الجديدة"),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "كلمات المرور غير متطابقة",
+  path: ["confirmPassword"],
+});
 
-export interface UserSession {
-  id: string;
-  device: string;
-  browser: string;
-  lastActive: string;
-  isCurrent: boolean;
-}
-
-export interface ActivityLog {
-  id: string;
-  userId: string;
-  activityType: "login" | "logout" | "profile_update" | "password_change" | "role_change" | "content_create" | "content_edit" | "security_check";
-  description: string;
-  timestamp: string;
-}
+export type ProfileFormValues = z.infer<typeof profileFormSchema>;
+export type PasswordFormValues = z.infer<typeof passwordFormSchema>;

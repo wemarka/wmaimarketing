@@ -15,12 +15,13 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
   const [loadingTime, setLoadingTime] = useState(0);
   const [forceRedirect, setForceRedirect] = useState(false);
   
+  // Debug loading state
   useEffect(() => {
     console.log("RequireAuth - Loading:", loading);
     console.log("RequireAuth - User:", user ? "authenticated" : "not authenticated");
   }, [loading, user]);
 
-  // Add a safety timeout
+  // Safety timeout to prevent infinite loading
   useEffect(() => {
     if (loading) {
       const startTime = Date.now();
@@ -28,8 +29,9 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
         const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
         setLoadingTime(elapsedTime);
         
-        if (elapsedTime >= 5) {
-          console.log("RequireAuth - Loading timeout reached, forcing redirect");
+        // Force redirect after 3 seconds of loading
+        if (elapsedTime >= 3) {
+          console.log("RequireAuth - Forcing navigation due to timeout");
           setForceRedirect(true);
           clearInterval(timer);
         }
@@ -44,7 +46,8 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  if (loading) {
+  // Only show loading for a maximum of 3 seconds
+  if (loading && loadingTime < 3) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

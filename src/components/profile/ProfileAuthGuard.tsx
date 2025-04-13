@@ -20,7 +20,7 @@ const ProfileAuthGuard = ({ children }: ProfileAuthGuardProps) => {
     console.log("ProfileAuthGuard - User:", user ? "authenticated" : "not authenticated");
   }, [loading, user]);
 
-  // Add a safety timeout
+  // Safety timeout to prevent infinite loading
   useEffect(() => {
     if (loading) {
       const startTime = Date.now();
@@ -28,7 +28,8 @@ const ProfileAuthGuard = ({ children }: ProfileAuthGuardProps) => {
         const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
         setLoadingTime(elapsedTime);
         
-        if (elapsedTime >= 5) {
+        // Force redirect after 3 seconds of loading
+        if (elapsedTime >= 3) {
           console.log("ProfileAuthGuard - Loading timeout reached, forcing redirect");
           setForceRedirect(true);
           clearInterval(timer);
@@ -43,7 +44,8 @@ const ProfileAuthGuard = ({ children }: ProfileAuthGuardProps) => {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  if (loading) {
+  // Only show loading for a maximum of 3 seconds
+  if (loading && loadingTime < 3) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
         <div className="text-center">

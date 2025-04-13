@@ -16,7 +16,7 @@ const Index = () => {
     console.log("Index page - User state:", user ? "authenticated" : "not authenticated");
   }, [loading, user]);
 
-  // Force navigation after 3 seconds to prevent infinite loading
+  // Force navigation after short timeout
   useEffect(() => {
     if (loading) {
       const startTime = Date.now();
@@ -24,8 +24,8 @@ const Index = () => {
         const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
         setLoadingTime(elapsedTime);
         
-        // Force navigation after 5 seconds of loading
-        if (elapsedTime >= 5) {
+        // Force navigation after 3 seconds of loading (reduced from 5)
+        if (elapsedTime >= 3) {
           console.log("Safety timeout reached - forcing navigation");
           setForceNavigate(true);
           clearInterval(timer);
@@ -41,8 +41,8 @@ const Index = () => {
     return user ? <Navigate to="/dashboard" replace /> : <Navigate to="/auth" replace />;
   }
 
-  // While loading, show spinner
-  if (loading) {
+  // While loading, show spinner (but only for maximum 3 seconds)
+  if (loading && loadingTime < 3) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -51,7 +51,7 @@ const Index = () => {
           <p className="mt-2 text-xs text-muted-foreground">
             {t('auth.loadingForSeconds', { seconds: loadingTime })}
           </p>
-          {loadingTime >= 3 && (
+          {loadingTime >= 2 && (
             <p className="mt-2 text-xs text-muted-foreground debug-loading">
               {t('auth.loadingTakingLonger')}
             </p>

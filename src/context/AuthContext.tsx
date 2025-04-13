@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [initialLoadDone, setInitialLoadDone] = useState(false);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const navigate = useNavigate();
 
   // Function to fetch user profile
@@ -69,28 +69,33 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
-    // Cleanup function to mark auth check as complete even if component unmounts
     let isMounted = true;
+    let timeoutId: NodeJS.Timeout;
 
-    // Set up auth state listener FIRST
+    // Set a safety timeout to prevent infinite loading
+    timeoutId = setTimeout(() => {
+      if (isMounted && loading) {
+        console.log("Auth loading timeout reached - forcing loading to false");
+        setLoading(false);
+        setInitialLoadComplete(true);
+      }
+    }, 3000); // Reduced from 5000
+
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {
         console.log("Auth state change event:", event);
         
         if (!isMounted) return;
         
-        setSession(newSession);
-        setUser(newSession?.user ?? null);
-        
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
           if (newSession?.user) {
             console.log("User signed in:", newSession.user);
+            setUser(newSession.user);
+            setSession(newSession);
+            
             const profileData = await fetchProfile(newSession.user.id);
             if (isMounted) setProfile(profileData);
-            
-            // Ensure loading is set to false after handling signin
-            setLoading(false);
-            setInitialLoadDone(true);
             
             const language = profileData?.app_metadata?.language || 'en';
             toast({
@@ -100,11 +105,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           }
         } else if (event === 'SIGNED_OUT') {
           console.log("User signed out");
+          setUser(null);
+          setSession(null);
           setProfile(null);
-          
-          // Also ensure loading is set to false on signout
-          setLoading(false);
-          setInitialLoadDone(true);
           
           const language = profile?.app_metadata?.language || 'en';
           toast({
@@ -113,41 +116,38 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           });
         }
         
-        // Important: Mark loading as false after handling auth state
-        if (event) {
+        // Important: Always update loading state after handling events
+        if (event && isMounted) {
           setLoading(false);
-          setInitialLoadDone(true);
+          setInitialLoadComplete(true);
         }
       }
     );
 
-    // THEN check for existing session
+    // Check for existing session
     console.log("Checking for existing session...");
     supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
       if (!isMounted) return;
       
       console.log("Current session:", currentSession ? "exists" : "none");
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
       
       if (currentSession?.user) {
+        setUser(currentSession.user);
+        setSession(currentSession);
         const profileData = await fetchProfile(currentSession.user.id);
         if (isMounted) setProfile(profileData);
       }
       
-      // Important: Always mark loading as false after the initial check
+      // Always mark loading as false after the initial check
       setLoading(false);
-      setInitialLoadDone(true);
-    });
-
-    // Set a maximum timeout to ensure loading state doesn't get stuck
-    const timeoutId = setTimeout(() => {
-      if (isMounted && loading) {
-        console.log("Auth loading timeout reached - forcing loading to false");
+      setInitialLoadComplete(true);
+    }).catch(error => {
+      console.error("Error getting session:", error);
+      if (isMounted) {
         setLoading(false);
-        setInitialLoadDone(true);
+        setInitialLoadComplete(true);
       }
-    }, 5000);
+    });
 
     return () => {
       isMounted = false;
@@ -232,7 +232,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       user, 
       session, 
       profile, 
-      loading: loading && !initialLoadDone, // Only consider loading if initial check isn't done
+      loading: loading && !initialLoadComplete, 
       signIn, 
       signUp, 
       signOut, 
