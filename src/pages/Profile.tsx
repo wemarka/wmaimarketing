@@ -13,6 +13,7 @@ import ProfileContent from "@/components/profile/ProfileContent";
 import ProfileLoading from "@/components/profile/ProfileLoading";
 import ProfileError from "@/components/profile/ProfileError";
 import ProfileAuthGuard from "@/components/profile/ProfileAuthGuard";
+import SecurityTestDialog from "@/components/profile/SecurityTestDialog";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -31,6 +32,7 @@ const Profile = () => {
   const { activities, loading: activitiesLoading, logActivity } = useActivityLog();
   const [loggingOut, setLoggingOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSecurityTestOpen, setIsSecurityTestOpen] = useState(false);
 
   // Ensure profile exists
   useEffect(() => {
@@ -48,6 +50,18 @@ const Profile = () => {
       ensureProfile();
     }
   }, [loading, profileData, user, createProfile]);
+
+  // Handle security test
+  const handleSecurityTest = () => {
+    setIsSecurityTestOpen(true);
+    // Log this activity
+    logActivity("security_check", "تم إجراء اختبار أمان للحساب");
+  };
+
+  // Handle dismiss error
+  const handleDismissError = () => {
+    setError(null);
+  };
 
   // Handle logout other sessions
   const handleLogoutOtherSessions = async () => {
@@ -111,10 +125,12 @@ const Profile = () => {
   return (
     <Layout>
       <div className="max-w-5xl mx-auto">
-        <ProfileHeader />
+        <ProfileHeader 
+          onSecurityTest={handleSecurityTest}
+        />
         
         <ProfileAuthGuard>
-          <ProfileError error={error} />
+          <ProfileError error={error} onDismiss={handleDismissError} />
           
           {loading ? (
             <ProfileLoading />
@@ -138,6 +154,11 @@ const Profile = () => {
           )}
         </ProfileAuthGuard>
       </div>
+      
+      <SecurityTestDialog 
+        open={isSecurityTestOpen}
+        onOpenChange={setIsSecurityTestOpen}
+      />
     </Layout>
   );
 };

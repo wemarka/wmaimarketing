@@ -1,10 +1,13 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Key, Laptop, AlertTriangle } from "lucide-react";
+import { Key, Laptop, AlertTriangle, Shield, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
 interface SessionsInfoProps {
   onLogoutOtherSessions: () => Promise<void>;
@@ -12,13 +15,18 @@ interface SessionsInfoProps {
 }
 
 const SessionsInfo = ({ onLogoutOtherSessions, isLoading }: SessionsInfoProps) => {
+  const [notifyOnNewLogin, setNotifyOnNewLogin] = useState(true);
+  const [preventUnknownLogins, setPreventUnknownLogins] = useState(false);
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
+      whileHover={{ y: -5 }}
+      className="transition-all duration-300"
     >
-      <Card className="overflow-hidden border-2 border-border/30 shadow-md hover:shadow-lg transition-shadow duration-300">
+      <Card className="overflow-hidden border-2 border-border/30 shadow-md hover:shadow-xl transition-all duration-300">
         <CardHeader className="bg-card/50 backdrop-blur-sm flex flex-row items-center gap-4">
           <div className="p-2 rounded-full bg-primary/10">
             <Key className="h-6 w-6 text-primary" />
@@ -28,7 +36,7 @@ const SessionsInfo = ({ onLogoutOtherSessions, isLoading }: SessionsInfoProps) =
               جلسات تسجيل الدخول
             </CardTitle>
             <CardDescription>
-              إدارة جلسات تسجيل الدخول النشطة على حسابك
+              إدارة جلسات تسجيل الدخول النشطة وإعدادات أمان الحساب
             </CardDescription>
           </div>
         </CardHeader>
@@ -53,9 +61,53 @@ const SessionsInfo = ({ onLogoutOtherSessions, isLoading }: SessionsInfoProps) =
                 <Laptop className="h-4 w-4" />
                 <span>{navigator.userAgent.split(" ").slice(0, 3).join(" ")}</span>
               </div>
-              <p>تاريخ آخر دخول: {new Date().toLocaleDateString("ar-SA")}</p>
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                <span>تاريخ آخر دخول: {new Date().toLocaleDateString("ar-SA")}</span>
+              </div>
             </div>
           </motion.div>
+
+          <Separator />
+          
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              إعدادات أمان الحساب
+            </h3>
+            
+            <motion.div className="space-y-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <div className="flex items-center justify-between p-3 rounded-md border border-muted hover:border-primary/30 transition-colors duration-200">
+                <div className="space-y-1">
+                  <Label htmlFor="notify-login" className="font-semibold">التنبيه عند تسجيل الدخول الجديد</Label>
+                  <p className="text-sm text-muted-foreground">تلقي إشعار عندما يتم تسجيل الدخول من جهاز جديد</p>
+                </div>
+                <Switch
+                  id="notify-login"
+                  checked={notifyOnNewLogin}
+                  onCheckedChange={setNotifyOnNewLogin}
+                />
+              </div>
+              
+              <div className="flex items-center justify-between p-3 rounded-md border border-muted hover:border-primary/30 transition-colors duration-200">
+                <div className="space-y-1">
+                  <Label htmlFor="prevent-unknown" className="font-semibold">منع تسجيل الدخول من أجهزة غير معروفة</Label>
+                  <p className="text-sm text-muted-foreground">طلب تأكيد إضافي عند تسجيل الدخول من جهاز جديد</p>
+                </div>
+                <Switch
+                  id="prevent-unknown"
+                  checked={preventUnknownLogins}
+                  onCheckedChange={setPreventUnknownLogins}
+                />
+              </div>
+            </motion.div>
+          </div>
+          
+          <Separator />
           
           <div className="rounded-md border border-amber-200 bg-amber-50 p-4 flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
