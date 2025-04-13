@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { FilePlus2, Filter, Tag, Search, Grid2X2, FolderPlus, Trash2, Pencil } from "lucide-react";
+import { FilePlus2, Filter, Tag, Search, Grid2X2, FolderPlus, Trash2, Pencil, Download, List, SortDesc, SortAsc } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +23,15 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface Asset {
   id: string;
@@ -142,6 +151,10 @@ const typeIcons = {
   font: "🔤",
 };
 
+type ViewMode = "grid" | "list";
+type SortOption = "name" | "date" | "size" | "type";
+type SortDirection = "asc" | "desc";
+
 const AssetsLibrary: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
@@ -149,6 +162,61 @@ const AssetsLibrary: React.FC = () => {
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isNewFolderDialogOpen, setIsNewFolderDialogOpen] = useState(false);
   const [isNewAssetDialogOpen, setIsNewAssetDialogOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [sortBy, setSortBy] = useState<SortOption>("date");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [selectedAssets, setSelectedAssets] = useState<Set<string>>(new Set());
+  const [isBulkActionMenuOpen, setIsBulkActionMenuOpen] = useState(false);
+  const { toast } = useToast();
+
+  const toggleAssetSelection = (assetId: string) => {
+    const newSelectedAssets = new Set(selectedAssets);
+    if (selectedAssets.has(assetId)) {
+      newSelectedAssets.delete(assetId);
+    } else {
+      newSelectedAssets.add(assetId);
+    }
+    setSelectedAssets(newSelectedAssets);
+  };
+
+  const clearSelectedAssets = () => {
+    setSelectedAssets(new Set());
+  };
+
+  const handleBulkDelete = () => {
+    toast({
+      title: "تم الحذف",
+      description: `تم حذف ${selectedAssets.size} عناصر بنجاح`,
+    });
+    clearSelectedAssets();
+  };
+
+  const handleBulkDownload = () => {
+    toast({
+      title: "جاري التحميل",
+      description: `جاري تحميل ${selectedAssets.size} عناصر`,
+    });
+  };
+
+  const handleBulkMove = () => {
+    toast({
+      title: "تم النقل",
+      description: `تم نقل ${selectedAssets.size} عناصر بنجاح`,
+    });
+    clearSelectedAssets();
+  };
+
+  const handleBulkTag = () => {
+    toast({
+      title: "تم تحديث الوسوم",
+      description: `تم تحديث وسوم ${selectedAssets.size} عناصر بنجاح`,
+    });
+    clearSelectedAssets();
+  };
+
+  const toggleSortDirection = () => {
+    setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+  };
 
   const filteredAssets = sampleAssets.filter(asset => {
     const matchesSearch = 
@@ -161,14 +229,186 @@ const AssetsLibrary: React.FC = () => {
     return matchesSearch && matchesFolder;
   });
 
-  const handleAssetClick = (asset: Asset) => {
-    setSelectedAsset(asset);
-    setIsDetailDialogOpen(true);
+  const sortedAssets = [...filteredAssets].sort((a, b) => {
+    switch (sortBy) {
+      case "name":
+        return sortDirection === "asc" 
+          ? a.name.localeCompare(b.name) 
+          : b.name.localeCompare(a.name);
+      case "date":
+        return sortDirection === "asc" 
+          ? a.created.localeCompare(b.created) 
+          : b.created.localeCompare(a.created);
+      case "size":
+        const getSize = (size: string) => parseInt(size.split(' ')[0]);
+        return sortDirection === "asc" 
+          ? getSize(a.size) - getSize(b.size) 
+          : getSize(b.size) - getSize(a.size);
+      case "type":
+        return sortDirection === "asc" 
+          ? a.type.localeCompare(b.type) 
+          : b.type.localeCompare(a.type);
+      default:
+        return 0;
+    }
+  });
+
+  const handleAssetClick = (asset: Asset, event: React.MouseEvent) => {
+    if (event.ctrlKey || event.metaKey) {
+      toggleAssetSelection(asset.id);
+    } else {
+      setSelectedAsset(asset);
+      setIsDetailDialogOpen(true);
+    }
   };
 
   const handleFolderClick = (folderId: string) => {
     setSelectedFolder(selectedFolder === folderId ? null : folderId);
+    clearSelectedAssets();
   };
+
+  const handleAssetSelectionChange = (assetId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedAssets(prev => new Set([...prev, assetId]));
+    } else {
+      const newSelected = new Set(selectedAssets);
+      newSelected.delete(assetId);
+      setSelectedAssets(newSelected);
+    }
+  };
+
+  const handleSelectAllAssets = () => {
+    if (selectedAssets.size === sortedAssets.length) {
+      clearSelectedAssets();
+    } else {
+      setSelectedAssets(new Set(sortedAssets.map(asset => asset.id)));
+    }
+  };
+
+  const renderGridView = () => (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      {sortedAssets.map((asset) => (
+        <Card
+          key={asset.id}
+          className={`cursor-pointer transition-all ${
+            selectedAssets.has(asset.id) ? "ring-2 ring-primary" : "hover:border-primary/50"
+          }`}
+          onClick={(e) => handleAssetClick(asset, e)}
+        >
+          <CardContent className="p-2">
+            <div className="aspect-square relative rounded overflow-hidden bg-muted mb-2 flex items-center justify-center">
+              <div className="absolute top-1 right-1 bg-background/70 rounded p-1 text-xs">
+                {typeIcons[asset.type]}
+              </div>
+              <img
+                src={asset.thumbnail}
+                alt={asset.name}
+                className="h-full w-full object-cover"
+              />
+              <div className="absolute top-1 left-1">
+                <Checkbox 
+                  checked={selectedAssets.has(asset.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleAssetSelection(asset.id);
+                  }}
+                  className="bg-background/70"
+                />
+              </div>
+            </div>
+            <div className="truncate text-sm font-medium" title={asset.name}>
+              {asset.name}
+            </div>
+            <div className="text-xs text-muted-foreground mt-1">
+              {asset.size}
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+
+  const renderListView = () => (
+    <div className="border rounded-lg overflow-hidden">
+      <table className="w-full">
+        <thead className="bg-muted text-muted-foreground">
+          <tr>
+            <th className="p-2 text-right w-8">
+              <Checkbox 
+                checked={selectedAssets.size > 0 && selectedAssets.size === sortedAssets.length}
+                onClick={handleSelectAllAssets}
+              />
+            </th>
+            <th className="p-2 text-right">اسم الملف</th>
+            <th className="p-2 text-right">النوع</th>
+            <th className="p-2 text-right">الحجم</th>
+            <th className="p-2 text-right">التاريخ</th>
+            <th className="p-2 text-right">الوسوم</th>
+            <th className="p-2 text-right"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {sortedAssets.map((asset) => (
+            <tr 
+              key={asset.id} 
+              className={`border-t hover:bg-muted/50 cursor-pointer ${
+                selectedAssets.has(asset.id) ? "bg-primary/10" : ""
+              }`}
+              onClick={(e) => handleAssetClick(asset, e)}
+            >
+              <td className="p-2">
+                <Checkbox 
+                  checked={selectedAssets.has(asset.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleAssetSelection(asset.id);
+                  }}
+                />
+              </td>
+              <td className="p-2">
+                <div className="flex items-center">
+                  <div className="w-8 h-8 rounded overflow-hidden bg-muted ml-2">
+                    <img
+                      src={asset.thumbnail}
+                      alt={asset.name}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <span className="truncate max-w-[200px]">{asset.name}</span>
+                </div>
+              </td>
+              <td className="p-2">{asset.type}</td>
+              <td className="p-2">{asset.size}</td>
+              <td className="p-2">{asset.created}</td>
+              <td className="p-2">
+                <div className="flex flex-wrap gap-1">
+                  {asset.tags.slice(0, 2).map((tag, i) => (
+                    <Badge key={i} variant="outline" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                  {asset.tags.length > 2 && (
+                    <Badge variant="outline" className="text-xs">
+                      +{asset.tags.length - 2}
+                    </Badge>
+                  )}
+                </div>
+              </td>
+              <td className="p-2">
+                <Button variant="ghost" size="icon" onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedAsset(asset);
+                  setIsDetailDialogOpen(true);
+                }}>
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -178,11 +418,11 @@ const AssetsLibrary: React.FC = () => {
             <CardTitle>مكتبة الأصول البصرية</CardTitle>
             <div className="flex gap-2">
               <Button onClick={() => setIsNewFolderDialogOpen(true)} variant="outline" size="sm">
-                <FolderPlus className="h-4 w-4 mr-2" />
+                <FolderPlus className="h-4 w-4 ml-2" />
                 مجلد جديد
               </Button>
               <Button onClick={() => setIsNewAssetDialogOpen(true)} size="sm">
-                <FilePlus2 className="h-4 w-4 mr-2" />
+                <FilePlus2 className="h-4 w-4 ml-2" />
                 إضافة ملف
               </Button>
             </div>
@@ -227,7 +467,7 @@ const AssetsLibrary: React.FC = () => {
 
             {/* Main Content */}
             <div className="flex-1">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
                 <div className="flex items-center">
                   <h3 className="text-lg font-medium">
                     {selectedFolder 
@@ -235,69 +475,129 @@ const AssetsLibrary: React.FC = () => {
                       : "كل الملفات"}
                   </h3>
                   <Badge variant="outline" className="mr-2">
-                    {filteredAssets.length} عنصر
+                    {sortedAssets.length} عنصر
                   </Badge>
                 </div>
+                
+                {selectedAssets.size > 0 && (
+                  <div className="flex items-center ml-auto mr-2 bg-muted/50 px-2 py-1 rounded-md">
+                    <span className="text-sm ml-2">تم تحديد {selectedAssets.size} عناصر</span>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          إجراءات جماعية
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem onClick={handleBulkDownload}>
+                          <Download className="h-4 w-4 ml-2" />
+                          تحميل الملفات
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleBulkMove}>
+                          <FolderPlus className="h-4 w-4 ml-2" />
+                          نقل إلى مجلد
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleBulkTag}>
+                          <Tag className="h-4 w-4 ml-2" />
+                          إدارة الوسوم
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          onClick={handleBulkDelete}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4 ml-2" />
+                          حذف
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={clearSelectedAssets}
+                    >
+                      إلغاء التحديد
+                    </Button>
+                  </div>
+                )}
+                
                 <div className="flex items-center gap-2">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="icon">
-                        <Filter className="h-4 w-4" />
+                      <Button variant="outline" size="sm">
+                        <Filter className="h-4 w-4 ml-2" />
+                        ترتيب وفلترة
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuLabel>خيارات التصفية</DropdownMenuLabel>
+                      <DropdownMenuLabel>ترتيب حسب</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuGroup>
-                        <DropdownMenuItem>
-                          <span>تصفية حسب النوع</span>
+                        <DropdownMenuItem onClick={() => setSortBy("name")}>
+                          <span>الاسم</span>
+                          {sortBy === "name" && (
+                            sortDirection === "asc" ? <SortAsc className="h-4 w-4 mr-2" /> : <SortDesc className="h-4 w-4 mr-2" />
+                          )}
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <span>تصفية حسب التاريخ</span>
+                        <DropdownMenuItem onClick={() => setSortBy("date")}>
+                          <span>التاريخ</span>
+                          {sortBy === "date" && (
+                            sortDirection === "asc" ? <SortAsc className="h-4 w-4 mr-2" /> : <SortDesc className="h-4 w-4 mr-2" />
+                          )}
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Tag className="mr-2 h-4 w-4" />
-                          <span>تصفية حسب الوسم</span>
+                        <DropdownMenuItem onClick={() => setSortBy("size")}>
+                          <span>الحجم</span>
+                          {sortBy === "size" && (
+                            sortDirection === "asc" ? <SortAsc className="h-4 w-4 mr-2" /> : <SortDesc className="h-4 w-4 mr-2" />
+                          )}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setSortBy("type")}>
+                          <span>النوع</span>
+                          {sortBy === "type" && (
+                            sortDirection === "asc" ? <SortAsc className="h-4 w-4 mr-2" /> : <SortDesc className="h-4 w-4 mr-2" />
+                          )}
                         </DropdownMenuItem>
                       </DropdownMenuGroup>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={toggleSortDirection}>
+                        {sortDirection === "asc" ? (
+                          <>
+                            <SortAsc className="h-4 w-4 ml-2" />
+                            <span>تصاعدي</span>
+                          </>
+                        ) : (
+                          <>
+                            <SortDesc className="h-4 w-4 ml-2" />
+                            <span>تنازلي</span>
+                          </>
+                        )}
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
 
-                  <Button variant="outline" size="icon">
-                    <Grid2X2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex border rounded-md overflow-hidden">
+                    <Button
+                      variant={viewMode === "grid" ? "secondary" : "ghost"}
+                      size="icon"
+                      onClick={() => setViewMode("grid")}
+                      className="rounded-none"
+                    >
+                      <Grid2X2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant={viewMode === "list" ? "secondary" : "ghost"}
+                      size="icon"
+                      onClick={() => setViewMode("list")}
+                      className="rounded-none"
+                    >
+                      <List className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
 
-              {filteredAssets.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {filteredAssets.map((asset) => (
-                    <Card
-                      key={asset.id}
-                      className="cursor-pointer hover:border-primary/50 transition-all"
-                      onClick={() => handleAssetClick(asset)}
-                    >
-                      <CardContent className="p-2">
-                        <div className="aspect-square relative rounded overflow-hidden bg-muted mb-2 flex items-center justify-center">
-                          <div className="absolute top-1 right-1 bg-background/70 rounded p-1 text-xs">
-                            {typeIcons[asset.type]}
-                          </div>
-                          <img
-                            src={asset.thumbnail}
-                            alt={asset.name}
-                            className="h-full w-full object-cover"
-                          />
-                        </div>
-                        <div className="truncate text-sm font-medium" title={asset.name}>
-                          {asset.name}
-                        </div>
-                        <div className="text-xs text-muted-foreground mt-1">
-                          {asset.size}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+              {sortedAssets.length > 0 ? (
+                viewMode === "grid" ? renderGridView() : renderListView()
               ) : (
                 <div className="border rounded-lg p-12 text-center">
                   <p className="text-muted-foreground">لا توجد ملفات تطابق معايير البحث</p>

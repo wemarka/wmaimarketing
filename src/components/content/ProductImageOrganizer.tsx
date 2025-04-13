@@ -26,7 +26,7 @@ const ProductImageOrganizer: React.FC = () => {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="gallery" className="w-full">
-            <TabsList className="mb-4">
+            <TabsList className="mb-4 flex flex-wrap">
               <TabsTrigger value="gallery">معرض الصور</TabsTrigger>
               <TabsTrigger value="analysis">تحليل الألوان</TabsTrigger>
               <TabsTrigger value="auto-analysis">التحليل التلقائي</TabsTrigger>
