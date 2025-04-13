@@ -36,15 +36,11 @@ const ProductImageOrganizer: React.FC = () => {
             </TabsContent>
             
             <TabsContent value="analysis">
-              <div className="text-center py-16 text-muted-foreground">
-                <p>سيتم تنفيذ هذه الميزة قريباً...</p>
-              </div>
+              <ImageColorAnalysis />
             </TabsContent>
             
             <TabsContent value="library">
-              <div className="text-center py-16 text-muted-foreground">
-                <p>سيتم تنفيذ هذه الميزة قريباً...</p>
-              </div>
+              <AssetsLibrary />
             </TabsContent>
           </Tabs>
         </CardContent>
