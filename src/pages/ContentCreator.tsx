@@ -15,7 +15,7 @@ import {
   MessageSquarePlus,
   Instagram,
   Facebook,
-  Tiktok,
+  MessageSquare
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -89,7 +89,7 @@ const ContentCreator = () => {
       label: "Facebook", 
     },
     tiktok: {
-      icon: <Tiktok className="h-4 w-4" />,
+      icon: <MessageSquare className="h-4 w-4" />,
       label: "TikTok", 
     },
   };

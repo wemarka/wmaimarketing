@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar } from "@/components/ui/calendar";
-import { Instagram, Facebook, Tiktok, Plus, Layers, MoreHorizontal } from "lucide-react";
+import { Instagram, Facebook, MessageSquare, Plus, Layers, MoreHorizontal } from "lucide-react";
 
 const Scheduler = () => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -49,7 +49,7 @@ const Scheduler = () => {
   const platformIcons = {
     instagram: <Instagram className="h-4 w-4" />,
     facebook: <Facebook className="h-4 w-4" />,
-    tiktok: <Tiktok className="h-4 w-4" />,
+    tiktok: <MessageSquare className="h-4 w-4" />,
   };
 
   const platformColors = {

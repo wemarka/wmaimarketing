@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Loader2, Download, Image as ImageIcon, Sparkles, Instagram, Facebook, Pinterest } from "lucide-react";
+import { Loader2, Download, Image as ImageIcon, Sparkles, Instagram, Facebook, Share2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 const AdGenerator = () => {
@@ -51,7 +51,7 @@ const AdGenerator = () => {
       label: "Facebook", 
     },
     pinterest: {
-      icon: <Pinterest className="h-4 w-4" />,
+      icon: <Share2 className="h-4 w-4" />,
       label: "Pinterest", 
     },
   };
