@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
@@ -6,14 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Settings, Square, LayoutPanelTop, TrendingUp, AlignVerticalJustifyCenter, LayoutTemplate } from "lucide-react";
-
-interface SizeOption {
-  id: string;
-  name: string;
-  aspectRatio: string;
-  size: string;
-  icon: React.ReactNode;
-}
+import { SizeOption } from "./adSizesConfig";
 
 interface SizeSelectionProps {
   adContent: {
