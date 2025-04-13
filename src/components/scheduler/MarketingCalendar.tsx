@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { DayContent, DayContentProps } from "react-day-picker";
+import { DayContentProps } from "react-day-picker";
 import { CalendarPost } from "./types";
 
 interface MarketingCalendarProps {
@@ -38,7 +38,7 @@ const MarketingCalendar = ({ posts = [] }: MarketingCalendarProps) => {
     const day = props.date;
     const dayPosts = getPostsForDay(day);
     
-    if (dayPosts.length === 0) return <>{props.children}</>;
+    if (dayPosts.length === 0) return <div>{props.date.getDate()}</div>;
     
     const statusColors = {
       draft: "bg-slate-200",
@@ -52,7 +52,7 @@ const MarketingCalendar = ({ posts = [] }: MarketingCalendarProps) => {
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="relative w-full h-full">
-              {props.children}
+              <div>{props.date.getDate()}</div>
               <div className="absolute right-1 top-1 flex gap-0.5">
                 {dayPosts.length <= 3 ? (
                   dayPosts.map((post) => (
