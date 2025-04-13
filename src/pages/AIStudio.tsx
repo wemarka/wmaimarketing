@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import AIOverview from "@/components/ai/AIOverview";
 
 const AIStudio = () => {
   // State for phases
@@ -99,8 +100,12 @@ const AIStudio = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="content" className="space-y-8">
+        <Tabs defaultValue="overview" className="space-y-8">
           <TabsList>
+            <TabsTrigger value="overview" className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4" />
+              نظرة عامة
+            </TabsTrigger>
             <TabsTrigger value="content" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
               تحسين المحتوى
@@ -118,6 +123,10 @@ const AIStudio = () => {
               الجدول الزمني
             </TabsTrigger>
           </TabsList>
+          
+          <TabsContent value="overview">
+            <AIOverview />
+          </TabsContent>
 
           <TabsContent value="content">
             <ContentEnhancer />
