@@ -3,6 +3,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import RequireAuth from "@/components/auth/RequireAuth";
 
 // Pages
 import Index from "./pages/Index";
@@ -44,30 +45,90 @@ function App() {
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             
-            {/* Dashboard and Content Routes */}
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/content-creator" element={<ContentCreator />} />
-            <Route path="/content-tools" element={<ContentTools />} />
-            <Route path="/ai-studio" element={<AIStudio />} />
+            {/* Protected Dashboard and Content Routes */}
+            <Route path="/dashboard" element={
+              <RequireAuth>
+                <Dashboard />
+              </RequireAuth>
+            } />
+            <Route path="/content-creator" element={
+              <RequireAuth>
+                <ContentCreator />
+              </RequireAuth>
+            } />
+            <Route path="/content-tools" element={
+              <RequireAuth>
+                <ContentTools />
+              </RequireAuth>
+            } />
+            <Route path="/ai-studio" element={
+              <RequireAuth>
+                <AIStudio />
+              </RequireAuth>
+            } />
             
-            {/* Media Routes */}
-            <Route path="/image-upload" element={<ImageUpload />} />
-            <Route path="/video-generator" element={<VideoGenerator />} />
+            {/* Protected Media Routes */}
+            <Route path="/image-upload" element={
+              <RequireAuth>
+                <ImageUpload />
+              </RequireAuth>
+            } />
+            <Route path="/video-generator" element={
+              <RequireAuth>
+                <VideoGenerator />
+              </RequireAuth>
+            } />
             
-            {/* Ad Routes */}
-            <Route path="/ad-generator" element={<AdGenerator />} />
-            <Route path="/ad-designer" element={<AdDesigner />} />
+            {/* Protected Ad Routes */}
+            <Route path="/ad-generator" element={
+              <RequireAuth>
+                <AdGenerator />
+              </RequireAuth>
+            } />
+            <Route path="/ad-designer" element={
+              <RequireAuth>
+                <AdDesigner />
+              </RequireAuth>
+            } />
             
-            {/* Management Routes */}
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/users" element={<UserManagement />} />
+            {/* Protected Management Routes */}
+            <Route path="/profile" element={
+              <RequireAuth>
+                <Profile />
+              </RequireAuth>
+            } />
+            <Route path="/users" element={
+              <RequireAuth>
+                <UserManagement />
+              </RequireAuth>
+            } />
             
-            {/* Analytics and Planning Routes */}
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/scheduler" element={<Scheduler />} />
-            <Route path="/scheduler-settings" element={<SchedulerSettings />} />
-            <Route path="/documentation" element={<Documentation />} />
-            <Route path="/integration" element={<Integration />} />
+            {/* Protected Analytics and Planning Routes */}
+            <Route path="/analytics" element={
+              <RequireAuth>
+                <Analytics />
+              </RequireAuth>
+            } />
+            <Route path="/scheduler" element={
+              <RequireAuth>
+                <Scheduler />
+              </RequireAuth>
+            } />
+            <Route path="/scheduler-settings" element={
+              <RequireAuth>
+                <SchedulerSettings />
+              </RequireAuth>
+            } />
+            <Route path="/documentation" element={
+              <RequireAuth>
+                <Documentation />
+              </RequireAuth>
+            } />
+            <Route path="/integration" element={
+              <RequireAuth>
+                <Integration />
+              </RequireAuth>
+            } />
             
             {/* 404 Route */}
             <Route path="*" element={<NotFound />} />

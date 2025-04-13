@@ -70,6 +70,26 @@
     "upgradeNow": "ترقية الآن",
     "signOut": "تسجيل الخروج"
   },
+  "auth": {
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "login": "تسجيل الدخول",
+    "register": "التسجيل",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "firstName": "الاسم الأول",
+    "lastName": "الاسم الأخير",
+    "createAccount": "إنشاء حساب",
+    "alreadyHaveAccount": "لديك حساب بالفعل؟",
+    "dontHaveAccount": "ليس لديك حساب؟",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "resetPassword": "إعادة تعيين كلمة المرور",
+    "welcomeMessage": "مرحباً بك في Beauty AI",
+    "loginDescription": "قم بتسجيل الدخول للوصول إلى لوحة التحكم",
+    "registerDescription": "قم بإنشاء حساب جديد للوصول إلى الميزات الكاملة",
+    "loading": "جاري التحميل...",
+    "verifyingUser": "جاري التحقق من المستخدم..."
+  },
   "scheduler": {
     "title": "الجدولة والنشر",
     "description": "إدارة ونشر المحتوى عبر منصات التواصل الاجتماعي",

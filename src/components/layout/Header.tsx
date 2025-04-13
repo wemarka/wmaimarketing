@@ -1,17 +1,25 @@
 
-import React from 'react';
-import { Bell } from "lucide-react";
+import React, { useState } from 'react';
+import { Bell, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import LanguageToggle from "@/components/common/LanguageToggle";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useLocation } from "react-router-dom";
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useTranslation } from "react-i18next";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
-  const { user } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const location = useLocation();
   const { t, i18n } = useTranslation();
   const currentLanguage = i18n.language;
@@ -56,14 +64,33 @@ const Header = () => {
     if (path === '/ai-studio') {
       return currentLanguage === 'ar' ? 'استوديو الذكاء الاصطناعي' : 'AI Studio';
     }
+    if (path === '/auth') {
+      return currentLanguage === 'ar' ? 'تسجيل الدخول' : 'Authentication';
+    }
     
     return '';
   };
   
   const getUserInitials = () => {
-    if (!user?.email) return 'U';
-    return user.email.substring(0, 1).toUpperCase();
+    if (profile?.first_name && profile?.last_name) {
+      return `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase();
+    }
+    
+    if (profile?.first_name) {
+      return profile.first_name[0].toUpperCase();
+    }
+    
+    if (user?.email) {
+      return user.email[0].toUpperCase();
+    }
+    
+    return 'U';
   };
+
+  const avatarUrl = profile?.avatar_url || '';
+  const userName = profile?.first_name 
+    ? `${profile.first_name} ${profile.last_name || ''}`
+    : user?.email || '';
 
   return (
     <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -95,20 +122,36 @@ const Header = () => {
               
               <Separator orientation="vertical" className="h-6" />
               
-              <Button 
-                variant="ghost" 
-                size="icon"
-                className="hover:bg-secondary"
-                asChild
-              >
-                <Link to="/profile">
-                  <Avatar className="h-9 w-9 border-2 border-border hover:border-primary transition-colors">
-                    <AvatarFallback className="bg-beauty-purple/10 text-beauty-purple">
-                      {getUserInitials()}
-                    </AvatarFallback>
-                  </Avatar>
-                </Link>
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="hover:bg-secondary rounded-full">
+                    <Avatar className="h-9 w-9 border-2 border-border hover:border-primary transition-colors">
+                      {avatarUrl ? <AvatarImage src={avatarUrl} /> : null}
+                      <AvatarFallback className="bg-beauty-purple/10 text-beauty-purple">
+                        {getUserInitials()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{userName}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="cursor-pointer">
+                      {currentLanguage === 'ar' ? 'الملف الشخصي' : 'Profile'}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive focus:text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    {currentLanguage === 'ar' ? 'تسجيل الخروج' : 'Log out'}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </>
           ) : (
             <Link to="/auth">

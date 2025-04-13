@@ -70,6 +70,26 @@
     "upgradeNow": "Upgrade Now",
     "signOut": "Sign Out"
   },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "createAccount": "Create Account",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "forgotPassword": "Forgot password?",
+    "resetPassword": "Reset Password",
+    "welcomeMessage": "Welcome to Beauty AI",
+    "loginDescription": "Sign in to access your dashboard",
+    "registerDescription": "Create a new account to access all features",
+    "loading": "Loading...",
+    "verifyingUser": "Verifying user..."
+  },
   "scheduler": {
     "title": "Schedule & Publish",
     "description": "Manage and publish content across social media platforms",
