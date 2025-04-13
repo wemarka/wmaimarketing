@@ -105,14 +105,14 @@ const AIOverview: React.FC = () => {
         initial="hidden"
         animate="visible"
       >
-        {capabilities.map((item, index) => (
+        {capabilities.map((capability, index) => (
           <motion.div key={index} variants={item}>
             <AICapabilityCard
-              title={item.title}
-              description={item.description}
-              icon={item.icon}
-              color={item.color}
-              badgeText={item.badgeText}
+              title={capability.title}
+              description={capability.description}
+              icon={capability.icon}
+              color={capability.color}
+              badgeText={capability.badgeText}
             />
           </motion.div>
         ))}
