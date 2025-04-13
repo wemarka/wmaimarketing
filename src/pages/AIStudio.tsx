@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, ImageIcon, MessageSquare, Video, RotateCw, Timeline } from "lucide-react";
+import { Sparkles, ImageIcon, MessageSquare, Video, RotateCw, List, Clock } from "lucide-react";
 import ContentEnhancer from "@/components/ai/ContentEnhancer";
 import ImageGenerator from "@/components/ai/ImageGenerator";
 import TimelineTab from "@/components/documentation/TimelineTab";
@@ -64,7 +64,7 @@ const AIStudio = () => {
               إنشاء الصور
             </TabsTrigger>
             <TabsTrigger value="timeline" className="flex items-center gap-2">
-              <Timeline className="h-4 w-4" />
+              <Clock className="h-4 w-4" />
               الجدول الزمني
             </TabsTrigger>
             <TabsTrigger value="videos" className="flex items-center gap-2">

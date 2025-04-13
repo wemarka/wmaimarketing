@@ -4,14 +4,20 @@ import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProjectHeader, { ProjectHeaderProps } from "@/components/documentation/ProjectHeader";
 import OverviewTab from "@/components/documentation/OverviewTab";
-import PhasesTab, { PhasesTabProps, PhaseData } from "@/components/documentation/PhasesTab";
-import TimelineTab, { TimelineTabProps } from "@/components/documentation/TimelineTab";
+import PhasesTab from "@/components/documentation/PhasesTab";
+import TimelineTab from "@/components/documentation/TimelineTab";
+import { PhaseData as TimelinePhaseData } from "@/components/documentation/TimelineTab";
+
+// Define a type that maps the string statuses to the required format
+type MappedPhase = Omit<TimelinePhaseData, 'status'> & {
+  status: "completed" | "in-progress" | "not-started";
+};
 
 const Documentation: React.FC = () => {
   const [currentTab, setCurrentTab] = useState("overview");
 
   // Project phases data
-  const phases: PhaseData[] = [
+  const rawPhases = [
     {
       id: 1,
       name: "تصميم وتخطيط النظام",
@@ -64,11 +70,29 @@ const Documentation: React.FC = () => {
     {
       id: 8,
       name: "التحسين المستمر",
-      status: "planned",
+      status: "not-started",
       progress: 0,
       description: "تحسين أداء النظام وإضافة ميزات جديدة بناءً على التغذية الراجعة",
     },
   ];
+  
+  // Convert phases to have the correct status type
+  const timelinePhases: TimelinePhaseData[] = rawPhases.map(phase => {
+    let status: "completed" | "in-progress" | "not-started";
+    
+    if (phase.status === "completed") {
+      status = "completed";
+    } else if (phase.status === "in-progress") {
+      status = "in-progress";
+    } else {
+      status = "not-started";
+    }
+    
+    return {
+      ...phase,
+      status
+    };
+  });
 
   // Project header data
   const headerProps: ProjectHeaderProps = {
@@ -105,11 +129,11 @@ const Documentation: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="phases">
-            <PhasesTab phases={phases} />
+            <PhasesTab phases={rawPhases} />
           </TabsContent>
 
           <TabsContent value="timeline">
-            <TimelineTab phases={phases} />
+            <TimelineTab phases={timelinePhases} />
           </TabsContent>
         </Tabs>
       </div>
