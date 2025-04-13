@@ -1,128 +1,147 @@
 
 import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar } from "@/components/ui/calendar";
-import { Plus } from "lucide-react";
-import ConnectedAccounts from "@/components/scheduler/ConnectedAccounts";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { CalendarPlus } from "lucide-react";
+import NewPostDialog from "@/components/scheduler/NewPostDialog";
 import ScheduledPosts from "@/components/scheduler/ScheduledPosts";
 import EmptyTabContent from "@/components/scheduler/EmptyTabContent";
+import ConnectedAccounts from "@/components/scheduler/ConnectedAccounts";
 import PostTimesCard from "@/components/scheduler/PostTimesCard";
 import PerformanceCard from "@/components/scheduler/PerformanceCard";
-import NewPostDialog from "@/components/scheduler/NewPostDialog";
+
+// Sample data for scheduled posts
+const scheduledPosts = [
+  {
+    id: 1,
+    title: "Summer makeup collection launch",
+    type: "image",
+    platform: "instagram",
+    date: "Today",
+    time: "3:30 PM",
+  },
+  {
+    id: 2,
+    title: "New skin care routine video",
+    type: "video",
+    platform: "facebook",
+    date: "Tomorrow",
+    time: "10:00 AM",
+  },
+  {
+    id: 3,
+    title: "Lipstick color trends 2025",
+    type: "carousel",
+    platform: "instagram",
+    date: "May 20",
+    time: "2:15 PM",
+  },
+  {
+    id: 4,
+    title: "Beauty tutorial: Summer glow",
+    type: "video",
+    platform: "tiktok",
+    date: "May 22",
+    time: "6:00 PM",
+  },
+];
+
+// Sample data for completed posts
+const completedPosts = [
+  {
+    id: 101,
+    title: "Spring collection preview",
+    type: "image",
+    platform: "instagram",
+    date: "May 10",
+    time: "1:00 PM",
+  },
+  {
+    id: 102,
+    title: "Foundation review",
+    type: "video",
+    platform: "facebook",
+    date: "May 8",
+    time: "11:30 AM",
+  },
+];
 
 const Scheduler = () => {
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
-  const [newPostDialogOpen, setNewPostDialogOpen] = useState(false);
-
-  // Sample scheduled posts data
-  const scheduledPosts = [
-    {
-      id: 1,
-      title: "Summer lipstick collection",
-      type: "image",
-      platform: "instagram",
-      date: "Apr 14, 2025",
-      time: "10:30 AM",
-    },
-    {
-      id: 2,
-      title: "Foundation shade finder guide",
-      type: "video",
-      platform: "facebook",
-      date: "Apr 15, 2025",
-      time: "2:00 PM",
-    },
-    {
-      id: 3,
-      title: "Quick makeup tutorial",
-      type: "video",
-      platform: "tiktok",
-      date: "Apr 16, 2025",
-      time: "6:45 PM",
-    },
-    {
-      id: 4,
-      title: "New mascara launch",
-      type: "image",
-      platform: "instagram",
-      date: "Apr 17, 2025",
-      time: "12:15 PM",
-    },
-  ];
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("upcoming");
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto">
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="mb-1">Publishing & Scheduler</h1>
-            <p className="text-muted-foreground max-w-2xl">
-              Schedule and manage your beauty product content across multiple social media platforms.
+      <div className="max-w-6xl mx-auto space-y-6">
+        <div className="flex justify-between items-center">
+          <div className="space-y-1">
+            <h1 className="text-2xl font-semibold">Publishing & Scheduler</h1>
+            <p className="text-muted-foreground">
+              Schedule and publish your content across social platforms
             </p>
           </div>
-          
-          <Button onClick={() => setNewPostDialogOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
+          <Button
+            onClick={() => setIsDialogOpen(true)}
+            className="flex items-center gap-2"
+          >
+            <CalendarPlus className="h-4 w-4" />
             New Post
           </Button>
         </div>
-        
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1">
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2">
             <Card>
-              <div className="p-4">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  className="rounded-md"
-                />
-              </div>
-            </Card>
-            
-            <ConnectedAccounts />
-          </div>
-          
-          <div className="lg:col-span-2">
-            <Card>
-              <Tabs defaultValue="scheduled">
-                <div className="flex items-center justify-between p-6 pb-2">
-                  <TabsList>
-                    <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
-                    <TabsTrigger value="published">Published</TabsTrigger>
+              <CardHeader className="pb-3 border-b">
+                <CardTitle className="text-lg font-medium">Content Calendar</CardTitle>
+              </CardHeader>
+              <Tabs
+                defaultValue="upcoming"
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-full"
+              >
+                <div className="px-6 pt-6">
+                  <TabsList className="grid grid-cols-3 mb-4">
+                    <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+                    <TabsTrigger value="completed">Completed</TabsTrigger>
                     <TabsTrigger value="drafts">Drafts</TabsTrigger>
                   </TabsList>
                 </div>
-                
-                <TabsContent value="scheduled" className="p-0 mt-0">
-                  <ScheduledPosts posts={scheduledPosts} />
+
+                <TabsContent value="upcoming">
+                  {scheduledPosts.length > 0 ? (
+                    <ScheduledPosts posts={scheduledPosts} />
+                  ) : (
+                    <EmptyTabContent message="No upcoming posts scheduled. Create a new post to get started." />
+                  )}
                 </TabsContent>
-                
-                <TabsContent value="published" className="p-0 mt-0">
-                  <EmptyTabContent message="No published posts in the selected time range" />
+
+                <TabsContent value="completed">
+                  {completedPosts.length > 0 ? (
+                    <ScheduledPosts posts={completedPosts} />
+                  ) : (
+                    <EmptyTabContent message="No completed posts yet." />
+                  )}
                 </TabsContent>
-                
-                <TabsContent value="drafts" className="p-0 mt-0">
-                  <EmptyTabContent message="No draft posts found" />
+
+                <TabsContent value="drafts">
+                  <EmptyTabContent message="No draft posts found." />
                 </TabsContent>
               </Tabs>
             </Card>
-            
-            <div className="grid grid-cols-2 gap-6 mt-6">
-              <PostTimesCard />
-              <PerformanceCard />
-            </div>
+          </div>
+
+          <div className="space-y-6">
+            <ConnectedAccounts />
+            <PostTimesCard />
+            <PerformanceCard />
           </div>
         </div>
 
-        {/* New Post Dialog */}
-        <NewPostDialog 
-          open={newPostDialogOpen}
-          onOpenChange={setNewPostDialogOpen}
-        />
+        <NewPostDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} />
       </div>
     </Layout>
   );
