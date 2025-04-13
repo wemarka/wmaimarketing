@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import {
@@ -16,7 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
-import { useActivityLog } from "@/hooks/useActivityLog";
+import { useActivityLog, Activity } from "@/hooks/useActivityLog";
 
 // Import components
 import ProfilePicture from "@/components/profile/ProfilePicture";

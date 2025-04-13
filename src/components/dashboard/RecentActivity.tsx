@@ -6,7 +6,7 @@ import {
   UserCheck, LogIn, LogOut, UserCog, 
   FileEdit, Activity 
 } from "lucide-react";
-import { useActivityLog } from "@/hooks/useActivityLog";
+import { useActivityLog, Activity as ActivityType } from "@/hooks/useActivityLog";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const RecentActivity = () => {

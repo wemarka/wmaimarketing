@@ -4,16 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Clock, FileEdit, LogIn, LogOut, User, UserCog, FileText, Image, Video } from "lucide-react";
-
-interface ActivityItem {
-  id: string;
-  type: "login" | "logout" | "profile_update" | "password_change" | "role_change" | "content_create" | "content_edit";
-  description: string;
-  timestamp: string;
-}
+import { Activity } from "@/hooks/useActivityLog";
 
 interface ActivityLogProps {
-  activities: ActivityItem[];
+  activities: Activity[];
   isLoading: boolean;
 }
 
