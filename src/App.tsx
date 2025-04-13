@@ -19,6 +19,7 @@ import AdDesigner from "./pages/AdDesigner";
 import VideoGenerator from "./pages/VideoGenerator";
 import Analytics from "./pages/Analytics";
 import Scheduler from "./pages/Scheduler";
+import SchedulerSettings from "./pages/SchedulerSettings";
 import ContentTools from "./pages/ContentTools";
 
 // Create a client for React Query
@@ -61,6 +62,7 @@ function App() {
             {/* Analytics and Planning Routes */}
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/scheduler" element={<Scheduler />} />
+            <Route path="/scheduler-settings" element={<SchedulerSettings />} />
             <Route path="/documentation" element={<Documentation />} />
             
             {/* 404 Route */}
