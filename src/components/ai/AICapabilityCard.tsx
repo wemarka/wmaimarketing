@@ -24,15 +24,17 @@ const AICapabilityCard: React.FC<AICapabilityCardProps> = ({
   children,
   onClick
 }) => {
+  const isDisabled = badgeText?.includes("Coming Soon") || badgeText?.includes("قريبًا");
+  
   return (
     <motion.div
-      whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={isDisabled ? {} : { y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+      whileTap={isDisabled ? {} : { scale: 0.98 }}
       transition={{ type: "spring", stiffness: 400, damping: 17 }}
     >
       <Card 
-        className={`h-full transition-all ${onClick ? 'cursor-pointer' : ''}`}
-        onClick={onClick}
+        className={`h-full transition-all ${onClick && !isDisabled ? 'cursor-pointer hover:border-beauty-purple/50' : ''} ${isDisabled ? 'opacity-70' : ''}`}
+        onClick={!isDisabled ? onClick : undefined}
       >
         <CardHeader className="pb-2">
           <div className="flex items-start justify-between">
@@ -40,11 +42,12 @@ const AICapabilityCard: React.FC<AICapabilityCardProps> = ({
               initial={{ rotate: -10, opacity: 0 }}
               animate={{ rotate: 0, opacity: 1 }}
               transition={{ duration: 0.5 }}
+              whileHover={{ scale: 1.1, rotate: 5 }}
             >
               <Icon className={`h-10 w-10 ${color}`} />
             </motion.div>
             {badgeText && (
-              <Badge variant="outline" className="ml-2">
+              <Badge variant="outline" className={`ml-2 ${badgeText.includes("Soon") || badgeText.includes("قريبًا") ? 'bg-amber-500/10 text-amber-600 border-amber-200' : 'bg-beauty-purple/10 text-beauty-purple border-beauty-purple/20'}`}>
                 {badgeText}
               </Badge>
             )}
@@ -53,7 +56,7 @@ const AICapabilityCard: React.FC<AICapabilityCardProps> = ({
           <CardDescription className="text-sm">{description}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-sm text-muted-foreground">
+          <div className={`text-sm ${isDisabled ? 'text-muted-foreground/70' : 'text-muted-foreground'}`}>
             {children}
           </div>
         </CardContent>

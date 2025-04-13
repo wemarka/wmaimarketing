@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Bot, Image, MessageSquare, Video, Zap } from "lucide-react";
+import { Bot, Image, MessageSquare, Video, Zap, ArrowRight } from "lucide-react";
 import AICapabilityCard from "./AICapabilityCard";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
@@ -53,6 +53,14 @@ const AIOverview: React.FC = () => {
     setTimeout(() => {
       navigate(`/ai-studio?tab=${capabilities[index].tabValue}`);
     }, 300);
+  };
+
+  const exploreAllTools = () => {
+    const firstAvailableTab = capabilities.find(
+      cap => cap.badgeText !== t("aiStudio.common.comingSoon")
+    )?.tabValue || "content";
+    
+    navigate(`/ai-studio?tab=${firstAvailableTab}`);
   };
 
   // Animation variants
@@ -142,14 +150,32 @@ const AIOverview: React.FC = () => {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="w-full mt-2 text-sm"
+                  className="w-full mt-2 text-sm group"
                 >
-                  {t("aiStudio.common.tryNow")}
+                  <span>{t("aiStudio.common.tryNow")}</span>
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               )}
             </AICapabilityCard>
           </motion.div>
         ))}
+      </motion.div>
+
+      <motion.div 
+        className="flex justify-center mt-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8, duration: 0.4 }}
+      >
+        <Button 
+          onClick={exploreAllTools}
+          variant="outline" 
+          size="lg" 
+          className="group border-beauty-purple/30 hover:border-beauty-purple/60 bg-beauty-purple/5"
+        >
+          {t("aiStudio.overview.exploreAll")}
+          <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+        </Button>
       </motion.div>
     </div>
   );

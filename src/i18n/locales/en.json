@@ -15,9 +15,11 @@
     }
   },
   "aiStudio": {
+    "title": "AI Studio",
     "overview": {
       "welcome": "Welcome to AI Studio",
-      "subtitle": "Explore our AI-powered tools to enhance your content creation and analysis"
+      "subtitle": "Explore our AI-powered tools to enhance your content creation and analysis",
+      "exploreAll": "Explore All Tools"
     },
     "tabs": {
       "overview": "Overview",
