@@ -5,9 +5,10 @@ import { Search, FolderOpen, Image, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsItem, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { sampleAssets } from "../content/assets-library/data";
+import { Asset } from "../content/assets-library/types";
 
 interface AssetLibrarySelectorProps {
   isOpen: boolean;
@@ -42,7 +43,7 @@ const AssetLibrarySelector: React.FC<AssetLibrarySelectorProps> = ({
   });
 
   const handleSelectAsset = (asset: typeof sampleAssets[0]) => {
-    onSelectImage(asset.url);
+    onSelectImage(asset.thumbnail);
     setIsOpen(false);
   };
 
@@ -106,7 +107,7 @@ const AssetLibrarySelector: React.FC<AssetLibrarySelectorProps> = ({
                     >
                       <div className="aspect-square relative">
                         <img 
-                          src={asset.url} 
+                          src={asset.thumbnail} 
                           alt={asset.name}
                           className="w-full h-full object-cover"
                         />
@@ -132,3 +133,4 @@ const AssetLibrarySelector: React.FC<AssetLibrarySelectorProps> = ({
 };
 
 export default AssetLibrarySelector;
+
