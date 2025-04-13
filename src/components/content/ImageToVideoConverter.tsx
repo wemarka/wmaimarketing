@@ -5,7 +5,7 @@ import ImageUploader from "./image-to-video/ImageUploader";
 import VideoSettings from "./image-to-video/VideoSettings";
 import VideoPreview from "./image-to-video/VideoPreview";
 import TemplateSuggestions from "./image-to-video/TemplateSuggestions";
-import { VideoSettingsType } from "./image-to-video/types";
+import { VideoSettingsType, TemplateType } from "./image-to-video/types";
 
 const ImageToVideoConverter: React.FC = () => {
   const { t } = useTranslation();
@@ -14,7 +14,7 @@ const ImageToVideoConverter: React.FC = () => {
   const [videoGenerating, setVideoGenerating] = useState(false);
   const [videoGenerated, setVideoGenerated] = useState(false);
   const [duration, setDuration] = useState([5]);
-  const [selectedTemplate, setSelectedTemplate] = useState("zoom");
+  const [selectedTemplate, setSelectedTemplate] = useState<TemplateType>("zoom");
   
   const [videoSettings, setVideoSettings] = useState<VideoSettingsType>({
     title: "",

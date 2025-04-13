@@ -7,11 +7,12 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RotateCw, Video } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { TemplateType } from "./types";
 
 interface VideoSettingsProps {
   selectedImage: string | null;
-  selectedTemplate: string;
-  setSelectedTemplate: (template: string) => void;
+  selectedTemplate: TemplateType;
+  setSelectedTemplate: (template: TemplateType) => void;
   duration: number[];
   setDuration: (duration: number[]) => void;
   videoSettings: {
@@ -69,7 +70,7 @@ const VideoSettings: React.FC<VideoSettingsProps> = ({
       
       <div className="space-y-2">
         <Label htmlFor="template">قالب الفيديو</Label>
-        <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+        <Select value={selectedTemplate} onValueChange={(value: TemplateType) => setSelectedTemplate(value)}>
           <SelectTrigger>
             <SelectValue placeholder="اختر قالبًا" />
           </SelectTrigger>
@@ -77,8 +78,6 @@ const VideoSettings: React.FC<VideoSettingsProps> = ({
             <SelectItem value="zoom">تكبير وتصغير</SelectItem>
             <SelectItem value="pan">تحريك أفقي</SelectItem>
             <SelectItem value="rotate">دوران</SelectItem>
-            <SelectItem value="bounce">حركة نطاطة</SelectItem>
-            <SelectItem value="slide">انزلاق</SelectItem>
           </SelectContent>
         </Select>
       </div>

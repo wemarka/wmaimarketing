@@ -4,11 +4,12 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Video } from "lucide-react";
+import { TemplateType } from "./types";
 
 interface VideoPreviewProps {
   selectedImage: string | null;
   videoGenerated: boolean;
-  selectedTemplate: string;
+  selectedTemplate: TemplateType;
   videoSettings: {
     title: string;
     subtitle: string;
@@ -35,9 +36,7 @@ const VideoPreview: React.FC<VideoPreviewProps> = ({
               alt="Video preview"
               className={`w-full h-full object-cover ${selectedTemplate === "zoom" ? "animate-pulse-scale" : 
                         selectedTemplate === "pan" ? "animate-pan" :
-                        selectedTemplate === "rotate" ? "animate-slow-spin" :
-                        selectedTemplate === "bounce" ? "animate-bounce" :
-                        "animate-slide-in"}`}
+                        "animate-slow-spin"}`}
             />
             
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/70"></div>
