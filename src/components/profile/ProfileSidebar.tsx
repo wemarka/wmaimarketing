@@ -37,12 +37,30 @@ const ProfileSidebar = ({
     }
   };
 
+  // Animation variants for buttons
+  const buttonVariants = {
+    inactive: { scale: 1 },
+    active: { scale: 1.03 }
+  };
+
+  const sidebarItems = [
+    { id: 'account', icon: <User className="ml-2 h-4 w-4" />, label: 'معلومات الحساب' },
+    { id: 'security', icon: <Shield className="ml-2 h-4 w-4" />, label: 'الأمان' },
+    { id: 'activity', icon: <Clock className="ml-2 h-4 w-4" />, label: 'سجل النشاط' }
+  ];
+
+  const extraItems = [
+    { id: 'preferences', icon: <UserCog className="ml-2 h-4 w-4" />, label: 'التفضيلات' },
+    { id: 'documentation', icon: <FileText className="ml-2 h-4 w-4" />, label: 'التوثيق' }
+  ];
+
   return (
     <motion.div 
-      className="space-y-6 bg-card p-6 rounded-lg shadow-sm border"
+      className="space-y-6 bg-card p-6 rounded-lg shadow-sm border border-border/40 backdrop-blur-sm"
       initial={{ opacity: 0, x: -30 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5 }}
+      whileHover={{ boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
     >
       <ProfilePicture 
         avatarUrl={avatarUrl} 
@@ -56,65 +74,66 @@ const ProfileSidebar = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.5 }}
+          whileHover={{ scale: 1.03 }}
         >
-          {`${firstName || ''} ${lastName || ''}`}
+          {firstName || lastName ? `${firstName || ''} ${lastName || ''}` : 'المستخدم'}
         </motion.h3>
-        <motion.p 
-          className="text-sm text-muted-foreground"
+        <motion.span
+          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary mt-1"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.5 }}
         >
           {role || 'مستخدم'}
-        </motion.p>
+        </motion.span>
       </div>
       
-      <Separator className="my-2" />
+      <Separator className="my-2 bg-border/60" />
       
-      <nav className="flex flex-col space-y-1">
-        <Button 
-          variant={activeTab === "account" ? "default" : "ghost"} 
-          className={cn(
-            "justify-start transition-all",
-            activeTab === "account" ? "bg-primary/10 text-primary hover:bg-primary/20" : ""
-          )}
-          onClick={() => handleTabClick("account")}
-        >
-          <User className="ml-2 h-4 w-4" />
-          <span>معلومات الحساب</span>
-        </Button>
-        <Button 
-          variant={activeTab === "security" ? "default" : "ghost"}
-          className={cn(
-            "justify-start transition-all",
-            activeTab === "security" ? "bg-primary/10 text-primary hover:bg-primary/20" : ""
-          )}
-          onClick={() => handleTabClick("security")}
-        >
-          <Shield className="ml-2 h-4 w-4" />
-          <span>الأمان</span>
-        </Button>
-        <Button 
-          variant={activeTab === "activity" ? "default" : "ghost"}
-          className={cn(
-            "justify-start transition-all",
-            activeTab === "activity" ? "bg-primary/10 text-primary hover:bg-primary/20" : ""
-          )}
-          onClick={() => handleTabClick("activity")}
-        >
-          <Clock className="ml-2 h-4 w-4" />
-          <span>سجل النشاط</span>
-        </Button>
+      <nav className="flex flex-col space-y-1.5">
+        {sidebarItems.map(item => (
+          <motion.div 
+            key={item.id}
+            variants={buttonVariants}
+            initial="inactive"
+            animate={activeTab === item.id ? "active" : "inactive"}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Button 
+              variant={activeTab === item.id ? "default" : "ghost"} 
+              className={cn(
+                "justify-start w-full transition-all text-sm",
+                activeTab === item.id 
+                  ? "bg-primary/10 text-primary hover:bg-primary/20 font-medium" 
+                  : "hover:bg-muted/50"
+              )}
+              onClick={() => handleTabClick(item.id)}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </Button>
+          </motion.div>
+        ))}
+        
         {!isMobile && (
           <>
-            <Button variant="ghost" className="justify-start">
-              <UserCog className="ml-2 h-4 w-4" />
-              <span>التفضيلات</span>
-            </Button>
-            <Button variant="ghost" className="justify-start">
-              <FileText className="ml-2 h-4 w-4" />
-              <span>التوثيق</span>
-            </Button>
+            <Separator className="my-2 bg-border/60" />
+            {extraItems.map(item => (
+              <motion.div
+                key={item.id}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Button 
+                  variant="ghost" 
+                  className="justify-start w-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </Button>
+              </motion.div>
+            ))}
           </>
         )}
       </nav>
