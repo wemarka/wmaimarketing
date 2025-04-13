@@ -21,10 +21,10 @@ serve(async (req) => {
 
     const { content, analysisType } = await req.json();
 
-    if (!content || !analysisType) {
+    if (!content) {
       return new Response(
         JSON.stringify({
-          error: "Missing required fields: content and analysisType are required",
+          error: "Missing required field: content is required",
         }),
         {
           status: 400,
@@ -33,29 +33,35 @@ serve(async (req) => {
       );
     }
 
-    // Create system prompt based on analysis type
-    let systemPrompt = "أنت متخصص في تحليل المحتوى التسويقي لمنتجات التجميل ومستحضرات العناية بالبشرة. تقدم تحليلًا موضوعيًا وتوصيات لتحسين فعالية المحتوى.";
+    // Prepare system prompt based on the analysis type
+    let systemPrompt = "أنت محلل محتوى خبير. قم بتحليل النص المقدم وتقديم تحليل مفصل.";
     let userPrompt = "";
-
+    
     switch (analysisType) {
       case "sentiment":
-        userPrompt = `تحليل مشاعر وانطباعات المستهلكين من المحتوى التالي. قم بتحديد المشاعر الإيجابية والسلبية والمحايدة، وقدم نسبة مئوية لكل منها، ثم قدم توصيات لتحسين الانطباع العام: "${content}"`;
+        systemPrompt = "أنت محلل محتوى متخصص في تحليل المشاعر. قم بتحليل النص لتحديد المشاعر والانطباعات التي ينقلها.";
+        userPrompt = `قم بتحليل المشاعر في النص التالي وتحديد ما إذا كان إيجابيًا أو سلبيًا أو محايدًا، مع تقديم درجة قوة هذه المشاعر والكلمات الرئيسية التي تدل عليها:\n\n${content}`;
         break;
       case "marketing":
-        userPrompt = `تحليل مدى فعالية المحتوى التسويقي التالي. قم بتقييم العناصر الإقناعية، ونقاط القوة والضعف، والجمهور المستهدف، واقترح تحسينات محددة: "${content}"`;
+        systemPrompt = "أنت محلل تسويقي متخصص في تقييم فعالية المحتوى التسويقي لمنتجات التجميل.";
+        userPrompt = `قم بتحليل فعالية هذا المحتوى التسويقي وتقييم النقاط التالية: جاذبية الرسالة، استخدام نقاط البيع الفريدة، الإقناع، الدعوة للعمل، واقتراحات للتحسين:\n\n${content}`;
         break;
       case "seo":
-        userPrompt = `تحليل المحتوى التالي من منظور تحسين محركات البحث (SEO) لمنتجات التجميل. حدد الكلمات المفتاحية المستخدمة، واقترح كلمات إضافية، وقدم توصيات لتحسين ظهور المحتوى في نتائج البحث: "${content}"`;
+        systemPrompt = "أنت محلل متخصص في تحسين محركات البحث (SEO) لمنتجات التجميل ومواقع العناية بالبشرة.";
+        userPrompt = `قم بتحليل هذا المحتوى من ناحية SEO وتقديم تقرير عن: الكلمات المفتاحية المستخدمة وكثافتها، بنية النص، العناوين الفرعية، طول المحتوى، واقتراحات للتحسين:\n\n${content}`;
         break;
       case "audience":
-        userPrompt = `تحليل الجمهور المستهدف للمحتوى التسويقي التالي. حدد الشرائح المستهدفة، واهتماماتها، واحتياجاتها، وكيفية تلبية المحتوى لها، واقترح تعديلات لزيادة جاذبية المحتوى: "${content}"`;
+        systemPrompt = "أنت محلل متخصص في تحديد الجمهور المستهدف لمنتجات التجميل والعناية بالبشرة.";
+        userPrompt = `قم بتحليل هذا المحتوى وتحديد: الجمهور المستهدف، العمر المحتمل، الاهتمامات، المستوى الثقافي والاقتصادي، ومدى ملاءمة المحتوى لهذا الجمهور:\n\n${content}`;
         break;
       default:
-        userPrompt = `تحليل المحتوى التسويقي التالي وتقديم توصيات لتحسينه: "${content}"`;
+        userPrompt = `قم بتحليل النص التالي وتقديم نظرة شاملة عن جوانب القوة والضعف فيه، مع اقتراحات للتحسين:\n\n${content}`;
     }
 
-    console.log(`Processing content analysis request for type: ${analysisType}`);
+    console.log(`Processing content analysis request for analysis type: ${analysisType}`);
+    console.log(`Using OpenAI API key: ${OPENAI_API_KEY.substring(0, 3)}...${OPENAI_API_KEY.substring(OPENAI_API_KEY.length - 4)}`);
 
+    // Call OpenAI API
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -105,10 +111,10 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    const analysisResult = data.choices[0]?.message?.content;
+    const analysis = data.choices[0]?.message?.content;
 
     return new Response(
-      JSON.stringify({ analysisResult }),
+      JSON.stringify({ analysis }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
