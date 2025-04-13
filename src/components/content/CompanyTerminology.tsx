@@ -3,27 +3,12 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, X, Search, Edit, Save, Trash2 } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
-interface TerminologyItem {
-  id: string;
-  term: string;
-  definition: string;
-  category: string;
-}
-
-const initialTerms: TerminologyItem[] = [
-  { id: "1", term: "جمال طبيعي", definition: "مظهر طبيعي وصحي دون استخدام مستحضرات تجميل ظاهرة", category: "مفاهيم عامة" },
-  { id: "2", term: "نضارة البشرة", definition: "بشرة صحية ومشرقة ومرطبة", category: "العناية بالبشرة" },
-  { id: "3", term: "ترطيب عميق", definition: "ترطيب يصل إلى الطبقات العميقة من البشرة", category: "العناية بالبشرة" },
-  { id: "4", term: "مستحضرات خالية من البارابين", definition: "منتجات لا تحتوي على مواد حافظة صناعية تعرف باسم البارابين", category: "مكونات" },
-  { id: "5", term: "تغذية الشعر", definition: "توفير العناصر الغذائية اللازمة لصحة الشعر", category: "العناية بالشعر" },
-];
+import { TerminologyItem, initialTerms } from "./terminology/types";
+import NewTermForm from "./terminology/NewTermForm";
+import TerminologyList from "./terminology/TerminologyList";
 
 const CompanyTerminology: React.FC = () => {
   const { t } = useTranslation();
@@ -93,14 +78,6 @@ const CompanyTerminology: React.FC = () => {
       description: "تم حذف المصطلح بنجاح",
     });
   };
-  
-  const filteredTerms = terms.filter(term => 
-    term.term.includes(searchTerm) || 
-    term.definition.includes(searchTerm) ||
-    term.category.includes(searchTerm)
-  );
-  
-  const categories = Array.from(new Set(terms.map(term => term.category)));
 
   return (
     <div>
@@ -131,137 +108,25 @@ const CompanyTerminology: React.FC = () => {
       </div>
       
       {isAdding && (
-        <Card className="mb-6">
-          <CardHeader className="pb-3">
-            <div className="flex justify-between items-center">
-              <CardTitle>مصطلح جديد</CardTitle>
-              <Button variant="ghost" size="sm" onClick={() => setIsAdding(false)}>
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="new-term">المصطلح</Label>
-                <Input 
-                  id="new-term"
-                  value={newTerm.term}
-                  onChange={(e) => setNewTerm({...newTerm, term: e.target.value})}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="new-category">التصنيف</Label>
-                <Input 
-                  id="new-category"
-                  value={newTerm.category}
-                  onChange={(e) => setNewTerm({...newTerm, category: e.target.value})}
-                  placeholder="مثال: العناية بالبشرة، مكونات، إلخ"
-                />
-              </div>
-              
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="new-definition">التعريف</Label>
-                <Textarea 
-                  id="new-definition"
-                  value={newTerm.definition}
-                  onChange={(e) => setNewTerm({...newTerm, definition: e.target.value})}
-                  rows={2}
-                />
-              </div>
-            </div>
-            
-            <div className="flex justify-end mt-4">
-              <Button onClick={handleAddNew}>حفظ المصطلح</Button>
-            </div>
-          </CardContent>
-        </Card>
+        <NewTermForm
+          newTerm={newTerm}
+          setNewTerm={setNewTerm}
+          onSave={handleAddNew}
+          onCancel={() => setIsAdding(false)}
+        />
       )}
       
-      <div className="space-y-8">
-        {categories.map(category => {
-          const categoryTerms = filteredTerms.filter(term => term.category === category);
-          if (categoryTerms.length === 0) return null;
-          
-          return (
-            <div key={category} className="space-y-3">
-              <h3 className="text-lg font-semibold">{category}</h3>
-              
-              <div className="grid md:grid-cols-2 gap-4">
-                {categoryTerms.map(term => (
-                  <Card key={term.id}>
-                    <CardContent className="p-4">
-                      {editingId === term.id ? (
-                        <div className="space-y-3">
-                          <div className="space-y-1">
-                            <Label htmlFor={`edit-term-${term.id}`}>المصطلح</Label>
-                            <Input 
-                              id={`edit-term-${term.id}`}
-                              value={editForm.term}
-                              onChange={(e) => setEditForm({...editForm, term: e.target.value})}
-                            />
-                          </div>
-                          
-                          <div className="space-y-1">
-                            <Label htmlFor={`edit-category-${term.id}`}>التصنيف</Label>
-                            <Input 
-                              id={`edit-category-${term.id}`}
-                              value={editForm.category}
-                              onChange={(e) => setEditForm({...editForm, category: e.target.value})}
-                            />
-                          </div>
-                          
-                          <div className="space-y-1">
-                            <Label htmlFor={`edit-definition-${term.id}`}>التعريف</Label>
-                            <Textarea 
-                              id={`edit-definition-${term.id}`}
-                              value={editForm.definition}
-                              onChange={(e) => setEditForm({...editForm, definition: e.target.value})}
-                              rows={2}
-                            />
-                          </div>
-                          
-                          <div className="flex justify-end gap-2 mt-2">
-                            <Button variant="ghost" size="sm" onClick={() => setEditingId(null)}>
-                              إلغاء
-                            </Button>
-                            <Button size="sm" onClick={() => handleSaveEdit(term.id)}>
-                              <Save className="h-3.5 w-3.5 mr-1" />
-                              حفظ
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <>
-                          <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-medium text-lg">{term.term}</h4>
-                            <div className="flex gap-1">
-                              <Button variant="ghost" size="sm" onClick={() => handleEdit(term)}>
-                                <Edit className="h-3.5 w-3.5" />
-                              </Button>
-                              <Button variant="ghost" size="sm" onClick={() => handleDelete(term.id)}>
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </Button>
-                            </div>
-                          </div>
-                          <p className="text-sm text-muted-foreground">{term.definition}</p>
-                        </>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-        
-        {filteredTerms.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">لم يتم العثور على مصطلحات</p>
-          </div>
-        )}
-      </div>
+      <TerminologyList 
+        terms={terms}
+        editingId={editingId}
+        editForm={editForm}
+        setEditForm={setEditForm}
+        onEdit={handleEdit}
+        onSave={handleSaveEdit}
+        onDelete={handleDelete}
+        onCancelEdit={() => setEditingId(null)}
+        searchTerm={searchTerm}
+      />
     </div>
   );
 };
