@@ -92,22 +92,24 @@ const UserManagement = () => {
 
       if (error) throw error;
 
-      // We need to get emails from auth.users, but we can't directly join them through the client
-      // So for now we'll just display profiles data
-      // In a real app, you'd either use a Supabase function to combine this data
-      // or handle this server-side
-      
-      const usersWithProfiles = profiles.map((profile) => ({
-        id: profile.id,
-        email: `user-${profile.id.substring(0, 6)}@example.com`, // Placeholder
-        first_name: profile.first_name,
-        last_name: profile.last_name,
-        avatar_url: profile.avatar_url,
-        role: profile.role || "user",
-        created_at: profile.created_at,
-      }));
-      
-      setUsers(usersWithProfiles);
+      if (profiles) {
+        // We need to get emails from auth.users, but we can't directly join them through the client
+        // So for now we'll just display profiles data
+        // In a real app, you'd either use a Supabase function to combine this data
+        // or handle this server-side
+        
+        const usersWithProfiles = profiles.map((profile) => ({
+          id: profile.id,
+          email: `user-${profile.id.substring(0, 6)}@example.com`, // Placeholder
+          first_name: profile.first_name,
+          last_name: profile.last_name,
+          avatar_url: profile.avatar_url,
+          role: profile.role || "user",
+          created_at: profile.created_at,
+        }));
+        
+        setUsers(usersWithProfiles);
+      }
     } catch (error) {
       console.error("Error fetching users:", error);
       toast({
@@ -159,7 +161,7 @@ const UserManagement = () => {
         
         fetchUsers();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error adding user:", error);
       toast({
         title: "خطأ",

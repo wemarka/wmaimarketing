@@ -29,6 +29,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import { UserCog, Mail, User, Shield, Key } from "lucide-react";
 
 // Define validation schema for profile form
@@ -69,7 +70,9 @@ interface ProfileData {
   first_name: string | null;
   last_name: string | null;
   avatar_url: string | null;
-  role: string;
+  role: string | null;
+  updated_at: string;
+  created_at: string;
 }
 
 const Profile = () => {
@@ -115,7 +118,7 @@ const Profile = () => {
         }
 
         if (profile) {
-          setProfileData(profile);
+          setProfileData(profile as ProfileData);
           profileForm.reset({
             first_name: profile.first_name || "",
             last_name: profile.last_name || "",

@@ -9,6 +9,27 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      permissions: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -16,6 +37,7 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
+          role: string | null
           updated_at: string
         }
         Insert: {
@@ -24,6 +46,7 @@ export type Database = {
           first_name?: string | null
           id: string
           last_name?: string | null
+          role?: string | null
           updated_at?: string
         }
         Update: {
@@ -32,7 +55,61 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
+          role?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      role_permissions: {
+        Row: {
+          created_at: string | null
+          id: string
+          permission_id: string | null
+          role_name: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          permission_id?: string | null
+          role_name: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          permission_id?: string | null
+          role_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_permissions_permission_id_fkey"
+            columns: ["permission_id"]
+            isOneToOne: false
+            referencedRelation: "permissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_activity_log: {
+        Row: {
+          activity_type: string
+          created_at: string | null
+          description: string
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          activity_type: string
+          created_at?: string | null
+          description: string
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string | null
+          description?: string
+          id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
