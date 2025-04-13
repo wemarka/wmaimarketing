@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AIOverview from "@/components/ai/AIOverview";
@@ -9,10 +9,41 @@ import VideoIdeaGenerator from "@/components/ai/VideoIdeaGenerator";
 import ContentAnalyzer from "@/components/ai/ContentAnalyzer";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion } from "framer-motion";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AIStudio: React.FC = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+  const location = useLocation();
+  const navigate = useNavigate();
   const { t } = useTranslation();
+  
+  // Get tab from URL query parameter or default to "overview"
+  const getTabFromQuery = () => {
+    const queryParams = new URLSearchParams(location.search);
+    const tab = queryParams.get("tab");
+    return tab && ["overview", "images", "content", "video", "analyzer"].includes(tab) 
+      ? tab 
+      : "overview";
+  };
+  
+  const [activeTab, setActiveTab] = useState(getTabFromQuery());
+  
+  // Update URL when tab changes
+  useEffect(() => {
+    const currentTab = getTabFromQuery();
+    if (currentTab !== activeTab) {
+      const searchParams = new URLSearchParams(location.search);
+      searchParams.set("tab", activeTab);
+      navigate({
+        pathname: location.pathname,
+        search: searchParams.toString()
+      }, { replace: true });
+    }
+  }, [activeTab, location, navigate]);
+  
+  // Update tab state when URL changes
+  useEffect(() => {
+    setActiveTab(getTabFromQuery());
+  }, [location]);
 
   const fadeVariants = {
     hidden: { opacity: 0, y: 10 },

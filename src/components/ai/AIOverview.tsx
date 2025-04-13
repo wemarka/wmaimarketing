@@ -1,12 +1,16 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Bot, Image, MessageSquare, Video, Zap } from "lucide-react";
 import AICapabilityCard from "./AICapabilityCard";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const AIOverview: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [activeCard, setActiveCard] = useState<number | null>(null);
   
   const capabilities = [
     {
@@ -14,30 +18,45 @@ const AIOverview: React.FC = () => {
       description: t("aiStudio.capabilities.contentEnhancement.description"),
       icon: MessageSquare,
       color: "text-blue-500",
-      badgeText: t("aiStudio.common.popular")
+      badgeText: t("aiStudio.common.popular"),
+      tabValue: "content"
     },
     {
       title: t("aiStudio.capabilities.imageGeneration.title"),
       description: t("aiStudio.capabilities.imageGeneration.description"),
       icon: Image,
-      color: "text-purple-500"
+      color: "text-purple-500",
+      tabValue: "images"
     },
     {
       title: t("aiStudio.capabilities.videoIdeas.title"),
       description: t("aiStudio.capabilities.videoIdeas.description"),
       icon: Video,
-      color: "text-red-500"
+      color: "text-red-500",
+      tabValue: "video"
     },
     {
       title: t("aiStudio.capabilities.performanceAnalysis.title"),
       description: t("aiStudio.capabilities.performanceAnalysis.description"),
       icon: Zap,
       color: "text-amber-500",
-      badgeText: t("aiStudio.common.comingSoon")
+      badgeText: t("aiStudio.common.comingSoon"),
+      tabValue: "analyzer"
     }
   ];
 
-  const container = {
+  const handleCardClick = (index: number) => {
+    if (capabilities[index].badgeText === t("aiStudio.common.comingSoon")) {
+      return;
+    }
+    setActiveCard(index);
+    setTimeout(() => {
+      navigate(`/ai-studio?tab=${capabilities[index].tabValue}`);
+    }, 300);
+  };
+
+  // Animation variants
+  const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -48,7 +67,7 @@ const AIOverview: React.FC = () => {
     }
   };
 
-  const item = {
+  const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
@@ -62,9 +81,9 @@ const AIOverview: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <motion.div 
-        className="flex flex-col gap-2 text-center"
+        className="flex flex-col gap-4 text-center"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -82,7 +101,7 @@ const AIOverview: React.FC = () => {
           <Bot className="h-8 w-8 text-beauty-gold" />
         </motion.div>
         <motion.h2 
-          className="text-2xl font-bold"
+          className="text-2xl md:text-3xl font-bold"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.4 }}
@@ -101,19 +120,34 @@ const AIOverview: React.FC = () => {
 
       <motion.div 
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8"
-        variants={container}
+        variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {capabilities.map((capability, index) => (
-          <motion.div key={index} variants={item}>
+          <motion.div 
+            key={index} 
+            variants={itemVariants}
+            animate={activeCard === index ? { scale: 0.95, opacity: 0.8 } : {}}
+          >
             <AICapabilityCard
               title={capability.title}
               description={capability.description}
               icon={capability.icon}
               color={capability.color}
               badgeText={capability.badgeText}
-            />
+              onClick={() => handleCardClick(index)}
+            >
+              {!capability.badgeText?.includes(t("aiStudio.common.comingSoon")) && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="w-full mt-2 text-sm"
+                >
+                  {t("aiStudio.common.tryNow")}
+                </Button>
+              )}
+            </AICapabilityCard>
           </motion.div>
         ))}
       </motion.div>

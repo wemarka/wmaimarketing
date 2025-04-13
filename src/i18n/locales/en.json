@@ -46,7 +46,8 @@
     },
     "common": {
       "popular": "Popular",
-      "comingSoon": "Coming Soon"
+      "comingSoon": "Coming Soon",
+      "tryNow": "Try Now"
     }
   }
 }

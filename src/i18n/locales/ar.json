@@ -46,7 +46,8 @@
     },
     "common": {
       "popular": "شائع",
-      "comingSoon": "قريبًا"
+      "comingSoon": "قريبًا",
+      "tryNow": "جرّب الآن"
     }
   }
 }
