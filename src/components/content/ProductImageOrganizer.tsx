@@ -1,13 +1,16 @@
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import ImageGallery from "./ImageGallery";
 import ImageColorAnalysis from "./ImageColorAnalysis";
-import AssetsLibrary from "./AssetsLibrary";
+import AssetsLibrary from "./assets-library/AssetsLibrary";
 import AutoImageAnalyzer from "./AutoImageAnalyzer";
 
 const ProductImageOrganizer: React.FC = () => {
+  const { t } = useTranslation();
+  
   return (
     <div>
       <div className="mb-6">
