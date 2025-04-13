@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from "react-router-dom";
-import { Bell, Settings, User, LogOut } from "lucide-react";
+import { Bell, Settings, User, LogOut, UserCog, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -57,10 +57,19 @@ const Header = () => {
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>حسابي</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>الملف الشخصي</span>
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile">
+                      <User className="ml-2 h-4 w-4" />
+                      <span>الملف الشخصي</span>
+                    </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/user-management">
+                      <UserCog className="ml-2 h-4 w-4" />
+                      <span>إدارة المستخدمين</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => signOut()}>
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>تسجيل الخروج</span>
