@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -75,40 +74,38 @@ const fetchAnalytics = async () => {
           
           <Card className="border-none shadow-md mb-6 overflow-hidden">
             <div className="bg-gradient-to-r from-beauty-purple to-beauty-lightpurple h-1"></div>
-            <TabsList className="w-full justify-start rounded-none bg-card p-0 h-auto border-b">
-              <TabsTrigger 
-                value="settings" 
-                onClick={() => setActiveTab("settings")}
-                className={`rounded-none border-b-2 px-6 py-3 data-[state=active]:border-beauty-purple data-[state=active]:bg-transparent ${activeTab === "settings" ? "border-beauty-purple" : "border-transparent"}`}
-              >
-                <Settings className="h-4 w-4 mr-2" />
-                الإعدادات العامة
-              </TabsTrigger>
-              <TabsTrigger 
-                value="social" 
-                onClick={() => setActiveTab("social")}
-                className={`rounded-none border-b-2 px-6 py-3 data-[state=active]:border-beauty-purple data-[state=active]:bg-transparent ${activeTab === "social" ? "border-beauty-purple" : "border-transparent"}`}
-              >
-                <Globe className="h-4 w-4 mr-2" />
-                منصات التواصل
-              </TabsTrigger>
-              <TabsTrigger 
-                value="api" 
-                onClick={() => setActiveTab("api")}
-                className={`rounded-none border-b-2 px-6 py-3 data-[state=active]:border-beauty-purple data-[state=active]:bg-transparent ${activeTab === "api" ? "border-beauty-purple" : "border-transparent"}`}
-              >
-                <Code className="h-4 w-4 mr-2" />
-                واجهة برمجة التطبيقات
-              </TabsTrigger>
-              <TabsTrigger 
-                value="webhooks" 
-                onClick={() => setActiveTab("webhooks")}
-                className={`rounded-none border-b-2 px-6 py-3 data-[state=active]:border-beauty-purple data-[state=active]:bg-transparent ${activeTab === "webhooks" ? "border-beauty-purple" : "border-transparent"}`}
-              >
-                <Webhook className="h-4 w-4 mr-2" />
-                Webhooks
-              </TabsTrigger>
-            </TabsList>
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="w-full justify-start rounded-none bg-card p-0 h-auto border-b">
+                <TabsTrigger 
+                  value="settings" 
+                  className={`rounded-none border-b-2 px-6 py-3 data-[state=active]:border-beauty-purple data-[state=active]:bg-transparent ${activeTab === "settings" ? "border-beauty-purple" : "border-transparent"}`}
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  الإعدادات العامة
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="social" 
+                  className={`rounded-none border-b-2 px-6 py-3 data-[state=active]:border-beauty-purple data-[state=active]:bg-transparent ${activeTab === "social" ? "border-beauty-purple" : "border-transparent"}`}
+                >
+                  <Globe className="h-4 w-4 mr-2" />
+                  منصات التواصل
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="api" 
+                  className={`rounded-none border-b-2 px-6 py-3 data-[state=active]:border-beauty-purple data-[state=active]:bg-transparent ${activeTab === "api" ? "border-beauty-purple" : "border-transparent"}`}
+                >
+                  <Code className="h-4 w-4 mr-2" />
+                  واجهة برمجة التطبيقات
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="webhooks" 
+                  className={`rounded-none border-b-2 px-6 py-3 data-[state=active]:border-beauty-purple data-[state=active]:bg-transparent ${activeTab === "webhooks" ? "border-beauty-purple" : "border-transparent"}`}
+                >
+                  <Webhook className="h-4 w-4 mr-2" />
+                  Webhooks
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </Card>
         </div>
         
@@ -386,7 +383,6 @@ const fetchAnalytics = async () => {
   );
 };
 
-// Component for social platform integration card
 const SocialPlatformCard = ({ 
   title, 
   isConnected, 
@@ -469,7 +465,6 @@ const SocialPlatformCard = ({
   );
 };
 
-// Component for webhook event item
 const WebhookEventItem = ({ 
   event, 
   isEnabled = true 
@@ -485,7 +480,6 @@ const WebhookEventItem = ({
   );
 };
 
-// Component for event log item
 const EventLogItem = ({
   event,
   timestamp,
