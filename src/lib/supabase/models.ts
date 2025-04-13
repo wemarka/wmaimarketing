@@ -2,16 +2,8 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 
-// النماذج الرئيسية للبيانات في التطبيق
-
-// نموذج المستخدم
-export interface UserProfile extends Tables<"profiles"> {
-  avatar_url: string | null;
-}
-
-// نموذج المنشور
-export interface Post {
-  id: string;
+// Extend the existing types from Supabase types
+export interface Post extends Tables<"posts"> {
   title: string;
   content: string;
   media_url: string[];
@@ -21,13 +13,9 @@ export interface Post {
   published_at: string | null;
   user_id: string;
   campaign_id: string | null;
-  created_at: string;
-  updated_at: string;
 }
 
-// نموذج الحملة
-export interface Campaign {
-  id: string;
+export interface Campaign extends Tables<"campaigns"> {
   name: string;
   description: string;
   start_date: string;
@@ -36,26 +24,18 @@ export interface Campaign {
   budget: number;
   target_audience: string[];
   user_id: string;
-  created_at: string;
-  updated_at: string;
 }
 
-// نموذج المنتج
-export interface Product {
-  id: string;
+export interface Product extends Tables<"products"> {
   name: string;
   description: string;
   category: string;
   image_url: string[];
   price: number;
   status: "active" | "inactive" | "archived";
-  created_at: string;
-  updated_at: string;
 }
 
-// نموذج الحساب الاجتماعي
-export interface SocialAccount {
-  id: string;
+export interface SocialAccount extends Tables<"social_accounts"> {
   platform: "instagram" | "facebook" | "tiktok" | "twitter";
   account_name: string;
   profile_name: string;
@@ -68,13 +48,9 @@ export interface SocialAccount {
     engagement: number;
     postCount: number;
   };
-  created_at: string;
-  updated_at: string;
 }
 
-// نموذج الأصول الإعلامية
-export interface MediaAsset {
-  id: string;
+export interface MediaAsset extends Tables<"media_assets"> {
   name: string;
   url: string;
   type: "image" | "video" | "audio";
@@ -85,13 +61,9 @@ export interface MediaAsset {
   folder_id: string | null;
   tags: string[];
   user_id: string;
-  created_at: string;
-  updated_at: string;
 }
 
-// واجهات للتعامل مع البيانات
-
-// جلب قائمة المنشورات
+// Fetch functions for each model
 export const fetchPosts = async (userId: string, status?: string) => {
   let query = supabase.from("posts").select("*").eq("user_id", userId);
   
@@ -105,7 +77,6 @@ export const fetchPosts = async (userId: string, status?: string) => {
   return data as Post[];
 };
 
-// جلب قائمة الحملات
 export const fetchCampaigns = async (userId: string, status?: string) => {
   let query = supabase.from("campaigns").select("*").eq("user_id", userId);
   
@@ -119,7 +90,6 @@ export const fetchCampaigns = async (userId: string, status?: string) => {
   return data as Campaign[];
 };
 
-// جلب قائمة المنتجات
 export const fetchProducts = async (status?: string) => {
   let query = supabase.from("products").select("*");
   
@@ -133,7 +103,6 @@ export const fetchProducts = async (status?: string) => {
   return data as Product[];
 };
 
-// جلب قائمة الحسابات الاجتماعية
 export const fetchSocialAccounts = async (userId: string) => {
   const { data, error } = await supabase
     .from("social_accounts")
@@ -145,7 +114,6 @@ export const fetchSocialAccounts = async (userId: string) => {
   return data as SocialAccount[];
 };
 
-// جلب قائمة الأصول الإعلامية
 export const fetchMediaAssets = async (userId: string, folderId?: string) => {
   let query = supabase.from("media_assets").select("*").eq("user_id", userId);
   

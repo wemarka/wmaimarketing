@@ -7,7 +7,24 @@ import OverviewTab from "@/components/documentation/OverviewTab";
 import PhasesTab from "@/components/documentation/PhasesTab";
 import TimelineTab from "@/components/documentation/TimelineTab";
 
-const Documentation = () => {
+interface ProjectHeaderProps {
+  title: string;
+  description: string;
+  version: string;
+  lastUpdated: string;
+}
+
+interface PhasesTabProps {
+  phases: {
+    id: number;
+    name: string;
+    status: string;
+    progress: number;
+    description: string;
+  }[];
+}
+
+const Documentation: React.FC = () => {
   const [currentTab, setCurrentTab] = useState("overview");
 
   // Project phases data
@@ -73,7 +90,7 @@ const Documentation = () => {
   return (
     <Layout>
       <div className="max-w-6xl mx-auto">
-        <ProjectHeader
+        <ProjectHeader 
           title="نظام إدارة التسويق والمحتوى للعلامة التجارية"
           description="توثيق شامل لمشروع منصة إدارة المحتوى والتسويق للعلامات التجارية الخاصة بمنتجات العناية والتجميل"
           version="1.7.0"
