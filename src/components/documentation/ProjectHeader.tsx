@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Calendar, Clock, CheckCircle2 } from "lucide-react";
+import { Calendar, Clock, CheckCircle2, Users, AlertCircle } from "lucide-react";
 
 const ProjectHeader: React.FC = () => {
   return (
@@ -21,16 +21,40 @@ const ProjectHeader: React.FC = () => {
           <Clock className="h-4 w-4" />
           <span>المدة المقدرة: ١٢-١٥ أسبوع</span>
         </div>
-        <div className="flex items-center gap-1.5 bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
-          <CheckCircle2 className="h-4 w-4" />
-          <span>المرحلة الحالية: إدارة المستخدمين</span>
+        <div className="flex items-center gap-1.5">
+          <Users className="h-4 w-4" />
+          <span>فريق التطوير: ٤ مطورين</span>
+        </div>
+        <div className="flex items-center gap-1.5 bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full">
+          <AlertCircle className="h-4 w-4" />
+          <span>أولوية المشروع: عالية</span>
+        </div>
+      </div>
+
+      <div className="bg-white p-3 rounded-lg border border-slate-100 flex items-center gap-3">
+        <div className="bg-green-100 text-green-700 p-2 rounded-full">
+          <CheckCircle2 className="h-5 w-5" />
+        </div>
+        <div>
+          <h3 className="font-medium">المرحلة الحالية: إدارة المستخدمين والصلاحيات الداخلية</h3>
+          <p className="text-sm text-muted-foreground">تطوير نظام إدارة المستخدمين، وإعداد صلاحيات الوصول للأدوار المختلفة</p>
         </div>
       </div>
       
-      <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-        <div className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" style={{ width: "30%" }}></div>
+      <div className="space-y-1">
+        <div className="flex justify-between text-sm mb-1">
+          <span className="text-muted-foreground">تقدم المشروع</span>
+          <span className="font-medium">٣٠٪</span>
+        </div>
+        <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" style={{ width: "30%" }}></div>
+        </div>
+        <div className="flex justify-between text-xs text-muted-foreground mt-1">
+          <span>المرحلة ١ (مكتملة)</span>
+          <span>المرحلة ٢ (قيد التنفيذ)</span>
+          <span>المراحل ٣-٧ (مخطط لها)</span>
+        </div>
       </div>
-      <div className="text-xs text-muted-foreground text-center">تم إنجاز ٣٠٪ من المشروع</div>
     </div>
   );
 };
