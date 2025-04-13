@@ -14,6 +14,7 @@ import Scheduler from "./pages/Scheduler";
 import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import Documentation from "./pages/Documentation";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const AppRouter = () => {
       <Route path="/video-generator" element={<ProtectedRoute><VideoGenerator /></ProtectedRoute>} />
       <Route path="/scheduler" element={<ProtectedRoute><Scheduler /></ProtectedRoute>} />
       <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+      <Route path="/documentation" element={<ProtectedRoute><Documentation /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
