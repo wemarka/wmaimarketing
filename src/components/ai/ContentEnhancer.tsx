@@ -39,7 +39,9 @@ const ContentEnhancer: React.FC<ContentEnhancerProps> = ({ initialContent = "", 
         body: { content, action, language }
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       setEnhancedContent(data.enhancedContent);
       toast({
@@ -50,7 +52,7 @@ const ContentEnhancer: React.FC<ContentEnhancerProps> = ({ initialContent = "", 
       console.error("Error enhancing content:", error);
       toast({
         title: "خطأ",
-        description: "حدث خطأ أثناء تحسين المحتوى",
+        description: `حدث خطأ أثناء تحسين المحتوى: ${error instanceof Error ? error.message : 'خطأ غير معروف'}`,
         variant: "destructive"
       });
     } finally {

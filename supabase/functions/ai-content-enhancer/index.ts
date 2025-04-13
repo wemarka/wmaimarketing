@@ -33,25 +33,29 @@ serve(async (req) => {
       );
     }
 
-    let prompt = "";
+    let systemPrompt = "أنت مساعد متخصص في تحسين المحتوى التسويقي وجعله أكثر إقناعاً وجاذبية للجمهور المستهدف في مجال التجميل ومستحضرات العناية بالبشرة. تقدم مساعدة باللغة العربية عند الطلب.";
+    let userPrompt = "";
     const lang = language || "Arabic";
 
     switch (action) {
       case "improve":
-        prompt = `تحسين النص التالي للتسويق وجعله أكثر جاذبية وإقناعاً (بنفس لغة النص الأصلي): "${content}"`;
+        userPrompt = `تحسين النص التسويقي التالي وجعله أكثر جاذبية وإقناعاً (بنفس لغة النص الأصلي): "${content}"`;
         break;
       case "summarize":
-        prompt = `تلخيص النص التالي مع الحفاظ على النقاط الرئيسية (بنفس لغة النص الأصلي): "${content}"`;
+        userPrompt = `تلخيص النص التسويقي التالي مع الحفاظ على النقاط الرئيسية والرسائل التسويقية الأساسية (بنفس لغة النص الأصلي): "${content}"`;
         break;
       case "hashtags":
-        prompt = `اقتراح 5-7 هاشتاغات مناسبة لمحتوى التسويق التالي باللغة ${lang}: "${content}"`;
+        userPrompt = `اقتراح 5-7 هاشتاغات مناسبة لمحتوى تسويقي لمنتجات التجميل التالي باللغة ${lang}: "${content}". قدم الهاشتاغات فقط بدون أي نص إضافي.`;
         break;
       case "translate":
-        prompt = `ترجمة النص التالي إلى اللغة ${lang} مع الحفاظ على المعنى والنبرة التسويقية: "${content}"`;
+        userPrompt = `ترجمة النص التسويقي التالي إلى اللغة ${lang} مع الحفاظ على المعنى والنبرة التسويقية المقنعة: "${content}"`;
         break;
       default:
-        prompt = `تحسين النص التالي للتسويق (بنفس لغة النص الأصلي): "${content}"`;
+        userPrompt = `تحسين النص التسويقي التالي (بنفس لغة النص الأصلي): "${content}"`;
     }
+
+    // Log the request for debugging
+    console.log(`Processing ${action} request for content length: ${content.length}`);
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -62,8 +66,8 @@ serve(async (req) => {
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
-          { role: 'system', content: 'أنت مساعد متخصص في تحسين المحتوى التسويقي وجعله أكثر إقناعاً وجاذبية للجمهور المستهدف. تقدم مساعدة باللغة العربية عند الطلب.' },
-          { role: 'user', content: prompt }
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
         ],
         temperature: 0.7,
       }),

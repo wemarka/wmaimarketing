@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -40,7 +39,9 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onImageGenerated }) => 
         body: { prompt, size, style }
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       setGeneratedImage(data.imageUrl);
       
@@ -56,7 +57,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onImageGenerated }) => 
       console.error("Error generating image:", error);
       toast({
         title: "خطأ",
-        description: "حدث خطأ أثناء إنشاء الصورة",
+        description: `حدث خطأ أثناء إنشاء الصورة: ${error instanceof Error ? error.message : 'خطأ غير معروف'}`,
         variant: "destructive"
       });
     } finally {
@@ -72,6 +73,11 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onImageGenerated }) => 
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      
+      toast({
+        title: "تم التحميل",
+        description: "تم تحميل الصورة بنجاح",
+      });
     }
   };
 
@@ -82,7 +88,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onImageGenerated }) => 
           <ImageIcon className="h-5 w-5 text-beauty-purple" />
           إنشاء صور بالذكاء الاصطناعي
         </CardTitle>
-        <CardDescription>إنشاء صور جذابة لمنتجات التجميل باستخدام الذكاء الاصطناعي</CardDescription>
+        <CardDescription>إنشاء صور جذابة لمنتجات التجميل باستخدام تقنية DALL-E 3</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -33,27 +33,27 @@ serve(async (req) => {
       );
     }
 
-    // تحضير وصف إضافي بناءً على الأسلوب المطلوب
+    // Prepare additional style description based on the requested style
     let styleDescription = "";
     switch (style) {
       case "glamour":
-        styleDescription = "في أسلوب فاخر وأنيق، صورة احترافية لمنتج تجميلي،";
+        styleDescription = "صورة فاخرة وأنيقة لمنتج تجميلي، بإضاءة احترافية، خلفية راقية،";
         break;
       case "natural":
-        styleDescription = "صورة طبيعية بإضاءة ناعمة لمنتج تجميلي، أسلوب طبيعي،";
+        styleDescription = "صورة طبيعية بإضاءة ناعمة لمنتج تجميلي، أسلوب بسيط وواقعي، خلفية هادئة،";
         break;
       case "vibrant":
-        styleDescription = "صورة نابضة بالحياة ذات ألوان زاهية لمنتج تجميلي،";
+        styleDescription = "صورة نابضة بالحياة ذات ألوان زاهية لمنتج تجميلي، خلفية عصرية جذابة،";
         break;
       default:
         styleDescription = "صورة احترافية لمنتج تجميلي،";
     }
 
-    // إعداد الوصف النهائي
-    const finalPrompt = `${styleDescription} ${prompt}`;
+    // Prepare final prompt
+    const finalPrompt = `${styleDescription} ${prompt}، تصوير عالي الجودة، صورة فوتوغرافية احترافية لعرض المنتج في أفضل صورة`;
     console.log("Generating image with prompt:", finalPrompt);
 
-    // استدعاء واجهة برمجة DALL-E
+    // Call DALL-E API
     const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
       headers: {
