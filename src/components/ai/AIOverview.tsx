@@ -2,34 +2,37 @@
 import React from "react";
 import { Bot, Image, MessageSquare, Video, Zap } from "lucide-react";
 import AICapabilityCard from "./AICapabilityCard";
+import { useTranslation } from "react-i18next";
 
 const AIOverview: React.FC = () => {
+  const { t } = useTranslation();
+  
   const capabilities = [
     {
-      title: "تحسين المحتوى",
-      description: "تحسين وتلخيص وترجمة النصوص التسويقية لمنتجات التجميل",
+      title: t("aiStudio.capabilities.contentEnhancement.title"),
+      description: t("aiStudio.capabilities.contentEnhancement.description"),
       icon: MessageSquare,
       color: "text-blue-500",
-      badgeText: "شائع"
+      badgeText: t("aiStudio.common.popular")
     },
     {
-      title: "توليد الصور",
-      description: "إنشاء صور احترافية لمنتجات التجميل باستخدام الذكاء الاصطناعي",
+      title: t("aiStudio.capabilities.imageGeneration.title"),
+      description: t("aiStudio.capabilities.imageGeneration.description"),
       icon: Image,
       color: "text-purple-500"
     },
     {
-      title: "أفكار الفيديو",
-      description: "إنشاء أفكار وسيناريوهات للمحتوى المرئي الترويجي",
+      title: t("aiStudio.capabilities.videoIdeas.title"),
+      description: t("aiStudio.capabilities.videoIdeas.description"),
       icon: Video,
       color: "text-red-500"
     },
     {
-      title: "تحليل الأداء",
-      description: "تحليل أداء المحتوى التسويقي وتقديم توصيات للتحسين",
+      title: t("aiStudio.capabilities.performanceAnalysis.title"),
+      description: t("aiStudio.capabilities.performanceAnalysis.description"),
       icon: Zap,
       color: "text-amber-500",
-      badgeText: "قريباً"
+      badgeText: t("aiStudio.common.comingSoon")
     }
   ];
 
@@ -39,9 +42,9 @@ const AIOverview: React.FC = () => {
         <div className="mx-auto bg-muted/50 p-3 rounded-full">
           <Bot className="h-8 w-8 text-beauty-gold" />
         </div>
-        <h2 className="text-2xl font-bold">مرحباً بك في استوديو الذكاء الاصطناعي</h2>
+        <h2 className="text-2xl font-bold">{t("aiStudio.overview.welcome")}</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          استخدم قدرات الذكاء الاصطناعي لتسريع وتحسين إنشاء المحتوى التسويقي لمنتجات التجميل
+          {t("aiStudio.overview.subtitle")}
         </p>
       </div>
 

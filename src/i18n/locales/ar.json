@@ -1,5 +1,76 @@
 
 {
+  "common": {
+    "textDirection": "rtl",
+    "copy": "نسخ",
+    "save": "حفظ"
+  },
+  "aiStudio": {
+    "title": "استوديو الذكاء الاصطناعي",
+    "description": "إنشاء وتحسين وتحليل المحتوى باستخدام الذكاء الاصطناعي",
+    "tabs": {
+      "overview": "نظرة عامة",
+      "images": "إنشاء الصور",
+      "content": "تحسين المحتوى",
+      "video": "أفكار فيديو",
+      "analyzer": "تحليل المحتوى"
+    },
+    "overview": {
+      "welcome": "مرحباً بك في استوديو الذكاء الاصطناعي",
+      "subtitle": "استخدم قدرات الذكاء الاصطناعي لتسريع وتحسين إنشاء المحتوى التسويقي لمنتجات التجميل"
+    },
+    "common": {
+      "popular": "شائع",
+      "comingSoon": "قريباً",
+      "copy": "نسخ",
+      "generate": "إنشاء",
+      "processing": "جاري المعالجة..."
+    },
+    "capabilities": {
+      "contentEnhancement": {
+        "title": "تحسين المحتوى",
+        "description": "تحسين وتلخيص وترجمة النصوص التسويقية لمنتجات التجميل"
+      },
+      "imageGeneration": {
+        "title": "توليد الصور",
+        "description": "إنشاء صور احترافية لمنتجات التجميل باستخدام الذكاء الاصطناعي"
+      },
+      "videoIdeas": {
+        "title": "أفكار الفيديو",
+        "description": "إنشاء أفكار وسيناريوهات للمحتوى المرئي الترويجي"
+      },
+      "performanceAnalysis": {
+        "title": "تحليل الأداء",
+        "description": "تحليل أداء المحتوى التسويقي وتقديم توصيات للتحسين"
+      }
+    },
+    "videoIdeas": {
+      "ideaTitle": "فكرة الفيديو",
+      "copied": "تم النسخ",
+      "copiedDescription": "تم نسخ فكرة الفيديو إلى الحافظة",
+      "placeholder": "فكرة الفيديو ستظهر هنا"
+    },
+    "contentEnhancer": {
+      "enhancedContent": "المحتوى المحسن",
+      "copied": "تم النسخ",
+      "copiedDescription": "تم نسخ المحتوى المحسن إلى الحافظة",
+      "use": "استخدام",
+      "placeholder": "المحتوى المحسن سيظهر هنا"
+    },
+    "contentAnalyzer": {
+      "analysisResult": "نتيجة التحليل",
+      "copied": "تم النسخ",
+      "copiedDescription": "تم نسخ نتيجة التحليل إلى الحافظة",
+      "analyzing": "جارٍ تحليل المحتوى...",
+      "placeholder": "نتيجة التحليل ستظهر هنا"
+    },
+    "errors": {
+      "apiKeyError": "خطأ في مفتاح API",
+      "apiKeyErrorDescription": "مفتاح OpenAI API غير صالح أو استنفد الرصيد المتاح. يرجى التحقق من حساب OpenAI الخاص بك وتحديث المفتاح.",
+      "systemError": "خطأ في النظام",
+      "serverErrorDescription": "حدث خطأ في الخادم. يرجى المحاولة مرة أخرى لاحقًا أو التحقق من تكوين النظام."
+    }
+  },
   "assetsLibrary": {
     "title": "مكتبة الأصول البصرية",
     "description": "تنظيم وتحليل وإدارة الأصول البصرية",

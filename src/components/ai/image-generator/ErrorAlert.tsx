@@ -2,6 +2,7 @@
 import React from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface ErrorAlertProps {
   errorMessage: string | null;
@@ -9,6 +10,8 @@ interface ErrorAlertProps {
 }
 
 const ErrorAlert: React.FC<ErrorAlertProps> = ({ errorMessage, showOnlyBillingErrors = true }) => {
+  const { t } = useTranslation();
+  
   if (!errorMessage) return null;
   
   const isBillingError = errorMessage.includes("billing") || 
@@ -26,13 +29,13 @@ const ErrorAlert: React.FC<ErrorAlertProps> = ({ errorMessage, showOnlyBillingEr
     <Alert variant="destructive" className="mb-4">
       <AlertCircle className="h-4 w-4" />
       <AlertTitle>
-        {isBillingError ? "خطأ في مفتاح API" : "خطأ في النظام"}
+        {isBillingError ? t("aiStudio.errors.apiKeyError") : t("aiStudio.errors.systemError")}
       </AlertTitle>
       <AlertDescription>
         {isBillingError 
-          ? "مفتاح OpenAI API غير صالح أو استنفد الرصيد المتاح. يرجى التحقق من حساب OpenAI الخاص بك وتحديث المفتاح."
+          ? t("aiStudio.errors.apiKeyErrorDescription")
           : isServerError
-            ? "حدث خطأ في الخادم. يرجى المحاولة مرة أخرى لاحقًا أو التحقق من تكوين النظام."
+            ? t("aiStudio.errors.serverErrorDescription")
             : errorMessage}
       </AlertDescription>
     </Alert>

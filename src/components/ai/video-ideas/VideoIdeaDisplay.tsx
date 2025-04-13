@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface VideoIdeaDisplayProps {
   videoIdea: string | null;
@@ -14,13 +15,14 @@ const VideoIdeaDisplay: React.FC<VideoIdeaDisplayProps> = ({
   errorMessage
 }) => {
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const handleCopy = () => {
     if (videoIdea) {
       navigator.clipboard.writeText(videoIdea);
       toast({
-        title: "تم النسخ",
-        description: "تم نسخ فكرة الفيديو إلى الحافظة",
+        title: t("aiStudio.videoIdeas.copied"),
+        description: t("aiStudio.videoIdeas.copiedDescription"),
       });
     }
   };
@@ -28,11 +30,11 @@ const VideoIdeaDisplay: React.FC<VideoIdeaDisplayProps> = ({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium">فكرة الفيديو</h3>
+        <h3 className="text-sm font-medium">{t("aiStudio.videoIdeas.ideaTitle")}</h3>
         {videoIdea && (
           <Button variant="outline" size="sm" onClick={handleCopy}>
-            <Copy className="ml-1 h-3 w-3" />
-            نسخ
+            <Copy className={`${t("common.textDirection") === "rtl" ? "ml-1" : "mr-1"} h-3 w-3`} />
+            {t("aiStudio.common.copy")}
           </Button>
         )}
       </div>
@@ -43,7 +45,7 @@ const VideoIdeaDisplay: React.FC<VideoIdeaDisplayProps> = ({
         ) : videoIdea ? (
           <div className="text-sm whitespace-pre-wrap">{videoIdea}</div>
         ) : (
-          <p className="text-muted-foreground text-center">فكرة الفيديو ستظهر هنا</p>
+          <p className="text-muted-foreground text-center">{t("aiStudio.videoIdeas.placeholder")}</p>
         )}
       </div>
     </div>

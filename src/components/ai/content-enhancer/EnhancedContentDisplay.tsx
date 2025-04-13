@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Check, Copy } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface EnhancedContentDisplayProps {
   enhancedContent: string;
@@ -16,29 +17,30 @@ const EnhancedContentDisplay: React.FC<EnhancedContentDisplayProps> = ({
   onSave
 }) => {
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const handleCopy = () => {
     navigator.clipboard.writeText(enhancedContent);
     toast({
-      title: "تم النسخ",
-      description: "تم نسخ المحتوى المحسن إلى الحافظة",
+      title: t("aiStudio.contentEnhancer.copied"),
+      description: t("aiStudio.contentEnhancer.copiedDescription"),
     });
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium">المحتوى المحسن</h3>
+        <h3 className="text-sm font-medium">{t("aiStudio.contentEnhancer.enhancedContent")}</h3>
         {enhancedContent && (
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={handleCopy}>
-              <Copy className="ml-1 h-3 w-3" />
-              نسخ
+              <Copy className={`${t("common.textDirection") === "rtl" ? "ml-1" : "mr-1"} h-3 w-3`} />
+              {t("aiStudio.common.copy")}
             </Button>
             {onSave && (
               <Button size="sm" onClick={onSave}>
-                <Check className="ml-1 h-3 w-3" />
-                استخدام
+                <Check className={`${t("common.textDirection") === "rtl" ? "ml-1" : "mr-1"} h-3 w-3`} />
+                {t("aiStudio.contentEnhancer.use")}
               </Button>
             )}
           </div>
@@ -51,7 +53,7 @@ const EnhancedContentDisplay: React.FC<EnhancedContentDisplayProps> = ({
         ) : enhancedContent ? (
           <div className="text-sm whitespace-pre-wrap">{enhancedContent}</div>
         ) : (
-          <p className="text-muted-foreground text-center">المحتوى المحسن سيظهر هنا</p>
+          <p className="text-muted-foreground text-center">{t("aiStudio.contentEnhancer.placeholder")}</p>
         )}
       </div>
     </div>

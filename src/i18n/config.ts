@@ -10,6 +10,7 @@ const savedLanguage = localStorage.getItem('language') || 'en';
 
 // Set document direction for RTL/LTR support
 document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+document.documentElement.lang = savedLanguage;
 
 const resources = {
   en: {
@@ -36,6 +37,7 @@ i18n.on('languageChanged', (lng) => {
   localStorage.setItem('language', lng);
   // Update document direction for RTL/LTR support
   document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
+  document.documentElement.lang = lng;
 });
 
 export default i18n;

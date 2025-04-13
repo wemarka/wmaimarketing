@@ -1,5 +1,76 @@
 
 {
+  "common": {
+    "textDirection": "ltr",
+    "copy": "Copy",
+    "save": "Save"
+  },
+  "aiStudio": {
+    "title": "AI Studio",
+    "description": "Create, enhance, and analyze content with AI",
+    "tabs": {
+      "overview": "Overview",
+      "images": "Generate Images",
+      "content": "Enhance Content",
+      "video": "Video Ideas",
+      "analyzer": "Content Analyzer"
+    },
+    "overview": {
+      "welcome": "Welcome to AI Studio",
+      "subtitle": "Use AI capabilities to accelerate and improve marketing content creation for beauty products"
+    },
+    "common": {
+      "popular": "Popular",
+      "comingSoon": "Coming Soon",
+      "copy": "Copy",
+      "generate": "Generate",
+      "processing": "Processing..."
+    },
+    "capabilities": {
+      "contentEnhancement": {
+        "title": "Content Enhancement",
+        "description": "Improve, summarize, and translate marketing text for beauty products"
+      },
+      "imageGeneration": {
+        "title": "Image Generation",
+        "description": "Create professional images for beauty products using AI"
+      },
+      "videoIdeas": {
+        "title": "Video Ideas",
+        "description": "Generate ideas and scripts for promotional video content"
+      },
+      "performanceAnalysis": {
+        "title": "Performance Analysis",
+        "description": "Analyze marketing content performance and provide improvement recommendations"
+      }
+    },
+    "videoIdeas": {
+      "ideaTitle": "Video Idea",
+      "copied": "Copied",
+      "copiedDescription": "Video idea copied to clipboard",
+      "placeholder": "Video idea will appear here"
+    },
+    "contentEnhancer": {
+      "enhancedContent": "Enhanced Content",
+      "copied": "Copied",
+      "copiedDescription": "Enhanced content copied to clipboard",
+      "use": "Use",
+      "placeholder": "Enhanced content will appear here"
+    },
+    "contentAnalyzer": {
+      "analysisResult": "Analysis Result",
+      "copied": "Copied",
+      "copiedDescription": "Analysis result copied to clipboard",
+      "analyzing": "Analyzing content...",
+      "placeholder": "Analysis result will appear here"
+    },
+    "errors": {
+      "apiKeyError": "API Key Error",
+      "apiKeyErrorDescription": "OpenAI API key is invalid or has exhausted its quota. Please check your OpenAI account and update the key.",
+      "systemError": "System Error",
+      "serverErrorDescription": "A server error occurred. Please try again later or check the system configuration."
+    }
+  },
   "assetsLibrary": {
     "title": "Visual Assets Library",
     "description": "Organize, analyze and manage visual assets",

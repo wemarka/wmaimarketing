@@ -7,9 +7,11 @@ import ImageGenerator from "@/components/ai/ImageGenerator";
 import ContentEnhancer from "@/components/ai/ContentEnhancer";
 import VideoIdeaGenerator from "@/components/ai/VideoIdeaGenerator";
 import ContentAnalyzer from "@/components/ai/ContentAnalyzer";
+import { useTranslation } from "react-i18next";
 
 const AIStudio: React.FC = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const { t } = useTranslation();
 
   return (
     <Layout>
@@ -21,11 +23,11 @@ const AIStudio: React.FC = () => {
           className="w-full"
         >
           <TabsList className="mb-6 flex flex-wrap justify-center">
-            <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
-            <TabsTrigger value="images">إنشاء الصور</TabsTrigger>
-            <TabsTrigger value="content">تحسين المحتوى</TabsTrigger>
-            <TabsTrigger value="video">أفكار فيديو</TabsTrigger>
-            <TabsTrigger value="analyzer">تحليل المحتوى</TabsTrigger>
+            <TabsTrigger value="overview">{t("aiStudio.tabs.overview")}</TabsTrigger>
+            <TabsTrigger value="images">{t("aiStudio.tabs.images")}</TabsTrigger>
+            <TabsTrigger value="content">{t("aiStudio.tabs.content")}</TabsTrigger>
+            <TabsTrigger value="video">{t("aiStudio.tabs.video")}</TabsTrigger>
+            <TabsTrigger value="analyzer">{t("aiStudio.tabs.analyzer")}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview">
