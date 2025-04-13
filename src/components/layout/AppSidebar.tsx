@@ -12,10 +12,8 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupContent,
-  SidebarSeparator,
-  SidebarTrigger
+  SidebarSeparator
 } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { 
@@ -27,49 +25,48 @@ import {
   CalendarDays, 
   BarChart,
   FileQuestion,
-  Settings,
   User,
   Users,
   Database,
   Sparkles,
-  HelpCircle,
-  LogOut
+  LogOut,
+  Crown
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 const AppSidebar = () => {
   const { signOut } = useAuth();
 
   // Navigation items grouped by category
   const mainNavItems = [
-    { id: 'dashboard', to: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" />, label: "لوحة التحكم" },
-    { id: 'image-upload', to: "/image-upload", icon: <Upload className="h-5 w-5" />, label: "تحليل الصور" },
-    { id: 'ad-generator', to: "/ad-generator", icon: <Image className="h-5 w-5" />, label: "منشئ الإعلانات" },
-    { id: 'content-creator', to: "/content-creator", icon: <FileText className="h-5 w-5" />, label: "منشئ المحتوى" },
+    { id: 'dashboard', to: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" />, label: "لوحة التحكم", tooltip: "الصفحة الرئيسية" },
+    { id: 'image-upload', to: "/image-upload", icon: <Upload className="h-5 w-5" />, label: "تحليل الصور", tooltip: "تحليل صور المنتجات" },
+    { id: 'ad-generator', to: "/ad-generator", icon: <Image className="h-5 w-5" />, label: "منشئ الإعلانات", tooltip: "إنشاء إعلانات جذابة" },
+    { id: 'content-creator', to: "/content-creator", icon: <FileText className="h-5 w-5" />, label: "منشئ المحتوى", tooltip: "إنشاء محتوى متميز" },
   ];
 
   const mediaNavItems = [
-    { id: 'video-generator', to: "/video-generator", icon: <Video className="h-5 w-5" />, label: "منشئ الفيديو" },
-    { id: 'scheduler', to: "/scheduler", icon: <CalendarDays className="h-5 w-5" />, label: "الجدولة والنشر" },
-    { id: 'analytics', to: "/analytics", icon: <BarChart className="h-5 w-5" />, label: "التحليلات" },
+    { id: 'video-generator', to: "/video-generator", icon: <Video className="h-5 w-5" />, label: "منشئ الفيديو", tooltip: "إنشاء فيديوهات احترافية" },
+    { id: 'scheduler', to: "/scheduler", icon: <CalendarDays className="h-5 w-5" />, label: "الجدولة والنشر", tooltip: "جدولة المحتوى ونشره" },
+    { id: 'analytics', to: "/analytics", icon: <BarChart className="h-5 w-5" />, label: "التحليلات", tooltip: "تحليل أداء المحتوى" },
   ];
 
   const managementNavItems = [
-    { id: 'profile', to: "/profile", icon: <User className="h-5 w-5" />, label: "الملف الشخصي" },
-    { id: 'users', to: "/users", icon: <Users className="h-5 w-5" />, label: "إدارة المستخدمين" },
-    { id: 'integration', to: "/integration", icon: <Database className="h-5 w-5" />, label: "التكاملات" },
+    { id: 'profile', to: "/profile", icon: <User className="h-5 w-5" />, label: "الملف الشخصي", tooltip: "إدارة حسابك" },
+    { id: 'users', to: "/users", icon: <Users className="h-5 w-5" />, label: "إدارة المستخدمين", tooltip: "إدارة فريق العمل" },
+    { id: 'integration', to: "/integration", icon: <Database className="h-5 w-5" />, label: "التكاملات", tooltip: "ربط مع خدمات أخرى" },
   ];
 
   return (
     <Sidebar variant="inset">
       <SidebarHeader className="flex h-14 items-center px-4">
         <div className="flex items-center">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-beauty-pink to-beauty-lightpurple"></div>
+          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-beauty-pink to-beauty-lightpurple flex items-center justify-center">
+            <Crown className="h-4 w-4 text-white" />
+          </div>
           <span className="mr-2 text-xl font-semibold">Beauty AI</span>
-        </div>
-        
-        <div className="ml-auto">
-          <SidebarTrigger />
         </div>
       </SidebarHeader>
       
@@ -85,9 +82,12 @@ const AppSidebar = () => {
                       {({ isActive }) => (
                         <SidebarMenuButton
                           isActive={isActive}
-                          tooltip={item.label}
+                          tooltip={item.tooltip}
                         >
-                          {item.icon}
+                          <span className={cn(
+                            "transition-all",
+                            isActive ? "text-primary" : "text-muted-foreground"
+                          )}>{item.icon}</span>
                           <span className="mr-2">{item.label}</span>
                         </SidebarMenuButton>
                       )}
@@ -110,9 +110,12 @@ const AppSidebar = () => {
                       {({ isActive }) => (
                         <SidebarMenuButton
                           isActive={isActive}
-                          tooltip={item.label}
+                          tooltip={item.tooltip}
                         >
-                          {item.icon}
+                          <span className={cn(
+                            "transition-all",
+                            isActive ? "text-primary" : "text-muted-foreground"
+                          )}>{item.icon}</span>
                           <span className="mr-2">{item.label}</span>
                         </SidebarMenuButton>
                       )}
@@ -135,9 +138,12 @@ const AppSidebar = () => {
                       {({ isActive }) => (
                         <SidebarMenuButton
                           isActive={isActive}
-                          tooltip={item.label}
+                          tooltip={item.tooltip}
                         >
-                          {item.icon}
+                          <span className={cn(
+                            "transition-all",
+                            isActive ? "text-primary" : "text-muted-foreground"
+                          )}>{item.icon}</span>
                           <span className="mr-2">{item.label}</span>
                         </SidebarMenuButton>
                       )}
@@ -159,7 +165,7 @@ const AppSidebar = () => {
                     {({ isActive }) => (
                       <SidebarMenuButton
                         isActive={isActive}
-                        tooltip="خطة المشروع"
+                        tooltip="خطة المشروع والتوثيق"
                       >
                         <FileQuestion className="h-5 w-5" />
                         <span className="mr-2">خطة المشروع</span>
@@ -178,6 +184,7 @@ const AppSidebar = () => {
                       >
                         <Sparkles className="h-5 w-5 text-beauty-gold" />
                         <span className="mr-2 font-medium bg-gradient-to-r from-beauty-gold to-beauty-pink bg-clip-text text-transparent">استوديو الذكاء الاصطناعي</span>
+                        <Badge className="mr-auto bg-beauty-gold/20 text-beauty-gold hover:bg-beauty-gold/30" variant="outline">جديد</Badge>
                       </SidebarMenuButton>
                     )}
                   </NavLink>

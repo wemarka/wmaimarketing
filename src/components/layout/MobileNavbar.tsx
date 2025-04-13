@@ -37,7 +37,7 @@ const MobileNavbar = () => {
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 border-t bg-background/90 backdrop-blur-sm lg:hidden">
-      <ScrollArea className="w-full" orientation="horizontal">
+      <ScrollArea className="w-full" scrollHideDelay={0}>
         <nav className="flex h-16 items-center justify-between px-2">
           {navItems.map((item, index) => (
             <NavItem 

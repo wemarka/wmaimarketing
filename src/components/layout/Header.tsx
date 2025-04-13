@@ -1,20 +1,13 @@
 
 import React from 'react';
-import { Bell, Settings } from "lucide-react";
+import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import LanguageToggle from "@/components/common/LanguageToggle";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Link, useLocation } from "react-router-dom";
 import { Separator } from '@/components/ui/separator';
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 const Header = () => {
   const { user } = useAuth();
@@ -49,6 +42,9 @@ const Header = () => {
     <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-4">
+          <div className="md:hidden">
+            <SidebarTrigger />
+          </div>
           <h1 className="text-xl font-semibold bg-gradient-to-r from-beauty-purple to-beauty-pink bg-clip-text text-transparent">
             {getPageTitle()}
           </h1>

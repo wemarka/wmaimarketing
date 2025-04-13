@@ -1,7 +1,7 @@
 
 import React from "react";
 import Header from "./Header";
-import { SidebarProvider, SidebarTrigger, SidebarRail, SidebarInset } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarRail, SidebarInset } from "@/components/ui/sidebar";
 import AppSidebar from "./AppSidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileNavbar from "./MobileNavbar";
