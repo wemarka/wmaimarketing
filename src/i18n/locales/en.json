@@ -13,5 +13,40 @@
       "management": "Management",
       "documentation": "Documentation"
     }
+  },
+  "aiStudio": {
+    "overview": {
+      "welcome": "Welcome to AI Studio",
+      "subtitle": "Explore our AI-powered tools to enhance your content creation and analysis"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "images": "Image Generator",
+      "content": "Content Enhancer",
+      "video": "Video Ideas",
+      "analyzer": "Content Analyzer"
+    },
+    "capabilities": {
+      "contentEnhancement": {
+        "title": "Content Enhancement",
+        "description": "Improve your written content with AI suggestions and refinements"
+      },
+      "imageGeneration": {
+        "title": "Image Generation",
+        "description": "Create stunning images from text descriptions"
+      },
+      "videoIdeas": {
+        "title": "Video Ideas",
+        "description": "Generate creative concepts for your next video project"
+      },
+      "performanceAnalysis": {
+        "title": "Performance Analysis",
+        "description": "Analyze content performance and get AI-powered recommendations"
+      }
+    },
+    "common": {
+      "popular": "Popular",
+      "comingSoon": "Coming Soon"
+    }
   }
 }

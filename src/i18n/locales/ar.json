@@ -13,5 +13,40 @@
       "management": "الإدارة",
       "documentation": "التوثيق"
     }
+  },
+  "aiStudio": {
+    "overview": {
+      "welcome": "مرحبًا بك في استوديو الذكاء الاصطناعي",
+      "subtitle": "استكشف أدواتنا المدعومة بالذكاء الاصطناعي لتعزيز إنشاء المحتوى وتحليله"
+    },
+    "tabs": {
+      "overview": "نظرة عامة",
+      "images": "مولد الصور",
+      "content": "محسن المحتوى",
+      "video": "أفكار الفيديو",
+      "analyzer": "محلل المحتوى"
+    },
+    "capabilities": {
+      "contentEnhancement": {
+        "title": "تحسين المحتوى",
+        "description": "تحسين المحتوى المكتوب باقتراحات وتحسينات الذكاء الاصطناعي"
+      },
+      "imageGeneration": {
+        "title": "إنشاء الصور",
+        "description": "إنشاء صور مذهلة من وصف نصي"
+      },
+      "videoIdeas": {
+        "title": "أفكار الفيديو",
+        "description": "توليد أفكار إبداعية لمشروع الفيديو التالي"
+      },
+      "performanceAnalysis": {
+        "title": "تحليل الأداء",
+        "description": "تحليل أداء المحتوى والحصول على توصيات مدعومة بالذكاء الاصطناعي"
+      }
+    },
+    "common": {
+      "popular": "شائع",
+      "comingSoon": "قريبًا"
+    }
   }
 }

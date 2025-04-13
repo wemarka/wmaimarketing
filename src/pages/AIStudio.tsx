@@ -8,57 +8,123 @@ import ContentEnhancer from "@/components/ai/ContentEnhancer";
 import VideoIdeaGenerator from "@/components/ai/VideoIdeaGenerator";
 import ContentAnalyzer from "@/components/ai/ContentAnalyzer";
 import { useTranslation } from "react-i18next";
+import { AnimatePresence, motion } from "framer-motion";
 
 const AIStudio: React.FC = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const { t } = useTranslation();
 
+  const fadeVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+    exit: { opacity: 0, y: -5, transition: { duration: 0.2 } }
+  };
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+  };
+
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
+      <motion.div 
+        className="max-w-7xl mx-auto px-4 py-8 space-y-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         <Tabs 
           defaultValue="overview" 
           value={activeTab}
-          onValueChange={setActiveTab}
+          onValueChange={handleTabChange}
           className="w-full"
         >
-          <TabsList className="mb-6 flex flex-wrap justify-center">
-            <TabsTrigger value="overview">{t("aiStudio.tabs.overview")}</TabsTrigger>
-            <TabsTrigger value="images">{t("aiStudio.tabs.images")}</TabsTrigger>
-            <TabsTrigger value="content">{t("aiStudio.tabs.content")}</TabsTrigger>
-            <TabsTrigger value="video">{t("aiStudio.tabs.video")}</TabsTrigger>
-            <TabsTrigger value="analyzer">{t("aiStudio.tabs.analyzer")}</TabsTrigger>
-          </TabsList>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+          >
+            <TabsList className="mb-6 flex flex-wrap justify-center">
+              <TabsTrigger value="overview">{t("aiStudio.tabs.overview")}</TabsTrigger>
+              <TabsTrigger value="images">{t("aiStudio.tabs.images")}</TabsTrigger>
+              <TabsTrigger value="content">{t("aiStudio.tabs.content")}</TabsTrigger>
+              <TabsTrigger value="video">{t("aiStudio.tabs.video")}</TabsTrigger>
+              <TabsTrigger value="analyzer">{t("aiStudio.tabs.analyzer")}</TabsTrigger>
+            </TabsList>
+          </motion.div>
           
-          <TabsContent value="overview">
-            <AIOverview />
-          </TabsContent>
-          
-          <TabsContent value="images">
-            <div className="animate-in fade-in duration-300">
-              <ImageGenerator />
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="content">
-            <div className="animate-in fade-in duration-300">
-              <ContentEnhancer />
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="video">
-            <div className="animate-in fade-in duration-300">
-              <VideoIdeaGenerator />
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="analyzer">
-            <div className="animate-in fade-in duration-300">
-              <ContentAnalyzer />
-            </div>
-          </TabsContent>
+          <AnimatePresence mode="wait">
+            {activeTab === "overview" && (
+              <TabsContent value="overview" forceMount>
+                <motion.div
+                  key="overview"
+                  variants={fadeVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <AIOverview />
+                </motion.div>
+              </TabsContent>
+            )}
+            
+            {activeTab === "images" && (
+              <TabsContent value="images" forceMount>
+                <motion.div
+                  key="images"
+                  variants={fadeVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <ImageGenerator />
+                </motion.div>
+              </TabsContent>
+            )}
+            
+            {activeTab === "content" && (
+              <TabsContent value="content" forceMount>
+                <motion.div
+                  key="content"
+                  variants={fadeVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <ContentEnhancer />
+                </motion.div>
+              </TabsContent>
+            )}
+            
+            {activeTab === "video" && (
+              <TabsContent value="video" forceMount>
+                <motion.div
+                  key="video"
+                  variants={fadeVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <VideoIdeaGenerator />
+                </motion.div>
+              </TabsContent>
+            )}
+            
+            {activeTab === "analyzer" && (
+              <TabsContent value="analyzer" forceMount>
+                <motion.div
+                  key="analyzer"
+                  variants={fadeVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <ContentAnalyzer />
+                </motion.div>
+              </TabsContent>
+            )}
+          </AnimatePresence>
         </Tabs>
-      </div>
+      </motion.div>
     </Layout>
   );
 };

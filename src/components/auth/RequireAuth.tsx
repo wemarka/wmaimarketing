@@ -4,6 +4,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from '@/hooks/use-toast';
 
 interface RequireAuthProps {
   children: ReactNode;
@@ -22,7 +23,7 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
     console.log("RequireAuth - User:", user ? "authenticated" : "not authenticated");
   }, [loading, user]);
 
-  // Safety timeout to prevent infinite loading
+  // Handle loading state and timing
   useEffect(() => {
     if (loading) {
       const startTime = Date.now();
@@ -30,9 +31,28 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
         const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
         setLoadingTime(elapsedTime);
         
-        // After 1.5 seconds show redirect message
-        if (elapsedTime >= 1.5) {
+        // Show redirect message sooner (after 1 second)
+        if (elapsedTime >= 1) {
           setShowRedirectMessage(true);
+        }
+        
+        // Safety timeout to avoid infinite loading (after 3 seconds)
+        if (elapsedTime >= 3) {
+          console.log("RequireAuth - Safety timeout reached, forcing redirect");
+          clearInterval(timer);
+          setLoadingTime(0);
+          setShowRedirectMessage(false);
+          
+          // Show toast notification about timeout
+          toast({
+            title: "Session verification timeout",
+            description: "Please try refreshing the page if this persists",
+            variant: "destructive",
+            duration: 5000,
+          });
+          
+          // Force redirect to auth page
+          window.location.href = '/auth';
         }
       }, 500);
       
@@ -60,10 +80,22 @@ const RequireAuth = ({ children }: RequireAuthProps) => {
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
             />
-            <p className="mt-4 text-muted-foreground">{t('auth.verifyingUser')}</p>
-            <p className="mt-2 text-xs text-muted-foreground">
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="mt-4 text-muted-foreground"
+            >
+              {t('auth.verifyingUser')}
+            </motion.p>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="mt-2 text-xs text-muted-foreground"
+            >
               {t('auth.loadingForSeconds', { seconds: loadingTime })}
-            </p>
+            </motion.p>
             
             {showRedirectMessage && (
               <motion.div 
