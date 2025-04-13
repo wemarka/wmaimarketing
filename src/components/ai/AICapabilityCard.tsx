@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { ReactNode } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LucideIcon } from "lucide-react";
@@ -10,6 +10,8 @@ interface AICapabilityCardProps {
   icon: LucideIcon;
   badgeText?: string;
   color?: string;
+  children?: ReactNode;
+  onClick?: () => void;
 }
 
 const AICapabilityCard: React.FC<AICapabilityCardProps> = ({
@@ -17,10 +19,15 @@ const AICapabilityCard: React.FC<AICapabilityCardProps> = ({
   description,
   icon: Icon,
   badgeText,
-  color = "text-beauty-purple"
+  color = "text-beauty-purple",
+  children,
+  onClick
 }) => {
   return (
-    <Card className="h-full transition-all hover:shadow-md">
+    <Card 
+      className={`h-full transition-all hover:shadow-md ${onClick ? 'cursor-pointer' : ''}`}
+      onClick={onClick}
+    >
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <Icon className={`h-10 w-10 ${color}`} />
@@ -35,7 +42,7 @@ const AICapabilityCard: React.FC<AICapabilityCardProps> = ({
       </CardHeader>
       <CardContent>
         <div className="text-sm text-muted-foreground">
-          {/* Content can be added here */}
+          {children}
         </div>
       </CardContent>
     </Card>

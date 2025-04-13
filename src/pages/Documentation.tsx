@@ -8,6 +8,8 @@ import PhasesTab from "@/components/documentation/PhasesTab";
 import TimelineTab from "@/components/documentation/TimelineTab";
 import { PhaseData as TimelinePhaseData } from "@/components/documentation/TimelineTab";
 import ProjectUpdates, { ProjectUpdate } from "@/components/documentation/ProjectUpdates";
+import ApiDocumentation from "@/components/documentation/ApiDocumentation";
+import TechnicalGuide from "@/components/documentation/TechnicalGuide";
 import { useToast } from "@/components/ui/use-toast";
 
 // Define a type that maps the string statuses to the required format
@@ -77,6 +79,20 @@ const Documentation: React.FC = () => {
       progress: 25,
       description: "تحسين أداء النظام وإضافة ميزات جديدة بناءً على التغذية الراجعة",
     },
+    {
+      id: 9,
+      name: "دمج تقنيات الذكاء الاصطناعي",
+      status: "completed",
+      progress: 100,
+      description: "إضافة ميزات الذكاء الاصطناعي لتوليد المحتوى وتحليله وتحسينه",
+    },
+    {
+      id: 10,
+      name: "تطوير التقارير المتقدمة",
+      status: "in-progress",
+      progress: 50,
+      description: "إنشاء تقارير متقدمة لتحليل أداء الحملات التسويقية والمحتوى",
+    }
   ]);
   
   const initialUpdates: ProjectUpdate[] = [
@@ -100,6 +116,13 @@ const Documentation: React.FC = () => {
       content: "تم تحديث تصميم الواجهة الرئيسية لتحسين تجربة المستخدم وإضافة ميزات جديدة.",
       date: "2025-04-10",
       type: "info"
+    },
+    {
+      id: 4,
+      title: "دمج تقنيات الذكاء الاصطناعي",
+      content: "تم إضافة ميزات متقدمة للذكاء الاصطناعي لتوليد المحتوى وتحليله وتحسينه.",
+      date: "2025-04-13",
+      type: "success"
     }
   ];
   
@@ -125,7 +148,7 @@ const Documentation: React.FC = () => {
   const headerProps: ProjectHeaderProps = {
     title: "نظام إدارة التسويق والمحتوى للعلامة التجارية",
     description: "توثيق شامل لمشروع منصة إدارة المحتوى والتسويق للعلامات التجارية الخاصة بمنتجات العناية والتجميل",
-    version: "1.7.0",
+    version: "1.8.0",
     lastUpdated: "14 أبريل 2025"
   };
 
@@ -166,6 +189,8 @@ const Documentation: React.FC = () => {
             <TabsTrigger value="phases">مراحل المشروع</TabsTrigger>
             <TabsTrigger value="timeline">الجدول الزمني</TabsTrigger>
             <TabsTrigger value="updates">تحديثات المشروع</TabsTrigger>
+            <TabsTrigger value="api">توثيق API</TabsTrigger>
+            <TabsTrigger value="technical">الدليل الفني</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview">
@@ -185,6 +210,14 @@ const Documentation: React.FC = () => {
           
           <TabsContent value="updates">
             <ProjectUpdates initialUpdates={initialUpdates} />
+          </TabsContent>
+          
+          <TabsContent value="api">
+            <ApiDocumentation />
+          </TabsContent>
+          
+          <TabsContent value="technical">
+            <TechnicalGuide />
           </TabsContent>
         </Tabs>
       </div>

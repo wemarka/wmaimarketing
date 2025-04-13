@@ -13,18 +13,27 @@ const ErrorAlert: React.FC<ErrorAlertProps> = ({ errorMessage, showOnlyBillingEr
   
   const isBillingError = errorMessage.includes("billing") || 
                          errorMessage.includes("quota") || 
-                         errorMessage.includes("API key");
+                         errorMessage.includes("API key") ||
+                         errorMessage.includes("insufficient credits");
   
-  if (showOnlyBillingErrors && !isBillingError) return null;
+  const isServerError = errorMessage.includes("500") || 
+                        errorMessage.includes("server") ||
+                        errorMessage.includes("Edge Function");
+                        
+  if (showOnlyBillingErrors && !isBillingError && !isServerError) return null;
   
   return (
     <Alert variant="destructive" className="mb-4">
       <AlertCircle className="h-4 w-4" />
-      <AlertTitle>خطأ في مفتاح API</AlertTitle>
+      <AlertTitle>
+        {isBillingError ? "خطأ في مفتاح API" : "خطأ في النظام"}
+      </AlertTitle>
       <AlertDescription>
         {isBillingError 
           ? "مفتاح OpenAI API غير صالح أو استنفد الرصيد المتاح. يرجى التحقق من حساب OpenAI الخاص بك وتحديث المفتاح."
-          : errorMessage}
+          : isServerError
+            ? "حدث خطأ في الخادم. يرجى المحاولة مرة أخرى لاحقًا أو التحقق من تكوين النظام."
+            : errorMessage}
       </AlertDescription>
     </Alert>
   );
