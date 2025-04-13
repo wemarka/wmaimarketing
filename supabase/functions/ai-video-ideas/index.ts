@@ -47,6 +47,9 @@ serve(async (req) => {
     4. الموسيقى أو المؤثرات المقترحة
     5. نصائح لتحسين مشاركة المستخدمين`;
 
+    console.log(`Processing video idea request for product type: ${productType}, platform: ${platform}`);
+    console.log(`Using OpenAI API key: ${OPENAI_API_KEY.substring(0, 3)}...${OPENAI_API_KEY.substring(OPENAI_API_KEY.length - 4)}`);
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -82,7 +85,17 @@ serve(async (req) => {
         );
       }
       
-      throw new Error('Error from OpenAI API: ' + (errorData.error?.message || 'Unknown error'));
+      // Return more specific error information
+      return new Response(
+        JSON.stringify({ 
+          error: `Error from OpenAI API: ${errorData.error?.message || 'Unknown error'}`,
+          details: errorData 
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     const data = await response.json();
@@ -97,7 +110,10 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in ai-video-ideas function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        stack: error.stack 
+      }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

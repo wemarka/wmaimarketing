@@ -2,9 +2,10 @@
 import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, ImageIcon, MessageSquare, Video, RotateCw, List, Clock } from "lucide-react";
+import { Sparkles, ImageIcon, MessageSquare, Video, Clock } from "lucide-react";
 import ContentEnhancer from "@/components/ai/ContentEnhancer";
 import ImageGenerator from "@/components/ai/ImageGenerator";
+import VideoIdeaGenerator from "@/components/ai/VideoIdeaGenerator";
 import TimelineTab from "@/components/documentation/TimelineTab";
 import { PhaseData } from "@/components/documentation/TimelineTab";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -108,13 +109,13 @@ const AIStudio = () => {
               <ImageIcon className="h-4 w-4" />
               إنشاء الصور
             </TabsTrigger>
+            <TabsTrigger value="videos" className="flex items-center gap-2">
+              <Video className="h-4 w-4" />
+              أفكار الفيديوهات
+            </TabsTrigger>
             <TabsTrigger value="timeline" className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
               الجدول الزمني
-            </TabsTrigger>
-            <TabsTrigger value="videos" className="flex items-center gap-2">
-              <Video className="h-4 w-4" />
-              تحسين الفيديوهات
             </TabsTrigger>
           </TabsList>
 
@@ -126,22 +127,16 @@ const AIStudio = () => {
             <ImageGenerator />
           </TabsContent>
           
+          <TabsContent value="videos">
+            <VideoIdeaGenerator />
+          </TabsContent>
+          
           <TabsContent value="timeline">
             <TimelineTab 
               phases={demoPhases} 
               onAddPhase={handleAddPhase}
               onEditPhase={handleEditPhase}
             />
-          </TabsContent>
-          
-          <TabsContent value="videos">
-            <div className="border rounded-md p-8 text-center">
-              <RotateCw className="h-10 w-10 text-muted-foreground mb-4 mx-auto animate-spin animate-once" />
-              <h3 className="text-lg font-medium mb-2">قريبًا</h3>
-              <p className="text-muted-foreground">
-                ميزة تحسين الفيديوهات بالذكاء الاصطناعي قيد التطوير وستكون متاحة قريبًا
-              </p>
-            </div>
           </TabsContent>
         </Tabs>
         

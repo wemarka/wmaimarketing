@@ -56,6 +56,7 @@ serve(async (req) => {
 
     // Log the request for debugging
     console.log(`Processing ${action} request for content length: ${content.length}`);
+    console.log(`Using OpenAI API key: ${OPENAI_API_KEY.substring(0, 3)}...${OPENAI_API_KEY.substring(OPENAI_API_KEY.length - 4)}`);
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -92,7 +93,17 @@ serve(async (req) => {
         );
       }
       
-      throw new Error('Error from OpenAI API: ' + (errorData.error?.message || 'Unknown error'));
+      // Return more specific error information
+      return new Response(
+        JSON.stringify({ 
+          error: `Error from OpenAI API: ${errorData.error?.message || 'Unknown error'}`,
+          details: errorData 
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     const data = await response.json();
@@ -107,7 +118,10 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in ai-content-enhancer function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        stack: error.stack
+      }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
