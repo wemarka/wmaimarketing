@@ -20,3 +20,4 @@ export interface AssetFolder {
 export type ViewMode = "grid" | "list";
 export type SortOption = "name" | "date" | "size" | "type";
 export type SortDirection = "asc" | "desc";
+

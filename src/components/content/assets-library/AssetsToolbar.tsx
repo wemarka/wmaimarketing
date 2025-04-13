@@ -11,7 +11,8 @@ import {
   Grid2X2,
   List,
   SortAsc,
-  SortDesc
+  SortDesc,
+  Wand2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,6 +43,7 @@ interface AssetsToolbarProps {
   handleBulkDownload: () => void;
   handleBulkMove: () => void;
   handleBulkTag: () => void;
+  handleBulkOperations: () => void;
   setIsNewFolderDialogOpen: (open: boolean) => void;
   setIsNewAssetDialogOpen: (open: boolean) => void;
 }
@@ -62,6 +64,7 @@ const AssetsToolbar: React.FC<AssetsToolbarProps> = ({
   handleBulkDownload,
   handleBulkMove,
   handleBulkTag,
+  handleBulkOperations,
   setIsNewFolderDialogOpen,
   setIsNewAssetDialogOpen,
 }) => {
@@ -73,16 +76,16 @@ const AssetsToolbar: React.FC<AssetsToolbarProps> = ({
         <h3 className="text-lg font-medium">
           {selectedFolder 
             ? folderName
-            : "كل الملفات"}
+            : t('assetsLibrary.allFiles')}
         </h3>
         <Badge variant="outline" className="mr-2">
-          {assetsCount} عنصر
+          {assetsCount} {t('assetsLibrary.items')}
         </Badge>
       </div>
       
       {selectedAssets.size > 0 && (
         <div className="flex items-center ml-auto mr-2 bg-muted/50 px-2 py-1 rounded-md">
-          <span className="text-sm ml-2">{t('assetsLibrary.selected', { count: selectedAssets.size })}: {selectedAssets.size}</span>
+          <span className="text-sm ml-2">{t('assetsLibrary.selected')}: {selectedAssets.size}</span>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm">
@@ -90,6 +93,10 @@ const AssetsToolbar: React.FC<AssetsToolbarProps> = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
+              <DropdownMenuItem onClick={handleBulkOperations}>
+                <Wand2 className="h-4 w-4 ml-2" />
+                {t('assetsLibrary.bulkOperations')}
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleBulkDownload}>
                 <Download className="h-4 w-4 ml-2" />
                 {t('assetsLibrary.download')}

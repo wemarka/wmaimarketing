@@ -13,20 +13,22 @@ import AssetsToolbar from "./AssetsToolbar";
 import AssetDetailsDialog from "./AssetDetailsDialog";
 import NewFolderDialog from "./NewFolderDialog";
 import NewAssetDialog from "./NewAssetDialog";
+import BulkOperations from "./BulkOperations";
 
 const AssetsLibrary: React.FC = () => {
+  const { t } = useTranslation();
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isNewFolderDialogOpen, setIsNewFolderDialogOpen] = useState(false);
   const [isNewAssetDialogOpen, setIsNewAssetDialogOpen] = useState(false);
+  const [isBulkOperationsOpen, setIsBulkOperationsOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [sortBy, setSortBy] = useState<SortOption>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [selectedAssets, setSelectedAssets] = useState<Set<string>>(new Set());
-  const { t } = useTranslation();
-  const { toast } = useToast();
 
   const toggleAssetSelection = (assetId: string) => {
     const newSelectedAssets = new Set(selectedAssets);
@@ -73,6 +75,10 @@ const AssetsLibrary: React.FC = () => {
     clearSelectedAssets();
   };
 
+  const handleBulkOperations = () => {
+    setIsBulkOperationsOpen(true);
+  };
+
   const toggleSortDirection = () => {
     setSortDirection(sortDirection === "asc" ? "desc" : "asc");
   };
@@ -111,6 +117,10 @@ const AssetsLibrary: React.FC = () => {
         return 0;
     }
   });
+
+  const selectedAssetsArray = [...selectedAssets].map(id => 
+    sampleAssets.find(asset => asset.id === id)
+  ).filter(Boolean) as Asset[];
 
   const handleAssetClick = (asset: Asset, event: React.MouseEvent) => {
     if (event.ctrlKey || event.metaKey) {
@@ -181,6 +191,7 @@ const AssetsLibrary: React.FC = () => {
                 handleBulkDownload={handleBulkDownload}
                 handleBulkMove={handleBulkMove}
                 handleBulkTag={handleBulkTag}
+                handleBulkOperations={handleBulkOperations}
                 setIsNewFolderDialogOpen={setIsNewFolderDialogOpen}
                 setIsNewAssetDialogOpen={setIsNewAssetDialogOpen}
               />
@@ -222,6 +233,12 @@ const AssetsLibrary: React.FC = () => {
       <NewAssetDialog
         isOpen={isNewAssetDialogOpen}
         setIsOpen={setIsNewAssetDialogOpen}
+      />
+      <BulkOperations
+        isOpen={isBulkOperationsOpen}
+        setIsOpen={setIsBulkOperationsOpen}
+        selectedAssets={selectedAssetsArray}
+        onComplete={clearSelectedAssets}
       />
     </div>
   );
