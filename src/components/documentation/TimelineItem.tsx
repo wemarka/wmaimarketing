@@ -1,15 +1,21 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Circle, CheckCircle, AlertCircle } from "lucide-react";
+import { Circle, CheckCircle, AlertCircle, Edit2 } from "lucide-react";
 import { PhaseData } from "./TimelineTab";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface TimelineItemProps {
   phase: PhaseData;
   isLast: boolean;
+  onEdit?: (phase: PhaseData) => void;
 }
 
-const TimelineItem: React.FC<TimelineItemProps> = ({ phase, isLast }) => {
+const TimelineItem: React.FC<TimelineItemProps> = ({ phase, isLast, onEdit }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  
   const getStatusIcon = () => {
     switch (phase.status) {
       case "completed":
@@ -37,23 +43,38 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ phase, isLast }) => {
   };
 
   return (
-    <div className="relative">
+    <div 
+      className="relative"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="flex items-start gap-4">
         <div className="flex-shrink-0 mt-1">{getStatusIcon()}</div>
         <div className="flex-grow">
           <div className="flex items-center justify-between mb-1">
             <h3 className="font-medium">{phase.name}</h3>
-            {getStatusBadge()}
+            <div className="flex items-center gap-2">
+              {getStatusBadge()}
+              {onEdit && isHovered && (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-7 w-7" 
+                  onClick={() => onEdit(phase)}
+                >
+                  <Edit2 className="h-3.5 w-3.5" />
+                </Button>
+              )}
+            </div>
           </div>
           <p className="text-muted-foreground text-sm mb-2">{phase.description}</p>
           {phase.progress > 0 && (
             <div className="w-full bg-muted rounded-full h-2 mb-1">
               <div
-                className={`h-2 rounded-full ${
-                  phase.status === "completed"
-                    ? "bg-green-500"
-                    : "bg-beauty-purple"
-                } transition-all duration-500 ease-in-out`}
+                className={cn(
+                  "h-2 rounded-full transition-all duration-500 ease-in-out",
+                  phase.status === "completed" ? "bg-green-500" : "bg-beauty-purple"
+                )}
                 style={{ width: `${phase.progress}%` }}
               ></div>
             </div>

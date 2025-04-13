@@ -7,6 +7,8 @@ import OverviewTab from "@/components/documentation/OverviewTab";
 import PhasesTab from "@/components/documentation/PhasesTab";
 import TimelineTab from "@/components/documentation/TimelineTab";
 import { PhaseData as TimelinePhaseData } from "@/components/documentation/TimelineTab";
+import ProjectUpdates, { ProjectUpdate } from "@/components/documentation/ProjectUpdates";
+import { useToast } from "@/components/ui/use-toast";
 
 // Define a type that maps the string statuses to the required format
 type MappedPhase = Omit<TimelinePhaseData, 'status'> & {
@@ -15,9 +17,10 @@ type MappedPhase = Omit<TimelinePhaseData, 'status'> & {
 
 const Documentation: React.FC = () => {
   const [currentTab, setCurrentTab] = useState("overview");
+  const { toast } = useToast();
 
   // Project phases data
-  const rawPhases = [
+  const [rawPhases, setRawPhases] = useState([
     {
       id: 1,
       name: "تصميم وتخطيط النظام",
@@ -70,10 +73,34 @@ const Documentation: React.FC = () => {
     {
       id: 8,
       name: "التحسين المستمر",
-      status: "not-started",
-      progress: 0,
+      status: "in-progress",
+      progress: 25,
       description: "تحسين أداء النظام وإضافة ميزات جديدة بناءً على التغذية الراجعة",
     },
+  ]);
+  
+  const initialUpdates: ProjectUpdate[] = [
+    {
+      id: 1,
+      title: "إطلاق النسخة التجريبية",
+      content: "تم إطلاق النسخة التجريبية من المنصة بنجاح وبدأ المستخدمون باختبارها وتقديم الملاحظات.",
+      date: "2025-04-01",
+      type: "success"
+    },
+    {
+      id: 2,
+      title: "مشكلة في وظيفة تحليل الصور",
+      content: "تم اكتشاف مشكلة في خوارزمية تحليل الصور، وجاري العمل على إصلاحها في أقرب وقت ممكن.",
+      date: "2025-04-05",
+      type: "warning"
+    },
+    {
+      id: 3,
+      title: "تحديث الواجهة الرئيسية",
+      content: "تم تحديث تصميم الواجهة الرئيسية لتحسين تجربة المستخدم وإضافة ميزات جديدة.",
+      date: "2025-04-10",
+      type: "info"
+    }
   ];
   
   // Convert phases to have the correct status type
@@ -102,6 +129,22 @@ const Documentation: React.FC = () => {
     lastUpdated: "14 أبريل 2025"
   };
 
+  // Add new phase handler
+  const handleAddPhase = (newPhase: Omit<TimelinePhaseData, "id">) => {
+    const maxId = rawPhases.reduce((max, phase) => Math.max(max, phase.id), 0);
+    const phaseWithId = {
+      ...newPhase,
+      id: maxId + 1
+    };
+    
+    setRawPhases([...rawPhases, phaseWithId]);
+    
+    toast({
+      title: "تمت الإضافة بنجاح",
+      description: "تمت إضافة المرحلة الجديدة إلى الجدول الزمني",
+    });
+  };
+
   return (
     <Layout>
       <div className="max-w-6xl mx-auto">
@@ -122,6 +165,7 @@ const Documentation: React.FC = () => {
             <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
             <TabsTrigger value="phases">مراحل المشروع</TabsTrigger>
             <TabsTrigger value="timeline">الجدول الزمني</TabsTrigger>
+            <TabsTrigger value="updates">تحديثات المشروع</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview">
@@ -133,7 +177,14 @@ const Documentation: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="timeline">
-            <TimelineTab phases={timelinePhases} />
+            <TimelineTab 
+              phases={timelinePhases} 
+              onAddPhase={handleAddPhase}
+            />
+          </TabsContent>
+          
+          <TabsContent value="updates">
+            <ProjectUpdates initialUpdates={initialUpdates} />
           </TabsContent>
         </Tabs>
       </div>

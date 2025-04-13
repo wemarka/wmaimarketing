@@ -7,10 +7,16 @@ import ContentEnhancer from "@/components/ai/ContentEnhancer";
 import ImageGenerator from "@/components/ai/ImageGenerator";
 import TimelineTab from "@/components/documentation/TimelineTab";
 import { PhaseData } from "@/components/documentation/TimelineTab";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 const AIStudio = () => {
-  // المراحل النموذجية للجدول الزمني
-  const demoPhases: PhaseData[] = [
+  // State for phases
+  const [demoPhases, setDemoPhases] = useState<PhaseData[]>([
     {
       id: 1,
       name: "تخطيط المحتوى",
@@ -39,7 +45,45 @@ const AIStudio = () => {
       progress: 0,
       description: "نشر المحتوى على القنوات المناسبة وتوزيعه على الجمهور المستهدف"
     }
-  ];
+  ]);
+  
+  // State for editing phase
+  const [editingPhase, setEditingPhase] = useState<PhaseData | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const { toast } = useToast();
+  
+  // Function to add a new phase
+  const handleAddPhase = (newPhase: Omit<PhaseData, "id">) => {
+    const maxId = demoPhases.reduce((max, phase) => Math.max(max, phase.id), 0);
+    const phaseWithId: PhaseData = {
+      ...newPhase,
+      id: maxId + 1
+    };
+    setDemoPhases([...demoPhases, phaseWithId]);
+  };
+  
+  // Function to open edit dialog
+  const handleEditPhase = (phase: PhaseData) => {
+    setEditingPhase(phase);
+    setIsEditDialogOpen(true);
+  };
+  
+  // Function to save edited phase
+  const saveEditedPhase = () => {
+    if (!editingPhase) return;
+    
+    setDemoPhases(demoPhases.map(phase => 
+      phase.id === editingPhase.id ? editingPhase : phase
+    ));
+    
+    setIsEditDialogOpen(false);
+    setEditingPhase(null);
+    
+    toast({
+      title: "تم الحفظ بنجاح",
+      description: "تم تحديث المرحلة بنجاح",
+    });
+  };
 
   return (
     <Layout>
@@ -83,7 +127,10 @@ const AIStudio = () => {
           </TabsContent>
           
           <TabsContent value="timeline">
-            <TimelineTab phases={demoPhases} />
+            <TimelineTab 
+              phases={demoPhases} 
+              onAddPhase={handleAddPhase} 
+            />
           </TabsContent>
           
           <TabsContent value="videos">
@@ -96,6 +143,72 @@ const AIStudio = () => {
             </div>
           </TabsContent>
         </Tabs>
+        
+        {/* Edit Phase Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent dir="rtl">
+            <DialogHeader>
+              <DialogTitle>تعديل المرحلة</DialogTitle>
+            </DialogHeader>
+            
+            {editingPhase && (
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">اسم المرحلة</label>
+                  <Input 
+                    value={editingPhase.name} 
+                    onChange={(e) => setEditingPhase({...editingPhase, name: e.target.value})}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">الوصف</label>
+                  <Textarea 
+                    value={editingPhase.description} 
+                    onChange={(e) => setEditingPhase({...editingPhase, description: e.target.value})}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">الحالة</label>
+                  <Select 
+                    value={editingPhase.status} 
+                    onValueChange={(value: "completed" | "in-progress" | "not-started") => {
+                      const newProgress = value === "completed" ? 100 : 
+                                          value === "not-started" ? 0 : 
+                                          editingPhase.progress;
+                      setEditingPhase({...editingPhase, status: value, progress: newProgress});
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="not-started">لم يبدأ</SelectItem>
+                      <SelectItem value="in-progress">قيد التنفيذ</SelectItem>
+                      <SelectItem value="completed">مكتمل</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">نسبة الإكمال ({editingPhase.progress}%)</label>
+                  <Input 
+                    type="range" 
+                    min={0} 
+                    max={100} 
+                    value={editingPhase.progress} 
+                    onChange={(e) => setEditingPhase({...editingPhase, progress: parseInt(e.target.value)})}
+                  />
+                </div>
+                
+                <Button onClick={saveEditedPhase} className="w-full mt-4">
+                  حفظ التغييرات
+                </Button>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );
