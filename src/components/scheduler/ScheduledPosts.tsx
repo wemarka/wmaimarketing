@@ -3,15 +3,7 @@ import React from "react";
 import { CardContent } from "@/components/ui/card";
 import { Instagram, Facebook, MessageSquare, Layers, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-interface ScheduledPost {
-  id: number;
-  title: string;
-  type: string;
-  platform: string;
-  date: string;
-  time: string;
-}
+import { ScheduledPost } from "./types";
 
 interface ScheduledPostsProps {
   posts: ScheduledPost[];

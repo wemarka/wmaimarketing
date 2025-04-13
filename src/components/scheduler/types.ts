@@ -1,9 +1,19 @@
+
 export interface CalendarPost {
   id: number;
   title: string;
   date: Date;
   platform: "instagram" | "facebook" | "tiktok";
   status: "draft" | "pending" | "scheduled" | "published";
+}
+
+export interface ScheduledPost {
+  id: number;
+  title: string;
+  type: string;
+  platform: string;
+  date: string;
+  time: string;
 }
 
 export interface SocialAccount {
