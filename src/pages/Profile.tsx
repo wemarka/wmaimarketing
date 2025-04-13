@@ -5,14 +5,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
-import { useActivityLog, Activity } from "@/hooks/useActivityLog";
+import { useActivityLog } from "@/hooks/useActivityLog";
 
 // Import components
-import ProfileSidebar from "@/components/profile/ProfileSidebar";
-import ProfileTabs from "@/components/profile/ProfileTabs";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import ProfileHeader from "@/components/profile/ProfileHeader";
+import ProfileContent from "@/components/profile/ProfileContent";
+import ProfileLoading from "@/components/profile/ProfileLoading";
+import ProfileError from "@/components/profile/ProfileError";
+import ProfileAuthGuard from "@/components/profile/ProfileAuthGuard";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -108,99 +108,35 @@ const Profile = () => {
     }
   };
 
-  if (!user) {
-    return (
-      <Layout>
-        <div className="flex justify-center items-center h-[60vh]">
-          <p className="text-lg">يرجى تسجيل الدخول للوصول إلى صفحة الملف الشخصي</p>
-        </div>
-      </Layout>
-    );
-  }
-
-  if (loading) {
-    return (
-      <Layout>
-        <div className="max-w-5xl mx-auto">
-          <div className="space-y-2 mb-8">
-            <h1>الملف الشخصي</h1>
-            <p className="text-muted-foreground">
-              إدارة حسابك ومعلوماتك الشخصية
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8">
-            <div className="space-y-6">
-              <Skeleton className="h-32 w-32 rounded-full mx-auto" />
-              <Skeleton className="h-6 w-40 mx-auto" />
-              <Skeleton className="h-4 w-20 mx-auto" />
-            </div>
-
-            <div className="space-y-6">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-[300px] w-full" />
-            </div>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
-
-  const emptyProfile = { 
-    id: user.id, 
-    first_name: '', 
-    last_name: '', 
-    avatar_url: null, 
-    role: 'مستخدم',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString() 
-  };
-
   return (
     <Layout>
       <div className="max-w-5xl mx-auto">
-        <div className="space-y-2 mb-8">
-          <h1>الملف الشخصي</h1>
-          <p className="text-muted-foreground">
-            إدارة حسابك ومعلوماتك الشخصية
-          </p>
-        </div>
-
-        {error && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>خطأ</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8">
-          {/* Profile sidebar */}
-          <ProfileSidebar
-            avatarUrl={profileData?.avatar_url || null}
-            userInitials={getUserInitials()}
-            firstName={profileData?.first_name || ''}
-            lastName={profileData?.last_name || ''}
-            role={profileData?.role || 'مستخدم'}
-            onAvatarChange={handleAvatarChange}
-          />
-
-          {/* Profile content */}
-          <div className="space-y-6">
-            <ProfileTabs
-              profileData={profileData || emptyProfile}
-              userEmail={user?.email || ""}
-              onUpdateProfile={handleUpdateProfile}
-              onChangePassword={handleChangePassword}
-              onLogoutOtherSessions={handleLogoutOtherSessions}
-              updating={updating}
-              changingPassword={changingPassword}
-              loggingOut={loggingOut}
-              activities={activities}
-              activitiesLoading={activitiesLoading}
-            />
-          </div>
-        </div>
+        <ProfileHeader />
+        
+        <ProfileAuthGuard>
+          <ProfileError error={error} />
+          
+          {loading ? (
+            <ProfileLoading />
+          ) : (
+            profileData && (
+              <ProfileContent
+                profileData={profileData}
+                userEmail={user?.email || ""}
+                userInitials={getUserInitials()}
+                onUpdateProfile={handleUpdateProfile}
+                onChangePassword={handleChangePassword}
+                onLogoutOtherSessions={handleLogoutOtherSessions}
+                onAvatarChange={handleAvatarChange}
+                updating={updating}
+                changingPassword={changingPassword}
+                loggingOut={loggingOut}
+                activities={activities}
+                activitiesLoading={activitiesLoading}
+              />
+            )
+          )}
+        </ProfileAuthGuard>
       </div>
     </Layout>
   );
