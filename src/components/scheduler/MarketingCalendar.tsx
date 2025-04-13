@@ -7,14 +7,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DayContent } from "react-day-picker";
-
-interface CalendarPost {
-  id: number;
-  title: string;
-  date: Date;
-  platform: "instagram" | "facebook" | "tiktok";
-  status: "draft" | "pending" | "scheduled" | "published";
-}
+import { CalendarPost } from "./types";
 
 interface MarketingCalendarProps {
   posts?: CalendarPost[];
@@ -40,12 +33,12 @@ const MarketingCalendar = ({ posts = [] }: MarketingCalendarProps) => {
   // Get today's posts
   const selectedDayPosts = getPostsForDay(date);
 
-  // Function to render calendar day content
+  // Function to render calendar day content with proper typing
   const renderDay = (props: React.ComponentProps<typeof DayContent>) => {
     const day = props.date;
     const dayPosts = getPostsForDay(day);
     
-    if (dayPosts.length === 0) return props.children;
+    if (dayPosts.length === 0) return <>{props.content}</>;
     
     const statusColors = {
       draft: "bg-slate-200",
@@ -59,7 +52,7 @@ const MarketingCalendar = ({ posts = [] }: MarketingCalendarProps) => {
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="relative w-full h-full">
-              {props.children}
+              {props.content}
               <div className="absolute right-1 top-1 flex gap-0.5">
                 {dayPosts.length <= 3 ? (
                   dayPosts.map((post) => (
@@ -137,7 +130,7 @@ const MarketingCalendar = ({ posts = [] }: MarketingCalendarProps) => {
               day_today: "bg-accent text-accent-foreground",
             }}
             components={{
-              DayContent: (props) => renderDay(props),
+              DayContent: renderDay,
             }}
           />
         </div>
