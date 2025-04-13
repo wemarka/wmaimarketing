@@ -2,34 +2,16 @@
 import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ProjectHeader from "@/components/documentation/ProjectHeader";
+import ProjectHeader, { ProjectHeaderProps } from "@/components/documentation/ProjectHeader";
 import OverviewTab from "@/components/documentation/OverviewTab";
-import PhasesTab from "@/components/documentation/PhasesTab";
-import TimelineTab from "@/components/documentation/TimelineTab";
-
-// Define prop types for components to resolve type errors
-interface ProjectHeaderProps {
-  title: string;
-  description: string;
-  version: string;
-  lastUpdated: string;
-}
-
-interface PhasesTabProps {
-  phases: {
-    id: number;
-    name: string;
-    status: string;
-    progress: number;
-    description: string;
-  }[];
-}
+import PhasesTab, { PhasesTabProps, PhaseData } from "@/components/documentation/PhasesTab";
+import TimelineTab, { TimelineTabProps } from "@/components/documentation/TimelineTab";
 
 const Documentation: React.FC = () => {
   const [currentTab, setCurrentTab] = useState("overview");
 
   // Project phases data
-  const phases = [
+  const phases: PhaseData[] = [
     {
       id: 1,
       name: "تصميم وتخطيط النظام",
@@ -88,14 +70,22 @@ const Documentation: React.FC = () => {
     },
   ];
 
+  // Project header data
+  const headerProps: ProjectHeaderProps = {
+    title: "نظام إدارة التسويق والمحتوى للعلامة التجارية",
+    description: "توثيق شامل لمشروع منصة إدارة المحتوى والتسويق للعلامات التجارية الخاصة بمنتجات العناية والتجميل",
+    version: "1.7.0",
+    lastUpdated: "14 أبريل 2025"
+  };
+
   return (
     <Layout>
       <div className="max-w-6xl mx-auto">
         <ProjectHeader 
-          title="نظام إدارة التسويق والمحتوى للعلامة التجارية"
-          description="توثيق شامل لمشروع منصة إدارة المحتوى والتسويق للعلامات التجارية الخاصة بمنتجات العناية والتجميل"
-          version="1.7.0"
-          lastUpdated="14 أبريل 2025"
+          title={headerProps.title}
+          description={headerProps.description}
+          version={headerProps.version}
+          lastUpdated={headerProps.lastUpdated}
         />
 
         <Tabs
