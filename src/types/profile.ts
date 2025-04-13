@@ -20,3 +20,19 @@ export interface PasswordFormValues {
   newPassword: string;
   confirmPassword: string;
 }
+
+export interface UserSession {
+  id: string;
+  device: string;
+  browser: string;
+  lastActive: string;
+  isCurrent: boolean;
+}
+
+export interface ActivityLog {
+  id: string;
+  userId: string;
+  activityType: string;
+  description: string;
+  timestamp: string;
+}

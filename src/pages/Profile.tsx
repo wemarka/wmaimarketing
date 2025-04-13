@@ -5,24 +5,25 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Shield, UserCog } from "lucide-react";
+import { User, Shield, UserCog, Clock, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
+import { useActivityLog } from "@/hooks/useActivityLog";
 
 // Import components
 import ProfilePicture from "@/components/profile/ProfilePicture";
 import PersonalInfoForm from "@/components/profile/PersonalInfoForm";
 import ChangePasswordForm from "@/components/profile/ChangePasswordForm";
 import SessionsInfo from "@/components/profile/SessionsInfo";
+import ActivityLog from "@/components/profile/ActivityLog";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -37,8 +38,10 @@ const Profile = () => {
     getUserInitials
   } = useProfile();
   
+  const { activities, loading: activitiesLoading, logActivity } = useActivityLog();
   const [loggingOut, setLoggingOut] = useState(false);
 
+  // Handle logout other sessions
   const handleLogoutOtherSessions = async () => {
     setLoggingOut(true);
     try {
@@ -50,6 +53,9 @@ const Profile = () => {
         title: "تم تسجيل الخروج",
         description: "تم تسجيل الخروج من جميع الجلسات الأخرى بنجاح",
       });
+
+      // Log activity
+      logActivity("logout", "تم تسجيل الخروج من جميع الجلسات الأخرى");
     } catch (error) {
       console.error("Error signing out other sessions:", error);
       toast({
@@ -60,6 +66,18 @@ const Profile = () => {
     } finally {
       setLoggingOut(false);
     }
+  };
+
+  // Handle profile update with activity logging
+  const handleUpdateProfile = async (data: any) => {
+    await onUpdateProfile(data);
+    logActivity("profile_update", "تم تحديث معلومات الملف الشخصي");
+  };
+
+  // Handle password change with activity logging
+  const handleChangePassword = async (data: any) => {
+    await onChangePassword(data);
+    logActivity("password_change", "تم تغيير كلمة المرور");
   };
 
   if (loading) {
@@ -108,8 +126,16 @@ const Profile = () => {
                 <span>الأمان</span>
               </Button>
               <Button variant="ghost" className="justify-start">
+                <Clock className="ml-2 h-4 w-4" />
+                <span>سجل النشاط</span>
+              </Button>
+              <Button variant="ghost" className="justify-start">
                 <UserCog className="ml-2 h-4 w-4" />
                 <span>التفضيلات</span>
+              </Button>
+              <Button variant="ghost" className="justify-start">
+                <FileText className="ml-2 h-4 w-4" />
+                <span>التوثيق</span>
               </Button>
             </nav>
           </div>
@@ -117,9 +143,10 @@ const Profile = () => {
           {/* Profile content */}
           <div className="space-y-6">
             <Tabs defaultValue="account" className="w-full">
-              <TabsList>
+              <TabsList className="grid grid-cols-3">
                 <TabsTrigger value="account">معلومات الحساب</TabsTrigger>
                 <TabsTrigger value="security">الأمان</TabsTrigger>
+                <TabsTrigger value="activity">سجل النشاط</TabsTrigger>
               </TabsList>
               
               <TabsContent value="account" className="space-y-6 pt-4">
@@ -134,7 +161,7 @@ const Profile = () => {
                     <PersonalInfoForm 
                       profileData={profileData!} 
                       userEmail={user?.email || ""} 
-                      onUpdateProfile={onUpdateProfile} 
+                      onUpdateProfile={handleUpdateProfile} 
                       isUpdating={updating}
                     />
                   </CardContent>
@@ -151,26 +178,23 @@ const Profile = () => {
                   </CardHeader>
                   <CardContent>
                     <ChangePasswordForm 
-                      onChangePassword={onChangePassword} 
+                      onChangePassword={handleChangePassword} 
                       isChangingPassword={changingPassword}
                     />
                   </CardContent>
                 </Card>
                 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>جلسات تسجيل الدخول</CardTitle>
-                    <CardDescription>
-                      إدارة جلسات تسجيل الدخول النشطة على حسابك
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <SessionsInfo 
-                      onLogoutOtherSessions={handleLogoutOtherSessions}
-                      isLoading={loggingOut}
-                    />
-                  </CardContent>
-                </Card>
+                <SessionsInfo 
+                  onLogoutOtherSessions={handleLogoutOtherSessions}
+                  isLoading={loggingOut}
+                />
+              </TabsContent>
+
+              <TabsContent value="activity" className="space-y-6 pt-4">
+                <ActivityLog 
+                  activities={activities} 
+                  isLoading={activitiesLoading} 
+                />
               </TabsContent>
             </Tabs>
           </div>
