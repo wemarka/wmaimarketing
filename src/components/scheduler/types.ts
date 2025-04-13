@@ -42,3 +42,57 @@ export interface ContentItem {
   created: string;
   scheduled: string | null;
 }
+
+export interface AnalyticsData {
+  period: string;
+  impressions: number;
+  engagement: number;
+  clicks: number;
+  conversions: number;
+  change: {
+    impressions: number;
+    engagement: number;
+    clicks: number;
+    conversions: number;
+  };
+}
+
+export interface PlatformData {
+  platform: string;
+  percentage: number;
+  iconColor: string;
+}
+
+export interface PostPerformance {
+  id: number;
+  title: string;
+  platform: "instagram" | "facebook" | "tiktok" | "twitter";
+  date: string;
+  impressions: number;
+  engagement: number;
+  clicks: number;
+  conversions: number;
+}
+
+export interface CampaignPerformance {
+  id: number;
+  name: string;
+  startDate: string;
+  endDate: string;
+  budget: number;
+  spent: number;
+  impressions: number;
+  engagement: number;
+  conversions: number;
+  roi: number;
+}
+
+export interface ProductPerformance {
+  id: number;
+  name: string;
+  impressions: number;
+  engagement: number;
+  clicks: number;
+  conversions: number;
+  revenue: number;
+}

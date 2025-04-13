@@ -36,41 +36,41 @@ const PhasesTab: React.FC = () => {
       <PhaseCard 
         phaseNumber={3}
         title="أدوات إنتاج المحتوى الأساسية"
-        status="in-progress"
+        status="complete"
         items={[
           { text: "نظام تنظيم وتصنيف صور المنتجات", done: true },
           { text: "تحليل تلقائي للصور (الألوان، الزوايا، التفاصيل)", done: true },
           { text: "مكتبة مركزية للأصول البصرية للشركة", done: true },
           { text: "واجهة لإنشاء إعلانات بناءً على صور المنتجات", done: true },
-          { text: "قوالب متعددة تتوافق مع هوية العلامة التجارية", done: false },
-          { text: "خيارات تخصيص متقدمة مع الحفاظ على معايير الشركة", done: false },
+          { text: "قوالب متعددة تتوافق مع هوية العلامة التجارية", done: true },
+          { text: "خيارات تخصيص متقدمة مع الحفاظ على معايير الشركة", done: true },
         ]}
       />
       
       <PhaseCard 
         phaseNumber={4}
         title="أدوات إنتاج المحتوى المتقدمة"
-        status="in-progress"
+        status="complete"
         items={[
           { text: "إنشاء نصوص تسويقية متوافقة مع هوية العلامة التجارية", done: true },
           { text: "قاموس مصطلحات الشركة والكلمات المفتاحية", done: true },
           { text: "أنماط متنوعة للمنصات المختلفة", done: true },
           { text: "تحويل صور المنتجات إلى فيديوهات قصيرة", done: true },
           { text: "قوالب متعددة مع شعار الشركة وألوانها", done: true },
-          { text: "أدوات تحرير بسيطة للفيديو", done: false },
+          { text: "أدوات تحرير بسيطة للفيديو", done: true },
         ]}
       />
       
       <PhaseCard 
         phaseNumber={5}
         title="نظام الجدولة والنشر"
-        status="planned"
+        status="in-progress"
         items={[
-          { text: "تقويم تسويقي للحملات والمنشورات", done: false },
-          { text: "سير عمل للموافقات قبل النشر", done: false },
-          { text: "ربط مع حسابات الشركة على وسائل التواصل", done: false },
-          { text: "تنظيم المحتوى حسب المنتجات أو الحملات", done: false },
-          { text: "نظام مراجعة وموافقة للمحتوى قبل النشر", done: false },
+          { text: "تقويم تسويقي للحملات والمنشورات", done: true },
+          { text: "سير عمل للموافقات قبل النشر", done: true },
+          { text: "ربط مع حسابات الشركة على وسائل التواصل", done: true },
+          { text: "تنظيم المحتوى حسب المنتجات أو الحملات", done: true },
+          { text: "نظام مراجعة وموافقة للمحتوى قبل النشر", done: true },
           { text: "متابعة حالة المنشورات", done: false },
         ]}
       />
@@ -78,12 +78,12 @@ const PhasesTab: React.FC = () => {
       <PhaseCard 
         phaseNumber={6}
         title="التحليلات والتقارير الداخلية"
-        status="planned"
+        status="in-progress"
         items={[
-          { text: "تتبع أداء منشورات وحملات الشركة", done: false },
-          { text: "مقارنة بين المنصات المختلفة", done: false },
-          { text: "تقارير دورية للإدارة", done: false },
-          { text: "مؤشرات الأداء الرئيسية للتسويق", done: false },
+          { text: "تتبع أداء منشورات وحملات الشركة", done: true },
+          { text: "مقارنة بين المنصات المختلفة", done: true },
+          { text: "تقارير دورية للإدارة", done: true },
+          { text: "مؤشرات الأداء الرئيسية للتسويق", done: true },
           { text: "تحليل تكلفة الإنتاج وفعالية الحملات", done: false },
           { text: "توصيات لتحسين المحتوى المستقبلي", done: false },
         ]}
