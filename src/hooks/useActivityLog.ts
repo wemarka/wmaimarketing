@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { ActivityLog } from "@/types/profile";
 
 export interface Activity {
   id: string;
@@ -19,7 +18,10 @@ export const useActivityLog = () => {
 
   useEffect(() => {
     const fetchActivities = async () => {
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
       try {
         setLoading(true);
@@ -34,12 +36,12 @@ export const useActivityLog = () => {
 
         if (error) throw error;
 
-        const formattedActivities: Activity[] = data.map((item: any) => ({
+        const formattedActivities: Activity[] = data ? data.map((item: any) => ({
           id: item.id,
           type: item.activity_type as Activity["type"],
           description: item.description,
           timestamp: item.created_at,
-        }));
+        })) : [];
 
         setActivities(formattedActivities);
       } catch (error) {

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
@@ -72,11 +71,31 @@ const Profile = () => {
     logActivity("profile_update", "تم تحديث الصورة الشخصية");
   };
 
+  if (!user) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-[60vh]">
+          <p className="text-lg">يرجى تسجيل الدخول للوصول إلى صفحة الملف الشخصي</p>
+        </div>
+      </Layout>
+    );
+  }
+
   if (loading) {
     return (
       <Layout>
         <div className="flex justify-center items-center h-[60vh]">
           <p className="text-lg">جاري تحميل البيانات...</p>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!profileData) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-[60vh]">
+          <p className="text-lg">تعذر تحميل بيانات الملف الشخصي. يرجى المحاولة مرة أخرى.</p>
         </div>
       </Layout>
     );
@@ -106,7 +125,7 @@ const Profile = () => {
           {/* Profile content */}
           <div className="space-y-6">
             <ProfileTabs
-              profileData={profileData!}
+              profileData={profileData}
               userEmail={user?.email || ""}
               onUpdateProfile={handleUpdateProfile}
               onChangePassword={handleChangePassword}

@@ -35,6 +35,10 @@ const ProfileTabs = ({
   activities,
   activitiesLoading
 }: ProfileTabsProps) => {
+  if (!profileData) {
+    return null; // Don't render if profileData is missing
+  }
+  
   return (
     <Tabs defaultValue="account" className="w-full" dir="rtl">
       <TabsList className="grid grid-cols-3">
