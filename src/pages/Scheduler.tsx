@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,6 +16,7 @@ import MarketingCalendar from "@/components/scheduler/MarketingCalendar";
 import AccountsManager from "@/components/scheduler/AccountsManager";
 import ApprovalWorkflow from "@/components/scheduler/ApprovalWorkflow";
 import ContentOrganizer from "@/components/scheduler/ContentOrganizer";
+import { CalendarPost, SocialAccount, ApprovalItem, ContentItem } from "@/components/scheduler/types";
 
 // Type definitions for our data
 interface ScheduledPost {
@@ -26,50 +26,6 @@ interface ScheduledPost {
   platform: string;
   date: string;
   time: string;
-}
-
-interface CalendarPost {
-  id: number;
-  title: string;
-  date: Date;
-  platform: "instagram" | "facebook" | "tiktok";
-  status: "draft" | "pending" | "scheduled" | "published";
-}
-
-interface SocialAccount {
-  id: string;
-  platform: "instagram" | "facebook" | "tiktok" | "twitter";
-  accountName: string;
-  profileName: string;
-  status: string;
-  insights: {
-    followers: number;
-    engagement: number;
-    postCount: number;
-  }
-}
-
-interface ApprovalItem {
-  id: number;
-  title: string;
-  submittedBy: string;
-  submittedAt: string;
-  type: string;
-  reviewers: {
-    name: string;
-    status: "pending" | "approved" | "rejected";
-  }[];
-}
-
-interface ContentItem {
-  id: number;
-  title: string;
-  type: string;
-  campaign: string;
-  product: string;
-  status: string;
-  created: string;
-  scheduled: string | null;
 }
 
 // Sample data for scheduled posts

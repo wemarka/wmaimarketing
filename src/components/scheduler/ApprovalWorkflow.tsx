@@ -5,18 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Check, X, Clock, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-interface ApprovalItem {
-  id: number;
-  title: string;
-  submittedBy: string;
-  submittedAt: string;
-  type: string;
-  reviewers: {
-    name: string;
-    status: "pending" | "approved" | "rejected";
-  }[];
-}
+import { ApprovalItem } from "./types";
 
 interface ApprovalWorkflowProps {
   approvals?: ApprovalItem[];
