@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 
 interface ProfileAuthGuardProps {
   children: React.ReactNode;
@@ -28,26 +29,32 @@ const ProfileAuthGuard = ({ children }: ProfileAuthGuardProps) => {
         const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
         setLoadingTime(elapsedTime);
         
-        // Force redirect after 3 seconds of loading
-        if (elapsedTime >= 3) {
+        // Force redirect after 2 seconds of loading (reduced from 3)
+        if (elapsedTime >= 2) {
           console.log("ProfileAuthGuard - Loading timeout reached, forcing redirect");
           setForceRedirect(true);
           clearInterval(timer);
         }
-      }, 1000);
+      }, 500); // Check more frequently
       
       return () => clearInterval(timer);
     }
   }, [loading]);
 
   if (forceRedirect && !user) {
+    console.log("ProfileAuthGuard - Forcing redirect to auth page due to timeout");
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  // Only show loading for a maximum of 3 seconds
-  if (loading && loadingTime < 3) {
+  // Only show loading for a maximum of 2 seconds
+  if (loading && loadingTime < 2) {
     return (
-      <div className="flex justify-center items-center h-[60vh]">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="flex justify-center items-center h-[60vh]"
+      >
         <div className="text-center">
           <div className="mx-auto h-12 w-12 rounded-full border-4 border-t-beauty-purple border-beauty-lightpurple border-t-transparent animate-spin"></div>
           <p className="mt-4 text-muted-foreground">
@@ -57,7 +64,7 @@ const ProfileAuthGuard = ({ children }: ProfileAuthGuardProps) => {
             {t('auth.loadingForSeconds', { seconds: loadingTime })}
           </p>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
@@ -67,7 +74,15 @@ const ProfileAuthGuard = ({ children }: ProfileAuthGuardProps) => {
   }
 
   console.log("ProfileAuthGuard - Rendering protected content");
-  return <>{children}</>;
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      {children}
+    </motion.div>
+  );
 };
 
 export default ProfileAuthGuard;
