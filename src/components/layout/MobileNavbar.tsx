@@ -15,24 +15,63 @@ import {
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useTranslation } from "react-i18next";
 
 const MobileNavbar = () => {
   const isMobile = useIsMobile();
+  const { i18n } = useTranslation();
+  const currentLanguage = i18n.language;
 
   if (!isMobile) {
     return null;
   }
 
   const navItems = [
-    { to: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" />, label: "الرئيسية" },
-    { to: "/image-upload", icon: <Upload className="h-5 w-5" />, label: "الصور" },
-    { to: "/ad-generator", icon: <ImageIcon className="h-5 w-5" />, label: "الإعلانات" },
-    { to: "/content-creator", icon: <FileText className="h-5 w-5" />, label: "المحتوى" },
-    { to: "/video-generator", icon: <Video className="h-5 w-5" />, label: "الفيديو" },
-    { to: "/scheduler", icon: <CalendarDays className="h-5 w-5" />, label: "الجدولة" },
-    { to: "/analytics", icon: <BarChart className="h-5 w-5" />, label: "التحليلات" },
-    { to: "/ai-studio", icon: <Sparkles className="h-5 w-5 text-beauty-gold" />, label: "الذكاء" },
-    { to: "/profile", icon: <User className="h-5 w-5" />, label: "الملف" },
+    { 
+      to: "/dashboard", 
+      icon: <LayoutDashboard className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "الرئيسية" : "Home" 
+    },
+    { 
+      to: "/image-upload", 
+      icon: <Upload className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "الصور" : "Images" 
+    },
+    { 
+      to: "/ad-generator", 
+      icon: <ImageIcon className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "الإعلانات" : "Ads" 
+    },
+    { 
+      to: "/content-creator", 
+      icon: <FileText className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "المحتوى" : "Content" 
+    },
+    { 
+      to: "/video-generator", 
+      icon: <Video className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "الفيديو" : "Video" 
+    },
+    { 
+      to: "/scheduler", 
+      icon: <CalendarDays className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "الجدولة" : "Schedule" 
+    },
+    { 
+      to: "/analytics", 
+      icon: <BarChart className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "التحليلات" : "Analytics" 
+    },
+    { 
+      to: "/ai-studio", 
+      icon: <Sparkles className="h-5 w-5 text-beauty-gold" />, 
+      label: currentLanguage === 'ar' ? "الذكاء" : "AI" 
+    },
+    { 
+      to: "/profile", 
+      icon: <User className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "الملف" : "Profile" 
+    },
   ];
 
   return (

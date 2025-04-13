@@ -35,28 +35,91 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 const AppSidebar = () => {
   const { signOut } = useAuth();
+  const { i18n } = useTranslation();
+  const currentLanguage = i18n.language;
 
   // Navigation items grouped by category
   const mainNavItems = [
-    { id: 'dashboard', to: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" />, label: "لوحة التحكم", tooltip: "الصفحة الرئيسية" },
-    { id: 'image-upload', to: "/image-upload", icon: <Upload className="h-5 w-5" />, label: "تحليل الصور", tooltip: "تحليل صور المنتجات" },
-    { id: 'ad-generator', to: "/ad-generator", icon: <Image className="h-5 w-5" />, label: "منشئ الإعلانات", tooltip: "إنشاء إعلانات جذابة" },
-    { id: 'content-creator', to: "/content-creator", icon: <FileText className="h-5 w-5" />, label: "منشئ المحتوى", tooltip: "إنشاء محتوى متميز" },
+    { 
+      id: 'dashboard', 
+      to: "/dashboard", 
+      icon: <LayoutDashboard className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "لوحة التحكم" : "Dashboard", 
+      tooltip: currentLanguage === 'ar' ? "الصفحة الرئيسية" : "Home Page" 
+    },
+    { 
+      id: 'image-upload', 
+      to: "/image-upload", 
+      icon: <Upload className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "تحليل الصور" : "Image Analysis", 
+      tooltip: currentLanguage === 'ar' ? "تحليل صور المنتجات" : "Analyze Product Images" 
+    },
+    { 
+      id: 'ad-generator', 
+      to: "/ad-generator", 
+      icon: <Image className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "منشئ الإعلانات" : "Ad Generator", 
+      tooltip: currentLanguage === 'ar' ? "إنشاء إعلانات جذابة" : "Create Compelling Ads" 
+    },
+    { 
+      id: 'content-creator', 
+      to: "/content-creator", 
+      icon: <FileText className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "منشئ المحتوى" : "Content Creator", 
+      tooltip: currentLanguage === 'ar' ? "إنشاء محتوى متميز" : "Create Outstanding Content" 
+    },
   ];
 
   const mediaNavItems = [
-    { id: 'video-generator', to: "/video-generator", icon: <Video className="h-5 w-5" />, label: "منشئ الفيديو", tooltip: "إنشاء فيديوهات احترافية" },
-    { id: 'scheduler', to: "/scheduler", icon: <CalendarDays className="h-5 w-5" />, label: "الجدولة والنشر", tooltip: "جدولة المحتوى ونشره" },
-    { id: 'analytics', to: "/analytics", icon: <BarChart className="h-5 w-5" />, label: "التحليلات", tooltip: "تحليل أداء المحتوى" },
+    { 
+      id: 'video-generator', 
+      to: "/video-generator", 
+      icon: <Video className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "منشئ الفيديو" : "Video Generator", 
+      tooltip: currentLanguage === 'ar' ? "إنشاء فيديوهات احترافية" : "Create Professional Videos" 
+    },
+    { 
+      id: 'scheduler', 
+      to: "/scheduler", 
+      icon: <CalendarDays className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "الجدولة والنشر" : "Schedule & Publish", 
+      tooltip: currentLanguage === 'ar' ? "جدولة المحتوى ونشره" : "Schedule and Publish Content" 
+    },
+    { 
+      id: 'analytics', 
+      to: "/analytics", 
+      icon: <BarChart className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "التحليلات" : "Analytics", 
+      tooltip: currentLanguage === 'ar' ? "تحليل أداء المحتوى" : "Analyze Content Performance" 
+    },
   ];
 
   const managementNavItems = [
-    { id: 'profile', to: "/profile", icon: <User className="h-5 w-5" />, label: "الملف الشخصي", tooltip: "إدارة حسابك" },
-    { id: 'users', to: "/users", icon: <Users className="h-5 w-5" />, label: "إدارة المستخدمين", tooltip: "إدارة فريق العمل" },
-    { id: 'integration', to: "/integration", icon: <Database className="h-5 w-5" />, label: "التكاملات", tooltip: "ربط مع خدمات أخرى" },
+    { 
+      id: 'profile', 
+      to: "/profile", 
+      icon: <User className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "الملف الشخصي" : "Profile", 
+      tooltip: currentLanguage === 'ar' ? "إدارة حسابك" : "Manage Your Account" 
+    },
+    { 
+      id: 'users', 
+      to: "/users", 
+      icon: <Users className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "إدارة المستخدمين" : "User Management", 
+      tooltip: currentLanguage === 'ar' ? "إدارة فريق العمل" : "Manage Your Team" 
+    },
+    { 
+      id: 'integration', 
+      to: "/integration", 
+      icon: <Database className="h-5 w-5" />, 
+      label: currentLanguage === 'ar' ? "التكاملات" : "Integrations", 
+      tooltip: currentLanguage === 'ar' ? "ربط مع خدمات أخرى" : "Connect with Other Services" 
+    },
   ];
 
   return (
@@ -73,7 +136,9 @@ const AppSidebar = () => {
       <SidebarContent>
         <ScrollArea>
           <SidebarGroup>
-            <SidebarGroupLabel>الرئيسية</SidebarGroupLabel>
+            <SidebarGroupLabel>
+              {currentLanguage === 'ar' ? "الرئيسية" : "Main"}
+            </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {mainNavItems.map((item) => (
@@ -101,7 +166,9 @@ const AppSidebar = () => {
           <SidebarSeparator />
           
           <SidebarGroup>
-            <SidebarGroupLabel>الوسائط والتحليلات</SidebarGroupLabel>
+            <SidebarGroupLabel>
+              {currentLanguage === 'ar' ? "الوسائط والتحليلات" : "Media & Analytics"}
+            </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {mediaNavItems.map((item) => (
@@ -129,7 +196,9 @@ const AppSidebar = () => {
           <SidebarSeparator />
           
           <SidebarGroup>
-            <SidebarGroupLabel>الإدارة</SidebarGroupLabel>
+            <SidebarGroupLabel>
+              {currentLanguage === 'ar' ? "الإدارة" : "Management"}
+            </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {managementNavItems.map((item) => (
@@ -157,7 +226,9 @@ const AppSidebar = () => {
           <SidebarSeparator />
           
           <SidebarGroup>
-            <SidebarGroupLabel>التوثيق والميزات</SidebarGroupLabel>
+            <SidebarGroupLabel>
+              {currentLanguage === 'ar' ? "التوثيق والميزات" : "Documentation & Features"}
+            </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
@@ -165,10 +236,12 @@ const AppSidebar = () => {
                     {({ isActive }) => (
                       <SidebarMenuButton
                         isActive={isActive}
-                        tooltip="خطة المشروع والتوثيق"
+                        tooltip={currentLanguage === 'ar' ? "خطة المشروع والتوثيق" : "Project Plan & Documentation"}
                       >
                         <FileQuestion className="h-5 w-5" />
-                        <span className="mr-2">خطة المشروع</span>
+                        <span className="mr-2">
+                          {currentLanguage === 'ar' ? "خطة المشروع" : "Project Plan"}
+                        </span>
                       </SidebarMenuButton>
                     )}
                   </NavLink>
@@ -178,13 +251,17 @@ const AppSidebar = () => {
                     {({ isActive }) => (
                       <SidebarMenuButton
                         isActive={isActive}
-                        tooltip="استوديو الذكاء الاصطناعي"
+                        tooltip={currentLanguage === 'ar' ? "استوديو الذكاء الاصطناعي" : "AI Studio"}
                         variant="outline"
                         className="bg-beauty-purple/5 border border-beauty-purple/20"
                       >
                         <Sparkles className="h-5 w-5 text-beauty-gold" />
-                        <span className="mr-2 font-medium bg-gradient-to-r from-beauty-gold to-beauty-pink bg-clip-text text-transparent">استوديو الذكاء الاصطناعي</span>
-                        <Badge className="mr-auto bg-beauty-gold/20 text-beauty-gold hover:bg-beauty-gold/30" variant="outline">جديد</Badge>
+                        <span className="mr-2 font-medium bg-gradient-to-r from-beauty-gold to-beauty-pink bg-clip-text text-transparent">
+                          {currentLanguage === 'ar' ? "استوديو الذكاء الاصطناعي" : "AI Studio"}
+                        </span>
+                        <Badge className="mr-auto bg-beauty-gold/20 text-beauty-gold hover:bg-beauty-gold/30" variant="outline">
+                          {currentLanguage === 'ar' ? "جديد" : "New"}
+                        </Badge>
                       </SidebarMenuButton>
                     )}
                   </NavLink>
@@ -198,12 +275,14 @@ const AppSidebar = () => {
       <SidebarFooter>
         <div className="p-4 border-t">
           <div className="rounded-lg bg-card p-4 border border-border/40 shadow-sm mb-4">
-            <h5 className="mb-2 text-sm font-medium">مستخدم الإصدار التجريبي</h5>
+            <h5 className="mb-2 text-sm font-medium">
+              {currentLanguage === 'ar' ? "مستخدم الإصدار التجريبي" : "Trial User"}
+            </h5>
             <p className="text-xs text-muted-foreground">
-              يمكنك الترقية للوصول إلى جميع الميزات
+              {currentLanguage === 'ar' ? "يمكنك الترقية للوصول إلى جميع الميزات" : "Upgrade to access all features"}
             </p>
             <Button className="mt-3 w-full bg-gradient-to-r from-beauty-pink to-beauty-purple hover:from-beauty-purple hover:to-beauty-pink transition-all duration-300" size="sm">
-              ترقية الآن
+              {currentLanguage === 'ar' ? "ترقية الآن" : "Upgrade Now"}
             </Button>
           </div>
           
@@ -213,7 +292,7 @@ const AppSidebar = () => {
             onClick={() => signOut()}
           >
             <LogOut className="h-4 w-4 ml-2" />
-            <span>تسجيل الخروج</span>
+            <span>{currentLanguage === 'ar' ? "تسجيل الخروج" : "Sign Out"}</span>
           </Button>
         </div>
       </SidebarFooter>

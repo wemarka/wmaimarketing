@@ -26,13 +26,13 @@ const LanguageToggle: React.FC = () => {
 
   return (
     <Toggle 
-      pressed={currentLanguage === "en"} 
+      pressed={currentLanguage === "ar"} 
       onPressedChange={toggleLanguage}
       aria-label={t("language.toggle")}
       className="flex items-center gap-1"
     >
       <Globe className="h-4 w-4" />
-      <span>{currentLanguage === "ar" ? "EN" : "AR"}</span>
+      <span>{currentLanguage === "ar" ? "AR" : "EN"}</span>
     </Toggle>
   );
 };

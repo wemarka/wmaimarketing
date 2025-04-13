@@ -8,27 +8,54 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Link, useLocation } from "react-router-dom";
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useTranslation } from "react-i18next";
 
 const Header = () => {
   const { user } = useAuth();
   const location = useLocation();
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language;
   
   // Get current page title based on route
   const getPageTitle = () => {
     const path = location.pathname;
     
-    if (path === '/dashboard' || path === '/') return 'لوحة التحكم';
-    if (path === '/image-upload') return 'تحليل الصور';
-    if (path === '/ad-generator') return 'منشئ الإعلانات';
-    if (path === '/content-creator') return 'منشئ المحتوى';
-    if (path === '/video-generator') return 'منشئ الفيديو';
-    if (path === '/scheduler') return 'الجدولة والنشر';
-    if (path === '/analytics') return 'التحليلات';
-    if (path === '/profile') return 'الملف الشخصي';
-    if (path === '/users') return 'إدارة المستخدمين';
-    if (path === '/integration') return 'التكاملات';
-    if (path === '/documentation') return 'خطة المشروع';
-    if (path === '/ai-studio') return 'استوديو الذكاء الاصطناعي';
+    if (path === '/dashboard' || path === '/') {
+      return currentLanguage === 'ar' ? 'لوحة التحكم' : 'Dashboard';
+    }
+    if (path === '/image-upload') {
+      return currentLanguage === 'ar' ? 'تحليل الصور' : 'Image Analysis';
+    }
+    if (path === '/ad-generator') {
+      return currentLanguage === 'ar' ? 'منشئ الإعلانات' : 'Ad Generator';
+    }
+    if (path === '/content-creator') {
+      return currentLanguage === 'ar' ? 'منشئ المحتوى' : 'Content Creator';
+    }
+    if (path === '/video-generator') {
+      return currentLanguage === 'ar' ? 'منشئ الفيديو' : 'Video Generator';
+    }
+    if (path === '/scheduler') {
+      return currentLanguage === 'ar' ? 'الجدولة والنشر' : 'Schedule & Publish';
+    }
+    if (path === '/analytics') {
+      return currentLanguage === 'ar' ? 'التحليلات' : 'Analytics';
+    }
+    if (path === '/profile') {
+      return currentLanguage === 'ar' ? 'الملف الشخصي' : 'Profile';
+    }
+    if (path === '/users') {
+      return currentLanguage === 'ar' ? 'إدارة المستخدمين' : 'User Management';
+    }
+    if (path === '/integration') {
+      return currentLanguage === 'ar' ? 'التكاملات' : 'Integrations';
+    }
+    if (path === '/documentation') {
+      return currentLanguage === 'ar' ? 'خطة المشروع' : 'Project Plan';
+    }
+    if (path === '/ai-studio') {
+      return currentLanguage === 'ar' ? 'استوديو الذكاء الاصطناعي' : 'AI Studio';
+    }
     
     return '';
   };
@@ -85,7 +112,7 @@ const Header = () => {
             </>
           ) : (
             <Link to="/auth">
-              <Button>تسجيل الدخول</Button>
+              <Button>{currentLanguage === 'ar' ? 'تسجيل الدخول' : 'Login'}</Button>
             </Link>
           )}
         </div>
