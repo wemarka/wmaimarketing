@@ -2,7 +2,14 @@
 import React from "react";
 import TimelineItem from "./TimelineItem";
 import { Card, CardContent } from "@/components/ui/card";
-import { PhaseData } from "./PhasesTab";
+
+export interface PhaseData {
+  id: number;
+  name: string;
+  status: "completed" | "in-progress" | "not-started";
+  progress: number;
+  description: string;
+}
 
 export interface TimelineTabProps {
   phases: PhaseData[];

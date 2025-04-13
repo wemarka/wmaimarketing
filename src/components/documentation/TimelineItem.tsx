@@ -1,7 +1,8 @@
 
 import React from "react";
-import { PhaseData } from "./PhasesTab";
-import { Check, Clock } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Circle, CheckCircle, AlertCircle } from "lucide-react";
+import { PhaseData } from "./TimelineTab";
 
 interface TimelineItemProps {
   phase: PhaseData;
@@ -9,31 +10,64 @@ interface TimelineItemProps {
 }
 
 const TimelineItem: React.FC<TimelineItemProps> = ({ phase, isLast }) => {
-  const isCompleted = phase.status === "completed";
-  
+  const getStatusIcon = () => {
+    switch (phase.status) {
+      case "completed":
+        return <CheckCircle className="h-6 w-6 text-green-500" />;
+      case "in-progress":
+        return <Circle className="h-6 w-6 text-beauty-purple" />;
+      case "not-started":
+        return <AlertCircle className="h-6 w-6 text-muted-foreground" />;
+      default:
+        return <Circle className="h-6 w-6 text-muted-foreground" />;
+    }
+  };
+
+  const getStatusBadge = () => {
+    switch (phase.status) {
+      case "completed":
+        return <Badge className="bg-green-500">مكتمل</Badge>;
+      case "in-progress":
+        return <Badge className="bg-beauty-purple">قيد التنفيذ</Badge>;
+      case "not-started":
+        return <Badge variant="outline">لم يبدأ</Badge>;
+      default:
+        return <Badge variant="outline">غير معروف</Badge>;
+    }
+  };
+
   return (
-    <div className="relative flex">
-      <div className="mr-4 flex flex-col items-center">
-        <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
-          isCompleted ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-500"
-        }`}>
-          {isCompleted ? <Check className="h-4 w-4" /> : <Clock className="h-4 w-4" />}
+    <div className="relative">
+      <div className="flex items-start gap-4">
+        <div className="flex-shrink-0 mt-1">{getStatusIcon()}</div>
+        <div className="flex-grow">
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="font-medium">{phase.name}</h3>
+            {getStatusBadge()}
+          </div>
+          <p className="text-muted-foreground text-sm mb-2">{phase.description}</p>
+          {phase.progress > 0 && (
+            <div className="w-full bg-muted rounded-full h-2 mb-1">
+              <div
+                className={`h-2 rounded-full ${
+                  phase.status === "completed"
+                    ? "bg-green-500"
+                    : "bg-beauty-purple"
+                }`}
+                style={{ width: `${phase.progress}%` }}
+              ></div>
+            </div>
+          )}
+          {phase.progress > 0 && (
+            <div className="text-xs text-right text-muted-foreground">
+              {phase.progress}%
+            </div>
+          )}
         </div>
-        {!isLast && <div className="h-full w-0.5 bg-gray-200" />}
       </div>
-      <div className="pb-8">
-        <div className="flex items-center space-x-2">
-          <h4 className="font-medium text-gray-900">{phase.name}</h4>
-          <span className={`px-2 py-0.5 rounded-full text-xs ${
-            isCompleted 
-              ? "bg-green-100 text-green-600" 
-              : "bg-yellow-100 text-yellow-600"
-          }`}>
-            {isCompleted ? "مكتمل" : "مخطط"}
-          </span>
-        </div>
-        <p className="mt-1 text-sm text-gray-500">{phase.description}</p>
-      </div>
+      {!isLast && (
+        <div className="absolute top-8 bottom-0 left-3 w-px bg-muted-foreground/20"></div>
+      )}
     </div>
   );
 };
