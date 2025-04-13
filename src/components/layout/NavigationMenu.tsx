@@ -1,9 +1,9 @@
 
 import React from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
-  NavigationMenu as UINavigationMenu,
+  NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
@@ -12,134 +12,176 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import {
+  Album,
+  BarChart3,
+  CalendarRange,
+  Clapperboard,
+  FileStack,
+  Laptop2,
   LayoutDashboard,
-  FileText,
-  Image,
-  Video,
-  CalendarDays,
-  BarChart,
+  MessageSquare,
   Settings,
-  Upload,
-  FileQuestion
+  Settings2,
+  Sparkles,
+  Users,
 } from "lucide-react";
 
-const routes = [
-  {
-    title: "لوحة التحكم",
-    href: "/dashboard",
-    icon: <LayoutDashboard className="h-5 w-5 ml-2" />,
-  },
-  {
-    title: "تحليل الصور",
-    href: "/image-upload",
-    icon: <Upload className="h-5 w-5 ml-2" />,
-  },
-  {
-    title: "منشئ الإعلانات",
-    href: "/ad-generator",
-    icon: <Image className="h-5 w-5 ml-2" />,
-  },
-  {
-    title: "منشئ المحتوى",
-    href: "/content-creator",
-    icon: <FileText className="h-5 w-5 ml-2" />,
-  },
-  {
-    title: "منشئ الفيديو",
-    href: "/video-generator",
-    icon: <Video className="h-5 w-5 ml-2" />,
-  },
-  {
-    title: "الجدولة والنشر",
-    href: "/scheduler",
-    icon: <CalendarDays className="h-5 w-5 ml-2" />,
-  },
-  {
-    title: "التحليلات",
-    href: "/analytics",
-    icon: <BarChart className="h-5 w-5 ml-2" />,
-  },
-  {
-    title: "خطة المشروع",
-    href: "/documentation",
-    icon: <FileQuestion className="h-5 w-5 ml-2" />,
-  },
-];
-
-const NavigationMenu = () => {
-  const location = useLocation();
-  
+export default function NavMenu() {
   return (
-    <UINavigationMenu className="hidden md:flex">
+    <NavigationMenu dir="rtl" className="hidden md:flex">
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>الصفحات الرئيسية</NavigationMenuTrigger>
+          <Link to="/dashboard">
+            <NavigationMenuLink className={navigationMenuTriggerStyle()} dir="rtl">
+              <LayoutDashboard className="h-4 w-4 ml-2" />
+              <span>الرئيسية</span>
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>
+            <Clapperboard className="h-4 w-4 ml-2" />
+            <span>المحتوى</span>
+          </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <div className="grid grid-cols-2 gap-3 p-4 w-[500px]">
-              {routes.map((route) => (
-                <NavigationMenuLink
-                  key={route.href}
-                  asChild
-                  className={cn(
-                    "flex items-center p-3 hover:bg-accent rounded-md transition-colors",
-                    location.pathname === route.href ? "bg-accent text-accent-foreground" : ""
-                  )}
-                >
-                  <NavLink to={route.href}>
-                    {route.icon}
-                    <span>{route.title}</span>
-                  </NavLink>
-                </NavigationMenuLink>
-              ))}
-            </div>
+            <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
+              <ListItem
+                to="/content-creator"
+                title="إنشاء محتوى"
+                icon={<MessageSquare className="h-4 w-4 ml-2" />}
+              >
+                تصميم وإنشاء محتوى التسويق للمنصات المختلفة
+              </ListItem>
+              <ListItem
+                to="/content-tools"
+                title="أدوات المحتوى"
+                icon={<FileStack className="h-4 w-4 ml-2" />}
+              >
+                أدوات متنوعة لإدارة وتنظيم الصور ومصطلحات المنتجات
+              </ListItem>
+              <ListItem
+                to="/image-upload"
+                title="رفع الصور"
+                icon={<Album className="h-4 w-4 ml-2" />}
+              >
+                رفع وإدارة صور المنتجات وأصول التسويق
+              </ListItem>
+              <ListItem
+                to="/video-generator"
+                title="إنشاء الفيديوهات"
+                icon={<Clapperboard className="h-4 w-4 ml-2" />}
+              >
+                إنشاء فيديوهات تسويقية جذابة باستخدام الذكاء الاصطناعي
+              </ListItem>
+            </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
-        
+
         <NavigationMenuItem>
-          <NavigationMenuTrigger>أدوات المحتوى</NavigationMenuTrigger>
+          <NavigationMenuTrigger>
+            <BarChart3 className="h-4 w-4 ml-2" />
+            <span>التحليلات والنشر</span>
+          </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <div className="grid gap-3 p-4 w-[400px]">
-              <NavigationMenuLink
-                asChild
-                className={cn(
-                  navigationMenuTriggerStyle(),
-                  location.pathname === "/content-tools" ? "bg-accent text-accent-foreground" : ""
-                )}
+            <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
+              <ListItem
+                to="/analytics"
+                title="التحليلات والتقارير"
+                icon={<BarChart3 className="h-4 w-4 ml-2" />}
               >
-                <NavLink to="/content-tools">
-                  <FileText className="h-5 w-5 ml-2" />
-                  <span>أدوات إنتاج المحتوى البصري</span>
-                </NavLink>
-              </NavigationMenuLink>
-              
-              <NavigationMenuLink
-                asChild
-                className={cn(
-                  navigationMenuTriggerStyle(),
-                  location.pathname === "/ad-designer" ? "bg-accent text-accent-foreground" : ""
-                )}
+                تحليل أداء الحملات التسويقية والتقارير التفصيلية
+              </ListItem>
+              <ListItem
+                to="/scheduler"
+                title="جدولة ونشر المحتوى"
+                icon={<CalendarRange className="h-4 w-4 ml-2" />}
               >
-                <NavLink to="/ad-designer">
-                  <Image className="h-5 w-5 ml-2" />
-                  <span>مصمم الإعلانات</span>
-                </NavLink>
-              </NavigationMenuLink>
-            </div>
+                جدولة ونشر المحتوى على منصات التواصل الاجتماعي
+              </ListItem>
+              <ListItem
+                to="/scheduler-settings"
+                title="إعدادات النشر"
+                icon={<Settings className="h-4 w-4 ml-2" />}
+              >
+                تكوين إعدادات النشر والجدولة للمحتوى
+              </ListItem>
+            </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
-        
+
         <NavigationMenuItem>
-          <NavLink to="/documentation" className={cn(
-            navigationMenuTriggerStyle(),
-            location.pathname === "/documentation" ? "bg-accent text-accent-foreground" : ""
-          )}>
-            <FileQuestion className="h-5 w-5 ml-2" />
-            <span>خطة المشروع</span>
-          </NavLink>
+          <NavigationMenuTrigger>
+            <Settings2 className="h-4 w-4 ml-2" />
+            <span>الإدارة</span>
+          </NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
+              <ListItem
+                to="/users"
+                title="إدارة المستخدمين"
+                icon={<Users className="h-4 w-4 ml-2" />}
+              >
+                إدارة صلاحيات وأدوار المستخدمين في النظام
+              </ListItem>
+              <ListItem
+                to="/integration"
+                title="التكامل والواجهات"
+                icon={<Laptop2 className="h-4 w-4 ml-2" />}
+              >
+                إعدادات التكامل مع الأنظمة الخارجية
+              </ListItem>
+              <ListItem
+                to="/documentation"
+                title="التوثيق والمساعدة"
+                icon={<FileStack className="h-4 w-4 ml-2" />}
+              >
+                توثيق المشروع ومراحله والمساعدة
+              </ListItem>
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <Link to="/ai-studio">
+            <NavigationMenuLink className={navigationMenuTriggerStyle()} dir="rtl">
+              <Sparkles className="h-4 w-4 ml-2 text-beauty-gold" />
+              <span>استوديو الذكاء الاصطناعي</span>
+            </NavigationMenuLink>
+          </Link>
         </NavigationMenuItem>
       </NavigationMenuList>
-    </UINavigationMenu>
+    </NavigationMenu>
+  );
+}
+
+interface ListItemProps {
+  to: string;
+  title: string;
+  icon?: React.ReactNode;
+  children?: React.ReactNode;
+}
+
+const ListItem = ({ to, title, icon, children }: ListItemProps) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <Link
+          to={to}
+          className={cn(
+            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+          )}
+          dir="rtl"
+        >
+          <div className="flex items-center mb-2">
+            {icon}
+            <span className="text-sm font-medium leading-none">{title}</span>
+          </div>
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+            {children}
+          </p>
+        </Link>
+      </NavigationMenuLink>
+    </li>
   );
 };
-
-export default NavigationMenu;

@@ -22,6 +22,7 @@ import Scheduler from "./pages/Scheduler";
 import SchedulerSettings from "./pages/SchedulerSettings";
 import ContentTools from "./pages/ContentTools";
 import Integration from "./pages/Integration";
+import AIStudio from "./pages/AIStudio";
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -47,6 +48,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/content-creator" element={<ContentCreator />} />
             <Route path="/content-tools" element={<ContentTools />} />
+            <Route path="/ai-studio" element={<AIStudio />} />
             
             {/* Media Routes */}
             <Route path="/image-upload" element={<ImageUpload />} />

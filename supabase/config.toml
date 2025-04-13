@@ -1,1 +1,8 @@
+
 project_id = "kcbkvrapjvdfpjuljqtr"
+
+[functions.ai-content-enhancer]
+verify_jwt = true
+
+[functions.ai-image-generator]
+verify_jwt = true
