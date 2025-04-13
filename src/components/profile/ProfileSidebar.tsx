@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { User, Shield, Clock, UserCog, FileText } from "lucide-react";
 import ProfilePicture from "./ProfilePicture";
+import { motion } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 interface ProfileSidebarProps {
   avatarUrl: string | null;
@@ -12,6 +15,8 @@ interface ProfileSidebarProps {
   lastName: string | null;
   role: string | null;
   onAvatarChange: (url: string) => void;
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
 }
 
 const ProfileSidebar = ({
@@ -20,10 +25,25 @@ const ProfileSidebar = ({
   firstName,
   lastName,
   role,
-  onAvatarChange
+  onAvatarChange,
+  activeTab = "account",
+  onTabChange
 }: ProfileSidebarProps) => {
+  const isMobile = useIsMobile();
+
+  const handleTabClick = (tab: string) => {
+    if (onTabChange) {
+      onTabChange(tab);
+    }
+  };
+
   return (
-    <div className="space-y-6">
+    <motion.div 
+      className="space-y-6 bg-card p-6 rounded-lg shadow-sm border"
+      initial={{ opacity: 0, x: -30 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <ProfilePicture 
         avatarUrl={avatarUrl} 
         userInitials={userInitials} 
@@ -31,35 +51,74 @@ const ProfileSidebar = ({
       />
       
       <div className="flex flex-col items-center">
-        <h3 className="font-medium text-lg">{`${firstName || ''} ${lastName || ''}`}</h3>
-        <p className="text-sm text-muted-foreground">{role || 'مستخدم'}</p>
+        <motion.h3 
+          className="font-medium text-lg bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          {`${firstName || ''} ${lastName || ''}`}
+        </motion.h3>
+        <motion.p 
+          className="text-sm text-muted-foreground"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+        >
+          {role || 'مستخدم'}
+        </motion.p>
       </div>
       
-      <Separator />
+      <Separator className="my-2" />
       
       <nav className="flex flex-col space-y-1">
-        <Button variant="ghost" className="justify-start">
+        <Button 
+          variant={activeTab === "account" ? "default" : "ghost"} 
+          className={cn(
+            "justify-start transition-all",
+            activeTab === "account" ? "bg-primary/10 text-primary hover:bg-primary/20" : ""
+          )}
+          onClick={() => handleTabClick("account")}
+        >
           <User className="ml-2 h-4 w-4" />
           <span>معلومات الحساب</span>
         </Button>
-        <Button variant="ghost" className="justify-start">
+        <Button 
+          variant={activeTab === "security" ? "default" : "ghost"}
+          className={cn(
+            "justify-start transition-all",
+            activeTab === "security" ? "bg-primary/10 text-primary hover:bg-primary/20" : ""
+          )}
+          onClick={() => handleTabClick("security")}
+        >
           <Shield className="ml-2 h-4 w-4" />
           <span>الأمان</span>
         </Button>
-        <Button variant="ghost" className="justify-start">
+        <Button 
+          variant={activeTab === "activity" ? "default" : "ghost"}
+          className={cn(
+            "justify-start transition-all",
+            activeTab === "activity" ? "bg-primary/10 text-primary hover:bg-primary/20" : ""
+          )}
+          onClick={() => handleTabClick("activity")}
+        >
           <Clock className="ml-2 h-4 w-4" />
           <span>سجل النشاط</span>
         </Button>
-        <Button variant="ghost" className="justify-start">
-          <UserCog className="ml-2 h-4 w-4" />
-          <span>التفضيلات</span>
-        </Button>
-        <Button variant="ghost" className="justify-start">
-          <FileText className="ml-2 h-4 w-4" />
-          <span>التوثيق</span>
-        </Button>
+        {!isMobile && (
+          <>
+            <Button variant="ghost" className="justify-start">
+              <UserCog className="ml-2 h-4 w-4" />
+              <span>التفضيلات</span>
+            </Button>
+            <Button variant="ghost" className="justify-start">
+              <FileText className="ml-2 h-4 w-4" />
+              <span>التوثيق</span>
+            </Button>
+          </>
+        )}
       </nav>
-    </div>
+    </motion.div>
   );
 };
 

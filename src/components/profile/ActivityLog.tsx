@@ -3,8 +3,10 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Clock, FileEdit, LogIn, LogOut, User, UserCog, FileText } from "lucide-react";
+import { Clock, FileEdit, LogIn, LogOut, User, UserCog, FileText, Loader2 } from "lucide-react";
 import { Activity } from "@/hooks/useActivityLog";
+import { motion } from "framer-motion";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ActivityLogProps {
   activities: Activity[];
@@ -76,30 +78,56 @@ const ActivityLog = ({ activities, isLoading }: ActivityLogProps) => {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>سجل النشاط</CardTitle>
+    <Card className="overflow-hidden border-2 border-border/30 shadow-md hover:shadow-lg transition-shadow duration-300">
+      <CardHeader className="bg-card/50 backdrop-blur-sm">
+        <CardTitle className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">سجل النشاط</CardTitle>
         <CardDescription>
           آخر الأنشطة التي قمت بها على حسابك
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0">
         {isLoading ? (
-          <div className="flex justify-center p-4">جاري التحميل...</div>
-        ) : activities.length === 0 ? (
-          <div className="text-center p-4 text-muted-foreground">
-            لا يوجد أنشطة مسجلة بعد
+          <div className="p-6 space-y-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="flex items-start space-x-4 space-x-reverse rtl:space-x-reverse">
+                <Skeleton className="flex-shrink-0 rounded-full w-10 h-10" />
+                <div className="flex-1 space-y-2">
+                  <div className="flex justify-between">
+                    <Skeleton className="h-5 w-24" />
+                    <Skeleton className="h-5 w-32" />
+                  </div>
+                  <Skeleton className="h-4 w-full" />
+                </div>
+              </div>
+            ))}
           </div>
+        ) : activities.length === 0 ? (
+          <motion.div 
+            className="text-center p-10 text-muted-foreground"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Clock className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
+            <p className="text-lg">لا يوجد أنشطة مسجلة بعد</p>
+            <p className="text-sm mt-2">ستظهر هنا الأنشطة التي تقوم بها على حسابك</p>
+          </motion.div>
         ) : (
-          <ScrollArea className="h-64 w-full pr-4">
-            <div className="space-y-4">
-              {activities.map((activity) => (
-                <div key={activity.id} className="flex items-start space-x-4 space-x-reverse rtl:space-x-reverse">
-                  <div className={`flex-shrink-0 rounded-full p-2 ${getActivityBadgeColor(activity.type).split(" ").slice(0, 1).join(" ")}`}>
+          <ScrollArea className="h-[400px] w-full">
+            <div className="space-y-4 p-6">
+              {activities.map((activity, index) => (
+                <motion.div 
+                  key={activity.id} 
+                  className="flex items-start space-x-4 space-x-reverse rtl:space-x-reverse p-3 rounded-lg hover:bg-muted/30 transition-colors"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <div className={`flex-shrink-0 rounded-full p-3 ${getActivityBadgeColor(activity.type).split(" ").slice(0, 1).join(" ")}`}>
                     {getActivityIcon(activity.type)}
                   </div>
                   <div className="flex-1 space-y-1">
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <Badge variant="outline" className={getActivityBadgeColor(activity.type)}>
                         {getActivityLabel(activity.type)}
                       </Badge>
@@ -109,7 +137,7 @@ const ActivityLog = ({ activities, isLoading }: ActivityLogProps) => {
                     </div>
                     <p className="text-sm">{activity.description}</p>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </ScrollArea>

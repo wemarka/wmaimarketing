@@ -3,6 +3,7 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import PersonalInfoForm from "./PersonalInfoForm";
 import { ProfileData } from "@/types/profile";
+import { motion } from "framer-motion";
 
 interface PersonalInfoCardProps {
   profileData: ProfileData;
@@ -18,22 +19,30 @@ const PersonalInfoCard = ({
   isUpdating 
 }: PersonalInfoCardProps) => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>المعلومات الشخصية</CardTitle>
-        <CardDescription>
-          قم بتحديث معلومات الملف الشخصي الخاص بك
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <PersonalInfoForm 
-          profileData={profileData} 
-          userEmail={userEmail} 
-          onUpdateProfile={onUpdateProfile} 
-          isUpdating={isUpdating}
-        />
-      </CardContent>
-    </Card>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="overflow-hidden border-2 border-border/30 shadow-md hover:shadow-lg transition-shadow duration-300">
+        <CardHeader className="bg-card/50 backdrop-blur-sm">
+          <CardTitle className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+            المعلومات الشخصية
+          </CardTitle>
+          <CardDescription>
+            قم بتحديث معلومات الملف الشخصي الخاص بك
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <PersonalInfoForm 
+            profileData={profileData} 
+            userEmail={userEmail} 
+            onUpdateProfile={onUpdateProfile} 
+            isUpdating={isUpdating}
+          />
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };
 
