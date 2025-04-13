@@ -6,10 +6,11 @@ import { Sparkles, ImageIcon, MessageSquare, Video, RotateCw, List, Clock } from
 import ContentEnhancer from "@/components/ai/ContentEnhancer";
 import ImageGenerator from "@/components/ai/ImageGenerator";
 import TimelineTab from "@/components/documentation/TimelineTab";
+import { PhaseData } from "@/components/documentation/TimelineTab";
 
 const AIStudio = () => {
   // المراحل النموذجية للجدول الزمني
-  const demoPhases = [
+  const demoPhases: PhaseData[] = [
     {
       id: 1,
       name: "تخطيط المحتوى",
