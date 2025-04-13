@@ -7,56 +7,56 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
-import { ArrowRight, Calendar, MessageSquare, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Globe, PaintBucket, BarChart } from "lucide-react";
 
 const NextStepCard: React.FC = () => {
   return (
     <Card className="mb-8 border-amber-200 bg-amber-50">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2">
-          <span>الخطوة التالية</span>
+          <span>الخطوات النهائية</span>
           <ArrowRight className="h-5 w-5 text-amber-600" />
         </CardTitle>
         <CardDescription>
-          بدء تنفيذ المرحلة الخامسة من المشروع: نظام الجدولة والنشر
+          استكمال المرحلة السابعة: التكامل والتوسع
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <p>
-            المرحلة التالية في خطة التطوير ستركز على نظام الجدولة والنشر لمنصة Beauty AI. سيتم إنشاء:
+            نحن في المراحل النهائية لتطوير منصة Beauty AI. للإنتهاء من المرحلة السابعة، سنركز على:
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-white p-3 rounded-lg border border-amber-100 flex items-start gap-2">
-              <Calendar className="h-5 w-5 text-amber-600 mt-1 flex-shrink-0" />
+              <Globe className="h-5 w-5 text-amber-600 mt-1 flex-shrink-0" />
               <div>
-                <h4 className="font-medium">تقويم تسويقي</h4>
-                <p className="text-sm text-muted-foreground">جدولة الحملات والمنشورات لوسائل التواصل المختلفة</p>
+                <h4 className="font-medium">دعم متعدد اللغات</h4>
+                <p className="text-sm text-muted-foreground">إضافة دعم للغات متعددة لتوسيع نطاق استخدام المنصة في أسواق مختلفة</p>
               </div>
             </div>
             <div className="bg-white p-3 rounded-lg border border-amber-100 flex items-start gap-2">
-              <MessageSquare className="h-5 w-5 text-amber-600 mt-1 flex-shrink-0" />
+              <PaintBucket className="h-5 w-5 text-amber-600 mt-1 flex-shrink-0" />
               <div>
-                <h4 className="font-medium">سير عمل الموافقات</h4>
-                <p className="text-sm text-muted-foreground">نظام مراجعة وموافقة للمحتوى قبل النشر</p>
+                <h4 className="font-medium">تخصيص واجهة المستخدم</h4>
+                <p className="text-sm text-muted-foreground">تمكين تخصيص واجهة المستخدم حسب هوية العلامة التجارية للعميل</p>
               </div>
             </div>
             <div className="bg-white p-3 rounded-lg border border-amber-100 flex items-start gap-2">
-              <CheckCircle2 className="h-5 w-5 text-amber-600 mt-1 flex-shrink-0" />
+              <BarChart className="h-5 w-5 text-amber-600 mt-1 flex-shrink-0" />
               <div>
-                <h4 className="font-medium">متابعة المنشورات</h4>
-                <p className="text-sm text-muted-foreground">تتبع حالة المنشورات وإجراءات النشر</p>
+                <h4 className="font-medium">استيراد/تصدير البيانات</h4>
+                <p className="text-sm text-muted-foreground">تطوير واجهة لاستيراد وتصدير البيانات من وإلى أنظمة الشركة المختلفة</p>
               </div>
             </div>
           </div>
           <p>
-            هذه المرحلة ستضيف القدرة على تنظيم وجدولة المحتوى الذي تم إنشاؤه بواسطة أدوات إنتاج المحتوى التي تم تطويرها في المراحل السابقة.
+            هذه التحسينات ستمكن المنصة من التكامل بشكل أفضل مع البنية التحتية التقنية للشركة وتوسيع نطاق استخدامها في أسواق مختلفة.
           </p>
           <div className="bg-white p-3 rounded-lg border border-amber-100 mt-4">
-            <h4 className="font-medium mb-2">الموعد المستهدف للإنجاز</h4>
+            <h4 className="font-medium mb-2">الموعد المستهدف للإطلاق النهائي</h4>
             <div className="flex justify-between text-sm">
-              <span>تاريخ البدء: ٢٥ مايو ٢٠٢٥</span>
-              <span>تاريخ الانتهاء المتوقع: ١٥ يونيو ٢٠٢٥</span>
+              <span>تاريخ الإنتهاء المتوقع: ٣٠ يونيو ٢٠٢٥</span>
+              <span>موعد الإطلاق: ١٥ يوليو ٢٠٢٥</span>
             </div>
           </div>
         </div>

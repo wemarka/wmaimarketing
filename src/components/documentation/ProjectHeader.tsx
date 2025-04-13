@@ -36,23 +36,23 @@ const ProjectHeader: React.FC = () => {
           <Clock className="h-5 w-5" />
         </div>
         <div>
-          <h3 className="font-medium">المرحلة الحالية: أدوات إنتاج المحتوى الأساسية</h3>
-          <p className="text-sm text-muted-foreground">تطوير نظام لتنظيم وتحليل صور المنتجات، وإنشاء مكتبة مركزية للأصول البصرية</p>
+          <h3 className="font-medium">المرحلة الحالية: التكامل والتوسع</h3>
+          <p className="text-sm text-muted-foreground">ربط المنصة بأنظمة الشركة الأخرى وتوسيع نطاق تطبيقها وتخصيصها</p>
         </div>
       </div>
       
       <div className="space-y-1">
         <div className="flex justify-between text-sm mb-1">
           <span className="text-muted-foreground">تقدم المشروع</span>
-          <span className="font-medium">٤٠٪</span>
+          <span className="font-medium">٩٣٪</span>
         </div>
         <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" style={{ width: "40%" }}></div>
+          <div className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full" style={{ width: "93%" }}></div>
         </div>
         <div className="flex justify-between text-xs text-muted-foreground mt-1">
-          <span>المرحلتان ١-٢ (مكتملتان)</span>
-          <span>المرحلة ٣ (قيد التنفيذ)</span>
-          <span>المراحل ٤-٧ (مخطط لها)</span>
+          <span>المراحل ١-٦ (مكتملة)</span>
+          <span>المرحلة ٧ (قيد التنفيذ)</span>
+          <span>الإطلاق النهائي (قريباً)</span>
         </div>
       </div>
     </div>

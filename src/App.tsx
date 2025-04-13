@@ -21,6 +21,7 @@ import Analytics from "./pages/Analytics";
 import Scheduler from "./pages/Scheduler";
 import SchedulerSettings from "./pages/SchedulerSettings";
 import ContentTools from "./pages/ContentTools";
+import Integration from "./pages/Integration";
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -64,6 +65,7 @@ function App() {
             <Route path="/scheduler" element={<Scheduler />} />
             <Route path="/scheduler-settings" element={<SchedulerSettings />} />
             <Route path="/documentation" element={<Documentation />} />
+            <Route path="/integration" element={<Integration />} />
             
             {/* 404 Route */}
             <Route path="*" element={<NotFound />} />

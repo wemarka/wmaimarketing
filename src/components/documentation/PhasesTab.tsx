@@ -64,40 +64,40 @@ const PhasesTab: React.FC = () => {
       <PhaseCard 
         phaseNumber={5}
         title="نظام الجدولة والنشر"
-        status="in-progress"
+        status="complete"
         items={[
           { text: "تقويم تسويقي للحملات والمنشورات", done: true },
           { text: "سير عمل للموافقات قبل النشر", done: true },
           { text: "ربط مع حسابات الشركة على وسائل التواصل", done: true },
           { text: "تنظيم المحتوى حسب المنتجات أو الحملات", done: true },
           { text: "نظام مراجعة وموافقة للمحتوى قبل النشر", done: true },
-          { text: "متابعة حالة المنشورات", done: false },
+          { text: "متابعة حالة المنشورات", done: true },
         ]}
       />
       
       <PhaseCard 
         phaseNumber={6}
         title="التحليلات والتقارير الداخلية"
-        status="in-progress"
+        status="complete"
         items={[
           { text: "تتبع أداء منشورات وحملات الشركة", done: true },
           { text: "مقارنة بين المنصات المختلفة", done: true },
           { text: "تقارير دورية للإدارة", done: true },
           { text: "مؤشرات الأداء الرئيسية للتسويق", done: true },
-          { text: "تحليل تكلفة الإنتاج وفعالية الحملات", done: false },
-          { text: "توصيات لتحسين المحتوى المستقبلي", done: false },
+          { text: "تحليل تكلفة الإنتاج وفعالية الحملات", done: true },
+          { text: "توصيات لتحسين المحتوى المستقبلي", done: true },
         ]}
       />
       
       <PhaseCard 
         phaseNumber={7}
         title="التكامل والتوسع"
-        status="planned"
+        status="in-progress"
         items={[
-          { text: "ربط مع نظام إدارة المنتجات", done: false },
-          { text: "تكامل مع نظام المبيعات لتتبع تأثير الحملات", done: false },
+          { text: "ربط مع نظام إدارة المنتجات", done: true },
+          { text: "تكامل مع نظام المبيعات لتتبع تأثير الحملات", done: true },
           { text: "استيراد/تصدير البيانات من/إلى أنظمة الشركة الأخرى", done: false },
-          { text: "تعريب كامل للنظام", done: false },
+          { text: "تعريب كامل للنظام", done: true },
           { text: "تخصيص الواجهة حسب هوية العلامة التجارية", done: false },
           { text: "دعم متعدد اللغات للأسواق المختلفة", done: false },
         ]}
