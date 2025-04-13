@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
@@ -18,7 +17,16 @@ import TemplateSelector from "@/components/ad-designer/TemplateSelector";
 import AssetLibrarySelector from "@/components/ad-designer/AssetLibrarySelector";
 import AdvancedOptions from "@/components/ad-designer/AdvancedOptions";
 
-// تعريف الأحجام القياسية للإعلانات حسب المنصات
+interface PlatformRecommendation {
+  styles: string[];
+  callToAction: string[];
+  colorRecommendations: string[];
+}
+
+interface PlatformRecommendations {
+  [key: string]: PlatformRecommendation;
+}
+
 const adSizesConfig = {
   instagram: [
     { id: "square", name: "مربع (1:1)", aspectRatio: "aspect-square", size: "1080×1080", icon: <Square className="h-4 w-4" /> },
@@ -41,8 +49,7 @@ const adSizesConfig = {
   ]
 };
 
-// توصيات الإعلان المستندة إلى المنصات
-const platformRecommendations = {
+const platformRecommendations: PlatformRecommendations = {
   instagram: {
     styles: ["modern", "minimal"],
     callToAction: ["shop_now", "learn_more"],
@@ -97,9 +104,7 @@ const AdDesigner = () => {
   const handleGenerate = () => {
     setLoading(true);
     
-    // محاكاة توليد الإعلان
     setTimeout(() => {
-      // استخدام صورة محددة أو صورة افتراضية
       setGeneratedAd(adContent.imageUrl || "https://images.unsplash.com/photo-1596704017254-9b5e2a025acf?q=80&w=1080&auto=format&fit=crop");
       setLoading(false);
       
@@ -111,7 +116,6 @@ const AdDesigner = () => {
   };
 
   const handleDownload = () => {
-    // في تطبيق حقيقي، هذه الوظيفة ستقوم بتنزيل الإعلان المنشأ
     toast({
       title: t("adDesigner.downloadStarted"),
       description: t("adDesigner.downloadDescription"),
@@ -127,7 +131,6 @@ const AdDesigner = () => {
     setGeneratedAd(imageUrl);
   };
 
-  // الحصول على نسب العرض بناءً على حجم الإعلان المحدد
   const getAdSizeConfig = useMemo(() => {
     const platformSizes = adSizesConfig[adContent.platform as keyof typeof adSizesConfig] || adSizesConfig.instagram;
     return platformSizes.find(size => size.id === adContent.adSize) || platformSizes[0];
@@ -135,13 +138,11 @@ const AdDesigner = () => {
 
   const getAspectRatio = () => {
     if (adContent.adSize === "custom") {
-      // لا تستخدم فئة النسبة بل استخدم أبعادًا مخصصة
       return "";
     }
     return getAdSizeConfig.aspectRatio;
   };
 
-  // الحصول على نمط النص بناءً على الإعدادات
   const getTextStyle = () => {
     let style: React.CSSProperties = {
       fontFamily: getFontFamily(),
@@ -155,8 +156,7 @@ const AdDesigner = () => {
     
     return style;
   };
-  
-  // الحصول على عائلة الخط بناءً على إعداد الخط المخصص
+
   const getFontFamily = () => {
     switch (adContent.customFont) {
       case "elegant": return "serif";
@@ -166,8 +166,7 @@ const AdDesigner = () => {
       default: return "sans-serif";
     }
   };
-  
-  // الحصول على نمط الخلفية بناءً على إعدادات التأثير
+
   const getBackgroundStyle = () => {
     if (!generatedAd) return {};
     
@@ -188,7 +187,6 @@ const AdDesigner = () => {
         style.boxShadow = `inset 0 0 0 2000px rgba(0, 0, 0, ${adContent.overlayOpacity / 100})`;
         break;
       case "duotone":
-        // تأثير duotone مبسط
         style.filter = "grayscale(100%) sepia(20%) brightness(90%) hue-rotate(45deg)";
         break;
       default:
@@ -197,8 +195,7 @@ const AdDesigner = () => {
     
     return style;
   };
-  
-  // الحصول على موضع المحتوى بناءً على موضع العلامة التجارية
+
   const getContentPosition = () => {
     let position = "justify-end";
     
@@ -209,7 +206,6 @@ const AdDesigner = () => {
       case "none": position = "hidden"; break;
     }
     
-    // إضافة محاذاة أفقية
     switch (adContent.alignmentX) {
       case "left": position += " items-start"; break;
       case "center": position += " items-center"; break;
@@ -219,18 +215,19 @@ const AdDesigner = () => {
     
     return position;
   };
-  
-  // الحصول على أحجام الإعلانات المتاحة للمنصة المحددة
+
   const getAvailableAdSizes = () => {
     return adSizesConfig[adContent.platform as keyof typeof adSizesConfig] || adSizesConfig.instagram;
   };
 
-  // الحصول على توصيات المنصة الحالية
   const getPlatformRecommendations = () => {
-    return platformRecommendations[adContent.platform as keyof typeof platformRecommendations] || {};
+    return platformRecommendations[adContent.platform as keyof typeof platformRecommendations] || {
+      styles: [],
+      callToAction: [],
+      colorRecommendations: []
+    };
   };
 
-  // عرض توصيات الألوان للمنصة المحددة
   const renderColorRecommendations = () => {
     const recommendations = getPlatformRecommendations().colorRecommendations || [];
     
@@ -259,7 +256,6 @@ const AdDesigner = () => {
           direction="horizontal"
           className="min-h-[600px]"
         >
-          {/* لوحة المحرر */}
           <ResizablePanel defaultSize={40} minSize={30}>
             <Card className="h-full">
               <CardContent className="p-6">
@@ -623,7 +619,6 @@ const AdDesigner = () => {
 
           <ResizableHandle withHandle />
 
-          {/* لوحة المعاينة */}
           <ResizablePanel defaultSize={60} minSize={30}>
             <Card className="h-full">
               <CardContent className="p-6">
@@ -655,7 +650,6 @@ const AdDesigner = () => {
                     >
                       <div className="absolute inset-0" style={getBackgroundStyle()}></div>
                       
-                      {/* تراكب المحتوى */}
                       <div className={`absolute inset-0 flex flex-col p-4 ${getContentPosition()}`}>
                         <div className={`${adContent.effectStyle === "overlay" ? "text-white" : ""} max-w-[80%]`} style={getTextStyle()}>
                           {adContent.headline && <h3 className="text-xl font-bold mb-1">{adContent.headline}</h3>}
@@ -666,14 +660,12 @@ const AdDesigner = () => {
                         </div>
                       </div>
                       
-                      {/* الشعار إذا كان مفعلاً */}
                       {adContent.showLogo && (
                         <div className="absolute top-2 left-2 bg-white/80 rounded-full p-1 w-8 h-8 flex items-center justify-center">
                           <div className="w-6 h-6 rounded-full bg-gray-800"></div>
                         </div>
                       )}
                       
-                      {/* مؤشر المنصة */}
                       <div className="absolute bottom-2 right-2 text-xs px-2 py-1 bg-black/50 text-white rounded-full">
                         {adContent.platform}
                       </div>
@@ -690,7 +682,6 @@ const AdDesigner = () => {
           </ResizablePanel>
         </ResizablePanelGroup>
         
-        {/* مربع حوار اختيار مكتبة الأصول */}
         <AssetLibrarySelector 
           isOpen={isAssetLibraryOpen}
           setIsOpen={setIsAssetLibraryOpen}
