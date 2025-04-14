@@ -25,6 +25,12 @@ import ContentTools from "./pages/ContentTools";
 import Integration from "./pages/Integration";
 import AIStudio from "./pages/AIStudio";
 
+// New Module Pages
+import GenerateAd from "./modules/ai-generator/pages/GenerateAd";
+import SchedulePost from "./modules/marketing/pages/SchedulePost";
+import ProductList from "./modules/product/pages/ProductList";
+import AddProduct from "./modules/product/pages/AddProduct";
+
 // Create a client for React Query
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -88,6 +94,28 @@ function App() {
             <Route path="/ad-designer" element={
               <RequireAuth>
                 <AdDesigner />
+              </RequireAuth>
+            } />
+            
+            {/* New Module Routes */}
+            <Route path="/generate-ad" element={
+              <RequireAuth>
+                <GenerateAd />
+              </RequireAuth>
+            } />
+            <Route path="/schedule-post" element={
+              <RequireAuth>
+                <SchedulePost />
+              </RequireAuth>
+            } />
+            <Route path="/product/list" element={
+              <RequireAuth>
+                <ProductList />
+              </RequireAuth>
+            } />
+            <Route path="/product/add" element={
+              <RequireAuth>
+                <AddProduct />
               </RequireAuth>
             } />
             
