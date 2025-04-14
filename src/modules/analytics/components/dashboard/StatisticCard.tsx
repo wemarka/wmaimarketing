@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowUpRight, ArrowDownRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
@@ -23,8 +23,13 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
   positive = true,
   showSpark = false,
 }) => {
-  const changeValue = parseFloat(change);
-  const isPositive = positive || changeValue >= 0;
+  // استخدام useMemo لتجنب إعادة حساب القيم في كل تصيير
+  const parsedChangeValue = useMemo(() => parseFloat(change), [change]);
+  const isPositive = useMemo(() => positive || parsedChangeValue >= 0, [positive, parsedChangeValue]);
+  const showExceptionalPerformance = useMemo(
+    () => isPositive && parsedChangeValue > 15,
+    [isPositive, parsedChangeValue]
+  );
 
   return (
     <motion.div
@@ -44,7 +49,7 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
                   <ArrowUpRight className="h-3 w-3 mr-1" /> : 
                   <ArrowDownRight className="h-3 w-3 mr-1" />
                 }
-                <span>{Math.abs(changeValue)}% من الأسبوع الماضي</span>
+                <span>{Math.abs(parsedChangeValue)}% من الأسبوع الماضي</span>
               </div>
             </div>
             <div className={`p-2 rounded-md ${iconBgClass} relative`}>
@@ -57,7 +62,7 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
             </div>
           </div>
           
-          {isPositive && changeValue > 15 && (
+          {showExceptionalPerformance && (
             <div className="mt-3 pt-3 border-t">
               <div className="text-xs text-green-600 flex items-center">
                 <Sparkles className="h-3 w-3 mr-1" />
@@ -71,4 +76,5 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
   );
 };
 
-export default StatisticCard;
+// تصدير تركيب يستخدم React.memo لمنع إعادة التصيير غير الضرورية
+export default React.memo(StatisticCard);

@@ -1,17 +1,64 @@
 
-import React from "react";
+import React, { Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useDashboardData } from "@/modules/analytics/components/dashboard/useDashboardData";
+import { Loader2 } from "lucide-react";
 
-// Import components from the module structure
+// استيراد المكونات من هيكل الوحدات
 import {
   OverviewChart,
   EngagementMetrics,
   PlatformBreakdown,
   StatisticCard
 } from "@/modules/analytics/components/dashboard";
+
+// مكون تحميل لاستخدامه مع Suspense
+const LoadingFallback = () => (
+  <div className="flex justify-center items-center p-8">
+    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+  </div>
+);
+
+// مكونات فرعية لتقليل إعادة التصيير
+const StatisticsGrid = React.memo(({ analyticsData }: { analyticsData: any }) => (
+  <div className="grid md:grid-cols-4 gap-6">
+    <StatisticCard
+      title="المشاهدات"
+      value={analyticsData.impressions.toLocaleString()}
+      change={analyticsData.change.impressions.toString()}
+      positive={analyticsData.change.impressions > 0}
+      icon={<span className="text-blue-500">👁️</span>}
+      iconBgClass="bg-blue-100"
+    />
+    <StatisticCard
+      title="نسبة التفاعل"
+      value={`${analyticsData.engagement}%`}
+      change={analyticsData.change.engagement.toString()}
+      positive={analyticsData.change.engagement > 0}
+      icon={<span className="text-pink-500">❤️</span>}
+      iconBgClass="bg-pink-100"
+    />
+    <StatisticCard
+      title="نسبة النقرات"
+      value={`${analyticsData.clicks}%`}
+      change={analyticsData.change.clicks.toString()}
+      positive={analyticsData.change.clicks > 0}
+      icon={<span className="text-amber-500">👆</span>}
+      iconBgClass="bg-amber-100"
+    />
+    <StatisticCard
+      title="التحويلات"
+      value={analyticsData.conversions.toLocaleString()}
+      change={analyticsData.change.conversions.toString()}
+      positive={analyticsData.change.conversions > 0}
+      icon={<span className="text-green-500">💰</span>}
+      iconBgClass="bg-green-100"
+      showSpark={true}
+    />
+  </div>
+));
 
 const AnalyticsDashboard = () => {
   const {
@@ -47,71 +94,51 @@ const AnalyticsDashboard = () => {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-4 gap-6">
-        <StatisticCard
-          title="المشاهدات"
-          value={analyticsData.impressions.toString()}
-          change={analyticsData.change.impressions.toString()}
-          positive={analyticsData.change.impressions > 0}
-          icon={<span className="text-blue-500">👁️</span>}
-          iconBgClass="bg-blue-100"
-        />
-        <StatisticCard
-          title="نسبة التفاعل"
-          value={`${analyticsData.engagement}%`}
-          change={analyticsData.change.engagement.toString()}
-          positive={analyticsData.change.engagement > 0}
-          icon={<span className="text-pink-500">❤️</span>}
-          iconBgClass="bg-pink-100"
-        />
-        <StatisticCard
-          title="نسبة النقرات"
-          value={`${analyticsData.clicks}%`}
-          change={analyticsData.change.clicks.toString()}
-          positive={analyticsData.change.clicks > 0}
-          icon={<span className="text-amber-500">👆</span>}
-          iconBgClass="bg-amber-100"
-        />
-        <StatisticCard
-          title="التحويلات"
-          value={analyticsData.conversions.toString()}
-          change={analyticsData.change.conversions.toString()}
-          positive={analyticsData.change.conversions > 0}
-          icon={<span className="text-green-500">💰</span>}
-          iconBgClass="bg-green-100"
-          showSpark={true}
-        />
-      </div>
+      {loading ? (
+        <LoadingFallback />
+      ) : (
+        <>
+          <Suspense fallback={<LoadingFallback />}>
+            <StatisticsGrid analyticsData={analyticsData} />
+          </Suspense>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>نظرة عامة على الأداء</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <OverviewChart data={overviewData} />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>توزيع المنصات</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <PlatformBreakdown data={platformData} />
-          </CardContent>
-        </Card>
-      </div>
+          <div className="grid lg:grid-cols-3 gap-6">
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle>نظرة عامة على الأداء</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Suspense fallback={<LoadingFallback />}>
+                  <OverviewChart data={overviewData} />
+                </Suspense>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>توزيع المنصات</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Suspense fallback={<LoadingFallback />}>
+                  <PlatformBreakdown data={platformData} />
+                </Suspense>
+              </CardContent>
+            </Card>
+          </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>مقاييس التفاعل</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <EngagementMetrics data={engagementData} />
-        </CardContent>
-      </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>مقاييس التفاعل</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Suspense fallback={<LoadingFallback />}>
+                <EngagementMetrics data={engagementData} />
+              </Suspense>
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   );
 };
 
-export default AnalyticsDashboard;
+export default React.memo(AnalyticsDashboard);

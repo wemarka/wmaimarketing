@@ -1,21 +1,21 @@
 
 import { useState } from "react";
-import { useAnalyticsData } from "./hooks/useAnalyticsData";
-import { AnalyticsState } from "./types/dashboardTypes";
+import { useAnalyticsQuery } from "./hooks/useAnalyticsQuery";
 
 export const useDashboardData = () => {
   const [period, setPeriod] = useState<string>("7days");
   
-  // Use the new hook for data fetching
+  // استخدام الـ Hook الجديد الذي يعتمد على React Query
   const { 
-    loading,
     overviewData, 
     engagementData,
     platformData,
-    analyticsData
-  } = useAnalyticsData(period);
+    analyticsData,
+    isLoading: loading,
+    isError
+  } = useAnalyticsQuery(period);
   
-  // This function now only handles UI state changes
+  // هذه الدالة تتعامل فقط مع تغييرات حالة واجهة المستخدم
   const handlePeriodChange = (newPeriod: string) => {
     setPeriod(newPeriod);
   };
@@ -23,6 +23,7 @@ export const useDashboardData = () => {
   return {
     period,
     loading,
+    isError,
     overviewData,
     engagementData,
     platformData,

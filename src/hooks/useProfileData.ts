@@ -1,66 +1,63 @@
 
-import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { ProfileData } from "@/types/profile";
+import { useQueryConfig } from "@/hooks/useQueryConfig";
 
 export const useProfileData = () => {
   const { user } = useAuth();
-  const [loading, setLoading] = useState(true);
-  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const queryClient = useQueryClient();
+  const queryConfig = useQueryConfig("userProfile");
+  
+  // استخدام React Query لجلب بيانات الملف الشخصي
+  const { data: profileData, isLoading: loading } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async (): Promise<ProfileData | null> => {
+      if (!user) return null;
+      
+      console.log("Fetching profile for user:", user.id);
+      
+      // الحصول على الملف الشخصي باستخدام select
+      const { data: profile, error: selectError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
 
-  // Fetch profile data
-  useEffect(() => {
-    const getProfile = async () => {
-      if (!user) {
-        setLoading(false);
-        return;
+      if (selectError) {
+        console.error("Error fetching profile:", selectError);
+        
+        // إذا لم يكن الملف الشخصي موجودًا، قم بإنشائه
+        if (selectError.code === 'PGRST116') {
+          console.log("Profile not found, attempting to create one");
+          const newProfile = await createProfileFn();
+          return newProfile;
+        }
+        
+        throw selectError;
       }
 
-      try {
-        setLoading(true);
-        console.log("Fetching profile for user:", user.id);
-        
-        // Get profile using select
-        const { data: profile, error: selectError } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .single();
-
-        if (selectError) {
-          console.error("Error fetching profile:", selectError);
-          
-          // If profile doesn't exist, create it
-          if (selectError.code === 'PGRST116') {
-            console.log("Profile not found, attempting to create one");
-            await createProfile();
-            return;
-          }
-          
-          throw selectError;
-        }
-
-        console.log("Fetched profile:", profile);
-        setProfileData(profile as ProfileData);
-      } catch (error) {
+      console.log("Fetched profile:", profile);
+      return profile as ProfileData;
+    },
+    ...queryConfig,
+    enabled: !!user, // تمكين الاستعلام فقط إذا كان المستخدم متاحًا
+    meta: {
+      onError: (error: any) => {
         console.error("Error in profile operation:", error);
         toast({
           title: "خطأ",
           description: "حدث خطأ أثناء جلب بيانات الملف الشخصي",
           variant: "destructive",
         });
-      } finally {
-        setLoading(false);
       }
-    };
+    }
+  });
 
-    getProfile();
-  }, [user]);
-
-  // Create profile function
-  const createProfile = async () => {
+  // إنشاء دالة لإنشاء الملف الشخصي
+  const createProfileFn = async (): Promise<ProfileData | null> => {
     if (!user) return null;
     
     try {
@@ -88,11 +85,10 @@ export const useProfileData = () => {
       }
       
       console.log("Created profile:", data);
-      setProfileData(data as ProfileData);
-      return data;
+      return data as ProfileData;
     } catch (error) {
       console.error("Error creating profile:", error);
-      // Even on error, try one more time to fetch profile in case it was created by trigger
+      // حتى في حالة حدوث خطأ، حاول مرة أخرى لجلب الملف الشخصي في حالة إنشائه بواسطة المحفز
       try {
         const { data } = await supabase
           .from("profiles")
@@ -102,8 +98,7 @@ export const useProfileData = () => {
           
         if (data) {
           console.log("Found profile on retry:", data);
-          setProfileData(data as ProfileData);
-          return data;
+          return data as ProfileData;
         }
       } catch (retryError) {
         console.error("Error on retry fetch:", retryError);
@@ -112,6 +107,16 @@ export const useProfileData = () => {
     }
   };
 
+  // استخدام React Query Mutation لإنشاء الملف الشخصي
+  const createProfileMutation = useMutation({
+    mutationFn: createProfileFn,
+    onSuccess: (data) => {
+      // تحديث التخزين المؤقت بعد إنشاء الملف الشخصي بنجاح
+      queryClient.setQueryData(["profile", user?.id], data);
+    }
+  });
+
+  // الحصول على الأحرف الأولى من اسم المستخدم
   const getUserInitials = () => {
     if (!profileData) return user?.email?.substring(0, 1).toUpperCase() || "U";
     const firstName = profileData.first_name || "";
@@ -123,7 +128,9 @@ export const useProfileData = () => {
     profileData,
     loading,
     getUserInitials,
-    createProfile,
-    setProfileData
+    createProfile: () => createProfileMutation.mutate(),
+    setProfileData: (data: ProfileData) => {
+      queryClient.setQueryData(["profile", user?.id], data);
+    }
   };
 };
