@@ -2,12 +2,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
-import FeatureCard from "@/components/dashboard/FeatureCard";
-import StatCard from "@/components/dashboard/StatCard";
-import RecentActivity from "@/components/dashboard/RecentActivity";
-import UpcomingPosts from "@/components/dashboard/UpcomingPosts";
 import { Button } from "@/components/ui/button";
-import DashboardGreeting from "@/components/dashboard/DashboardGreeting";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PostStatusTracker from "@/components/analytics/PostStatusTracker";
 import {
@@ -24,11 +19,20 @@ import {
   Palette,
   Sparkles,
 } from "lucide-react";
-import PerformanceSummary from "@/components/dashboard/PerformanceSummary";
-import MarketingStats from "@/components/dashboard/MarketingStats";
-import ContentInsights from "@/components/dashboard/ContentInsights";
-import QuickActions from "@/components/dashboard/QuickActions";
-import DashboardAnnouncement from "@/components/dashboard/DashboardAnnouncement";
+
+// Import from the new modules structure
+import {
+  FeatureCard,
+  StatCard,
+  QuickActions,
+  DashboardGreeting,
+  DashboardAnnouncement,
+  RecentActivity,
+  ContentInsights,
+  PerformanceSummary,
+  MarketingStats
+} from "@/modules/dashboard/components";
+import UpcomingPosts from "@/components/dashboard/UpcomingPosts";
 
 const Dashboard = () => {
   const { t } = useTranslation();
