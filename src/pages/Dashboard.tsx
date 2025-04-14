@@ -33,6 +33,8 @@ import {
   MarketingStats
 } from "@/modules/dashboard/components";
 import UpcomingPosts from "@/components/dashboard/UpcomingPosts";
+import NotificationsWidget from "@/components/dashboard/NotificationsWidget";
+import EngagementInsights from "@/components/dashboard/EngagementInsights";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -95,6 +97,13 @@ const Dashboard = () => {
                 positive={false}
                 trend="week"
               />
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="md:col-span-2">
+                <EngagementInsights />
+              </div>
+              <NotificationsWidget />
             </div>
             
             <div className="grid md:grid-cols-3 gap-6">
