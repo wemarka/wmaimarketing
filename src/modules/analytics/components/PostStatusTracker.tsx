@@ -1,47 +1,33 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Clock, CheckCircle, AlertCircle, XCircle, 
-  LoaderCircle, BarChart2, Search, Filter, RefreshCw 
+  LoaderCircle, BarChart2, RefreshCw 
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { AnimatePresence } from "framer-motion";
 
-// تعريف أنواع الحالات للمنشورات
-type PostStatus = "published" | "scheduled" | "pending" | "rejected";
-
-// نوع بيانات المنشور
-interface PostData {
-  id: string;
-  title: string;
-  status: PostStatus;
-  date: string;
-  priority?: "high" | "medium" | "low";
-  platform?: string;
-}
+// استيراد المكونات الفرعية والأنواع
+import { PostData, StatusInfo } from "./post-tracker/types";
+import SearchFilters from "./post-tracker/SearchFilters";
+import StatusChart from "./post-tracker/StatusChart";
+import AnimatedTabContent from "./post-tracker/AnimatedTabContent";
+import PostItem from "./post-tracker/PostItem";
 
 const PostStatusTracker = () => {
   const [viewType, setViewType] = useState<"cards" | "chart">("cards");
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [platformFilter, setplatformFilter] = useState<string>("all");
+  const [platformFilter, setPlatformFilter] = useState<string>("all");
   const { toast } = useToast();
 
   // بيانات توضيحية للحالات
-  const statuses = [
+  const statuses: StatusInfo[] = [
     {
       icon: <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500" />,
       label: "تم نشر 12 منشوراً",
@@ -113,11 +99,6 @@ const PostStatusTracker = () => {
     }, 1500);
   };
 
-  // حساب النسب المئوية للرسم البياني
-  const getPercentage = (count: number) => {
-    return (count / totalPosts) * 100;
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -156,41 +137,12 @@ const PostStatusTracker = () => {
           </div>
         </CardHeader>
         <CardContent>
-          {/* حقل البحث وخيارات التصفية */}
-          <div className="flex flex-col sm:flex-row gap-2 mb-4">
-            <div className="relative flex-grow">
-              <Search className="absolute left-2.5 rtl:right-2.5 rtl:left-auto top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input 
-                type="search" 
-                placeholder="بحث عن منشور..." 
-                className="pl-8 rtl:pl-4 rtl:pr-8" 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-1">
-                  <Filter size={14} />
-                  <span className="hidden sm:inline">تصفية</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setplatformFilter("all")}>
-                  جميع المنصات
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setplatformFilter("instagram")}>
-                  Instagram
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setplatformFilter("facebook")}>
-                  Facebook
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setplatformFilter("tiktok")}>
-                  TikTok
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          {/* استخدام مكون البحث والتصفية */}
+          <SearchFilters
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onPlatformFilterChange={setPlatformFilter}
+          />
           
           <Tabs defaultValue="all" className="w-full" onValueChange={setStatusFilter}>
             <TabsList className="grid grid-cols-2 md:grid-cols-4 mb-4">
@@ -207,41 +159,7 @@ const PostStatusTracker = () => {
                     {filteredPosts.length > 0 ? (
                       <div className="space-y-4">
                         {filteredPosts.map((post, index) => (
-                          <motion.div
-                            key={post.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.2, delay: index * 0.1 }}
-                            whileHover={{ scale: 1.01 }}
-                            className={cn(
-                              "flex justify-between items-center p-3 rounded-md border transition-colors",
-                              getStatusStyle(post.status).bg,
-                              getStatusStyle(post.status).border
-                            )}
-                          >
-                            <div className="flex items-center gap-3">
-                              {getStatusIcon(post.status)}
-                              <div>
-                                <div className="flex gap-2 items-center">
-                                  <p className="font-medium">{post.title}</p>
-                                  {post.priority && (
-                                    <Badge variant={getPriorityVariant(post.priority)} className="text-xs">
-                                      {getPriorityText(post.priority)}
-                                    </Badge>
-                                  )}
-                                </div>
-                                <div className="flex gap-2 items-center text-sm text-muted-foreground">
-                                  <span>{getFormattedDate(post.date)}</span>
-                                  {post.platform && (
-                                    <Badge variant="outline" className="text-xs">
-                                      {post.platform}
-                                    </Badge>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                            <Button variant="ghost" size="sm">التفاصيل</Button>
-                          </motion.div>
+                          <PostItem key={post.id} post={post} index={index} />
                         ))}
                       </div>
                     ) : (
@@ -251,108 +169,7 @@ const PostStatusTracker = () => {
                     )}
                   </>
                 ) : (
-                  <div className="space-y-4">
-                    {/* مخطط بياني دائري سريع الاستجابة */}
-                    <div className="relative pt-2">
-                      <div className="h-40 w-40 mx-auto">
-                        <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                          {statuses.map((status, index) => {
-                            // حساب قيم المخطط الدائري
-                            const percentage = getPercentage(status.count);
-                            const dashArray = 2 * Math.PI * 25; // محيط الدائرة (2πr)
-                            const dashOffset = dashArray - (dashArray * percentage) / 100;
-                            const prevPercentages = statuses
-                              .slice(0, index)
-                              .reduce((sum, s) => sum + getPercentage(s.count), 0);
-                            
-                            // تعيين الألوان حسب حالة المنشور
-                            let strokeColor = "";
-                            if (index === 0) strokeColor = "stroke-green-500"; // منشورة
-                            if (index === 1) strokeColor = "stroke-yellow-500"; // مجدولة
-                            if (index === 2) strokeColor = "stroke-blue-500"; // قيد الانتظار
-                            if (index === 3) strokeColor = "stroke-red-500"; // مرفوضة
-                            
-                            return (
-                              <circle
-                                key={index}
-                                cx="50"
-                                cy="50"
-                                r="25"
-                                fill="none"
-                                strokeWidth="12"
-                                strokeDasharray={dashArray}
-                                strokeDashoffset={dashOffset}
-                                style={{
-                                  transformOrigin: "50% 50%",
-                                  transform: `rotate(${prevPercentages * 3.6}deg)`,
-                                }}
-                                className={cn("transition-all", strokeColor)}
-                              />
-                            );
-                          })}
-                          <circle cx="50" cy="50" r="18" className="fill-card" />
-                          <text
-                            x="50"
-                            y="50"
-                            dominantBaseline="middle"
-                            textAnchor="middle"
-                            className="fill-foreground text-lg font-bold"
-                          >
-                            {totalPosts}
-                          </text>
-                          <text
-                            x="50"
-                            y="60"
-                            dominantBaseline="middle"
-                            textAnchor="middle"
-                            className="fill-muted-foreground text-[9px]"
-                          >
-                            منشور
-                          </text>
-                        </svg>
-                      </div>
-                      
-                      <div className="flex flex-wrap justify-center gap-3 mt-4">
-                        {statuses.map((status, index) => {
-                          let dotColor = "";
-                          if (index === 0) dotColor = "bg-green-500";
-                          if (index === 1) dotColor = "bg-yellow-500";
-                          if (index === 2) dotColor = "bg-blue-500";
-                          if (index === 3) dotColor = "bg-red-500";
-                          
-                          return (
-                            <div key={index} className="flex items-center gap-2">
-                              <div className={`w-3 h-3 rounded-full ${dotColor}`} />
-                              <div className="text-sm">
-                                <span className="font-medium">{status.count}</span>
-                                <span className="text-muted-foreground mr-1">
-                                  ({Math.round(getPercentage(status.count))}%)
-                                </span>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                    
-                    {/* جدول بيانات المنشورات */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                      {statuses.map((status, index) => (
-                        <div 
-                          key={index} 
-                          className={cn(
-                            "p-3 rounded-md border text-center transition-colors", 
-                            status.bgClass,
-                            status.borderClass
-                          )}
-                        >
-                          <div className="flex justify-center mb-2">{status.icon}</div>
-                          <p className="text-2xl font-bold">{status.count}</p>
-                          <p className="text-xs text-muted-foreground">{status.description}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                  <StatusChart statuses={statuses} totalPosts={totalPosts} />
                 )}
               </TabsContent>
               
@@ -377,156 +194,6 @@ const PostStatusTracker = () => {
       </Card>
     </motion.div>
   );
-};
-
-// مكون فرعي لعرض محتوى التبويبات مع رسوم متحركة
-const AnimatedTabContent = ({ status, posts }: { status: string, posts: PostData[] }) => {
-  const filteredPosts = posts.filter(post => post.status === status);
-  
-  const getStatusLabel = (status: string): string => {
-    switch (status) {
-      case "published": return "المنشورات المنشورة";
-      case "scheduled": return "المنشورات المجدولة";
-      case "pending": return "المنشورات قيد الانتظار";
-      case "rejected": return "المنشورات المرفوضة";
-      default: return "المنشورات";
-    }
-  };
-  
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "published": return <CheckCircle className="h-10 w-10 mx-auto mb-4 text-green-500 opacity-50" />;
-      case "scheduled": return <Clock className="h-10 w-10 mx-auto mb-4 text-yellow-500 opacity-50" />;
-      case "pending": return <LoaderCircle className="h-10 w-10 mx-auto mb-4 text-blue-500 opacity-50" />;
-      case "rejected": return <XCircle className="h-10 w-10 mx-auto mb-4 text-red-500 opacity-50" />;
-      default: return null;
-    }
-  };
-  
-  return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-    >
-      {filteredPosts.length > 0 ? (
-        <div className="space-y-4">
-          {filteredPosts.map((post, index) => (
-            <motion.div
-              key={post.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2, delay: index * 0.1 }}
-              whileHover={{ scale: 1.01 }}
-              className={cn(
-                "flex justify-between items-center p-3 rounded-md border transition-colors",
-                getStatusStyle(post.status).bg,
-                getStatusStyle(post.status).border
-              )}
-            >
-              <div className="flex items-center gap-3">
-                {getStatusIcon(post.status)}
-                <div>
-                  <div className="flex gap-2 items-center">
-                    <p className="font-medium">{post.title}</p>
-                    {post.priority && (
-                      <Badge variant={getPriorityVariant(post.priority)} className="text-xs">
-                        {getPriorityText(post.priority)}
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="flex gap-2 items-center text-sm text-muted-foreground">
-                    <span>{getFormattedDate(post.date)}</span>
-                    {post.platform && (
-                      <Badge variant="outline" className="text-xs">
-                        {post.platform}
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <Button variant="ghost" size="sm">التفاصيل</Button>
-            </motion.div>
-          ))}
-        </div>
-      ) : (
-        <div className="p-8 text-center">
-          {getStatusIcon(status)}
-          <h3 className="font-medium text-xl">{getStatusLabel(status)}</h3>
-          <p className="text-muted-foreground mt-2">لا توجد منشورات تطابق معايير البحث</p>
-        </div>
-      )}
-    </motion.div>
-  );
-};
-
-// وظائف مساعدة للحصول على الأيقونات والأنماط حسب الحالة
-const getStatusIcon = (status: PostStatus) => {
-  switch (status) {
-    case "published":
-      return <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500" />;
-    case "scheduled":
-      return <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-500" />;
-    case "pending":
-      return <LoaderCircle className="h-5 w-5 text-blue-600 dark:text-blue-500" />;
-    case "rejected":
-      return <XCircle className="h-5 w-5 text-red-600 dark:text-red-500" />;
-  }
-};
-
-const getStatusStyle = (status: PostStatus) => {
-  switch (status) {
-    case "published":
-      return {
-        bg: "bg-green-50 dark:bg-green-900/20",
-        border: "border-green-200 dark:border-green-900"
-      };
-    case "scheduled":
-      return {
-        bg: "bg-yellow-50 dark:bg-yellow-900/20",
-        border: "border-yellow-200 dark:border-yellow-900"
-      };
-    case "pending":
-      return {
-        bg: "bg-blue-50 dark:bg-blue-900/20",
-        border: "border-blue-200 dark:border-blue-900"
-      };
-    case "rejected":
-      return {
-        bg: "bg-red-50 dark:bg-red-900/20",
-        border: "border-red-200 dark:border-red-900"
-      };
-  }
-};
-
-// وظائف مساعدة للتحويل بين الأولويات
-const getPriorityVariant = (priority: string) => {
-  switch (priority) {
-    case "high": return "destructive";
-    case "medium": return "secondary";
-    case "low": return "outline";
-    default: return "secondary";
-  }
-};
-
-const getPriorityText = (priority: string) => {
-  switch (priority) {
-    case "high": return "أولوية عالية";
-    case "medium": return "أولوية متوسطة";
-    case "low": return "أولوية منخفضة";
-    default: return "";
-  }
-};
-
-// تنسيق التاريخ بشكل أفضل
-const getFormattedDate = (dateString: string) => {
-  const options: Intl.DateTimeFormatOptions = { 
-    year: 'numeric', 
-    month: 'short', 
-    day: 'numeric' 
-  };
-  return new Date(dateString).toLocaleDateString('ar-EG', options);
 };
 
 export default PostStatusTracker;
