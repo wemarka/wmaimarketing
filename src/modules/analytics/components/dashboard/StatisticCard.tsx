@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowUpRight, ArrowDownRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
-interface StatisticCardProps {
+export interface StatisticCardProps {
   title: string;
   value: string | number;
   change: string;

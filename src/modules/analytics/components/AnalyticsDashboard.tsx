@@ -53,28 +53,33 @@ const AnalyticsDashboard = () => {
           value={analyticsData.impressions.toString()}
           change={analyticsData.change.impressions.toString()}
           positive={analyticsData.change.impressions > 0}
-          loading={loading}
+          icon={<span className="text-blue-500">👁️</span>}
+          iconBgClass="bg-blue-100"
         />
         <StatisticCard
           title="نسبة التفاعل"
           value={`${analyticsData.engagement}%`}
           change={analyticsData.change.engagement.toString()}
           positive={analyticsData.change.engagement > 0}
-          loading={loading}
+          icon={<span className="text-pink-500">❤️</span>}
+          iconBgClass="bg-pink-100"
         />
         <StatisticCard
           title="نسبة النقرات"
           value={`${analyticsData.clicks}%`}
           change={analyticsData.change.clicks.toString()}
           positive={analyticsData.change.clicks > 0}
-          loading={loading}
+          icon={<span className="text-amber-500">👆</span>}
+          iconBgClass="bg-amber-100"
         />
         <StatisticCard
           title="التحويلات"
           value={analyticsData.conversions.toString()}
           change={analyticsData.change.conversions.toString()}
           positive={analyticsData.change.conversions > 0}
-          loading={loading}
+          icon={<span className="text-green-500">💰</span>}
+          iconBgClass="bg-green-100"
+          showSpark={true}
         />
       </div>
 
