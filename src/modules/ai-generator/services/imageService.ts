@@ -81,7 +81,7 @@ export const getRecentGenerations = async (limit: number = 5): Promise<Generated
     .select('*')
     .eq('user_id', userId)
     .eq('type', 'image')
-    .in('tags', ['ai-generated']) // Fixed: Pass a single value in the first array
+    .in('tags', ['ai-generated']) // Fixed: Passing an array with a single string value
     .order('created_at', { ascending: false })
     .limit(limit);
 
