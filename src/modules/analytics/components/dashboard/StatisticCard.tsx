@@ -3,6 +3,8 @@ import React, { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowUpRight, ArrowDownRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 export interface StatisticCardProps {
   title: string;
@@ -23,6 +25,8 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
   positive = true,
   showSpark = false,
 }) => {
+  const isMobile = useMediaQuery("(max-width: 640px)");
+  
   // استخدام useMemo لتجنب إعادة حساب القيم في كل تصيير
   const parsedChangeValue = useMemo(() => parseFloat(change), [change]);
   const isPositive = useMemo(() => positive || parsedChangeValue >= 0, [positive, parsedChangeValue]);
@@ -38,13 +42,23 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
       transition={{ duration: 0.5 }}
       whileHover={{ y: -5 }}
     >
-      <Card className="overflow-hidden hover:shadow-md transition-all">
-        <CardContent className="p-6">
+      <Card className="overflow-hidden hover:shadow-md transition-all dark:border-slate-700">
+        <CardContent className={cn(
+          "p-6",
+          isMobile && "p-4"
+        )}>
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm text-muted-foreground mb-1">{title}</p>
-              <p className="text-2xl font-semibold">{value}</p>
-              <div className={`flex items-center mt-1 ${isPositive ? 'text-green-600' : 'text-red-600'} text-sm`}>
+              <p className={cn(
+                "text-2xl font-semibold",
+                isMobile && "text-xl"
+              )}>{value}</p>
+              <div className={cn(
+                "flex items-center mt-1", 
+                isPositive ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-400',
+                "text-sm"
+              )}>
                 {isPositive ? 
                   <ArrowUpRight className="h-3 w-3 mr-1" /> : 
                   <ArrowDownRight className="h-3 w-3 mr-1" />
@@ -52,7 +66,11 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
                 <span>{Math.abs(parsedChangeValue)}% من الأسبوع الماضي</span>
               </div>
             </div>
-            <div className={`p-2 rounded-md ${iconBgClass} relative`}>
+            <div className={cn(
+              "p-2 rounded-md relative",
+              iconBgClass,
+              "dark:bg-opacity-30"
+            )}>
               {icon}
               {showSpark && (
                 <div className="absolute -top-1 -right-1">
@@ -63,8 +81,8 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
           </div>
           
           {showExceptionalPerformance && (
-            <div className="mt-3 pt-3 border-t">
-              <div className="text-xs text-green-600 flex items-center">
+            <div className="mt-3 pt-3 border-t dark:border-slate-700">
+              <div className="text-xs text-green-600 dark:text-green-500 flex items-center">
                 <Sparkles className="h-3 w-3 mr-1" />
                 <span>أداء استثنائي مقارنة بالفترات السابقة</span>
               </div>
