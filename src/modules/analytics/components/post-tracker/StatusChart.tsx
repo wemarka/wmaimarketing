@@ -1,6 +1,7 @@
 
 import React from "react";
 import { StatusInfo } from "./types";
+import { cn } from "@/lib/utils";
 
 interface StatusChartProps {
   statuses: StatusInfo[];

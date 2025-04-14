@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Clock, CheckCircle, AlertCircle, XCircle, LoaderCircle } from "lucide-react";
 import { PostStatus } from "./types";
 
