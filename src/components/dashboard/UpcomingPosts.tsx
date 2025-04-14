@@ -1,12 +1,19 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Instagram, Facebook, CalendarCheck, Clock, Users, Eye } from "lucide-react";
+import { Instagram, Facebook, CalendarCheck, Clock, Users, Eye, MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { useToast } from "@/components/ui/use-toast";
 
 const platforms = {
   instagram: {
@@ -66,6 +73,23 @@ const posts = [
 
 const UpcomingPosts = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [viewMode, setViewMode] = useState<"list" | "compact">("list");
+
+  const handleEdit = (id: number) => {
+    toast({
+      title: "تحرير المنشور",
+      description: `جاري فتح المنشور رقم ${id} للتحرير`
+    });
+    navigate(`/scheduler/edit/${id}`);
+  };
+
+  const handleDelete = (id: number) => {
+    toast({
+      title: "تم الحذف",
+      description: `تم حذف المنشور رقم ${id} بنجاح`
+    });
+  };
 
   return (
     <Card className="h-full">
@@ -76,14 +100,24 @@ const UpcomingPosts = () => {
             {posts.length} منشور مجدول للأيام القادمة
           </CardDescription>
         </div>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={() => navigate('/scheduler')}
-          className="text-xs"
-        >
-          عرض الجدول
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setViewMode(viewMode === "list" ? "compact" : "list")}
+            className="text-xs"
+          >
+            {viewMode === "list" ? "عرض مختصر" : "عرض مفصل"}
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate('/scheduler')}
+            className="text-xs"
+          >
+            عرض الجدول
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="px-6">
         <div className="space-y-4">
@@ -95,9 +129,15 @@ const UpcomingPosts = () => {
               transition={{ duration: 0.3, delay: index * 0.1 }}
             >
               <div
-                className="flex items-center gap-3 text-sm p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors"
+                className={cn(
+                  "flex items-center gap-3 text-sm p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors",
+                  viewMode === "compact" ? "p-2" : "p-3"
+                )}
               >
-                <div className="h-12 w-12 rounded-md bg-muted overflow-hidden shrink-0">
+                <div className={cn(
+                  "rounded-md bg-muted overflow-hidden shrink-0",
+                  viewMode === "compact" ? "h-10 w-10" : "h-12 w-12"
+                )}>
                   <img src={post.image} alt={post.title} className="h-full w-full object-cover" />
                 </div>
                 <div className="flex-1">
@@ -108,19 +148,43 @@ const UpcomingPosts = () => {
                     )}>
                       {platforms[post.platform as keyof typeof platforms].label}
                     </Badge>
+                    {viewMode !== "compact" && (
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <Clock className="h-3 w-3" />
+                        <span>{post.date}</span>
+                      </div>
+                    )}
                   </div>
-                  <p className="font-medium">{post.title}</p>
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mt-1">
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      <span>{post.date}</span>
+                  <p className={cn(
+                    "font-medium",
+                    viewMode === "compact" ? "text-sm truncate max-w-[200px]" : ""
+                  )}>{post.title}</p>
+                  {viewMode !== "compact" && (
+                    <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mt-1">
+                      <div className="flex items-center gap-1">
+                        <Eye className="h-3 w-3" />
+                        <span>{post.audienceSize}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Eye className="h-3 w-3" />
-                      <span>{post.audienceSize}</span>
-                    </div>
-                  </div>
+                  )}
                 </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => handleEdit(post.id)}>
+                      <Edit className="w-4 h-4 mr-2" />
+                      تحرير
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleDelete(post.id)} className="text-destructive focus:text-destructive">
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      حذف
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </motion.div>
           ))}

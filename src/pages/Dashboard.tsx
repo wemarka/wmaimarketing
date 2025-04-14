@@ -9,6 +9,7 @@ import UpcomingPosts from "@/components/dashboard/UpcomingPosts";
 import { Button } from "@/components/ui/button";
 import DashboardGreeting from "@/components/dashboard/DashboardGreeting";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import PostStatusTracker from "@/components/analytics/PostStatusTracker";
 import {
   Upload,
   Image,
@@ -92,7 +93,14 @@ const Dashboard = () => {
               />
             </div>
             
-            <PerformanceSummary />
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="md:col-span-2">
+                <PerformanceSummary />
+              </div>
+              <div>
+                <PostStatusTracker />
+              </div>
+            </div>
             
             <div className="grid md:grid-cols-2 gap-6">
               <RecentActivity />

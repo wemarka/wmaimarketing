@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Eye, Share, MousePointerClick, ShoppingBag, Download, RefreshCw } from "lucide-react";
+import { Eye, Share, MousePointerClick, ShoppingBag, Download, RefreshCw, Calendar, Clock } from "lucide-react";
 import { useDashboardData } from "./dashboard/useDashboardData";
 import StatisticCard from "./dashboard/StatisticCard";
 import OverviewChart from "./dashboard/OverviewChart";
@@ -26,6 +26,12 @@ const AnalyticsDashboard: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const { toast } = useToast();
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+
+  // Set last updated when component mounts
+  useEffect(() => {
+    setLastUpdated(new Date());
+  }, []);
 
   // Simulate data refresh
   const refreshData = () => {
@@ -38,6 +44,7 @@ const AnalyticsDashboard: React.FC = () => {
     
     setTimeout(() => {
       setLoading(false);
+      setLastUpdated(new Date());
       
       toast({
         title: "تم تحديث البيانات",
@@ -48,12 +55,23 @@ const AnalyticsDashboard: React.FC = () => {
   
   // Format date for last updated display
   const getLastUpdated = () => {
-    const now = new Date();
-    return now.toLocaleString('ar-SA', {
+    return lastUpdated.toLocaleString('ar-SA', {
       hour: '2-digit',
       minute: '2-digit',
       day: 'numeric',
       month: 'numeric'
+    });
+  };
+  
+  // Format date for last updated tooltip
+  const getLastUpdatedFull = () => {
+    return lastUpdated.toLocaleString('ar-SA', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
     });
   };
 
@@ -71,8 +89,9 @@ const AnalyticsDashboard: React.FC = () => {
             <p className="text-muted-foreground">
               تتبع أداء التسويق وفهم ما يؤثر على جمهورك المستهدف
             </p>
-            <Badge variant="outline" className="ml-2">
-              آخر تحديث: {getLastUpdated()}
+            <Badge variant="outline" className="ml-2 flex items-center gap-1" title={getLastUpdatedFull()}>
+              <Clock className="h-3 w-3" />
+              <span>آخر تحديث: {getLastUpdated()}</span>
             </Badge>
           </div>
         </div>
@@ -95,6 +114,7 @@ const AnalyticsDashboard: React.FC = () => {
             size="icon"
             onClick={refreshData}
             disabled={loading}
+            title="تحديث البيانات"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
           </Button>
@@ -102,6 +122,7 @@ const AnalyticsDashboard: React.FC = () => {
           <Button 
             variant="outline" 
             size="icon"
+            title="تحميل التقرير"
           >
             <Download className="h-4 w-4" />
           </Button>
@@ -180,20 +201,26 @@ const AnalyticsDashboard: React.FC = () => {
         </TabsContent>
         
         <TabsContent value="audience">
-          <div className="flex items-center justify-center h-64">
-            <p className="text-muted-foreground">بيانات الجمهور ستكون متاحة قريباً</p>
+          <div className="flex flex-col items-center justify-center h-64 bg-muted/20 rounded-lg border border-dashed">
+            <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
+            <p className="text-xl font-medium mb-2">بيانات الجمهور</p>
+            <p className="text-muted-foreground">ستكون متاحة قريباً مع التحديث القادم</p>
           </div>
         </TabsContent>
         
         <TabsContent value="content">
-          <div className="flex items-center justify-center h-64">
-            <p className="text-muted-foreground">بيانات المحتوى ستكون متاحة قريباً</p>
+          <div className="flex flex-col items-center justify-center h-64 bg-muted/20 rounded-lg border border-dashed">
+            <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+            <p className="text-xl font-medium mb-2">بيانات المحتوى</p>
+            <p className="text-muted-foreground">ستكون متاحة قريباً مع التحديث القادم</p>
           </div>
         </TabsContent>
         
         <TabsContent value="conversion">
-          <div className="flex items-center justify-center h-64">
-            <p className="text-muted-foreground">بيانات التحويلات ستكون متاحة قريباً</p>
+          <div className="flex flex-col items-center justify-center h-64 bg-muted/20 rounded-lg border border-dashed">
+            <ShoppingBag className="h-12 w-12 text-muted-foreground mb-4" />
+            <p className="text-xl font-medium mb-2">بيانات التحويلات</p>
+            <p className="text-muted-foreground">ستكون متاحة قريباً مع التحديث القادم</p>
           </div>
         </TabsContent>
       </Tabs>
