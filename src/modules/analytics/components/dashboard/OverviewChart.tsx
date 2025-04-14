@@ -319,7 +319,7 @@ const OverviewChart: React.FC<OverviewChartProps> = ({ data }) => {
   const renderMetricFilters = () => (
     <div className="flex flex-wrap gap-1 mt-2">
       <Button
-        variant={focusedMetric === null ? "subtle" : "ghost"}
+        variant={focusedMetric === null ? "secondary" : "ghost"}
         size="sm"
         onClick={() => setFocusedMetric(null)}
         className="text-xs"
@@ -327,7 +327,7 @@ const OverviewChart: React.FC<OverviewChartProps> = ({ data }) => {
         الكل
       </Button>
       <Button
-        variant={focusedMetric === "impressions" ? "subtle" : "ghost"}
+        variant={focusedMetric === "impressions" ? "secondary" : "ghost"}
         size="sm"
         onClick={() => setFocusedMetric("impressions")}
         className="text-xs"
@@ -336,7 +336,7 @@ const OverviewChart: React.FC<OverviewChartProps> = ({ data }) => {
         المشاهدات
       </Button>
       <Button
-        variant={focusedMetric === "engagement" ? "subtle" : "ghost"}
+        variant={focusedMetric === "engagement" ? "secondary" : "ghost"}
         size="sm"
         onClick={() => setFocusedMetric("engagement")}
         className="text-xs"
@@ -345,7 +345,7 @@ const OverviewChart: React.FC<OverviewChartProps> = ({ data }) => {
         التفاعل
       </Button>
       <Button
-        variant={focusedMetric === "clicks" ? "subtle" : "ghost"}
+        variant={focusedMetric === "clicks" ? "secondary" : "ghost"}
         size="sm"
         onClick={() => setFocusedMetric("clicks")}
         className="text-xs"
@@ -354,7 +354,7 @@ const OverviewChart: React.FC<OverviewChartProps> = ({ data }) => {
         النقرات
       </Button>
       <Button
-        variant={focusedMetric === "revenue" ? "subtle" : "ghost"}
+        variant={focusedMetric === "revenue" ? "secondary" : "ghost"}
         size="sm"
         onClick={() => setFocusedMetric("revenue")}
         className="text-xs"
@@ -484,11 +484,9 @@ const OverviewChart: React.FC<OverviewChartProps> = ({ data }) => {
               />
               <ChartTooltip 
                 content={<ChartTooltipContent />}
-                wrapperClassName="!bg-popover !text-popover-foreground" 
               />
               <ChartLegend 
                 content={<ChartLegendContent />}
-                wrapperClassName="!text-muted-foreground" 
               />
               
               {renderChartComponents()}
