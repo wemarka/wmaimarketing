@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Eye, Share, MousePointerClick, ShoppingBag, Download, RefreshCw, Calendar, Clock } from "lucide-react";
+import { Eye, Share, MousePointerClick, ShoppingBag, Download, RefreshCw, Calendar, Clock, FileText } from "lucide-react";
 import { useDashboardData } from "./dashboard/useDashboardData";
 import StatisticCard from "./dashboard/StatisticCard";
 import OverviewChart from "./dashboard/OverviewChart";
@@ -28,12 +27,10 @@ const AnalyticsDashboard: React.FC = () => {
   const { toast } = useToast();
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
-  // Set last updated when component mounts
   useEffect(() => {
     setLastUpdated(new Date());
   }, []);
 
-  // Simulate data refresh
   const refreshData = () => {
     setLoading(true);
     
@@ -52,8 +49,7 @@ const AnalyticsDashboard: React.FC = () => {
       });
     }, 1500);
   };
-  
-  // Format date for last updated display
+
   const getLastUpdated = () => {
     return lastUpdated.toLocaleString('ar-SA', {
       hour: '2-digit',
@@ -62,8 +58,7 @@ const AnalyticsDashboard: React.FC = () => {
       month: 'numeric'
     });
   };
-  
-  // Format date for last updated tooltip
+
   const getLastUpdatedFull = () => {
     return lastUpdated.toLocaleString('ar-SA', {
       hour: '2-digit',
