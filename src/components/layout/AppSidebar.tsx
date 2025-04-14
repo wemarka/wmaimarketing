@@ -17,7 +17,7 @@ const AppSidebar = () => {
   const { 
     mainNavItems, 
     mediaNavItems, 
-    managementNavItems, 
+    managementItems, 
     documentationItems 
   } = useNavigationItems();
 
@@ -43,7 +43,7 @@ const AppSidebar = () => {
           
           <SidebarNavGroup 
             title={t("sidebar.groups.management")} 
-            items={managementNavItems} 
+            items={managementItems} 
           />
 
           <SidebarSeparator />
