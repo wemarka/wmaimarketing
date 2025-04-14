@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, Calendar } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,24 +8,35 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 
 interface SearchFiltersProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onPlatformFilterChange: (platform: string) => void;
+  onDateFilterChange?: (period: string) => void;
 }
 
 const SearchFilters: React.FC<SearchFiltersProps> = ({
   searchQuery,
   onSearchChange,
-  onPlatformFilterChange
+  onPlatformFilterChange,
+  onDateFilterChange
 }) => {
   const platforms = [
     { id: "all", label: "جميع المنصات" },
     { id: "instagram", label: "Instagram" },
     { id: "facebook", label: "Facebook" },
     { id: "tiktok", label: "TikTok" }
+  ];
+
+  const datePeriods = [
+    { id: "all", label: "كل الفترات" },
+    { id: "today", label: "اليوم" },
+    { id: "week", label: "هذا الأسبوع" },
+    { id: "month", label: "هذا الشهر" }
   ];
 
   return (
@@ -40,6 +51,32 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
           onChange={(e) => onSearchChange(e.target.value)}
         />
       </div>
+
+      {/* فلترة التاريخ */}
+      {onDateFilterChange && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-1">
+              <Calendar size={14} />
+              <span className="hidden sm:inline">التاريخ</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuLabel>تصفية حسب التاريخ</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {datePeriods.map(period => (
+              <DropdownMenuItem 
+                key={period.id}
+                onClick={() => onDateFilterChange(period.id)}
+              >
+                {period.label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+
+      {/* فلترة المنصات */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="gap-1">
@@ -47,7 +84,9 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             <span className="hidden sm:inline">تصفية</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuLabel>تصفية حسب المنصة</DropdownMenuLabel>
+          <DropdownMenuSeparator />
           {platforms.map(platform => (
             <DropdownMenuItem 
               key={platform.id}

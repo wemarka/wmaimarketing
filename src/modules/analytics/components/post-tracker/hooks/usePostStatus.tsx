@@ -10,6 +10,7 @@ export const usePostStatus = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [platformFilter, setPlatformFilter] = useState<string>("all");
+  const [dateFilter, setDateFilter] = useState<string>("all");
   const { toast } = useToast();
 
   // بيانات توضيحية للحالات
@@ -57,18 +58,50 @@ export const usePostStatus = () => {
     { id: "5", title: "أحدث منتجات العناية بالشعر", status: "pending", date: "2025-04-15", platform: "instagram" },
     { id: "6", title: "طرق تطبيق كريم الأساس للبشرة الجافة", status: "rejected", date: "2025-04-05", platform: "tiktok" },
     { id: "7", title: "منتجات طبيعية للعناية بالبشرة", status: "published", date: "2025-04-12", priority: "low", platform: "instagram" },
-    { id: "8", title: "أفضل أنواع العطور النسائية", status: "pending", date: "2025-04-17", platform: "facebook" }
+    { id: "8", title: "أفضل أنواع العطور النسائية", status: "pending", date: "2025-04-17", platform: "facebook" },
+    { id: "9", title: "أحدث قصات الشعر لموسم الصيف", status: "scheduled", date: "2025-04-25", platform: "instagram", priority: "high" },
+    { id: "10", title: "مقارنة بين منتجات العناية بالبشرة", status: "rejected", date: "2025-04-03", platform: "facebook" }
   ];
+
+  // التحقق من تاريخ المنشور ضمن الفلتر المحدد
+  const isWithinDateFilter = (postDate: string): boolean => {
+    if (dateFilter === "all") return true;
+    
+    const today = new Date();
+    const date = new Date(postDate);
+    
+    if (dateFilter === "today") {
+      return (
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
+      );
+    }
+    
+    if (dateFilter === "week") {
+      const weekAgo = new Date();
+      weekAgo.setDate(today.getDate() - 7);
+      return date >= weekAgo;
+    }
+    
+    if (dateFilter === "month") {
+      return date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+    }
+    
+    return true;
+  };
 
   // حساب مجموع المنشورات
   const totalPosts = statuses.reduce((sum, status) => sum + status.count, 0);
 
   // تصفية البيانات حسب البحث والفلتر
   const filteredPosts = postsData.filter((post) => {
-    const matchesSearch = post.title.includes(searchQuery);
+    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "all" || post.status === statusFilter;
     const matchesPlatform = platformFilter === "all" || post.platform === platformFilter;
-    return matchesSearch && matchesStatus && matchesPlatform;
+    const matchesDate = isWithinDateFilter(post.date);
+    
+    return matchesSearch && matchesStatus && matchesPlatform && matchesDate;
   });
 
   // إعادة تحميل البيانات (محاكاة)
@@ -95,6 +128,7 @@ export const usePostStatus = () => {
     searchQuery,
     statusFilter,
     platformFilter,
+    dateFilter,
     statuses,
     postsData,
     totalPosts,
@@ -102,6 +136,7 @@ export const usePostStatus = () => {
     setSearchQuery,
     setStatusFilter,
     setPlatformFilter,
+    setDateFilter,
     handleRefresh,
     toggleViewType
   };
