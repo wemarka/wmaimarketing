@@ -15,10 +15,10 @@ serve(async (req) => {
   try {
     const { prompt, style, size, brand, product } = await req.json()
     
-    // Get the OpenAI API key from environment variables
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')
-    if (!OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY is not set')
+    // Get the Anthropic API key from environment variables
+    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY')
+    if (!ANTHROPIC_API_KEY) {
+      throw new Error('ANTHROPIC_API_KEY is not set')
     }
 
     // Enhance prompt based on style
@@ -53,51 +53,112 @@ serve(async (req) => {
     // Add beauty-related context
     enhancedPrompt += ', beauty product advertisement, professional lighting, attractive composition'
 
-    // Convert size parameter to DALL-E size format
-    let imageSize = '1024x1024' // Default square format
+    // Determine dimensions based on size parameter
+    let width = 1024
+    let height = 1024 // Default square format
     
     if (size) {
       switch(size) {
         case '16:9':
-          imageSize = '1792x1024'
+          width = 1792
+          height = 1024
           break
         case '4:5':
-          imageSize = '1024x1280'
+          width = 1024
+          height = 1280
           break
         case '3:2':
-          imageSize = '1024x768'
+          width = 1024
+          height = 768
           break
       }
     }
 
     console.log('Generating image with prompt:', enhancedPrompt)
-    console.log('Using size:', imageSize)
+    console.log('Using dimensions:', width, 'x', height)
 
-    // Call OpenAI API to generate image
-    const openaiResponse = await fetch('https://api.openai.com/v1/images/generations', {
+    // Call Anthropic's Claude 3 API to generate image
+    const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'dall-e-3',
-        prompt: enhancedPrompt,
-        n: 1,
-        size: imageSize,
-        quality: 'standard'
+        model: 'claude-3-opus-20240229',
+        max_tokens: 1024,
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: `Generate an image for a beauty product advertisement with these details: ${enhancedPrompt}. The image should be high quality and professional looking.`
+              }
+            ]
+          }
+        ],
+        system: "You are an expert in generating beauty product advertisements. Create attractive, professional product images.",
+        tools: [
+          {
+            name: "image_generation",
+            description: "Generate an image based on a text description",
+            input_schema: {
+              type: "object",
+              properties: {
+                prompt: {
+                  type: "string",
+                  description: "The prompt to generate an image from"
+                },
+                width: {
+                  type: "integer",
+                  description: "Width of the image in pixels"
+                },
+                height: {
+                  type: "integer",
+                  description: "Height of the image in pixels"
+                }
+              },
+              required: ["prompt"]
+            }
+          }
+        ],
+        tool_choice: {
+          name: "image_generation",
+          input: {
+            prompt: enhancedPrompt,
+            width: width,
+            height: height
+          }
+        }
       })
     })
 
-    const openaiData = await openaiResponse.json()
+    const anthropicData = await anthropicResponse.json()
     
-    if (openaiData.error) {
-      throw new Error(`OpenAI API error: ${openaiData.error.message}`)
+    if (anthropicResponse.status !== 200) {
+      throw new Error(`Anthropic API error: ${JSON.stringify(anthropicData)}`)
+    }
+
+    // Extract the image URL from the response
+    const content = anthropicData.content
+    let imageUrl = null
+    
+    for (const item of content) {
+      if (item.type === 'image') {
+        imageUrl = item.source.url
+        break
+      }
+    }
+
+    if (!imageUrl) {
+      throw new Error('No image was generated')
     }
 
     return new Response(
       JSON.stringify({
-        imageUrl: openaiData.data[0].url,
+        imageUrl: imageUrl,
         prompt: enhancedPrompt
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

@@ -14,9 +14,9 @@ serve(async (req) => {
   }
 
   try {
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-    if (!OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY is not set');
+    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
+    if (!ANTHROPIC_API_KEY) {
+      throw new Error('ANTHROPIC_API_KEY is not set');
     }
 
     const { prompt, size, style, productImage } = await req.json();
@@ -52,39 +52,88 @@ serve(async (req) => {
     // Prepare final prompt
     const finalPrompt = `${styleDescription} ${prompt}، تصوير عالي الجودة، صورة فوتوغرافية احترافية لعرض المنتج في أفضل صورة`;
     console.log("Generating image with prompt:", finalPrompt);
-    console.log(`Using OpenAI API key: ${OPENAI_API_KEY.substring(0, 3)}...${OPENAI_API_KEY.substring(OPENAI_API_KEY.length - 4)}`);
 
-    // Call DALL-E API
-    const response = await fetch('https://api.openai.com/v1/images/generations', {
+    // Parse size to get dimensions
+    let width = 1024;
+    let height = 1024; // Default to square format
+    if (size) {
+      const [w, h] = size.split("x").map(Number);
+      if (w && h) {
+        width = w;
+        height = h;
+      }
+    }
+
+    // Call Claude 3 API
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: "dall-e-3",
-        prompt: finalPrompt,
-        n: 1,
-        size: size || "1024x1024",
-        quality: "standard",
-        response_format: "url",
+        model: 'claude-3-opus-20240229',
+        max_tokens: 1024,
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: `Generate an image for a beauty product advertisement with these details: ${finalPrompt}`
+              }
+            ]
+          }
+        ],
+        system: "You are an expert in generating beauty product advertisements. Create attractive, professional product images.",
+        tools: [
+          {
+            name: "image_generation",
+            description: "Generate an image based on a text description",
+            input_schema: {
+              type: "object",
+              properties: {
+                prompt: {
+                  type: "string",
+                  description: "The prompt to generate an image from"
+                },
+                width: {
+                  type: "integer",
+                  description: "Width of the image in pixels"
+                },
+                height: {
+                  type: "integer",
+                  description: "Height of the image in pixels"
+                }
+              },
+              required: ["prompt"]
+            }
+          }
+        ],
+        tool_choice: {
+          name: "image_generation",
+          input: {
+            prompt: finalPrompt,
+            width: width,
+            height: height
+          }
+        }
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('OpenAI API error:', JSON.stringify(errorData, null, 2));
+      console.error('Anthropic API error:', JSON.stringify(errorData, null, 2));
       
-      // Handle common OpenAI API errors with clear messages
-      if (errorData.error?.type === "insufficient_quota" || 
-          errorData.error?.code === "insufficient_quota" ||
-          errorData.error?.code === "billing_hard_limit_reached") {
+      // Handle common API errors with clear messages
+      if (errorData.error?.type === "authentication_error") {
         return new Response(
           JSON.stringify({ 
-            error: "OpenAI API key has insufficient credits or has reached its billing limit. Please check your OpenAI account billing details." 
+            error: "Authentication error with Anthropic API. Please check your API key." 
           }),
           {
-            status: 402, // Payment Required
+            status: 401,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           }
         );
@@ -93,7 +142,7 @@ serve(async (req) => {
       // Return more specific error information
       return new Response(
         JSON.stringify({ 
-          error: `Error from OpenAI API: ${errorData.error?.message || 'Unknown error'}`,
+          error: `Error from Anthropic API: ${errorData.error?.message || 'Unknown error'}`,
           details: errorData 
         }),
         {
@@ -104,7 +153,19 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    const imageUrl = data.data[0].url;
+    
+    // Extract image URL from response
+    let imageUrl = null;
+    for (const item of data.content) {
+      if (item.type === 'image') {
+        imageUrl = item.source.url;
+        break;
+      }
+    }
+
+    if (!imageUrl) {
+      throw new Error('No image was generated');
+    }
 
     return new Response(
       JSON.stringify({ imageUrl }),

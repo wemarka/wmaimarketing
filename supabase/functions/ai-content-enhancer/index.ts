@@ -14,9 +14,9 @@ serve(async (req) => {
   }
 
   try {
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-    if (!OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY is not set');
+    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
+    if (!ANTHROPIC_API_KEY) {
+      throw new Error('ANTHROPIC_API_KEY is not set');
     }
 
     const { content, action, language } = await req.json();
@@ -56,19 +56,26 @@ serve(async (req) => {
 
     // Log the request for debugging
     console.log(`Processing ${action} request for content length: ${content.length}`);
-    console.log(`Using OpenAI API key: ${OPENAI_API_KEY.substring(0, 3)}...${OPENAI_API_KEY.substring(OPENAI_API_KEY.length - 4)}`);
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'claude-3-sonnet-20240229',
+        max_tokens: 1024,
         messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
+          {
+            role: 'system',
+            content: systemPrompt
+          },
+          {
+            role: 'user',
+            content: userPrompt
+          }
         ],
         temperature: 0.7,
       }),
@@ -76,27 +83,23 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('OpenAI API error:', JSON.stringify(errorData, null, 2));
+      console.error('Anthropic API error:', JSON.stringify(errorData, null, 2));
       
-      // Handle common OpenAI API errors with clear messages
-      if (errorData.error?.type === "insufficient_quota" || 
-          errorData.error?.code === "insufficient_quota" ||
-          errorData.error?.code === "billing_hard_limit_reached") {
+      if (errorData.error?.type === "authentication_error") {
         return new Response(
           JSON.stringify({ 
-            error: "OpenAI API key has insufficient credits or has reached its billing limit. Please check your OpenAI account billing details." 
+            error: "Authentication error with Anthropic API. Please check your API key." 
           }),
           {
-            status: 402, // Payment Required
+            status: 401,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           }
         );
       }
       
-      // Return more specific error information
       return new Response(
         JSON.stringify({ 
-          error: `Error from OpenAI API: ${errorData.error?.message || 'Unknown error'}`,
+          error: `Error from Anthropic API: ${errorData.error?.message || 'Unknown error'}`,
           details: errorData 
         }),
         {
@@ -107,7 +110,7 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    const enhancedContent = data.choices[0]?.message?.content;
+    const enhancedContent = data.content[0].text;
 
     return new Response(
       JSON.stringify({ enhancedContent }),
