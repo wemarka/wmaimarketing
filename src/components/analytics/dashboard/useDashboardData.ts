@@ -3,6 +3,7 @@ import { AnalyticsData, OverviewData, EngagementData, PlatformData, Post, PostIn
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
+import { useCreateActivity } from "@/hooks/useCreateActivity";
 import { Json } from "@/integrations/supabase/types";
 
 interface SocialAccountInsights {
@@ -50,6 +51,7 @@ export const useDashboardData = () => {
   
   const { user } = useAuth();
   const { toast } = useToast();
+  const { logActivity } = useCreateActivity();
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -173,6 +175,8 @@ export const useDashboardData = () => {
           conversions: totalConversions || 1560,
           change: changePercentages
         });
+
+        logActivity("analytics_data_fetched", "تم جلب بيانات التحليلات بنجاح");
         
       } catch (error) {
         console.error("Error fetching analytics data:", error);
@@ -181,6 +185,8 @@ export const useDashboardData = () => {
           description: "حدث خطأ أثناء جلب بيانات التحليلات",
           variant: "destructive"
         });
+        
+        logActivity("analytics_data_error", "حدث خطأ أثناء جلب بيانات التحليلات");
         
         setAnalyticsData(getFallbackAnalyticsData(period));
         setOverviewData(getFallbackOverviewData());
@@ -192,7 +198,7 @@ export const useDashboardData = () => {
     };
 
     fetchAnalytics();
-  }, [period, user, toast]);
+  }, [period, user, toast, logActivity]);
 
   const handlePeriodChange = (newPeriod: string) => {
     setPeriod(newPeriod);

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Eye, Share, MousePointerClick, ShoppingBag, Download, RefreshCw, Calendar, Clock, FileText } from "lucide-react";
@@ -13,6 +12,7 @@ import { motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCreateActivity } from "@/hooks/useCreateActivity";
 
 const AnalyticsDashboard: React.FC = () => {
   const {
@@ -29,10 +29,12 @@ const AnalyticsDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const { toast } = useToast();
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+  const { logActivity } = useCreateActivity();
 
   useEffect(() => {
     setLastUpdated(new Date());
-  }, []);
+    logActivity("analytics_view", "عرض لوحة التحليلات");
+  }, [logActivity]);
 
   const refreshData = () => {
     setRefreshing(true);
@@ -50,7 +52,23 @@ const AnalyticsDashboard: React.FC = () => {
         title: "تم تحديث البيانات",
         description: "تم تحديث البيانات التحليلية بنجاح"
       });
+      
+      logActivity("analytics_refresh", "تحديث بيانات التحليلات");
     }, 1500);
+  };
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    logActivity("analytics_tab_change", `تغيير إلى تبويب ${value}`);
+  };
+
+  const downloadReport = () => {
+    toast({
+      title: "جاري تحميل التقرير",
+      description: "سيتم تحميل التقرير قريبًا"
+    });
+    
+    logActivity("analytics_download", "تحميل تقرير التحليلات");
   };
 
   const getLastUpdated = () => {
@@ -95,7 +113,10 @@ const AnalyticsDashboard: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-2">
-          <Select value={period} onValueChange={handlePeriodChange}>
+          <Select value={period} onValueChange={(value) => {
+            handlePeriodChange(value);
+            logActivity("analytics_period_change", `تغيير الفترة إلى ${value}`);
+          }}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="حدد الفترة الزمنية" />
             </SelectTrigger>
@@ -121,13 +142,14 @@ const AnalyticsDashboard: React.FC = () => {
             variant="outline" 
             size="icon"
             title="تحميل التقرير"
+            onClick={downloadReport}
           >
             <Download className="h-4 w-4" />
           </Button>
         </div>
       </motion.div>
       
-      <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
+      <Tabs defaultValue="overview" value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="mb-6">
           <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
           <TabsTrigger value="audience">الجمهور</TabsTrigger>
