@@ -4,12 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Image, FileText, Video, Calendar, 
   UserCheck, LogIn, LogOut, UserCog, 
-  FileEdit, Activity, Badge as BadgeIcon
+  FileEdit, Activity, Badge
 } from "lucide-react";
 import { useActivityLog, Activity as ActivityType } from "@/hooks/useActivityLog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
 
 const RecentActivity = () => {
   const { activities, loading } = useActivityLog();
@@ -25,7 +24,7 @@ const RecentActivity = () => {
       case "password_change":
         return <UserCog className="h-4 w-4" />;
       case "role_change":
-        return <BadgeIcon className="h-4 w-4" />;
+        return <Badge className="h-4 w-4" />;
       case "content_create":
         return <FileText className="h-4 w-4" />;
       case "content_edit":
@@ -92,11 +91,13 @@ const RecentActivity = () => {
 
   return (
     <Card className="h-full">
-      <CardHeader className="pb-3 flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-medium">النشاطات الأخيرة</CardTitle>
-        <Badge variant="outline">
-          {displayActivities.length} نشاط
-        </Badge>
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg font-medium">النشاطات الأخيرة</CardTitle>
+          <div className="bg-muted text-muted-foreground text-xs py-1 px-2 rounded-full">
+            {displayActivities.length} نشاط
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="px-6 overflow-hidden">
         {loading ? (

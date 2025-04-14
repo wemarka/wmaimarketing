@@ -1,20 +1,19 @@
 
 import { useState, useEffect } from "react";
-import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
 
 export interface Activity {
   id: string;
-  type: "login" | "logout" | "profile_update" | "password_change" | "role_change" | "content_create" | "content_edit" | "security_check";
+  type: string;
   description: string;
   timestamp: string;
 }
 
 export const useActivityLog = () => {
-  const { user } = useAuth();
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -25,35 +24,28 @@ export const useActivityLog = () => {
 
       try {
         setLoading(true);
-        console.log("Fetching activity logs for user:", user.id);
-        
-        // Fetch real activity logs from Supabase
+
         const { data, error } = await supabase
           .from("user_activity_log")
-          .select("*")
+          .select("id, activity_type, description, created_at")
           .eq("user_id", user.id)
           .order("created_at", { ascending: false })
           .limit(10);
 
-        if (error) {
-          console.error("Error fetching activity logs:", error);
-          throw error;
-        }
+        if (error) throw error;
 
-        console.log("Fetched activity logs:", data?.length || 0, "entries");
-        
-        const formattedActivities: Activity[] = data ? data.map((item: any) => ({
+        // Map to Activity interface
+        const mappedActivities: Activity[] = data.map((item) => ({
           id: item.id,
-          type: item.activity_type as Activity["type"],
+          type: item.activity_type,
           description: item.description,
           timestamp: item.created_at,
-        })) : [];
+        }));
 
-        setActivities(formattedActivities);
+        setActivities(mappedActivities);
       } catch (error) {
-        console.error("Error fetching activity logs:", error);
-        // Don't show toast for this error as it's not critical
-        // Set empty activities to prevent UI issues
+        console.error("Error fetching activity log:", error);
+        // Use default activities if error occurs (they will be handled in the component)
         setActivities([]);
       } finally {
         setLoading(false);
@@ -63,54 +55,8 @@ export const useActivityLog = () => {
     fetchActivities();
   }, [user]);
 
-  const logActivity = async (
-    type: Activity["type"], 
-    description: string
-  ) => {
-    if (!user) return;
-
-    try {
-      console.log("Logging activity:", { type, description });
-      
-      // Create new activity entry in Supabase
-      const { data, error } = await supabase
-        .from("user_activity_log")
-        .insert({
-          user_id: user.id,
-          activity_type: type,
-          description: description,
-        })
-        .select();
-
-      if (error) {
-        console.error("Error logging activity:", error);
-        return;
-      }
-
-      if (data && data.length > 0) {
-        console.log("Activity logged successfully:", data[0]);
-        
-        // Update local state with the new activity
-        const newActivity: Activity = {
-          id: data[0].id,
-          type: data[0].activity_type as Activity["type"],
-          description: data[0].description,
-          timestamp: data[0].created_at,
-        };
-
-        setActivities(prev => [newActivity, ...prev]);
-        
-        return newActivity;
-      }
-    } catch (error) {
-      console.error("Error logging activity:", error);
-      // Don't show toast for this error as it's not critical
-    }
-  };
-
   return {
     activities,
     loading,
-    logActivity,
   };
 };

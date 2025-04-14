@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Eye, Share, MousePointerClick, ShoppingBag, Download, RefreshCw, Calendar, Clock, FileText } from "lucide-react";
@@ -11,10 +12,12 @@ import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const AnalyticsDashboard: React.FC = () => {
   const {
     period,
+    loading: dataLoading,
     overviewData,
     engagementData,
     platformData,
@@ -22,7 +25,7 @@ const AnalyticsDashboard: React.FC = () => {
     handlePeriodChange
   } = useDashboardData();
   
-  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const { toast } = useToast();
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
@@ -32,7 +35,7 @@ const AnalyticsDashboard: React.FC = () => {
   }, []);
 
   const refreshData = () => {
-    setLoading(true);
+    setRefreshing(true);
     
     toast({
       title: "جاري تحديث البيانات",
@@ -40,7 +43,7 @@ const AnalyticsDashboard: React.FC = () => {
     });
     
     setTimeout(() => {
-      setLoading(false);
+      setRefreshing(false);
       setLastUpdated(new Date());
       
       toast({
@@ -108,10 +111,10 @@ const AnalyticsDashboard: React.FC = () => {
             variant="outline" 
             size="icon"
             onClick={refreshData}
-            disabled={loading}
+            disabled={refreshing || dataLoading}
             title="تحديث البيانات"
           >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
           </Button>
           
           <Button 
@@ -139,41 +142,55 @@ const AnalyticsDashboard: React.FC = () => {
             transition={{ duration: 0.5 }}
             className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
           >
-            <StatisticCard 
-              title="إجمالي المشاهدات"
-              value={analyticsData.impressions.toLocaleString()}
-              change={analyticsData.change.impressions.toString()}
-              positive={analyticsData.change.impressions > 0}
-              icon={<Eye className="h-5 w-5 text-beauty-pink" />}
-              iconBgClass="bg-beauty-pink/20"
-            />
-            
-            <StatisticCard 
-              title="معدل التفاعل"
-              value={`${analyticsData.engagement}%`}
-              change={analyticsData.change.engagement.toString()}
-              positive={analyticsData.change.engagement > 0}
-              icon={<Share className="h-5 w-5 text-beauty-purple" />}
-              iconBgClass="bg-beauty-purple/20"
-            />
-            
-            <StatisticCard 
-              title="معدل النقر"
-              value={`${analyticsData.clicks}%`}
-              change={analyticsData.change.clicks.toString()}
-              positive={analyticsData.change.clicks > 0}
-              icon={<MousePointerClick className="h-5 w-5 text-beauty-gold" />}
-              iconBgClass="bg-beauty-gold/20"
-            />
-            
-            <StatisticCard 
-              title="التحويلات"
-              value={analyticsData.conversions.toString()}
-              change={analyticsData.change.conversions.toString()}
-              positive={analyticsData.change.conversions > 0}
-              icon={<ShoppingBag className="h-5 w-5 text-blue-600" />}
-              iconBgClass="bg-blue-100"
-            />
+            {dataLoading ? (
+              <>
+                {Array(4).fill(0).map((_, i) => (
+                  <div key={i} className="bg-card border rounded-xl p-6">
+                    <Skeleton className="h-6 w-28 mb-4" />
+                    <Skeleton className="h-10 w-24 mb-2" />
+                    <Skeleton className="h-4 w-20" />
+                  </div>
+                ))}
+              </>
+            ) : (
+              <>
+                <StatisticCard 
+                  title="إجمالي المشاهدات"
+                  value={analyticsData.impressions.toLocaleString()}
+                  change={analyticsData.change.impressions.toString()}
+                  positive={analyticsData.change.impressions > 0}
+                  icon={<Eye className="h-5 w-5 text-beauty-pink" />}
+                  iconBgClass="bg-beauty-pink/20"
+                />
+                
+                <StatisticCard 
+                  title="معدل التفاعل"
+                  value={`${analyticsData.engagement}%`}
+                  change={analyticsData.change.engagement.toString()}
+                  positive={analyticsData.change.engagement > 0}
+                  icon={<Share className="h-5 w-5 text-beauty-purple" />}
+                  iconBgClass="bg-beauty-purple/20"
+                />
+                
+                <StatisticCard 
+                  title="معدل النقر"
+                  value={`${analyticsData.clicks}%`}
+                  change={analyticsData.change.clicks.toString()}
+                  positive={analyticsData.change.clicks > 0}
+                  icon={<MousePointerClick className="h-5 w-5 text-beauty-gold" />}
+                  iconBgClass="bg-beauty-gold/20"
+                />
+                
+                <StatisticCard 
+                  title="التحويلات"
+                  value={analyticsData.conversions.toString()}
+                  change={analyticsData.change.conversions.toString()}
+                  positive={analyticsData.change.conversions > 0}
+                  icon={<ShoppingBag className="h-5 w-5 text-blue-600" />}
+                  iconBgClass="bg-blue-100"
+                />
+              </>
+            )}
           </motion.div>
           
           <motion.div 
@@ -182,8 +199,24 @@ const AnalyticsDashboard: React.FC = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="grid md:grid-cols-5 gap-6 mb-8"
           >
-            <OverviewChart data={overviewData} />
-            <PlatformBreakdown data={platformData} />
+            {dataLoading ? (
+              <>
+                <div className="md:col-span-3 bg-card border rounded-xl p-6">
+                  <Skeleton className="h-6 w-36 mb-4" />
+                  <Skeleton className="h-64 w-full" />
+                </div>
+                
+                <div className="md:col-span-2 bg-card border rounded-xl p-6">
+                  <Skeleton className="h-6 w-36 mb-4" />
+                  <Skeleton className="h-64 w-full" />
+                </div>
+              </>
+            ) : (
+              <>
+                <OverviewChart data={overviewData} />
+                <PlatformBreakdown data={platformData} />
+              </>
+            )}
           </motion.div>
           
           <motion.div
@@ -191,7 +224,14 @@ const AnalyticsDashboard: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <EngagementMetrics data={engagementData} />
+            {dataLoading ? (
+              <div className="bg-card border rounded-xl p-6">
+                <Skeleton className="h-6 w-36 mb-4" />
+                <Skeleton className="h-64 w-full" />
+              </div>
+            ) : (
+              <EngagementMetrics data={engagementData} />
+            )}
           </motion.div>
         </TabsContent>
         
