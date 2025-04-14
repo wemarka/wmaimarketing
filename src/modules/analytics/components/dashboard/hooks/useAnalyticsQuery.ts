@@ -1,7 +1,7 @@
 
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useCreateActivity } from "@/hooks/useCreateActivity";
 import { useQueryConfig } from "@/hooks/useQueryConfig";
 import { 
@@ -30,6 +30,7 @@ export interface AnalyticsQueryResult {
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
+  refetch: () => Promise<any>; // Adding the refetch function to the return type
 }
 
 export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
@@ -132,6 +133,7 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
     analyticsData: queryResult.data?.analyticsData || getFallbackAnalyticsData(period),
     isLoading: queryResult.isLoading,
     isError: queryResult.isError,
-    error: queryResult.error as Error | null
+    error: queryResult.error as Error | null,
+    refetch: queryResult.refetch // Exposing the refetch function from useQuery
   };
 };
