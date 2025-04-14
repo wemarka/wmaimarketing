@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { AnalyticsData, OverviewData, EngagementData, PlatformData } from "./types";
+import { AnalyticsData, OverviewData, EngagementData, PlatformData, Post, PostInsights } from "./types";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
@@ -24,19 +24,7 @@ interface SupabaseSocialAccount {
   insights: Json;
 }
 
-interface PostInsights {
-  impressions?: number;
-  engagement?: number;
-  clicks?: number;
-  revenue?: number;
-  likes?: number;
-  comments?: number;
-  shares?: number;
-}
-
-interface Post {
-  id: string;
-  created_at: string;
+interface PostWithInsights extends Post {
   insights?: PostInsights;
 }
 
@@ -150,19 +138,9 @@ export const useDashboardData = () => {
         const dailyEngagementData = generateDailyDataPoints(timeRange.start, timeRange.end);
         
         if (posts && posts.length > 0) {
-          interface PostWithInsights extends Post {
-            insights?: {
-              impressions?: number;
-              engagement?: number;
-              clicks?: number;
-              revenue?: number;
-              likes?: number;
-              comments?: number;
-              shares?: number;
-            }
-          }
+          const postsWithInsights = posts as unknown as PostWithInsights[];
           
-          (posts as PostWithInsights[]).forEach((post) => {
+          postsWithInsights.forEach((post) => {
             const date = new Date(post.created_at);
             const dateStr = formatDateForChart(date);
             

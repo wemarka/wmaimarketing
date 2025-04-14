@@ -46,3 +46,27 @@ export interface SocialAccount {
     postCount: number;
   };
 }
+
+export interface PostInsights {
+  impressions?: number;
+  engagement?: number;
+  clicks?: number;
+  revenue?: number;
+  likes?: number;
+  comments?: number;
+  shares?: number;
+}
+
+export interface Post {
+  id: string;
+  created_at: string;
+  title: string;
+  content: string;
+  platform: string;
+  status: string;
+  scheduled_at: string;
+  published_at?: string;
+  media_url?: string[];
+  campaign_id?: string;
+  insights?: PostInsights;
+}
