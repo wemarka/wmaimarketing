@@ -3,6 +3,7 @@ import { AnalyticsData, OverviewData, EngagementData, PlatformData } from "./typ
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
+import { Json } from "@/integrations/supabase/types";
 
 interface SocialAccountInsights {
   impressions?: number;
@@ -16,6 +17,11 @@ interface SocialAccountInsights {
 interface SocialAccount {
   platform: string;
   insights: SocialAccountInsights | null;
+}
+
+interface SupabaseSocialAccount {
+  platform: string;
+  insights: Json;
 }
 
 interface PostInsights {
@@ -78,21 +84,23 @@ export const useDashboardData = () => {
         let totalConversions = 0;
         
         if (socialAccounts && socialAccounts.length > 0) {
-          socialAccounts.forEach((account: SocialAccount) => {
+          (socialAccounts as SupabaseSocialAccount[]).forEach((account) => {
             const platform = account.platform;
             
             if (!platforms[platform]) {
               platforms[platform] = 0;
             }
             
-            if (account.insights) {
-              const impressions = account.insights.impressions || 0;
+            if (account.insights && typeof account.insights === 'object') {
+              const insights = account.insights as Record<string, number>;
+              const impressions = insights.impressions || 0;
+              
               platforms[platform] += impressions;
               totalImpressions += impressions;
               
-              if (account.insights.engagement) totalEngagement += account.insights.engagement;
-              if (account.insights.clicks) totalClicks += account.insights.clicks;
-              if (account.insights.conversions) totalConversions += account.insights.conversions;
+              if (insights.engagement) totalEngagement += insights.engagement;
+              if (insights.clicks) totalClicks += insights.clicks;
+              if (insights.conversions) totalConversions += insights.conversions;
             }
           });
         }
@@ -142,7 +150,19 @@ export const useDashboardData = () => {
         const dailyEngagementData = generateDailyDataPoints(timeRange.start, timeRange.end);
         
         if (posts && posts.length > 0) {
-          posts.forEach((post: Post) => {
+          interface PostWithInsights extends Post {
+            insights?: {
+              impressions?: number;
+              engagement?: number;
+              clicks?: number;
+              revenue?: number;
+              likes?: number;
+              comments?: number;
+              shares?: number;
+            }
+          }
+          
+          (posts as PostWithInsights[]).forEach((post) => {
             const date = new Date(post.created_at);
             const dateStr = formatDateForChart(date);
             
