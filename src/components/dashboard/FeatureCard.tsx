@@ -1,17 +1,20 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 
 interface FeatureCardProps {
   icon: React.ReactNode;
   title: string;
   description: string;
   href: string;
-  className?: string;
   iconColor?: string;
+  className?: string;
 }
 
 const FeatureCard = ({
@@ -19,22 +22,48 @@ const FeatureCard = ({
   title,
   description,
   href,
+  iconColor = "bg-muted text-foreground",
   className,
-  iconColor = "bg-beauty-pink text-primary"
 }: FeatureCardProps) => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
   return (
-    <div className={cn("beauty-card p-6 flex flex-col", className)}>
-      <div className={cn("w-12 h-12 rounded-lg flex items-center justify-center mb-4", iconColor)}>
-        {icon}
-      </div>
-      <h3 className="text-xl font-medium mb-2">{title}</h3>
-      <p className="text-muted-foreground mb-4 flex-1">{description}</p>
-      <Link to={href} className="mt-auto">
-        <Button variant="ghost" className="flex items-center gap-1 p-0 hover:gap-2 transition-all">
-          Get started <ArrowRight className="h-4 w-4 ml-1" />
-        </Button>
-      </Link>
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ y: -5 }}
+    >
+      <Card 
+        className={cn("overflow-hidden h-full hover:shadow-md transition-all", 
+          className)}
+      >
+        <CardContent className="p-6">
+          <div className="flex flex-col h-full">
+            <div className="flex items-start justify-between">
+              <div className={cn("p-3 rounded-lg", iconColor)}>
+                {icon}
+              </div>
+            </div>
+            
+            <div className="mt-4 flex-grow">
+              <h3 className="text-lg font-medium">{title}</h3>
+              <p className="text-sm text-muted-foreground mt-2">{description}</p>
+            </div>
+            
+            <Button 
+              variant="ghost" 
+              className="justify-start p-0 mt-4 hover:bg-transparent" 
+              onClick={() => navigate(href)}
+            >
+              <span>{t("dashboard.features.openTool")}</span>
+              <ChevronRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };
 
