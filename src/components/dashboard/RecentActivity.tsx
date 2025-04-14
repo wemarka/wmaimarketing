@@ -4,11 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Image, FileText, Video, Calendar, 
   UserCheck, LogIn, LogOut, UserCog, 
-  FileEdit, Activity, Badge 
+  FileEdit, Activity, Badge as BadgeIcon
 } from "lucide-react";
 import { useActivityLog, Activity as ActivityType } from "@/hooks/useActivityLog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
 
 const RecentActivity = () => {
   const { activities, loading } = useActivityLog();
@@ -24,7 +25,7 @@ const RecentActivity = () => {
       case "password_change":
         return <UserCog className="h-4 w-4" />;
       case "role_change":
-        return <Badge className="h-4 w-4" />;
+        return <BadgeIcon className="h-4 w-4" />;
       case "content_create":
         return <FileText className="h-4 w-4" />;
       case "content_edit":

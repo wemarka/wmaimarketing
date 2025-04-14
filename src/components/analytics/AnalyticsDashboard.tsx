@@ -41,8 +41,7 @@ const AnalyticsDashboard: React.FC = () => {
       
       toast({
         title: "تم تحديث البيانات",
-        description: "تم تحديث البيانات التحليلية بنجاح",
-        variant: "success"
+        description: "تم تحديث البيانات التحليلية بنجاح"
       });
     }, 1500);
   };
