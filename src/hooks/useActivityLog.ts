@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
+import { useCreateActivity } from "./useCreateActivity";
 
 export interface Activity {
   id: string;
@@ -14,6 +15,7 @@ export const useActivityLog = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const { logActivity } = useCreateActivity();
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -58,5 +60,6 @@ export const useActivityLog = () => {
   return {
     activities,
     loading,
+    logActivity
   };
 };

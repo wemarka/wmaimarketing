@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   Table,
@@ -11,7 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Check, X, Edit } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useActivityLog } from "@/hooks/useActivityLog";
+import { useCreateActivity } from "@/hooks/useCreateActivity";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 
@@ -21,7 +20,7 @@ interface RolePermissionTableProps {
 
 const RolePermissionsTable: React.FC<RolePermissionTableProps> = ({ onEditRole }) => {
   const { user } = useAuth();
-  const { logActivity } = useActivityLog();
+  const { logActivity } = useCreateActivity();
   
   const roles = [
     {
@@ -76,7 +75,6 @@ const RolePermissionsTable: React.FC<RolePermissionTableProps> = ({ onEditRole }
   
   const handleEditRole = (role: string) => {
     if (onEditRole) {
-      // Log the activity when editing a role
       logActivity("role_change", `تم بدء تحرير دور ${roles.find(r => r.name === role)?.title || role}`);
       
       toast({

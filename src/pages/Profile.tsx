@@ -6,6 +6,7 @@ import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
 import { useActivityLog } from "@/hooks/useActivityLog";
+import { useCreateActivity } from "@/hooks/useCreateActivity";
 
 // Import components
 import ProfileHeader from "@/components/profile/ProfileHeader";
@@ -29,7 +30,8 @@ const Profile = () => {
     createProfile
   } = useProfile();
   
-  const { activities, loading: activitiesLoading, logActivity } = useActivityLog();
+  const { activities, loading: activitiesLoading } = useActivityLog();
+  const { logActivity } = useCreateActivity();
   const [loggingOut, setLoggingOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSecurityTestOpen, setIsSecurityTestOpen] = useState(false);
