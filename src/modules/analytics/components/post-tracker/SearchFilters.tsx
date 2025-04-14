@@ -21,6 +21,13 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   onSearchChange,
   onPlatformFilterChange
 }) => {
+  const platforms = [
+    { id: "all", label: "جميع المنصات" },
+    { id: "instagram", label: "Instagram" },
+    { id: "facebook", label: "Facebook" },
+    { id: "tiktok", label: "TikTok" }
+  ];
+
   return (
     <div className="flex flex-col sm:flex-row gap-2 mb-4">
       <div className="relative flex-grow">
@@ -41,18 +48,14 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => onPlatformFilterChange("all")}>
-            جميع المنصات
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onPlatformFilterChange("instagram")}>
-            Instagram
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onPlatformFilterChange("facebook")}>
-            Facebook
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onPlatformFilterChange("tiktok")}>
-            TikTok
-          </DropdownMenuItem>
+          {platforms.map(platform => (
+            <DropdownMenuItem 
+              key={platform.id}
+              onClick={() => onPlatformFilterChange(platform.id)}
+            >
+              {platform.label}
+            </DropdownMenuItem>
+          ))}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

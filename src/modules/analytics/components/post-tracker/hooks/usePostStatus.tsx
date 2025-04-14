@@ -106,4 +106,3 @@ export const usePostStatus = () => {
     toggleViewType
   };
 };
-

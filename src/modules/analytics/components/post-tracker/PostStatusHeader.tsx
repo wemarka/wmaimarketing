@@ -3,6 +3,7 @@ import React from "react";
 import { BarChart2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CardTitle } from "@/components/ui/card";
+import { motion } from "framer-motion";
 
 interface PostStatusHeaderProps {
   isLoading: boolean;
@@ -22,7 +23,12 @@ const PostStatusHeader: React.FC<PostStatusHeaderProps> = ({
       <CardTitle className="flex items-center gap-2">
         حالة المنشورات
         {isLoading && (
-          <RefreshCw size={16} className="animate-spin text-muted-foreground" />
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          >
+            <RefreshCw size={16} className="text-muted-foreground" />
+          </motion.div>
         )}
       </CardTitle>
       <div className="flex items-center space-x-2 rtl:space-x-reverse">

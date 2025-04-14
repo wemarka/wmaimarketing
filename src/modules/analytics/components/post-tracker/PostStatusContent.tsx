@@ -1,11 +1,12 @@
 
 import React from "react";
 import { AnimatePresence } from "framer-motion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { PostData, StatusInfo } from "./types";
 import AnimatedTabContent from "./AnimatedTabContent";
 import StatusChart from "./StatusChart";
 import PostItem from "./PostItem";
+import TabsFilter from "./TabsFilter";
 
 interface PostStatusContentProps {
   viewType: "cards" | "chart";
@@ -26,12 +27,7 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
 }) => {
   return (
     <Tabs defaultValue={statusFilter} className="w-full" onValueChange={onStatusFilterChange}>
-      <TabsList className="grid grid-cols-2 md:grid-cols-4 mb-4">
-        <TabsTrigger value="all">الكل</TabsTrigger>
-        <TabsTrigger value="published">المنشورة</TabsTrigger>
-        <TabsTrigger value="scheduled">المجدولة</TabsTrigger>
-        <TabsTrigger value="pending">قيد الانتظار</TabsTrigger>
-      </TabsList>
+      <TabsFilter statusFilter={statusFilter} />
       
       <AnimatePresence mode="wait">
         <TabsContent value="all" className="outline-none">
