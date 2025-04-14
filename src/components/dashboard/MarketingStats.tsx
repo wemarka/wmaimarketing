@@ -9,21 +9,30 @@ import {
   XAxis, 
   YAxis, 
   CartesianGrid, 
-  ResponsiveContainer 
+  ResponsiveContainer,
+  Tooltip,
+  Legend
 } from "recharts";
 import { ChartContainer } from "@/components/ui/chart";
+import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 
-// Sample data
+// More realistic marketing data
 const marketingData = [
-  { name: "Instagram", current: 7400, previous: 6200 },
-  { name: "Facebook", current: 5100, previous: 4800 },
-  { name: "TikTok", current: 4200, previous: 2800 },
-  { name: "Email", current: 3500, previous: 3200 },
-  { name: "Website", current: 2800, previous: 2500 }
+  { name: "انستجرام", current: 7400, previous: 6200 },
+  { name: "فيسبوك", current: 5100, previous: 4800 },
+  { name: "تيك توك", current: 4200, previous: 2800 },
+  { name: "البريد", current: 3500, previous: 3200 },
+  { name: "الموقع", current: 2800, previous: 2500 }
 ];
 
 const MarketingStats = () => {
   const { t } = useTranslation();
+
+  // Calculate growth percentages
+  const calculateGrowth = (current: number, previous: number) => {
+    if (previous === 0) return 100;
+    return ((current - previous) / previous * 100).toFixed(1);
+  };
 
   return (
     <Card>
@@ -61,14 +70,31 @@ const MarketingStats = () => {
                   tickLine={false}
                   tickMargin={10}
                 />
-                <YAxis axisLine={false} tickLine={false} tickMargin={10} />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tickMargin={10} 
+                  tickFormatter={(value) => {
+                    if (value >= 1000) {
+                      return `${(value / 1000).toFixed(0)}K`;
+                    }
+                    return value;
+                  }}
+                />
+                <Tooltip 
+                  formatter={(value) => [`${value.toLocaleString()} مشاهدة`, ""]}
+                  labelFormatter={(name) => `منصة: ${name}`}
+                />
+                <Legend />
                 <Bar 
+                  name="الفترة الحالية"
                   dataKey="current" 
                   fill="#9b87f5" 
                   radius={[4, 4, 0, 0]} 
                   barSize={26} 
                 />
                 <Bar 
+                  name="الفترة السابقة"
                   dataKey="previous" 
                   fill="#D6BCFA" 
                   radius={[4, 4, 0, 0]} 
@@ -81,7 +107,7 @@ const MarketingStats = () => {
         
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
           {marketingData.map((item) => {
-            const growthPercent = ((item.current - item.previous) / item.previous * 100).toFixed(1);
+            const growthPercent = calculateGrowth(item.current, item.previous);
             const isPositive = item.current >= item.previous;
             
             return (
@@ -89,8 +115,12 @@ const MarketingStats = () => {
                 <CardContent className="p-4">
                   <p className="text-xs font-medium">{item.name}</p>
                   <p className="text-xl font-semibold mt-1">{item.current.toLocaleString()}</p>
-                  <p className={`text-xs mt-1 ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                    {isPositive ? '+' : ''}{growthPercent}%
+                  <p className={`text-xs mt-1 flex items-center gap-1 ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                    {isPositive ? 
+                      <ArrowUpRight className="h-3 w-3" /> : 
+                      <ArrowDownRight className="h-3 w-3" />
+                    }
+                    {growthPercent}%
                   </p>
                 </CardContent>
               </Card>

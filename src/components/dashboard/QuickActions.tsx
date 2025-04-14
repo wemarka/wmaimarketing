@@ -10,8 +10,15 @@ import {
   MessageSquarePlus, 
   BarChart4, 
   FileText, 
-  PenLine 
+  PenLine,
+  Sparkles,
+  Video,
+  Palette,
+  Users,
+  FileImage,
+  Settings 
 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const QuickActions = () => {
   const { t } = useTranslation();
@@ -22,37 +29,61 @@ const QuickActions = () => {
       icon: <CalendarPlus className="h-5 w-5" />,
       label: t("dashboard.quickActions.schedule"),
       action: () => navigate("/scheduler"),
-      color: "text-green-600"
+      color: "text-green-600 dark:text-green-400"
     },
     {
       icon: <ImagePlus className="h-5 w-5" />,
       label: t("dashboard.quickActions.uploadImage"),
       action: () => navigate("/image-upload"),
-      color: "text-pink-600"
+      color: "text-pink-600 dark:text-pink-400"
     },
     {
       icon: <MessageSquarePlus className="h-5 w-5" />,
       label: t("dashboard.quickActions.createPost"),
       action: () => navigate("/content-creator"),
-      color: "text-beauty-purple"
+      color: "text-beauty-purple dark:text-beauty-purple"
     },
     {
       icon: <BarChart4 className="h-5 w-5" />,
       label: t("dashboard.quickActions.viewAnalytics"),
       action: () => navigate("/analytics"),
-      color: "text-blue-600"
+      color: "text-blue-600 dark:text-blue-400"
     },
     {
       icon: <FileText className="h-5 w-5" />,
       label: t("dashboard.quickActions.createCampaign"),
       action: () => navigate("/ad-generator"),
-      color: "text-orange-600"
+      color: "text-orange-600 dark:text-orange-400"
     },
     {
       icon: <PenLine className="h-5 w-5" />,
       label: t("dashboard.quickActions.designAd"),
       action: () => navigate("/ad-designer"),
-      color: "text-beauty-gold"
+      color: "text-beauty-gold dark:text-beauty-gold"
+    },
+    {
+      icon: <Sparkles className="h-5 w-5" />,
+      label: t("dashboard.quickActions.aiStudio"),
+      action: () => navigate("/ai-studio"),
+      color: "text-purple-600 dark:text-purple-400"
+    },
+    {
+      icon: <Video className="h-5 w-5" />,
+      label: t("dashboard.quickActions.videoGenerator"),
+      action: () => navigate("/video-generator"),
+      color: "text-red-600 dark:text-red-400"
+    },
+    {
+      icon: <Palette className="h-5 w-5" />,
+      label: t("dashboard.quickActions.contentTools"),
+      action: () => navigate("/content-tools"),
+      color: "text-teal-600 dark:text-teal-400"
+    },
+    {
+      icon: <Settings className="h-5 w-5" />,
+      label: t("dashboard.quickActions.settings"),
+      action: () => navigate("/profile"),
+      color: "text-slate-600 dark:text-slate-400"
     }
   ];
 
@@ -62,19 +93,24 @@ const QuickActions = () => {
         <CardTitle>{t("dashboard.quickActions.title")}</CardTitle>
       </CardHeader>
       <CardContent className="pt-4">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-3">
           {actions.map((action, index) => (
-            <Button
+            <motion.div
               key={index}
-              variant="outline"
-              className="h-auto flex flex-col items-center gap-2 p-4 hover:bg-slate-50 dark:hover:bg-slate-900"
-              onClick={action.action}
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
             >
-              <div className={`${action.color}`}>
-                {action.icon}
-              </div>
-              <span className="text-xs font-normal text-center">{action.label}</span>
-            </Button>
+              <Button
+                variant="outline"
+                className="h-auto w-full flex flex-col items-center gap-2 p-3 hover:bg-slate-50 dark:hover:bg-slate-900"
+                onClick={action.action}
+              >
+                <div className={`${action.color}`}>
+                  {action.icon}
+                </div>
+                <span className="text-xs font-normal text-center">{action.label}</span>
+              </Button>
+            </motion.div>
           ))}
         </div>
       </CardContent>

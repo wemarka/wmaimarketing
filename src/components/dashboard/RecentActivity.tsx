@@ -4,10 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Image, FileText, Video, Calendar, 
   UserCheck, LogIn, LogOut, UserCog, 
-  FileEdit, Activity 
+  FileEdit, Activity, Badge 
 } from "lucide-react";
 import { useActivityLog, Activity as ActivityType } from "@/hooks/useActivityLog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "framer-motion";
 
 const RecentActivity = () => {
   const { activities, loading } = useActivityLog();
@@ -23,7 +24,7 @@ const RecentActivity = () => {
       case "password_change":
         return <UserCog className="h-4 w-4" />;
       case "role_change":
-        return <UserCog className="h-4 w-4" />;
+        return <Badge className="h-4 w-4" />;
       case "content_create":
         return <FileText className="h-4 w-4" />;
       case "content_edit":
@@ -57,39 +58,46 @@ const RecentActivity = () => {
     {
       id: "1",
       type: "image",
-      title: "تم إنشاء صورة إعلانية",
-      time: "منذ ساعتين",
-      icon: <Image className="h-4 w-4" />,
+      description: "تم إنشاء صورة إعلانية جديدة لمنتج كريم الأساس",
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
     },
     {
       id: "2",
-      type: "content",
-      title: "تم إنشاء محتوى لمنشور أحمر الشفاه",
-      time: "منذ 5 ساعات",
-      icon: <FileText className="h-4 w-4" />,
+      type: "content_create",
+      description: "تم إنشاء محتوى لمنشور جديد حول أحمر الشفاه الجديد",
+      timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5 hours ago
     },
     {
       id: "3",
       type: "video",
-      title: "تم إنشاء فيديو ترويجي",
-      time: "أمس",
-      icon: <Video className="h-4 w-4" />,
+      description: "تم إنشاء فيديو ترويجي للمجموعة الجديدة من العطور",
+      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
     },
     {
       id: "4",
       type: "schedule",
-      title: "تمت جدولة 3 منشورات على انستجرام",
-      time: "منذ يومين",
-      icon: <Calendar className="h-4 w-4" />,
+      description: "تمت جدولة 3 منشورات جديدة على انستجرام للأسبوع القادم",
+      timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+    },
+    {
+      id: "5",
+      type: "login",
+      description: "تم تسجيل الدخول إلى النظام من جهاز جديد",
+      timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
     },
   ];
 
+  const displayActivities = activities.length > 0 ? activities.slice(0, 5) : defaultActivities;
+
   return (
-    <Card>
-      <CardHeader className="pb-3">
+    <Card className="h-full">
+      <CardHeader className="pb-3 flex flex-row items-center justify-between">
         <CardTitle className="text-lg font-medium">النشاطات الأخيرة</CardTitle>
+        <Badge variant="outline">
+          {displayActivities.length} نشاط
+        </Badge>
       </CardHeader>
-      <CardContent className="px-6">
+      <CardContent className="px-6 overflow-hidden">
         {loading ? (
           <div className="space-y-4">
             {[1, 2, 3, 4].map((index) => (
@@ -104,9 +112,12 @@ const RecentActivity = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            {activities.length > 0 ? activities.slice(0, 5).map((activity) => (
-              <div
+            {displayActivities.map((activity, index) => (
+              <motion.div
                 key={activity.id}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
                 className="flex items-center gap-3 text-sm"
               >
                 <div className="bg-muted p-2 rounded-full">
@@ -118,23 +129,8 @@ const RecentActivity = () => {
                     {formatTimeAgo(activity.timestamp)}
                   </p>
                 </div>
-              </div>
-            )) : (
-              defaultActivities.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="flex items-center gap-3 text-sm"
-                >
-                  <div className="bg-muted p-2 rounded-full">
-                    {activity.icon}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium">{activity.title}</p>
-                    <p className="text-xs text-muted-foreground">{activity.time}</p>
-                  </div>
-                </div>
-              ))
-            )}
+              </motion.div>
+            ))}
           </div>
         )}
       </CardContent>

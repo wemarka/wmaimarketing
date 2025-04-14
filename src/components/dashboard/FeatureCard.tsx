@@ -7,6 +7,7 @@ import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
 
 interface FeatureCardProps {
   icon: React.ReactNode;
@@ -15,6 +16,8 @@ interface FeatureCardProps {
   href: string;
   iconColor?: string;
   className?: string;
+  isNew?: boolean;
+  isPopular?: boolean;
 }
 
 const FeatureCard = ({
@@ -24,6 +27,8 @@ const FeatureCard = ({
   href,
   iconColor = "bg-muted text-foreground",
   className,
+  isNew = false,
+  isPopular = false,
 }: FeatureCardProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -36,7 +41,7 @@ const FeatureCard = ({
       whileHover={{ y: -5 }}
     >
       <Card 
-        className={cn("overflow-hidden h-full hover:shadow-md transition-all", 
+        className={cn("overflow-hidden h-full hover:shadow-md transition-all border", 
           className)}
       >
         <CardContent className="p-6">
@@ -44,6 +49,18 @@ const FeatureCard = ({
             <div className="flex items-start justify-between">
               <div className={cn("p-3 rounded-lg", iconColor)}>
                 {icon}
+              </div>
+              <div className="flex gap-2">
+                {isNew && (
+                  <Badge className="bg-beauty-purple text-white">
+                    {t("dashboard.features.new")}
+                  </Badge>
+                )}
+                {isPopular && (
+                  <Badge className="bg-beauty-gold text-white">
+                    {t("dashboard.features.popular")}
+                  </Badge>
+                )}
               </div>
             </div>
             

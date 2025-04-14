@@ -3,9 +3,12 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, ThumbsUp, MessageCircle } from "lucide-react";
+import { Clock, ThumbsUp, MessageCircle, Eye, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
-// Sample data
+// More realistic data
 const contentData = [
   {
     id: 1,
@@ -14,6 +17,7 @@ const contentData = [
     platform: "Instagram",
     engagement: 820,
     comments: 48,
+    views: 4250,
     publishedAt: "2025-04-12T14:30:00",
     image: "/placeholder.svg"
   },
@@ -24,6 +28,7 @@ const contentData = [
     platform: "Instagram",
     engagement: 1250,
     comments: 72,
+    views: 6380,
     publishedAt: "2025-04-10T10:15:00",
     image: "/placeholder.svg"
   },
@@ -34,6 +39,7 @@ const contentData = [
     platform: "TikTok",
     engagement: 940,
     comments: 63,
+    views: 5120,
     publishedAt: "2025-04-08T18:45:00",
     image: "/placeholder.svg"
   }
@@ -41,6 +47,7 @@ const contentData = [
 
 const ContentInsights = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -70,6 +77,11 @@ const ContentInsights = () => {
     }
   };
 
+  // Calculate engagement rate percentage
+  const calculateEngagementRate = (engagement: number, views: number) => {
+    return ((engagement / views) * 100).toFixed(1);
+  };
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -79,42 +91,79 @@ const ContentInsights = () => {
             {t("dashboard.content.subtitle")}
           </p>
         </div>
+        <Button 
+          variant="outline"
+          size="sm"
+          onClick={() => navigate("/content-creator")}
+        >
+          إنشاء محتوى جديد
+        </Button>
       </CardHeader>
       <CardContent className="pt-4">
         <div className="space-y-4">
-          {contentData.map((content) => (
-            <div key={content.id} className="flex items-center gap-4 p-3 rounded-lg border bg-card">
-              <div className="h-16 w-16 rounded-md bg-muted overflow-hidden shrink-0">
-                <img src={content.image} alt={content.title} className="h-full w-full object-cover" />
-              </div>
-              
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-wrap gap-2 mb-1">
-                  <Badge variant="outline" className={getPlatformBadgeClass(content.platform)}>
-                    {content.platform}
-                  </Badge>
-                  <Badge variant="outline">
-                    {getContentTypeLabel(content.type)}
-                  </Badge>
+          {contentData.map((content, index) => (
+            <motion.div
+              key={content.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+            >
+              <div className="flex items-center gap-4 p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
+                <div className="h-16 w-16 rounded-md bg-muted overflow-hidden shrink-0">
+                  <img src={content.image} alt={content.title} className="h-full w-full object-cover" />
                 </div>
-                <h4 className="font-medium text-sm truncate">{content.title}</h4>
-                <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    <span>{formatDate(content.publishedAt)}</span>
+                
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap gap-2 mb-1">
+                    <Badge variant="outline" className={getPlatformBadgeClass(content.platform)}>
+                      {content.platform}
+                    </Badge>
+                    <Badge variant="outline">
+                      {getContentTypeLabel(content.type)}
+                    </Badge>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <ThumbsUp className="h-3 w-3" />
-                    <span>{content.engagement}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <MessageCircle className="h-3 w-3" />
-                    <span>{content.comments}</span>
+                  <h4 className="font-medium text-sm truncate">{content.title}</h4>
+                  <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      <span>{formatDate(content.publishedAt)}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Eye className="h-3 w-3" />
+                      <span>{content.views}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <ThumbsUp className="h-3 w-3" />
+                      <span>{content.engagement} ({calculateEngagementRate(content.engagement, content.views)}%)</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <MessageCircle className="h-3 w-3" />
+                      <span>{content.comments}</span>
+                    </div>
                   </div>
                 </div>
+                
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => navigate("/analytics")}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
               </div>
-            </div>
+            </motion.div>
           ))}
+        </div>
+        
+        <div className="mt-4 text-center">
+          <Button 
+            variant="link" 
+            onClick={() => navigate("/content-creator")}
+            className="text-beauty-purple"
+          >
+            عرض كل المنشورات
+            <ChevronRight className="h-4 w-4 ml-1" />
+          </Button>
         </div>
       </CardContent>
     </Card>

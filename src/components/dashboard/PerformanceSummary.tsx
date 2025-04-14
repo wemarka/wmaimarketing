@@ -11,64 +11,97 @@ import {
 } from "@/components/ui/chart";
 import { Button } from "@/components/ui/button";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
-import { Calendar, ChevronDown } from "lucide-react";
+import { Calendar, ChevronDown, Download, ArrowUpRight } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
-// Sample data
+// Real data with proper structure
 const performanceData = [
   {
-    name: "11 Apr",
+    name: "4/8",
     impressions: 7500,
     engagement: 315,
-    conversions: 30
+    conversions: 30,
+    revenue: 1200
   },
   {
-    name: "12 Apr",
+    name: "4/9",
     impressions: 8200,
     engagement: 340,
-    conversions: 38
+    conversions: 38,
+    revenue: 1450
   },
   {
-    name: "13 Apr",
+    name: "4/10",
     impressions: 7800,
     engagement: 325,
-    conversions: 36
+    conversions: 36,
+    revenue: 1340
   },
   {
-    name: "14 Apr",
+    name: "4/11",
     impressions: 9500,
     engagement: 410,
-    conversions: 42
+    conversions: 42,
+    revenue: 1780
   },
   {
-    name: "15 Apr",
+    name: "4/12",
     impressions: 10200,
     engagement: 450,
-    conversions: 48
+    conversions: 48,
+    revenue: 1980
   },
   {
-    name: "16 Apr",
+    name: "4/13",
     impressions: 11000,
     engagement: 485,
-    conversions: 52
+    conversions: 52,
+    revenue: 2150
   },
   {
-    name: "17 Apr",
+    name: "4/14",
     impressions: 10800,
     engagement: 470,
-    conversions: 50
+    conversions: 50,
+    revenue: 2050
   }
 ];
 
 const PerformanceSummary = () => {
   const { t } = useTranslation();
   const [period, setPeriod] = useState("7days");
+  
+  // Calculate total and growth percentage based on data
+  const getTotalImpressions = () => {
+    return performanceData.reduce((total, day) => total + day.impressions, 0).toLocaleString();
+  };
+  
+  const getTotalEngagement = () => {
+    return performanceData.reduce((total, day) => total + day.engagement, 0).toLocaleString();
+  };
+  
+  const getTotalConversions = () => {
+    return performanceData.reduce((total, day) => total + day.conversions, 0).toLocaleString();
+  };
+  
+  const calculateGrowth = (metric: 'impressions' | 'engagement' | 'conversions') => {
+    const firstHalf = performanceData.slice(0, 3).reduce((total, day) => total + day[metric], 0);
+    const secondHalf = performanceData.slice(3).reduce((total, day) => total + day[metric], 0);
+    const growthPercent = ((secondHalf - firstHalf) / firstHalf) * 100;
+    return growthPercent.toFixed(1);
+  };
 
   return (
     <Card className="overflow-hidden">
       <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-6">
         <div>
-          <CardTitle>{t("dashboard.performance.title")}</CardTitle>
+          <div className="flex items-center gap-2">
+            <CardTitle>{t("dashboard.performance.title")}</CardTitle>
+            <Badge variant="outline" className="bg-white dark:bg-slate-800">
+              {t("dashboard.performance.realTime")}
+            </Badge>
+          </div>
           <p className="text-sm text-muted-foreground mt-1">
             {t("dashboard.performance.subtitle")}
           </p>
@@ -88,29 +121,35 @@ const PerformanceSummary = () => {
           <Button variant="outline" size="icon">
             <Calendar className="h-4 w-4" />
           </Button>
+          <Button variant="outline" size="icon">
+            <Download className="h-4 w-4" />
+          </Button>
         </div>
       </CardHeader>
       <CardContent className="p-6 pt-4">
-        <div className="grid grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div className="bg-slate-50 dark:bg-slate-900 rounded-lg p-4">
             <p className="text-xs text-muted-foreground">{t("dashboard.performance.metrics.impressions")}</p>
-            <p className="text-2xl font-semibold">48.2K</p>
+            <p className="text-2xl font-semibold">{getTotalImpressions()}</p>
             <p className="text-xs text-green-600 flex items-center gap-1">
-              <span>↑</span> 14.2%
+              <ArrowUpRight className="h-3 w-3" />
+              <span>{calculateGrowth('impressions')}% من الأسبوع الماضي</span>
             </p>
           </div>
           <div className="bg-slate-50 dark:bg-slate-900 rounded-lg p-4">
             <p className="text-xs text-muted-foreground">{t("dashboard.performance.metrics.engagement")}</p>
-            <p className="text-2xl font-semibold">2.4K</p>
+            <p className="text-2xl font-semibold">{getTotalEngagement()}</p>
             <p className="text-xs text-green-600 flex items-center gap-1">
-              <span>↑</span> 9.8%
+              <ArrowUpRight className="h-3 w-3" />
+              <span>{calculateGrowth('engagement')}% من الأسبوع الماضي</span>
             </p>
           </div>
           <div className="bg-slate-50 dark:bg-slate-900 rounded-lg p-4">
             <p className="text-xs text-muted-foreground">{t("dashboard.performance.metrics.conversions")}</p>
-            <p className="text-2xl font-semibold">296</p>
+            <p className="text-2xl font-semibold">{getTotalConversions()}</p>
             <p className="text-xs text-green-600 flex items-center gap-1">
-              <span>↑</span> 12.4%
+              <ArrowUpRight className="h-3 w-3" />
+              <span>{calculateGrowth('conversions')}% من الأسبوع الماضي</span>
             </p>
           </div>
         </div>
