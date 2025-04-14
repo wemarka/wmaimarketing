@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -5,12 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarIcon, Instagram, Facebook, Music2, Upload } from "lucide-react";
+import { CalendarIcon, Upload } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { toast } from "@/hooks/use-toast";
+import { platforms } from "@/modules/content-creator/utils/platformIcons";
 
 interface NewPostDialogProps {
   open: boolean;
@@ -53,12 +55,6 @@ const NewPostDialog: React.FC<NewPostDialogProps> = ({ open, onOpenChange }) => 
     setTime("");
   };
 
-  const platformIcons = {
-    instagram: <Instagram className="h-4 w-4 text-pink-600" />,
-    facebook: <Facebook className="h-4 w-4 text-blue-600" />,
-    tiktok: <Music2 className="h-4 w-4 text-slate-600" />,
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
@@ -95,24 +91,20 @@ const NewPostDialog: React.FC<NewPostDialogProps> = ({ open, onOpenChange }) => 
                 <SelectValue placeholder="Select platform" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="instagram">
-                  <div className="flex items-center gap-2">
-                    <Instagram className="h-4 w-4 text-pink-600" />
-                    <span>Instagram</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="facebook">
-                  <div className="flex items-center gap-2">
-                    <Facebook className="h-4 w-4 text-blue-600" />
-                    <span>Facebook</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="tiktok">
-                  <div className="flex items-center gap-2">
-                    <Music2 className="h-4 w-4 text-slate-600" />
-                    <span>TikTok</span>
-                  </div>
-                </SelectItem>
+                {Object.entries(platforms).map(([key, { icon, label }]) => (
+                  <SelectItem key={key} value={key}>
+                    <div className="flex items-center gap-2">
+                      {React.cloneElement(icon as React.ReactElement, {
+                        className: `h-4 w-4 ${
+                          key === "instagram" ? "text-pink-600" : 
+                          key === "facebook" ? "text-blue-600" : 
+                          "text-slate-600"
+                        }`
+                      })}
+                      <span>{label}</span>
+                    </div>
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

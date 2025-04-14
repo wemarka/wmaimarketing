@@ -16,3 +16,9 @@ export const platforms = {
     label: "TikTok", 
   },
 };
+
+export const platformColors = {
+  instagram: "bg-pink-100 text-pink-600",
+  facebook: "bg-blue-100 text-blue-600",
+  tiktok: "bg-slate-100 text-slate-600",
+};
