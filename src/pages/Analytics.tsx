@@ -10,7 +10,8 @@ import {
   ProductPerformance,
   ProductionCostAnalysis,
   ContentRecommendations,
-  PostPerformance
+  PostPerformance,
+  PostStatusTracker
 } from "@/modules/analytics/components";
 
 const Analytics = () => {
@@ -33,6 +34,7 @@ const Analytics = () => {
           <TabsTrigger value="products">المنتجات</TabsTrigger>
           <TabsTrigger value="costs">تكاليف الإنتاج</TabsTrigger>
           <TabsTrigger value="recommendations">التوصيات</TabsTrigger>
+          <TabsTrigger value="status">حالة النشر</TabsTrigger>
         </TabsList>
 
         <TabsContent value="dashboard">
@@ -57,6 +59,10 @@ const Analytics = () => {
 
         <TabsContent value="recommendations">
           <ContentRecommendations />
+        </TabsContent>
+
+        <TabsContent value="status">
+          <PostStatusTracker />
         </TabsContent>
       </Tabs>
     </Layout>

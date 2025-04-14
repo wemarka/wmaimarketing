@@ -5,13 +5,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LineChart, BarChart } from "@/components/ui/chart";
-import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { ResponsiveContainer, BarChart, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar, Line } from "recharts";
 import { Eye, Heart, MessageSquare, Share2, TrendingUp } from "lucide-react";
 
 const PostPerformance = () => {
   const [platform, setPlatform] = useState("all");
   const [sortBy, setSortBy] = useState("engagement");
+  
+  // Mock data for charts
+  const lineChartData = [
+    { name: "يناير", views: 4000, engagement: 2400, amt: 2400 },
+    { name: "فبراير", views: 3000, engagement: 1398, amt: 2210 },
+    { name: "مارس", views: 2000, engagement: 9800, amt: 2290 },
+    { name: "أبريل", views: 2780, engagement: 3908, amt: 2000 },
+    { name: "مايو", views: 1890, engagement: 4800, amt: 2181 },
+    { name: "يونيو", views: 2390, engagement: 3800, amt: 2500 },
+    { name: "يوليو", views: 3490, engagement: 4300, amt: 2100 },
+  ];
   
   return (
     <div className="space-y-6">
@@ -34,7 +44,7 @@ const PostPerformance = () => {
               <SelectItem value="twitter">تويتر</SelectItem>
             </SelectContent>
           </Select>
-          <DateRangePicker />
+          <Button variant="outline">اختيار التاريخ</Button>
           <Button variant="outline">تصدير البيانات</Button>
         </div>
       </div>
@@ -108,7 +118,17 @@ const PostPerformance = () => {
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
-                  <LineChart />
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={lineChartData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Line type="monotone" dataKey="views" stroke="#8884d8" activeDot={{ r: 8 }} />
+                      <Line type="monotone" dataKey="engagement" stroke="#82ca9d" />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
@@ -118,7 +138,17 @@ const PostPerformance = () => {
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
-                  <BarChart />
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={lineChartData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="views" fill="#8884d8" />
+                      <Bar dataKey="engagement" fill="#82ca9d" />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>

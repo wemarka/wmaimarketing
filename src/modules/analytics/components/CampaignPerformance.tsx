@@ -4,12 +4,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AreaChart, BarChart, LineChart } from "@/components/ui/chart";
-import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { 
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent
+} from "@/components/ui/chart";
+import { ResponsiveContainer, ComposedChart, AreaChart, BarChart, Bar, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Line } from "recharts";
 
 const CampaignPerformance = () => {
   const [period, setPeriod] = useState("30days");
   const [campaignType, setCampaignType] = useState("all");
+
+  // Mock data for charts
+  const lineChartData = [
+    { name: "يناير", views: 4000, engagement: 2400, amt: 2400 },
+    { name: "فبراير", views: 3000, engagement: 1398, amt: 2210 },
+    { name: "مارس", views: 2000, engagement: 9800, amt: 2290 },
+    { name: "أبريل", views: 2780, engagement: 3908, amt: 2000 },
+    { name: "مايو", views: 1890, engagement: 4800, amt: 2181 },
+    { name: "يونيو", views: 2390, engagement: 3800, amt: 2500 },
+    { name: "يوليو", views: 3490, engagement: 4300, amt: 2100 },
+  ];
   
   return (
     <div className="space-y-6">
@@ -30,7 +47,7 @@ const CampaignPerformance = () => {
               <SelectItem value="seasonal">حملات موسمية</SelectItem>
             </SelectContent>
           </Select>
-          <DateRangePicker />
+          <Button variant="outline">اختيار التاريخ</Button>
           <Button variant="outline">تصدير البيانات</Button>
         </div>
       </div>
@@ -80,7 +97,17 @@ const CampaignPerformance = () => {
             </CardHeader>
             <CardContent>
               <div className="h-[350px]">
-                <LineChart />
+                <ResponsiveContainer width="100%" height="100%">
+                  <ComposedChart data={lineChartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Area type="monotone" dataKey="views" fill="#8884d8" stroke="#8884d8" />
+                    <Bar dataKey="engagement" fill="#82ca9d" />
+                  </ComposedChart>
+                </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
@@ -92,7 +119,16 @@ const CampaignPerformance = () => {
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
-                  <BarChart />
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={lineChartData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="views" fill="#8884d8" />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
@@ -102,7 +138,16 @@ const CampaignPerformance = () => {
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
-                  <AreaChart />
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={lineChartData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Area type="monotone" dataKey="views" fill="#8884d8" stroke="#8884d8" />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>

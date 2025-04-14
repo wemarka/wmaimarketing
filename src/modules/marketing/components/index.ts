@@ -1,4 +1,3 @@
-
 // Export marketing components for easier imports
 export { default as CampaignCard } from './CampaignCard';
 export { default as CampaignSchedule } from './CampaignSchedule';

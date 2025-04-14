@@ -4,12 +4,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { BarChart, PieChart, LineChart } from "@/components/ui/chart";
-import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { ResponsiveContainer, BarChart, LineChart, PieChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar, Line, Pie, Cell } from "recharts";
 
 const ProductionCostAnalysis = () => {
   const [contentType, setContentType] = useState("all");
   const [period, setPeriod] = useState("month");
+  
+  // Mock data for charts
+  const barChartData = [
+    { name: "حملة 1", تكلفة_الإنتاج: 4000, الإنفاق_الفعلي: 2400 },
+    { name: "حملة 2", تكلفة_الإنتاج: 3000, الإنفاق_الفعلي: 1398 },
+    { name: "حملة 3", تكلفة_الإنتاج: 2000, الإنفاق_الفعلي: 9800 },
+    { name: "حملة 4", تكلفة_الإنتاج: 2780, الإنفاق_الفعلي: 3908 },
+    { name: "حملة 5", تكلفة_الإنتاج: 1890, الإنفاق_الفعلي: 4800 },
+  ];
+  
+  const pieChartData = [
+    { name: "الصور", value: 400 },
+    { name: "الفيديو", value: 300 },
+    { name: "التصاميم", value: 200 },
+    { name: "كتابة المحتوى", value: 100 },
+  ];
+  
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
   
   return (
     <div className="space-y-6">
@@ -31,7 +48,7 @@ const ProductionCostAnalysis = () => {
               <SelectItem value="copywriting">كتابة المحتوى</SelectItem>
             </SelectContent>
           </Select>
-          <DateRangePicker />
+          <Button variant="outline">اختيار التاريخ</Button>
           <Button variant="outline">تصدير البيانات</Button>
         </div>
       </div>
@@ -82,7 +99,26 @@ const ProductionCostAnalysis = () => {
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
-                  <PieChart />
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={pieChartData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      >
+                        {pieChartData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
@@ -92,7 +128,17 @@ const ProductionCostAnalysis = () => {
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
-                  <BarChart />
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={barChartData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="تكلفة_الإنتاج" fill="#8884d8" />
+                      <Bar dataKey="الإنفاق_الفعلي" fill="#82ca9d" />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>

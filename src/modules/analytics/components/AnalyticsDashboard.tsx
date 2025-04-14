@@ -50,29 +50,29 @@ const AnalyticsDashboard = () => {
       <div className="grid md:grid-cols-4 gap-6">
         <StatisticCard
           title="المشاهدات"
-          value={analyticsData.impressions.toLocaleString()}
-          change={analyticsData.change.impressions}
+          value={analyticsData.impressions.toString()}
+          change={analyticsData.change.impressions.toString()}
           positive={analyticsData.change.impressions > 0}
           loading={loading}
         />
         <StatisticCard
           title="نسبة التفاعل"
           value={`${analyticsData.engagement}%`}
-          change={analyticsData.change.engagement}
+          change={analyticsData.change.engagement.toString()}
           positive={analyticsData.change.engagement > 0}
           loading={loading}
         />
         <StatisticCard
           title="نسبة النقرات"
           value={`${analyticsData.clicks}%`}
-          change={analyticsData.change.clicks}
+          change={analyticsData.change.clicks.toString()}
           positive={analyticsData.change.clicks > 0}
           loading={loading}
         />
         <StatisticCard
           title="التحويلات"
-          value={analyticsData.conversions.toLocaleString()}
-          change={analyticsData.change.conversions}
+          value={analyticsData.conversions.toString()}
+          change={analyticsData.change.conversions.toString()}
           positive={analyticsData.change.conversions > 0}
           loading={loading}
         />
@@ -84,7 +84,7 @@ const AnalyticsDashboard = () => {
             <CardTitle>نظرة عامة على الأداء</CardTitle>
           </CardHeader>
           <CardContent>
-            <OverviewChart data={overviewData} loading={loading} />
+            <OverviewChart data={overviewData} />
           </CardContent>
         </Card>
         <Card>
@@ -92,7 +92,7 @@ const AnalyticsDashboard = () => {
             <CardTitle>توزيع المنصات</CardTitle>
           </CardHeader>
           <CardContent>
-            <PlatformBreakdown data={platformData} loading={loading} />
+            <PlatformBreakdown data={platformData} />
           </CardContent>
         </Card>
       </div>
@@ -102,7 +102,7 @@ const AnalyticsDashboard = () => {
           <CardTitle>مقاييس التفاعل</CardTitle>
         </CardHeader>
         <CardContent>
-          <EngagementMetrics data={engagementData} loading={loading} />
+          <EngagementMetrics data={engagementData} />
         </CardContent>
       </Card>
     </div>

@@ -4,11 +4,31 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { LineChart, BarChart, PieChart } from "@/components/ui/chart";
+import { ResponsiveContainer, BarChart, LineChart, PieChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar, Line, Pie, Cell } from "recharts";
 
 const ProductPerformance = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortBy, setSortBy] = useState("views");
+  
+  // Mock data for charts
+  const lineChartData = [
+    { name: "يناير", sales: 4000, views: 2400, amt: 2400 },
+    { name: "فبراير", sales: 3000, views: 1398, amt: 2210 },
+    { name: "مارس", sales: 2000, views: 9800, amt: 2290 },
+    { name: "أبريل", sales: 2780, views: 3908, amt: 2000 },
+    { name: "مايو", sales: 1890, views: 4800, amt: 2181 },
+    { name: "يونيو", sales: 2390, views: 3800, amt: 2500 },
+    { name: "يوليو", sales: 3490, views: 4300, amt: 2100 },
+  ];
+  
+  const pieChartData = [
+    { name: "العناية بالبشرة", value: 400 },
+    { name: "المكياج", value: 300 },
+    { name: "العناية بالشعر", value: 200 },
+    { name: "العطور", value: 100 },
+  ];
+  
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
   
   return (
     <div className="space-y-6">
@@ -89,7 +109,17 @@ const ProductPerformance = () => {
             </CardHeader>
             <CardContent>
               <div className="h-[350px]">
-                <LineChart />
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={lineChartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="sales" stroke="#8884d8" activeDot={{ r: 8 }} />
+                    <Line type="monotone" dataKey="views" stroke="#82ca9d" />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
@@ -101,7 +131,16 @@ const ProductPerformance = () => {
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
-                  <BarChart />
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={lineChartData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="sales" fill="#8884d8" />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
@@ -111,7 +150,26 @@ const ProductPerformance = () => {
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
-                  <PieChart />
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={pieChartData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      >
+                        {pieChartData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
