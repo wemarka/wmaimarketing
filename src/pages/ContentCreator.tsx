@@ -18,6 +18,7 @@ import {
   MessageSquare
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const ContentCreator = () => {
   const { toast } = useToast();
@@ -27,42 +28,46 @@ const ContentCreator = () => {
   const [tone, setTone] = useState("professional");
   const [content, setContent] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [product, setProduct] = useState("أحمر شفاه");
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     setGenerating(true);
     
-    // Simulate AI generation with a timeout
-    setTimeout(() => {
-      const sampleContent = {
-        instagram: {
-          english: "✨ Unveil your perfect pout with our NEW Ruby Sunrise Lipstick! 💋 This hydrating formula glides on for all-day color that doesn't fade or feather. Infused with nourishing oils for softness you can feel. #BeautyEssentials #PerfectPout #NewLipstick",
-          arabic: "✨ اكتشفي شفاهًا مثالية مع أحمر الشفاه روبي صنرايز الجديد! 💋 تركيبة مرطبة تنزلق بسلاسة للحصول على لون يدوم طوال اليوم دون أن يتلاشى. مع زيوت مغذية لنعومة ملموسة. #مستحضرات_التجميل #شفاه_مثالية #أحمر_شفاه_جديد"
-        },
-        facebook: {
-          english: "Introducing our NEW Ruby Sunrise Lipstick! 💄\n\nThis summer's must-have shade is here to elevate your makeup game. Our advanced formula combines vibrant color with nourishing ingredients for lips that look and feel amazing all day long.\n\nEnjoy 15% off with code RUBYLOVE this week only! Shop now via link in bio.",
-          arabic: "نقدم لكِ أحمر الشفاه روبي صنرايز الجديد! 💄\n\nلون الصيف الذي لا غنى عنه موجود هنا لرفع مستوى مكياجك. تجمع تركيبتنا المتطورة بين اللون النابض بالحياة والمكونات المغذية للشفاه التي تبدو رائعة طوال اليوم.\n\nاستمتعي بخصم 15% مع رمز RUBYLOVE هذا الأسبوع فقط! تسوقي الآن عبر الرابط في البايو."
-        },
-        tiktok: {
-          english: "This lipstick changed my life 😱💄 #BeautyHacks #MakeupTrends #LipstickObsessed #NewBeautyFind #MustHaveMakeup #BeautyReview",
-          arabic: "أحمر الشفاه هذا غيّر حياتي 😱💄 #خدع_الجمال #اتجاهات_المكياج #هوس_أحمر_الشفاه #اكتشاف_جمال_جديد #مكياج_ضروري #تقييم_منتجات_التجميل"
+    try {
+      // Call the AI content generator edge function
+      const { data, error } = await supabase.functions.invoke('ai-content-generator', {
+        body: {
+          platform,
+          language,
+          tone,
+          product
         }
-      };
-      
-      if (language === "english") {
-        setContent(sampleContent[platform as keyof typeof sampleContent].english);
-      } else if (language === "arabic") {
-        setContent(sampleContent[platform as keyof typeof sampleContent].arabic);
-      } else {
-        setContent(`${sampleContent[platform as keyof typeof sampleContent].english}\n\n${sampleContent[platform as keyof typeof sampleContent].arabic}`);
+      });
+
+      if (error) {
+        throw error;
       }
-      
-      setGenerating(false);
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      setContent(data.content);
       
       toast({
-        title: "Content Generated",
-        description: "Your marketing content is ready to use!",
+        title: "تم إنشاء المحتوى",
+        description: "تم إنشاء المحتوى التسويقي بنجاح",
       });
-    }, 2000);
+    } catch (error) {
+      console.error("Error generating content:", error);
+      toast({
+        title: "خطأ",
+        description: `حدث خطأ أثناء إنشاء المحتوى: ${error instanceof Error ? error.message : 'خطأ غير معروف'}`,
+        variant: "destructive"
+      });
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const handleCopy = () => {
@@ -72,8 +77,8 @@ const ContentCreator = () => {
     setCopied(true);
     
     toast({
-      title: "Copied!",
-      description: "Content copied to clipboard",
+      title: "تم النسخ!",
+      description: "تم نسخ المحتوى إلى الحافظة",
     });
     
     setTimeout(() => setCopied(false), 2000);
@@ -97,20 +102,36 @@ const ContentCreator = () => {
   return (
     <Layout>
       <div className="max-w-4xl mx-auto">
-        <h1 className="mb-2">AI Content Creator</h1>
+        <h1 className="mb-2">منشئ المحتوى بالذكاء الاصطناعي</h1>
         <p className="text-muted-foreground mb-8 max-w-2xl">
-          Generate engaging marketing content for your beauty products. Our AI creates 
-          captions, hashtags, and marketing messages tailored to each platform.
+          إنشاء محتوى تسويقي جذاب لمنتجات التجميل الخاصة بك. يقوم الذكاء الاصطناعي بإنشاء
+          نصوص، هاشتاغات، ورسائل تسويقية مخصصة لكل منصة.
         </p>
         
         <div className="grid md:grid-cols-2 gap-8">
           <Card>
             <CardContent className="p-6">
-              <h2 className="text-xl font-medium mb-6">Content Settings</h2>
+              <h2 className="text-xl font-medium mb-6">إعدادات المحتوى</h2>
               
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Platform</label>
+                  <label className="block text-sm font-medium mb-2">المنتج</label>
+                  <Select value={product} onValueChange={setProduct}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="اختر المنتج" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="أحمر شفاه">أحمر شفاه</SelectItem>
+                      <SelectItem value="كريم ترطيب">كريم ترطيب</SelectItem>
+                      <SelectItem value="مسكارا">مسكارا</SelectItem>
+                      <SelectItem value="سيروم للبشرة">سيروم للبشرة</SelectItem>
+                      <SelectItem value="كريم أساس">كريم أساس</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-2">المنصة</label>
                   <Tabs
                     defaultValue="instagram"
                     value={platform}
@@ -131,31 +152,31 @@ const ContentCreator = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Language</label>
+                  <label className="block text-sm font-medium mb-2">اللغة</label>
                   <Select value={language} onValueChange={setLanguage}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select language" />
+                      <SelectValue placeholder="اختر اللغة" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="english">English</SelectItem>
-                      <SelectItem value="arabic">Arabic</SelectItem>
-                      <SelectItem value="both">English & Arabic</SelectItem>
+                      <SelectItem value="english">الإنجليزية</SelectItem>
+                      <SelectItem value="arabic">العربية</SelectItem>
+                      <SelectItem value="both">الإنجليزية والعربية</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Tone</label>
+                  <label className="block text-sm font-medium mb-2">نبرة المحتوى</label>
                   <Select value={tone} onValueChange={setTone}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select tone" />
+                      <SelectValue placeholder="اختر نبرة المحتوى" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="professional">Professional</SelectItem>
-                      <SelectItem value="friendly">Friendly & Casual</SelectItem>
-                      <SelectItem value="luxury">Luxury & Elegant</SelectItem>
-                      <SelectItem value="trendy">Trendy & Bold</SelectItem>
-                      <SelectItem value="educational">Educational</SelectItem>
+                      <SelectItem value="professional">احترافية</SelectItem>
+                      <SelectItem value="friendly">ودية وغير رسمية</SelectItem>
+                      <SelectItem value="luxury">فاخرة وراقية</SelectItem>
+                      <SelectItem value="trendy">عصرية وجريئة</SelectItem>
+                      <SelectItem value="educational">تعليمية</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -167,13 +188,13 @@ const ContentCreator = () => {
                 >
                   {generating ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Generating...
+                      <Loader2 className="h-4 w-4 ml-2 animate-spin" />
+                      جاري الإنشاء...
                     </>
                   ) : (
                     <>
-                      <MessageSquarePlus className="h-4 w-4 mr-2" />
-                      Generate Content
+                      <MessageSquarePlus className="h-4 w-4 ml-2" />
+                      إنشاء المحتوى
                     </>
                   )}
                 </Button>
@@ -184,7 +205,7 @@ const ContentCreator = () => {
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-medium">Generated Content</h2>
+                <h2 className="text-xl font-medium">المحتوى المنشأ</h2>
                 {content && (
                   <div className="flex gap-2">
                     <Button 
@@ -195,13 +216,13 @@ const ContentCreator = () => {
                     >
                       {copied ? (
                         <>
-                          <Check className="h-4 w-4 mr-1" />
-                          Copied
+                          <Check className="h-4 w-4 ml-1" />
+                          تم النسخ
                         </>
                       ) : (
                         <>
-                          <Copy className="h-4 w-4 mr-1" />
-                          Copy
+                          <Copy className="h-4 w-4 ml-1" />
+                          نسخ
                         </>
                       )}
                     </Button>
@@ -220,7 +241,7 @@ const ContentCreator = () => {
               {generating ? (
                 <div className="h-64 flex flex-col items-center justify-center">
                   <Loader2 className="h-8 w-8 animate-spin mb-4 text-beauty-purple" />
-                  <p className="text-muted-foreground">Crafting engaging content...</p>
+                  <p className="text-muted-foreground">جاري إنشاء محتوى جذاب...</p>
                 </div>
               ) : content ? (
                 <Textarea
@@ -231,7 +252,7 @@ const ContentCreator = () => {
               ) : (
                 <div className="h-64 flex flex-col items-center justify-center text-muted-foreground">
                   <Languages className="h-16 w-16 mb-4 text-muted-foreground/50" />
-                  <p>Configure your settings and generate marketing content</p>
+                  <p>قم بتهيئة الإعدادات وإنشاء محتوى تسويقي</p>
                 </div>
               )}
             </CardContent>
