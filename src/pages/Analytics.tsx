@@ -3,13 +3,13 @@ import React from "react";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Update imports from the new modular structure
-import { AnalyticsDashboard } from "@/components/analytics/AnalyticsDashboard";
-import { CampaignPerformance } from "@/components/analytics/CampaignPerformance";
-import { ProductPerformance } from "@/components/analytics/ProductPerformance";
-import { ProductionCostAnalysis } from "@/components/analytics/ProductionCostAnalysis";
-import { ContentRecommendations } from "@/components/analytics/ContentRecommendations";
-import { PostPerformance } from "@/components/analytics/PostPerformance";
+// Update imports from the new modular structure to use default imports
+import AnalyticsDashboard from "@/components/analytics/AnalyticsDashboard";
+import CampaignPerformance from "@/components/analytics/CampaignPerformance";
+import ProductPerformance from "@/components/analytics/ProductPerformance";
+import ProductionCostAnalysis from "@/components/analytics/ProductionCostAnalysis";
+import ContentRecommendations from "@/components/analytics/ContentRecommendations";
+import PostPerformance from "@/components/analytics/PostPerformance";
 
 const Analytics = () => {
   return (
