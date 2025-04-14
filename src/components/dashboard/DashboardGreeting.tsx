@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 const DashboardGreeting = () => {
   const { t } = useTranslation();
-  const { profile, isLoading } = useProfile();
+  const { profileData, loading } = useProfile();
   
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -16,7 +16,7 @@ const DashboardGreeting = () => {
   };
 
   const greeting = getGreeting();
-  const userName = profile?.first_name || "";
+  const userName = profileData?.first_name || "";
 
   return (
     <div className="mb-8">
