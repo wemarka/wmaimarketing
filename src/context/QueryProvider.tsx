@@ -23,7 +23,7 @@ const queryClient = new QueryClient({
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       refetchOnReconnect: true,
-      suspense: false, // يمكن تفعيله لاستخدام ميزة التعليق
+      // Removed suspense configuration
     },
     mutations: {
       retry: 1,
