@@ -19,7 +19,7 @@ const queryClient = new QueryClient({
       },
       // استخدام SWR (stale-while-revalidate) استراتيجية
       staleTime: 2 * 60 * 1000, // 2 دقائق
-      cacheTime: 10 * 60 * 1000, // 10 دقائق
+      gcTime: 10 * 60 * 1000, // 10 دقائق (formerly cacheTime)
       refetchOnMount: true,
       refetchOnWindowFocus: false,
       refetchOnReconnect: true,

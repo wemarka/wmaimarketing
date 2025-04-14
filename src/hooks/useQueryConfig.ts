@@ -3,7 +3,7 @@ import { useQueryClient, QueryKey } from "@tanstack/react-query";
 
 interface QueryConfigOptions {
   staleTime?: number;
-  cacheTime?: number;
+  gcTime?: number; // Changed from cacheTime to gcTime
   retry?: number | boolean;
   retryDelay?: number;
   refetchOnWindowFocus?: boolean;
@@ -14,7 +14,7 @@ interface QueryConfigOptions {
 // قيم افتراضية محسنة للتخزين المؤقت
 export const defaultQueryConfig: QueryConfigOptions = {
   staleTime: 5 * 60 * 1000, // 5 دقائق
-  cacheTime: 30 * 60 * 1000, // 30 دقيقة
+  gcTime: 30 * 60 * 1000, // 30 دقيقة (formerly cacheTime)
   retry: 2,
   retryDelay: 3000,
   refetchOnWindowFocus: false,
