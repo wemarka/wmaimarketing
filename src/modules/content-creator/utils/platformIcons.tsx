@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Instagram, Facebook, MessageSquare } from "lucide-react";
+import { Instagram, Facebook, Music2 } from "lucide-react";
 
 export const platforms = {
   instagram: {
@@ -12,7 +12,7 @@ export const platforms = {
     label: "Facebook", 
   },
   tiktok: {
-    icon: <MessageSquare className="h-4 w-4" />,
+    icon: <Music2 className="h-4 w-4" />,
     label: "TikTok", 
   },
 };

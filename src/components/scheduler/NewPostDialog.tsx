@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarIcon, Instagram, Facebook, MessageSquare, Upload } from "lucide-react";
+import { CalendarIcon, Instagram, Facebook, Music2, Upload } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -28,7 +27,6 @@ const NewPostDialog: React.FC<NewPostDialogProps> = ({ open, onOpenChange }) => 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation
     if (!title || !content || !platform || !date || !time) {
       toast({
         title: "Validation Error",
@@ -38,13 +36,11 @@ const NewPostDialog: React.FC<NewPostDialogProps> = ({ open, onOpenChange }) => 
       return;
     }
     
-    // Here we'd normally submit the form data to an API
     toast({
       title: "Success",
       description: "Post scheduled successfully",
     });
     
-    // Reset form and close dialog
     resetForm();
     onOpenChange(false);
   };
@@ -60,7 +56,7 @@ const NewPostDialog: React.FC<NewPostDialogProps> = ({ open, onOpenChange }) => 
   const platformIcons = {
     instagram: <Instagram className="h-4 w-4 text-pink-600" />,
     facebook: <Facebook className="h-4 w-4 text-blue-600" />,
-    tiktok: <MessageSquare className="h-4 w-4 text-slate-600" />,
+    tiktok: <Music2 className="h-4 w-4 text-slate-600" />,
   };
 
   return (
@@ -113,7 +109,7 @@ const NewPostDialog: React.FC<NewPostDialogProps> = ({ open, onOpenChange }) => 
                 </SelectItem>
                 <SelectItem value="tiktok">
                   <div className="flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4 text-slate-600" />
+                    <Music2 className="h-4 w-4 text-slate-600" />
                     <span>TikTok</span>
                   </div>
                 </SelectItem>

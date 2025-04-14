@@ -1,15 +1,14 @@
-
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Instagram, Facebook, MessageSquare, Plus } from "lucide-react";
+import { Instagram, Facebook, Music2, Plus } from "lucide-react";
 
 const ConnectedAccounts = () => {
   // Platform icons mapping
   const platformIcons = {
     instagram: <Instagram className="h-4 w-4" />,
     facebook: <Facebook className="h-4 w-4" />,
-    tiktok: <MessageSquare className="h-4 w-4" />,
+    tiktok: <Music2 className="h-4 w-4" />,
   };
 
   // Platform colors mapping
