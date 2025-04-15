@@ -22,7 +22,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
 const AppSidebar = () => {
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   const isMobile = useMediaQuery("(max-width: 767px)");
   const [expanded, setExpanded] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -215,7 +215,7 @@ const AppSidebar = () => {
               {profile ? `${profile.first_name} ${profile.last_name}` : "المستخدم"}
             </span>
             <span className="text-xs text-gray-500">
-              {profile?.email || "user@example.com"}
+              {user?.email || "user@example.com"}
             </span>
           </div>
         )}
