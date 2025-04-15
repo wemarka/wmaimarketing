@@ -1,81 +1,67 @@
 
 import { useState } from "react";
-import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { ProfileData, ProfileFormValues } from "@/types/profile";
+import { useAuth } from "@/context/AuthContext";
+import { useActivityLog } from "@/hooks/useActivityLog"; 
 
-export const useProfileUpdates = (profileData: ProfileData | null) => {
+export const useProfileUpdates = () => {
   const { user } = useAuth();
   const [updating, setUpdating] = useState(false);
+  const { logActivity } = useActivityLog();
 
-  // Update profile handler
-  const onUpdateProfile = async (data: ProfileFormValues) => {
+  const updateAvatarUrl = async (file: File) => {
     if (!user) return;
 
-    setUpdating(true);
     try {
-      console.log("Updating profile with data:", data);
+      setUpdating(true);
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/profile_picture.${fileExt}`;
       
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          first_name: data.first_name,
-          last_name: data.last_name,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", user.id);
+      // Upload to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from('profile_pictures')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
 
-      if (error) throw error;
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('profile_pictures')
+        .getPublicUrl(fileName);
+
+      // Update profile with new avatar URL
+      const { error: profileUpdateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('id', user.id);
+
+      if (profileUpdateError) throw profileUpdateError;
+
+      // Log activity
+      await logActivity('profile_picture_update', 'تم تحديث الصورة الشخصية');
 
       toast({
-        title: "تم التحديث",
-        description: "تم تحديث الملف الشخصي بنجاح",
+        title: "نجاح",
+        description: "تم تحديث الصورة الشخصية بنجاح"
       });
 
-      // We don't update local state here, as that would cause a re-render
-      // Profile data is refreshed on next page visit
+      return publicUrl;
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error("Error updating avatar:", error);
       toast({
         title: "خطأ",
-        description: "حدث خطأ أثناء تحديث الملف الشخصي",
-        variant: "destructive",
+        description: "فشل تحديث الصورة الشخصية",
+        variant: "destructive"
       });
+      return null;
     } finally {
       setUpdating(false);
     }
   };
 
-  // Update avatar URL
-  const updateAvatarUrl = async (url: string) => {
-    if (!user) return;
-    
-    try {      
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          avatar_url: url,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", user.id);
-      
-      if (error) throw error;
-      
-      console.log("Avatar URL updated successfully");
-    } catch (error) {
-      console.error("Error updating avatar URL:", error);
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء تحديث الصورة الشخصية",
-        variant: "destructive",
-      });
-    }
-  };
-
-  return {
-    updating,
-    onUpdateProfile,
-    updateAvatarUrl
-  };
+  return { updateAvatarUrl, updating };
 };

@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
-import { useCreateActivity } from "./useCreateActivity";
 
 export interface Activity {
   id: string;
@@ -15,7 +14,24 @@ export const useActivityLog = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
-  const { logActivity } = useCreateActivity();
+
+  const logActivity = async (type: string, description: string) => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('user_activity_log')
+        .insert({
+          user_id: user.id,
+          activity_type: type,
+          description: description
+        });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error("Error logging activity:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -26,29 +42,23 @@ export const useActivityLog = () => {
 
       try {
         setLoading(true);
-
         const { data, error } = await supabase
-          .from("user_activity_log")
-          .select("id, activity_type, description, created_at")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false })
-          .limit(10);
+          .from('user_activity_log')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(50);
 
         if (error) throw error;
 
-        // Map to Activity interface
-        const mappedActivities: Activity[] = data.map((item) => ({
+        setActivities(data.map(item => ({
           id: item.id,
           type: item.activity_type,
           description: item.description,
-          timestamp: item.created_at,
-        }));
-
-        setActivities(mappedActivities);
+          timestamp: item.created_at
+        })));
       } catch (error) {
-        console.error("Error fetching activity log:", error);
-        // Use default activities if error occurs (they will be handled in the component)
-        setActivities([]);
+        console.error("Error fetching activities:", error);
       } finally {
         setLoading(false);
       }
@@ -57,9 +67,5 @@ export const useActivityLog = () => {
     fetchActivities();
   }, [user]);
 
-  return {
-    activities,
-    loading,
-    logActivity
-  };
+  return { activities, loading, logActivity };
 };
