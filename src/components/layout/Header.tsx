@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -48,7 +47,7 @@ const getPageTitle = (pathname: string) => {
 
 const Header: React.FC = () => {
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   const [lastScrollTop, setLastScrollTop] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -56,7 +55,6 @@ const Header: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const { toast } = useToast();
 
-  // مراقبة حركة التمرير لإخفاء/إظهار الهيدر
   useEffect(() => {
     const handleScroll = () => {
       const st = window.pageYOffset || document.documentElement.scrollTop;
@@ -70,7 +68,6 @@ const Header: React.FC = () => {
     };
   }, [lastScrollTop]);
 
-  // التعامل مع البحث
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -81,7 +78,6 @@ const Header: React.FC = () => {
     }
   };
 
-  // التعامل مع تبديل السمة
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
     toast({
@@ -90,7 +86,6 @@ const Header: React.FC = () => {
     });
   };
 
-  // التعامل مع الإشعارات
   const handleNotificationClick = () => {
     setNotificationCount(0);
   };
@@ -125,7 +120,6 @@ const Header: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-4">
-          {/* نموذج البحث */}
           <form onSubmit={handleSearch} className="relative hidden md:block">
             <Input 
               placeholder="بحث سريع..."
@@ -136,7 +130,6 @@ const Header: React.FC = () => {
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
           </form>
           
-          {/* زر تبديل السمة */}
           <Button
             variant="ghost"
             size="icon"
@@ -150,7 +143,6 @@ const Header: React.FC = () => {
             )}
           </Button>
           
-          {/* زر الإشعارات */}
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full h-9 w-9 relative">
@@ -206,7 +198,6 @@ const Header: React.FC = () => {
             </PopoverContent>
           </Popover>
           
-          {/* قائمة المستخدم */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="gap-2 pl-2">
@@ -236,7 +227,7 @@ const Header: React.FC = () => {
                   <span>الإعدادات</span>
                 </a>
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-red-500" onClick={() => logout && logout()}>
+              <DropdownMenuItem className="text-red-500" onClick={() => signOut && signOut()}>
                 تسجيل الخروج
               </DropdownMenuItem>
             </DropdownMenuContent>
