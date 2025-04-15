@@ -7,7 +7,7 @@ export interface Notification {
   title: string;
   message: string;
   time: string;
-  type: "task" | "post" | "approval" | "system";
+  type: "task" | "post" | "approval" | "system" | "message" | "urgent";
   read: boolean;
   urgent?: boolean;
   actionUrl?: string;

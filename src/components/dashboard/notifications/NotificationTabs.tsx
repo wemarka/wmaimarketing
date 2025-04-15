@@ -1,8 +1,10 @@
 
 import React from "react";
-import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTranslation } from "react-i18next";
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { NotificationTabsProps } from "./types";
+import { cn } from "@/lib/utils";
 
 const NotificationTabs: React.FC<NotificationTabsProps> = ({
   activeTab,
@@ -10,49 +12,38 @@ const NotificationTabs: React.FC<NotificationTabsProps> = ({
   getUnreadCount
 }) => {
   const { t } = useTranslation();
+  
+  const tabs = [
+    { id: "all", label: t("dashboard.notifications.tabs.all"), type: "all" },
+    { id: "approval", label: t("dashboard.notifications.tabs.approval"), type: "approval" },
+    { id: "post", label: t("dashboard.notifications.tabs.post"), type: "post" },
+    { id: "task", label: t("dashboard.notifications.tabs.task"), type: "task" },
+    { id: "system", label: t("dashboard.notifications.tabs.system"), type: "system" }
+  ];
 
   return (
-    <TabsList className="grid grid-cols-4 mb-4">
-      <TabsTrigger 
-        value="all" 
-        className="relative"
-        onClick={() => onTabChange("all")}
-      >
-        {t("dashboard.notifications.filters.all", "الكل")}
-        {getUnreadCount() > 0 && (
-          <span className="absolute top-0.5 left-0.5 w-2 h-2 bg-red-500 rounded-full"></span>
-        )}
-      </TabsTrigger>
-      <TabsTrigger 
-        value="post" 
-        className="relative"
-        onClick={() => onTabChange("post")}
-      >
-        {t("dashboard.notifications.filters.posts", "المنشورات")}
-        {getUnreadCount("post") > 0 && (
-          <span className="absolute top-0.5 left-0.5 w-2 h-2 bg-red-500 rounded-full"></span>
-        )}
-      </TabsTrigger>
-      <TabsTrigger 
-        value="task" 
-        className="relative"
-        onClick={() => onTabChange("task")}
-      >
-        {t("dashboard.notifications.filters.tasks", "المهام")}
-        {getUnreadCount("task") > 0 && (
-          <span className="absolute top-0.5 left-0.5 w-2 h-2 bg-red-500 rounded-full"></span>
-        )}
-      </TabsTrigger>
-      <TabsTrigger 
-        value="approval" 
-        className="relative"
-        onClick={() => onTabChange("approval")}
-      >
-        {t("dashboard.notifications.filters.approvals", "الموافقات")}
-        {getUnreadCount("approval") > 0 && (
-          <span className="absolute top-0.5 left-0.5 w-2 h-2 bg-red-500 rounded-full"></span>
-        )}
-      </TabsTrigger>
+    <TabsList className="grid grid-cols-5 mb-4">
+      {tabs.map((tab) => (
+        <TabsTrigger
+          key={tab.id}
+          value={tab.id}
+          className={cn("flex items-center justify-center gap-1.5 relative")}
+          onClick={() => onTabChange(tab.id)}
+        >
+          {tab.label}
+          {getUnreadCount(tab.type) > 0 && (
+            <Badge
+              variant="secondary"
+              className={cn(
+                "absolute -top-2 -right-1 h-4 min-w-4 p-0 flex items-center justify-center text-[10px]",
+                tab.id === "all" ? "bg-beauty-pink text-white" : "bg-muted-foreground/20"
+              )}
+            >
+              {getUnreadCount(tab.type)}
+            </Badge>
+          )}
+        </TabsTrigger>
+      ))}
     </TabsList>
   );
 };

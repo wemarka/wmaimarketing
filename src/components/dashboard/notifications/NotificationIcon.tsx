@@ -1,18 +1,23 @@
 
 import React from "react";
-import { CheckCircle, Calendar, AlertCircle, Bell } from "lucide-react";
+import { CheckCircle, Calendar, AlertCircle, Bell, MessageCircle, Zap } from "lucide-react";
 import { NotificationIconProps } from "./types";
+import { cn } from "@/lib/utils";
 
-const NotificationIcon: React.FC<NotificationIconProps> = ({ type }) => {
+const NotificationIcon: React.FC<NotificationIconProps> = ({ type, className }) => {
   switch (type) {
     case "task":
-      return <CheckCircle className="h-5 w-5 text-green-500" />;
+      return <CheckCircle className={cn("h-5 w-5 text-green-500", className)} />;
     case "post":
-      return <Calendar className="h-5 w-5 text-beauty-purple" />;
+      return <Calendar className={cn("h-5 w-5 text-beauty-purple", className)} />;
     case "approval":
-      return <AlertCircle className="h-5 w-5 text-amber-500" />;
+      return <AlertCircle className={cn("h-5 w-5 text-amber-500", className)} />;
+    case "message":
+      return <MessageCircle className={cn("h-5 w-5 text-blue-500", className)} />;
+    case "urgent":
+      return <Zap className={cn("h-5 w-5 text-red-500", className)} />;
     default:
-      return <Bell className="h-5 w-5 text-blue-500" />;
+      return <Bell className={cn("h-5 w-5 text-blue-500", className)} />;
   }
 };
 

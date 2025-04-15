@@ -1,79 +1,58 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Clock, X } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useTranslation } from "react-i18next";
-import NotificationIcon from "./NotificationIcon";
 import { NotificationItemProps } from "./types";
+import NotificationIcon from "./NotificationIcon";
+import { cn } from "@/lib/utils";
 
-const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onMarkAsRead }) => {
-  const { t } = useTranslation();
-  
+const NotificationItem: React.FC<NotificationItemProps> = ({
+  notification,
+  onMarkAsRead,
+}) => {
+  const handleAction = () => {
+    if (notification.actionUrl) {
+      window.location.href = notification.actionUrl;
+    }
+    onMarkAsRead(notification.id);
+  };
+
   return (
     <motion.div
-      key={notification.id}
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 5 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className={`border rounded-lg p-3 relative ${
-        notification.read ? 'bg-white' : 'bg-slate-50'
-      } ${notification.urgent ? 'border-amber-200' : 'border'}`}
+      transition={{ duration: 0.2 }}
+      className={cn(
+        "flex items-start p-3 rounded-md border transition-colors",
+        notification.read
+          ? "bg-background"
+          : "bg-blue-50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/30",
+        notification.urgent && !notification.read && "border-red-200 dark:border-red-900/30 bg-red-50 dark:bg-red-900/10"
+      )}
     >
-      <div className="flex">
-        <div className={`rounded-full p-2 mr-3 ${
-          notification.type === 'post' ? 'bg-beauty-purple/10' :
-          notification.type === 'task' ? 'bg-green-100' :
-          notification.type === 'approval' ? 'bg-amber-100' :
-          'bg-blue-100'
-        }`}>
-          <NotificationIcon type={notification.type} />
+      <div className="mt-1 mr-3">
+        <NotificationIcon type={notification.type} />
+      </div>
+      <div className="flex-grow">
+        <div className="flex justify-between items-start">
+          <h4 className={cn("text-sm font-medium", !notification.read && "font-bold")}>
+            {notification.title}
+          </h4>
+          <span className="text-xs text-muted-foreground mr-1">{notification.time}</span>
         </div>
-        <div className="flex-1">
-          <div className="flex justify-between items-start">
-            <h4 className={`font-medium ${notification.read ? '' : 'font-semibold'}`}>
-              {notification.title}
-              {!notification.read && (
-                <span className="inline-block w-2 h-2 bg-beauty-pink rounded-full mr-2"></span>
-              )}
-            </h4>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground whitespace-nowrap">
-                {notification.time}
-              </span>
-              
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onMarkAsRead(notification.id)}
-                className="h-5 w-5 text-muted-foreground hover:text-foreground"
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </div>
+        <p className="text-sm text-muted-foreground mt-0.5 mb-1.5">{notification.message}</p>
+        {notification.actionUrl && (
+          <div className="flex justify-end">
+            <Button
+              size="sm"
+              variant={notification.urgent ? "destructive" : "outline"}
+              className="text-xs h-7 mt-1"
+              onClick={handleAction}
+            >
+              {notification.urgent ? "اتخاذ إجراء فوري" : "عرض التفاصيل"}
+            </Button>
           </div>
-          <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
-          <div className="flex justify-between items-center mt-2">
-            {notification.urgent && (
-              <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
-                <Clock className="h-3 w-3 mr-1" /> هام
-              </Badge>
-            )}
-            {notification.actionUrl && (
-              <Button
-                variant="link"
-                className="h-auto p-0 text-beauty-purple"
-                size="sm"
-                asChild
-              >
-                <a href={notification.actionUrl}>
-                  {t("dashboard.notifications.view", "عرض التفاصيل")}
-                </a>
-              </Button>
-            )}
-          </div>
-        </div>
+        )}
       </div>
     </motion.div>
   );
