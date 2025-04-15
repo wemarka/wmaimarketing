@@ -145,14 +145,15 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({ title, items, compact
                         )}
                       </SidebarMenuButton>
                     )}
-                  </NavLink>
-                </motion.div>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
-    );
+                  )}
+                </NavLink>
+              </motion.div>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
 };
 
 export default SidebarNavGroup;
