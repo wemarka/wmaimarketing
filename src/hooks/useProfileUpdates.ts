@@ -4,14 +4,54 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useActivityLog } from "@/hooks/useActivityLog"; 
+import { ProfileFormValues } from "@/types/profile";
 
 export const useProfileUpdates = () => {
   const { user } = useAuth();
   const [updating, setUpdating] = useState(false);
   const { logActivity } = useActivityLog();
 
-  const updateAvatarUrl = async (file: File) => {
+  const onUpdateProfile = async (data: ProfileFormValues) => {
     if (!user) return;
+
+    try {
+      setUpdating(true);
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          first_name: data.first_name,
+          last_name: data.last_name,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      // Log activity
+      await logActivity('profile_update', 'تم تحديث معلومات الملف الشخصي');
+
+      toast({
+        title: "نجاح",
+        description: "تم تحديث معلومات الملف الشخصي بنجاح"
+      });
+
+      return true;
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast({
+        title: "خطأ",
+        description: "فشل تحديث معلومات الملف الشخصي",
+        variant: "destructive"
+      });
+      return false;
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const updateAvatarUrl = async (file: File) => {
+    if (!user) return null;
 
     try {
       setUpdating(true);
@@ -63,5 +103,5 @@ export const useProfileUpdates = () => {
     }
   };
 
-  return { updateAvatarUrl, updating };
+  return { updateAvatarUrl, updating, onUpdateProfile };
 };

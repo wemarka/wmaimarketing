@@ -19,7 +19,7 @@ export const useProfile = () => {
     updating,
     onUpdateProfile,
     updateAvatarUrl
-  } = useProfileUpdates(profileData);
+  } = useProfileUpdates();
 
   const {
     changingPassword,

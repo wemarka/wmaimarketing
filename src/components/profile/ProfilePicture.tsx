@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 interface ProfilePictureProps {
   avatarUrl: string | null;
   userInitials: string;
-  onAvatarChange: (url: string) => void;
+  onAvatarChange: (file: File) => void;
 }
 
 const ProfilePicture = ({ avatarUrl, userInitials, onAvatarChange }: ProfilePictureProps) => {
@@ -47,43 +47,14 @@ const ProfilePicture = ({ avatarUrl, userInitials, onAvatarChange }: ProfilePict
 
     try {
       setIsUploading(true);
-
-      // Generate a unique file name
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
       
-      // Upload to Supabase Storage
-      const { error: uploadError, data } = await supabase.storage
-        .from("profile_pictures")
-        .upload(fileName, file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
-
-      if (uploadError) {
-        console.error("Error uploading profile picture:", uploadError);
-        throw uploadError;
-      }
-
-      // Get the public URL
-      const { data: publicUrlData } = supabase.storage
-        .from("profile_pictures")
-        .getPublicUrl(fileName);
-
-      if (!publicUrlData.publicUrl) throw new Error("Failed to get public URL");
-
       // Call the parent component's handler to update the avatar URL
-      onAvatarChange(publicUrlData.publicUrl);
-
-      toast({
-        title: "تم التحديث",
-        description: "تم تحديث الصورة الشخصية بنجاح",
-      });
+      onAvatarChange(file);
     } catch (error) {
-      console.error("Error uploading profile picture:", error);
+      console.error("Error handling file change:", error);
       toast({
         title: "خطأ",
-        description: "حدث خطأ أثناء تحديث الصورة الشخصية",
+        description: "حدث خطأ أثناء معالجة الملف",
         variant: "destructive",
       });
     } finally {

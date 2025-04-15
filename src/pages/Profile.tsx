@@ -115,9 +115,9 @@ const Profile = () => {
   };
 
   // Handle avatar change with activity logging
-  const handleAvatarChange = async (url: string) => {
+  const handleAvatarChange = async (file: File) => {
     try {
-      await updateAvatarUrl(url);
+      await updateAvatarUrl(file);
       logActivity("profile_update", "تم تحديث الصورة الشخصية");
       setError(null);
     } catch (err) {
