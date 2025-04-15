@@ -7,34 +7,40 @@ import { PlatformStats } from "../types/socialTypes";
 export const getPlatformStats = async (): Promise<PlatformStats[]> => {
   // In a real implementation, this would fetch actual statistics
   // For now, we'll return mock data
+  const currentDate = new Date().toISOString();
+  
   return [
     {
       platform: "instagram",
       posts: 42,
       engagement: 3.2,
       followers: 12500,
-      growth: 2.5
+      growth: 2.5,
+      lastUpdated: currentDate
     },
     {
       platform: "facebook",
       posts: 38,
       engagement: 1.8,
       followers: 8700,
-      growth: -0.3
+      growth: -0.3,
+      lastUpdated: currentDate
     },
     {
       platform: "twitter",
       posts: 67,
       engagement: 2.1,
       followers: 5300,
-      growth: 1.7
+      growth: 1.7,
+      lastUpdated: currentDate
     },
     {
       platform: "tiktok",
       posts: 12,
       engagement: 4.7,
       followers: 3200,
-      growth: 8.2
+      growth: 8.2,
+      lastUpdated: currentDate
     }
   ];
 };

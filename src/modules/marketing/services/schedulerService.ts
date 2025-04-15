@@ -31,7 +31,7 @@ export class SchedulerService extends BaseService {
       const userId = await this.getCurrentUserId();
       
       const { data, error } = await supabase
-        .from(this.tableName)
+        .from('posts')
         .insert({
           title: params.title,
           content: params.content,
@@ -47,7 +47,6 @@ export class SchedulerService extends BaseService {
       
       if (error) throw error;
       
-      // Handle cross posting if needed
       if (params.crossPostAccountIds?.length) {
         await this.handleCrossPosts(params, data.id, userId);
       }
@@ -64,14 +63,12 @@ export class SchedulerService extends BaseService {
     userId: string
   ): Promise<void> {
     try {
-      // Get accounts info
       const { data: accountsData } = await supabase
         .from('social_accounts')
         .select('id, platform')
         .in('id', params.crossPostAccountIds || []);
         
       if (accountsData?.length) {
-        // Create cross-posts for each account
         const crossPosts = accountsData.map(account => ({
           title: params.title,
           content: params.content,
@@ -85,7 +82,7 @@ export class SchedulerService extends BaseService {
         }));
         
         const { error } = await supabase
-          .from(this.tableName)
+          .from('posts')
           .insert(crossPosts);
           
         if (error) {
@@ -107,7 +104,7 @@ export class SchedulerService extends BaseService {
       const userId = await this.getCurrentUserId();
       
       const { data, error } = await supabase
-        .from(this.tableName)
+        .from('posts')
         .select('*')
         .eq('user_id', userId)
         .eq('status', 'scheduled')
@@ -126,7 +123,7 @@ export class SchedulerService extends BaseService {
       const userId = await this.getCurrentUserId();
       
       const { data, error } = await supabase
-        .from(this.tableName)
+        .from('posts')
         .select('*')
         .eq('user_id', userId)
         .eq('status', 'pending')
@@ -143,7 +140,7 @@ export class SchedulerService extends BaseService {
   async updatePostStatus(postId: string, status: string): Promise<Post> {
     try {
       const { data, error } = await supabase
-        .from(this.tableName)
+        .from('posts')
         .update({ status })
         .eq('id', postId)
         .select()
@@ -160,7 +157,7 @@ export class SchedulerService extends BaseService {
   async deletePost(postId: string): Promise<void> {
     try {
       const { error } = await supabase
-        .from(this.tableName)
+        .from('posts')
         .delete()
         .eq('id', postId);
       
@@ -242,10 +239,8 @@ export class SchedulerService extends BaseService {
   }
 }
 
-// Create a singleton instance of the scheduler service
 export const schedulerService = new SchedulerService();
 
-// Re-export the functions for backward compatibility 
 export const schedulePost = async (params: SchedulePostParams): Promise<Post> => {
   return schedulerService.schedulePost(params);
 };
