@@ -2,6 +2,8 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { 
+  Sidebar,
+  SidebarContent,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupContent,
@@ -61,7 +63,7 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({ title, items, compact
                 whileTap={{ scale: 0.97 }}
               >
                 <NavLink to={item.to} className="w-full">
-                  {({ isActive }) => (
+                  {({ isActive }) => 
                     compact ? (
                       <TooltipProvider delayDuration={300}>
                         <Tooltip>
@@ -144,8 +146,8 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({ title, items, compact
                           </Badge>
                         )}
                       </SidebarMenuButton>
-                    )}
-                  )}
+                    )
+                  }
                 </NavLink>
               </motion.div>
             </SidebarMenuItem>
