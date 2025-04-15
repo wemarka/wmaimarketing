@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export interface SocialAccount {
@@ -50,7 +49,22 @@ export const getSocialAccounts = async (): Promise<SocialAccount[]> => {
     throw error;
   }
   
-  return data as SocialAccount[];
+  return data.map(account => {
+    const insights = account.insights as Record<string, any>;
+    return {
+      id: account.id,
+      platform: account.platform,
+      account_name: account.account_name,
+      profile_name: account.profile_name,
+      status: account.status as "connected" | "pending" | "error",
+      user_id: account.user_id,
+      insights: insights ? {
+        followers: Number(insights.followers || 0),
+        engagement: Number(insights.engagement || 0),
+        postCount: Number(insights.postCount || 0),
+      } : undefined
+    };
+  });
 };
 
 /**
@@ -87,7 +101,20 @@ export const connectAccount = async (params: ConnectAccountParams): Promise<Soci
     throw error;
   }
   
-  return data as SocialAccount;
+  const insights = data.insights as Record<string, any>;
+  return {
+    id: data.id,
+    platform: data.platform,
+    account_name: data.account_name,
+    profile_name: data.profile_name,
+    status: data.status as "connected" | "pending" | "error",
+    user_id: data.user_id,
+    insights: insights ? {
+      followers: Number(insights.followers || 0),
+      engagement: Number(insights.engagement || 0),
+      postCount: Number(insights.postCount || 0),
+    } : undefined
+  };
 };
 
 /**
