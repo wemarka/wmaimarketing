@@ -5,7 +5,7 @@ import { Grid } from "lucide-react";
 
 import EngagementInsights from "@/modules/dashboard/components/engagement-insights/EngagementInsights";
 import CampaignTracker from "@/modules/dashboard/components/campaign-tracker/CampaignTracker";
-import UpcomingPosts from "@/components/dashboard/UpcomingPosts";
+import UpcomingPosts from "@/modules/dashboard/components/upcoming-posts/UpcomingPosts";
 import AnalyticsSummary from "../analytics/AnalyticsSummary";
 
 const OverviewTab = () => {
