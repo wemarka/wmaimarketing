@@ -1,79 +1,49 @@
 
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Eye, Heart, MousePointerClick } from "lucide-react";
-import { StatCard } from "@/modules/dashboard/components";
-import NotificationsWidget from "@/components/dashboard/NotificationsWidget";
-import EngagementInsights from "@/modules/dashboard/components/engagement-insights";
-import PerformanceSummary from "@/components/dashboard/PerformanceSummary";
-import PostStatusTracker from "@/components/analytics/PostStatusTracker";
-import RecentActivity from "@/components/dashboard/RecentActivity";
+import { Grid } from "lucide-react";
+
+import EngagementInsights from "@/modules/dashboard/components/engagement-insights/EngagementInsights";
+import CampaignTracker from "@/modules/dashboard/components/campaign-tracker/CampaignTracker";
 import UpcomingPosts from "@/components/dashboard/UpcomingPosts";
-import DashboardAnnouncement from "@/modules/dashboard/components/DashboardAnnouncement";
-import CampaignTracker from "@/modules/dashboard/components/campaign-tracker";
-import QuickStats from "@/modules/dashboard/components/QuickStats";
+import AnalyticsSummary from "../analytics/AnalyticsSummary";
 
 const OverviewTab = () => {
   const { t } = useTranslation();
   
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* إضافة مكون الإحصائيات السريعة الجديد */}
-      <div className="mb-8">
-        <QuickStats />
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">{t("dashboard.overview.title", "النظرة العامة")}</h2>
+        <div className="flex items-center space-x-2 space-x-reverse">
+          <div className="bg-beauty-purple/10 text-beauty-purple p-1 rounded text-xs">
+            {new Date().toLocaleDateString("ar-SA", { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })}
+          </div>
+          <button className="p-1 rounded-md hover:bg-muted text-muted-foreground">
+            <Grid className="h-4 w-4" />
+          </button>
+        </div>
       </div>
       
-      <div className="grid xl:grid-cols-3 gap-6">
-        <StatCard
-          icon={<Eye className="h-5 w-5 text-beauty-purple" />}
-          title={t("dashboard.stats.impressions.title")}
-          value="15.2K"
-          change="12%"
-          positive={true}
-          trend="week"
-        />
-        <StatCard
-          icon={<Heart className="h-5 w-5 text-beauty-pink" />}
-          title={t("dashboard.stats.engagement.title")}
-          value="4.8%"
-          change="0.5%"
-          positive={true}
-          trend="week"
-        />
-        <StatCard
-          icon={<MousePointerClick className="h-5 w-5 text-beauty-gold" />}
-          title={t("dashboard.stats.conversion.title")}
-          value="2.1%"
-          change="0.2%"
-          positive={false}
-          trend="week"
-        />
-      </div>
-      
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2">
+      <div className="grid grid-cols-1 gap-6">
+        <AnalyticsSummary />
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <EngagementInsights />
+          <CampaignTracker />
         </div>
-        <NotificationsWidget />
-      </div>
-      
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2">
-          <PerformanceSummary />
-        </div>
-        <div>
-          <PostStatusTracker />
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <UpcomingPosts />
+          </div>
         </div>
       </div>
-      
-      <CampaignTracker />
-      
-      <div className="grid md:grid-cols-2 gap-6">
-        <RecentActivity />
-        <UpcomingPosts />
-      </div>
-      
-      <DashboardAnnouncement />
     </div>
   );
 };

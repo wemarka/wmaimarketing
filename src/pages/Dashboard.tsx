@@ -3,6 +3,7 @@ import React from "react";
 import Layout from "@/components/layout/Layout";
 import { DashboardGreeting, DashboardTabs } from "@/modules/dashboard/components";
 import { Helmet } from "react-helmet-async";
+import { motion } from "framer-motion";
 
 const Dashboard = () => {
   return (
@@ -10,10 +11,15 @@ const Dashboard = () => {
       <Helmet>
         <title>لوحة التحكم - بيوتي</title>
       </Helmet>
-      <div className="max-w-7xl mx-auto">
+      <motion.div 
+        className="max-w-7xl mx-auto"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         <DashboardGreeting />
         <DashboardTabs />
-      </div>
+      </motion.div>
     </Layout>
   );
 };
