@@ -2,37 +2,52 @@
 import React from "react";
 import { SidebarFooter as Footer } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useTranslation } from "react-i18next";
+import { LogOut, HelpCircle } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const SidebarFooter: React.FC = () => {
   const { signOut } = useAuth();
-  const { t, i18n } = useTranslation();
-  const currentLanguage = i18n.language;
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  
+  const handleSignOut = () => {
+    signOut && signOut();
+    toast({
+      title: "تم تسجيل الخروج بنجاح",
+      description: "نأمل أن نراك مرة أخرى قريباً",
+    });
+  };
+  
+  const handleHelp = () => {
+    navigate('/documentation');
+    toast({
+      title: "مركز المساعدة",
+      description: "تم توجيهك إلى صفحة الوثائق والمساعدة",
+    });
+  };
 
   return (
-    <Footer>
-      <div className="p-4 border-t">
-        <div className="rounded-lg bg-card p-4 border border-border/40 shadow-sm mb-4">
-          <h5 className="mb-2 text-sm font-medium">
-            {t("sidebar.trialUser")}
-          </h5>
-          <p className="text-xs text-muted-foreground">
-            {t("sidebar.upgradeAccess")}
-          </p>
-          <Button className="mt-3 w-full bg-gradient-to-r from-beauty-pink to-beauty-purple hover:from-beauty-purple hover:to-beauty-pink transition-all duration-300" size="sm">
-            {t("sidebar.upgradeNow")}
-          </Button>
-        </div>
-        
+    <Footer className="p-4">
+      <div className="flex flex-col gap-2">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="w-full justify-start" 
+          onClick={handleHelp}
+        >
+          <HelpCircle className="ml-2 h-4 w-4" />
+          <span>المساعدة</span>
+        </Button>
         <Button 
           variant="ghost" 
-          className="w-full justify-start text-muted-foreground hover:text-foreground"
-          onClick={() => signOut()}
+          size="sm" 
+          onClick={handleSignOut}
+          className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-100/50"
         >
-          <LogOut className="h-4 w-4 ml-2" />
-          <span>{t("sidebar.signOut")}</span>
+          <LogOut className="ml-2 h-4 w-4" />
+          <span>تسجيل الخروج</span>
         </Button>
       </div>
     </Footer>

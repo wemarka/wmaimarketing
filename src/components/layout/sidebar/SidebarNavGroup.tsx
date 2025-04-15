@@ -10,6 +10,7 @@ import {
   SidebarMenuButton
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 interface NavItem {
   id: string;
@@ -18,6 +19,7 @@ interface NavItem {
   label: string;
   tooltip: string;
   badgeText?: string;
+  badgeVariant?: string;
   variant?: "default" | "outline";
   className?: string;
 }
@@ -41,17 +43,30 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({ title, items }) => {
                     isActive={isActive}
                     tooltip={item.tooltip}
                     variant={item.variant}
-                    className={item.className}
+                    className={cn(item.className, "transition-all duration-200 group")}
                   >
                     <span className={cn(
                       "transition-all",
-                      isActive ? "text-primary" : "text-muted-foreground"
+                      isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground/80"
                     )}>{item.icon}</span>
-                    <span className="mr-2">{item.label}</span>
+                    <span className={cn(
+                      "mr-2 transition-all",
+                      isActive ? "font-medium" : "font-normal"
+                    )}>{item.label}</span>
                     {item.badgeText && (
-                      <span className="mr-auto bg-beauty-gold/20 text-beauty-gold hover:bg-beauty-gold/30 inline-flex items-center rounded-md border border-transparent px-2 py-0.5 text-xs font-medium">
+                      <Badge 
+                        variant={item.badgeVariant as any || "outline"} 
+                        className={cn(
+                          "mr-auto text-xs",
+                          !item.badgeVariant && (
+                            isActive 
+                              ? "bg-primary/10 text-primary hover:bg-primary/20" 
+                              : "bg-muted text-muted-foreground hover:bg-muted/80"
+                          )
+                        )}
+                      >
                         {item.badgeText}
-                      </span>
+                      </Badge>
                     )}
                   </SidebarMenuButton>
                 )}
