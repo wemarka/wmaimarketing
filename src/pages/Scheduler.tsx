@@ -39,7 +39,12 @@ const Scheduler = () => {
       <div className="max-w-6xl mx-auto space-y-6">
         <SchedulerHeader onNewPostClick={() => setIsDialogOpen(true)} />
 
-        <Tabs value={mainView} onValueChange={(value) => setMainView(value)}>
+        <Tabs value={mainView} onValueChange={(value) => {
+          // Type casting to ensure the value is one of the allowed types
+          if (value === "list" || value === "calendar" || value === "organize" || value === "workflow" || value === "tasks") {
+            setMainView(value);
+          }
+        }}>
           <TabsList className="mb-4">
             <TabsTrigger value="list">{t("scheduler.views.list", "قائمة المنشورات")}</TabsTrigger>
             <TabsTrigger value="calendar">{t("scheduler.views.calendar", "التقويم")}</TabsTrigger>
