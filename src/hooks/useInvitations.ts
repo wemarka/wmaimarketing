@@ -5,6 +5,7 @@ import { toast } from "@/hooks/use-toast";
 import { Invitation, InvitationFormData } from "@/types/invitation";
 import { useCreateActivity } from "@/hooks/useCreateActivity";
 import { nanoid } from 'nanoid';
+import { AppRole } from "@/types/profile";
 
 export const useInvitations = () => {
   const [loading, setLoading] = useState(false);
@@ -48,16 +49,17 @@ export const useInvitations = () => {
       
       const newInvitation = {
         email: invitationData.email,
-        role: invitationData.role,
+        role: invitationData.role as AppRole, // تحديد النوع بوضوح
         invited_by: user?.id,
         token: token,
         expires_at: expiresAt.toISOString(),
         status: 'pending'
       };
 
+      // تصحيح طريقة إدراج البيانات (استخدام كائن واحد وليس مصفوفة)
       const { data, error } = await supabase
         .from('user_invitations')
-        .insert([newInvitation])
+        .insert(newInvitation)
         .select()
         .single();
 
@@ -207,10 +209,13 @@ export const useInvitations = () => {
 
       if (error) throw error;
       
+      // تحويل البيانات المرجعة إلى الصيغة المتوقعة
+      const result = data as unknown as { success: boolean; message?: string; email?: string; role?: string };
+      
       // إذا تم التسجيل بنجاح، قم بتسجيل الدخول
-      if (data.success) {
+      if (result.success && validationResult.email) {
         await supabase.auth.signInWithPassword({
-          email: validationResult.email!,
+          email: validationResult.email,
           password: password
         });
         
@@ -220,7 +225,7 @@ export const useInvitations = () => {
         });
       }
       
-      return data;
+      return result;
     } catch (error: any) {
       console.error("Error registering from invitation:", error);
       toast({

@@ -13,10 +13,10 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import {
-  ArrowPathIcon,
-  PlusIcon,
-  XMarkIcon,
-  EnvelopeIcon
+  RotateCw, // استبدال ArrowPathIcon
+  Plus, // استبدال PlusIcon
+  X, // استبدال XMarkIcon
+  Mail // استبدال EnvelopeIcon
 } from "lucide-react";
 import { format } from "date-fns";
 import CreateInvitationDialog from "./CreateInvitationDialog";
@@ -65,7 +65,7 @@ const InvitationsTab = () => {
           </p>
         </div>
         <Button onClick={() => setIsCreateDialogOpen(true)}>
-          <PlusIcon className="ml-2 h-4 w-4" />
+          <Plus className="ml-2 h-4 w-4" />
           إنشاء دعوة جديدة
         </Button>
       </div>
@@ -130,7 +130,7 @@ const InvitationsTab = () => {
                             onClick={() => handleResend(invitation)}
                             title="إعادة إرسال"
                           >
-                            <ArrowPathIcon className="h-4 w-4" />
+                            <RotateCw className="h-4 w-4" />
                           </Button>
                           <Button 
                             variant="ghost" 
@@ -138,7 +138,7 @@ const InvitationsTab = () => {
                             onClick={() => handleRevoke(invitation)}
                             title="إلغاء"
                           >
-                            <XMarkIcon className="h-4 w-4 text-red-500" />
+                            <X className="h-4 w-4 text-red-500" />
                           </Button>
                         </>
                       )}

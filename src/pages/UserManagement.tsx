@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { UserPlus, Shield, UserCheck, Users, EnvelopeOpen } from "lucide-react";
+import { UserPlus, Shield, UserCheck, Users, Mail } from "lucide-react"; // استبدلنا EnvelopeOpen بـ Mail
 import Layout from "@/components/layout/Layout";
 import {
   Card,
@@ -105,7 +105,7 @@ const UserManagement = () => {
                   المستخدمون
                 </TabsTrigger>
                 <TabsTrigger value="invitations" className="flex items-center">
-                  <EnvelopeOpen className="ml-2 h-4 w-4" />
+                  <Mail className="ml-2 h-4 w-4" /> {/* استبدلنا EnvelopeOpen بـ Mail */}
                   الدعوات
                 </TabsTrigger>
                 <TabsTrigger value="roles" className="flex items-center">
