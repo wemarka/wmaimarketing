@@ -76,52 +76,52 @@ const UserProfile: React.FC<UserProfileProps> = ({ expanded, profile, userEmail 
                 )}
               </motion.div>
             </DropdownMenuTrigger>
-            
-            {!expanded && (
-              <TooltipContent side="right">
-                <div className="text-sm">
-                  <p className="font-medium">{displayName}</p>
-                  <p className="text-xs opacity-70">{displayRole}</p>
-                </div>
-              </TooltipContent>
-            )}
-          </Tooltip>
-        </TooltipProvider>
-
-        <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel className="font-normal">
-            <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">{displayName}</p>
-              <p className="text-xs leading-none text-muted-foreground">{userEmail}</p>
-              <div className="mt-1">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                  {displayRole}
-                </span>
+          </TooltipTrigger>
+          
+          {!expanded && (
+            <TooltipContent side="right">
+              <div className="text-sm">
+                <p className="font-medium">{displayName}</p>
+                <p className="text-xs opacity-70">{displayRole}</p>
               </div>
+            </TooltipContent>
+          )}
+        </Tooltip>
+      </TooltipProvider>
+
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">{displayName}</p>
+            <p className="text-xs leading-none text-muted-foreground">{userEmail}</p>
+            <div className="mt-1">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                {displayRole}
+              </span>
             </div>
-          </DropdownMenuLabel>
-          
-          <DropdownMenuSeparator />
-          
-          <DropdownMenuItem onClick={handleProfileClick} className="cursor-pointer">
-            <UserCircle className="ml-2 h-4 w-4" />
-            <span>الملف الشخصي</span>
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer">
-            <Settings className="ml-2 h-4 w-4" />
-            <span>الإعدادات</span>
-          </DropdownMenuItem>
-          
-          <DropdownMenuSeparator />
-          
-          <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-rose-500 focus:text-rose-500">
-            <LogOut className="ml-2 h-4 w-4" />
-            <span>تسجيل الخروج</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </TooltipProvider>
+          </div>
+        </DropdownMenuLabel>
+        
+        <DropdownMenuSeparator />
+        
+        <DropdownMenuItem onClick={handleProfileClick} className="cursor-pointer">
+          <UserCircle className="ml-2 h-4 w-4" />
+          <span>الملف الشخصي</span>
+        </DropdownMenuItem>
+        
+        <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer">
+          <Settings className="ml-2 h-4 w-4" />
+          <span>الإعدادات</span>
+        </DropdownMenuItem>
+        
+        <DropdownMenuSeparator />
+        
+        <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-rose-500 focus:text-rose-500">
+          <LogOut className="ml-2 h-4 w-4" />
+          <span>تسجيل الخروج</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
