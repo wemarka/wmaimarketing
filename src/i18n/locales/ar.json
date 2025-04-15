@@ -11,14 +11,21 @@
   "common": {
     "back": "رجوع",
     "error": "خطأ",
-    "operationFailed": "فشلت العملية"
+    "operationFailed": "فشلت العملية",
+    "generating": "جاري التوليد..."
   },
   "scheduler": {
     "title": "جدولة منشور جديد",
     "subtitle": "إنشاء وجدولة منشورات على منصات التواصل الاجتماعي",
     "contentSection": {
       "title": "المحتوى",
-      "description": "أنشئ محتوى منشورك"
+      "description": "أنشئ محتوى منشورك",
+      "titlePlaceholder": "أدخل عنوان المنشور",
+      "content": "المحتوى",
+      "contentPlaceholder": "اكتب محتوى منشورك هنا...",
+      "generateSuggestion": "توليد اقتراح",
+      "suggestedContent": "المحتوى المقترح",
+      "suggestedHashtags": "الهاشتاغات المقترحة"
     },
     "mediaSection": {
       "title": "الوسائط",
@@ -40,5 +47,29 @@
   "integration": {
     "accountDisconnected": "تم فصل الحساب",
     "accountDisconnectedDesc": "تم فصل حساب التواصل الاجتماعي بنجاح"
+  },
+  "language": {
+    "toggle": "تغيير اللغة"
+  },
+  "userManagement": {
+    "permission": "الصلاحية",
+    "editRole": "تحرير"
+  },
+  "dashboard": {
+    "timeRanges": {
+      "day": "يوم",
+      "week": "أسبوع", 
+      "month": "شهر"
+    },
+    "compare": "مقارنة",
+    "notifications": {
+      "tabs": {
+        "all": "الكل",
+        "approval": "الموافقات",
+        "post": "المنشورات",
+        "task": "المهام",
+        "system": "النظام"
+      }
+    }
   }
 }

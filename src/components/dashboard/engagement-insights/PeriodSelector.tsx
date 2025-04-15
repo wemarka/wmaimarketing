@@ -26,12 +26,12 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({
         onValueChange={onTimeRangeChange}
       >
         <SelectTrigger className="w-[130px]">
-          <SelectValue placeholder={t("dashboard.timeRanges.week", "أسبوع")} />
+          <SelectValue placeholder={t("dashboard.timeRanges.week")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="day">{t("dashboard.timeRanges.day", "يوم")}</SelectItem>
-          <SelectItem value="week">{t("dashboard.timeRanges.week", "أسبوع")}</SelectItem>
-          <SelectItem value="month">{t("dashboard.timeRanges.month", "شهر")}</SelectItem>
+          <SelectItem value="day">{t("dashboard.timeRanges.day")}</SelectItem>
+          <SelectItem value="week">{t("dashboard.timeRanges.week")}</SelectItem>
+          <SelectItem value="month">{t("dashboard.timeRanges.month")}</SelectItem>
         </SelectContent>
       </Select>
       
@@ -40,7 +40,7 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({
         className="cursor-pointer"
         onClick={onCompareModeToggle}
       >
-        {t("dashboard.compare", "مقارنة")}
+        {t("dashboard.compare")}
       </Badge>
     </div>
   );

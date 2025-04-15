@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
 import { AppRole } from "@/types/profile";
 import { RoleInfo } from "@/hooks/user-management/useRolesPermissions";
+import { useTranslation } from "react-i18next";
 
 interface RoleHeaderProps {
   role: RoleInfo;
@@ -14,6 +15,8 @@ interface RoleHeaderProps {
 }
 
 const RoleHeader: React.FC<RoleHeaderProps> = ({ role, onEditRole, onHandleEditRole }) => {
+  const { t } = useTranslation();
+  
   return (
     <TableHead key={role.name} className="text-center">
       <div className="flex flex-col items-center gap-2">
@@ -25,8 +28,8 @@ const RoleHeader: React.FC<RoleHeaderProps> = ({ role, onEditRole, onHandleEditR
             className="h-7 px-2 text-xs" 
             onClick={() => onHandleEditRole(role.name, onEditRole)}
           >
-            <Edit className="h-3 w-3 ml-1" />
-            تحرير
+            <Edit className="h-3 w-3 mr-1 rtl:ml-1 rtl:mr-0" />
+            {t('userManagement.editRole', 'Edit')}
           </Button>
         )}
       </div>

@@ -64,12 +64,12 @@ const ContentSection: React.FC<ContentSectionProps> = ({
         >
           {isGenerating ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 rtl:ml-2 rtl:mr-0 h-4 w-4 animate-spin" />
               {t("common.generating")}
             </>
           ) : (
             <>
-              <Sparkles className="mr-2 h-4 w-4" />
+              <Sparkles className="mr-2 rtl:ml-2 rtl:mr-0 h-4 w-4" />
               {t("scheduler.contentSection.generateSuggestion")}
             </>
           )}

@@ -133,6 +133,9 @@ if (!i18n.exists('sidebar.navigation.dashboard')) {
       upgradeAccess: "يمكنك الترقية للوصول إلى جميع الميزات",
       upgradeNow: "ترقية الآن",
       signOut: "تسجيل الخروج"
+    },
+    language: {
+      toggle: "تبديل اللغة"
     }
   }, true, true);
 }

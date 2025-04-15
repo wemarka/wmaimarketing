@@ -11,14 +11,21 @@
   "common": {
     "back": "Back",
     "error": "Error",
-    "operationFailed": "Operation failed"
+    "operationFailed": "Operation failed",
+    "generating": "Generating..."
   },
   "scheduler": {
     "title": "Schedule New Post",
     "subtitle": "Create and schedule posts on social media platforms",
     "contentSection": {
       "title": "Content",
-      "description": "Create your post content"
+      "description": "Create your post content",
+      "titlePlaceholder": "Enter post title",
+      "content": "Content",
+      "contentPlaceholder": "Write your post content here...",
+      "generateSuggestion": "Generate Suggestion",
+      "suggestedContent": "Suggested Content",
+      "suggestedHashtags": "Suggested Hashtags"
     },
     "mediaSection": {
       "title": "Media",
@@ -40,5 +47,29 @@
   "integration": {
     "accountDisconnected": "Account Disconnected",
     "accountDisconnectedDesc": "Social media account has been disconnected successfully"
+  },
+  "language": {
+    "toggle": "Toggle language"
+  },
+  "userManagement": {
+    "permission": "Permission",
+    "editRole": "Edit"
+  },
+  "dashboard": {
+    "timeRanges": {
+      "day": "Day",
+      "week": "Week", 
+      "month": "Month"
+    },
+    "compare": "Compare",
+    "notifications": {
+      "tabs": {
+        "all": "All",
+        "approval": "Approvals",
+        "post": "Posts",
+        "task": "Tasks",
+        "system": "System"
+      }
+    }
   }
 }

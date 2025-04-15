@@ -28,43 +28,43 @@ const Header = () => {
     const path = location.pathname;
     
     if (path === '/dashboard' || path === '/') {
-      return currentLanguage === 'ar' ? 'لوحة التحكم' : 'Dashboard';
+      return t('sidebar.navigation.dashboard');
     }
     if (path === '/image-upload') {
-      return currentLanguage === 'ar' ? 'تحليل الصور' : 'Image Analysis';
+      return t('sidebar.navigation.imageAnalysis');
     }
     if (path === '/ad-generator') {
-      return currentLanguage === 'ar' ? 'منشئ الإعلانات' : 'Ad Generator';
+      return t('sidebar.navigation.adGenerator');
     }
     if (path === '/content-creator') {
-      return currentLanguage === 'ar' ? 'منشئ المحتوى' : 'Content Creator';
+      return t('sidebar.navigation.contentCreator');
     }
     if (path === '/video-generator') {
-      return currentLanguage === 'ar' ? 'منشئ الفيديو' : 'Video Generator';
+      return t('sidebar.navigation.videoGenerator');
     }
     if (path === '/scheduler') {
-      return currentLanguage === 'ar' ? 'الجدولة والنشر' : 'Schedule & Publish';
+      return t('sidebar.navigation.scheduler');
     }
     if (path === '/analytics') {
-      return currentLanguage === 'ar' ? 'التحليلات' : 'Analytics';
+      return t('sidebar.navigation.analytics');
     }
     if (path === '/profile') {
-      return currentLanguage === 'ar' ? 'الملف الشخصي' : 'Profile';
+      return t('sidebar.navigation.profile');
     }
     if (path === '/users') {
-      return currentLanguage === 'ar' ? 'إدارة المستخدمين' : 'User Management';
+      return t('sidebar.navigation.userManagement');
     }
     if (path === '/integration') {
-      return currentLanguage === 'ar' ? 'التكاملات' : 'Integrations';
+      return t('sidebar.navigation.integrations');
     }
     if (path === '/documentation') {
-      return currentLanguage === 'ar' ? 'خطة المشروع' : 'Project Plan';
+      return t('sidebar.navigation.projectPlan');
     }
     if (path === '/ai-studio') {
-      return currentLanguage === 'ar' ? 'استوديو الذكاء الاصطناعي' : 'AI Studio';
+      return t('sidebar.navigation.aiStudio');
     }
     if (path === '/auth') {
-      return currentLanguage === 'ar' ? 'تسجيل الدخول' : 'Authentication';
+      return t('auth.title', 'Authentication');
     }
     
     return '';
@@ -89,7 +89,7 @@ const Header = () => {
       if (!auth.user) {
         return (
           <Link to="/auth">
-            <Button>{currentLanguage === 'ar' ? 'تسجيل الدخول' : 'Login'}</Button>
+            <Button>{t('auth.login', 'Login')}</Button>
           </Link>
         );
       }
@@ -124,7 +124,7 @@ const Header = () => {
             className="relative hover:bg-secondary"
           >
             <Bell className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive text-[10px] text-destructive-foreground flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 rtl:-left-1 rtl:right-auto h-4 w-4 rounded-full bg-destructive text-[10px] text-destructive-foreground flex items-center justify-center">
               3
             </span>
           </Button>
@@ -152,12 +152,12 @@ const Header = () => {
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link to="/profile" className="cursor-pointer">
-                  {currentLanguage === 'ar' ? 'الملف الشخصي' : 'Profile'}
+                  {t('sidebar.navigation.profile')}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => auth.signOut()} className="cursor-pointer text-destructive focus:text-destructive">
-                <LogOut className="mr-2 h-4 w-4" />
-                {currentLanguage === 'ar' ? 'تسجيل الخروج' : 'Log out'}
+                <LogOut className="mr-2 rtl:ml-2 rtl:mr-0 h-4 w-4" />
+                {t('sidebar.signOut')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -168,7 +168,7 @@ const Header = () => {
       // Fallback UI in case of error
       return (
         <Link to="/auth">
-          <Button>{currentLanguage === 'ar' ? 'تسجيل الدخول' : 'Login'}</Button>
+          <Button>{t('auth.login', 'Login')}</Button>
         </Link>
       );
     }

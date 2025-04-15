@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
@@ -129,19 +130,19 @@ const SchedulePost = () => {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle>{t("scheduler.crossPostingSection.title", "المشاركة المتعددة")}</CardTitle>
-                  <div className="flex items-center space-x-2 space-x-reverse">
+                  <CardTitle>{t("scheduler.crossPostingSection.title")}</CardTitle>
+                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
                     <Switch
                       id="cross-posting"
                       checked={enableCrossPosting}
                       onCheckedChange={toggleCrossPosting}
                       disabled={!platform}
                     />
-                    <Label htmlFor="cross-posting">{enableCrossPosting ? "مفعّل" : "معطّل"}</Label>
+                    <Label htmlFor="cross-posting">{enableCrossPosting ? t("enabled", "Enabled") : t("disabled", "Disabled")}</Label>
                   </div>
                 </div>
                 <CardDescription>
-                  {t("scheduler.crossPostingSection.description", "نشر المحتوى تلقائياً على منصات متعددة في نفس الوقت")}
+                  {t("scheduler.crossPostingSection.description")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -154,11 +155,11 @@ const SchedulePost = () => {
                 ) : (
                   <div className="flex flex-col items-center justify-center py-4 text-center text-muted-foreground">
                     <p className="mb-2">
-                      {t("scheduler.crossPostingSection.disabled", "فعّل المشاركة المتعددة لنشر المحتوى على عدة منصات في نفس الوقت")}
+                      {t("scheduler.crossPostingSection.disabled")}
                     </p>
                     {!platform && (
                       <p className="text-sm">
-                        {t("scheduler.crossPostingSection.selectPlatform", "الرجاء اختيار منصة أولاً")}
+                        {t("scheduler.crossPostingSection.selectPlatform")}
                       </p>
                     )}
                   </div>
