@@ -35,6 +35,7 @@ const Profile = () => {
   const [loggingOut, setLoggingOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSecurityTestOpen, setIsSecurityTestOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("account");
 
   // Ensure profile exists
   useEffect(() => {
@@ -124,6 +125,11 @@ const Profile = () => {
     }
   };
 
+  // Handle tab change
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+  };
+
   return (
     <Layout>
       <div className="max-w-5xl mx-auto">
@@ -151,6 +157,8 @@ const Profile = () => {
                 loggingOut={loggingOut}
                 activities={activities}
                 activitiesLoading={activitiesLoading}
+                activeTab={activeTab}
+                onTabChange={handleTabChange}
               />
             )
           )}

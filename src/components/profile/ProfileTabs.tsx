@@ -66,8 +66,8 @@ const ProfileTabs = ({
       <TabsContent value="security" className="space-y-4">
         <PasswordManagementCard
           onChangePassword={onChangePassword}
-          onLogoutOtherSessions={onLogoutOtherSessions}
           isChangingPassword={changingPassword}
+          onLogoutOtherSessions={onLogoutOtherSessions}
           loggingOut={loggingOut}
         />
       </TabsContent>

@@ -20,6 +20,8 @@ interface ProfileContentProps {
   loggingOut: boolean;
   activities: Activity[];
   activitiesLoading: boolean;
+  activeTab: string;
+  onTabChange: (tab: string) => void;
 }
 
 const ProfileContent = ({
@@ -34,14 +36,15 @@ const ProfileContent = ({
   changingPassword,
   loggingOut,
   activities,
-  activitiesLoading
+  activitiesLoading,
+  activeTab,
+  onTabChange
 }: ProfileContentProps) => {
   const isMobile = useIsMobile();
-  const [activeTab, setActiveTab] = useState("account");
   
   // For mobile: When sidebar tab is clicked, update the main tabs
   const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
+    onTabChange(tab);
   };
 
   return (
@@ -83,7 +86,7 @@ const ProfileContent = ({
             activities={activities}
             activitiesLoading={activitiesLoading}
             activeTab={activeTab}
-            onTabChange={setActiveTab}
+            onTabChange={onTabChange}
           />
         </motion.div>
       </div>

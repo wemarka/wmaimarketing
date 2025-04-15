@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -90,8 +89,6 @@ const ActivityLog = ({ activities, isLoading }: ActivityLogProps) => {
   const filteredActivities = filter 
     ? activities.filter(activity => activity.type === filter) 
     : activities;
-
-  const activityTypes = [...new Set(activities.map(a => a.type))];
 
   return (
     <Card className="overflow-hidden border-2 border-border/30 shadow-md hover:shadow-lg transition-shadow duration-300">
