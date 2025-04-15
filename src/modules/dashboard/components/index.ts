@@ -3,7 +3,6 @@
 export { default as FeatureCard } from './FeatureCard';
 export { default as StatCard } from './StatCard';
 export { default as QuickActions } from './QuickActions';
-export { default as DashboardGreeting } from './DashboardGreeting';
 export { default as DashboardAnnouncement } from './DashboardAnnouncement';
 export { default as RecentActivity } from './RecentActivity';
 export { default as ContentInsights } from './ContentInsights';
@@ -16,3 +15,4 @@ export { default as OverviewTab } from './tabs/OverviewTab';
 export { default as MarketingTab } from './tabs/MarketingTab';
 export { default as ContentTab } from './tabs/ContentTab';
 export { default as AnalyticsTab } from './tabs/AnalyticsTab';
+

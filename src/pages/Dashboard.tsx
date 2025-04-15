@@ -1,7 +1,7 @@
 
 import React from "react";
 import Layout from "@/components/layout/Layout";
-import { DashboardGreeting, DashboardTabs } from "@/modules/dashboard/components";
+import { DashboardTabs } from "@/modules/dashboard/components";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 
@@ -17,7 +17,6 @@ const Dashboard = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <DashboardGreeting />
         <DashboardTabs />
       </motion.div>
     </Layout>
@@ -25,3 +24,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
