@@ -5,7 +5,7 @@ import { SidebarProvider, SidebarRail, SidebarInset } from "@/components/ui/side
 import AppSidebar from "./AppSidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileNavbar from "./MobileNavbar";
-import { useAuth } from "@/context/AuthContext";
+import { AuthContext } from "@/context/AuthContext";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,17 +15,14 @@ const Layout = ({ children }: LayoutProps) => {
   const isMobile = useIsMobile();
   const [authAvailable, setAuthAvailable] = useState<boolean>(false);
   
-  // Safely access auth context
+  // Check for auth context availability using the context directly
+  // instead of using useAuth() hook inside useEffect
+  const authContext = React.useContext(AuthContext);
+
+  // Set auth availability on mount
   useEffect(() => {
-    try {
-      // Check if we can access auth context safely
-      const auth = useAuth();
-      setAuthAvailable(!!auth); // Will be true even with default values
-    } catch (error) {
-      console.error("Auth context not available:", error);
-      setAuthAvailable(false);
-    }
-  }, []);
+    setAuthAvailable(!!authContext);
+  }, [authContext]);
 
   return (
     <SidebarProvider defaultOpen={!isMobile}>
