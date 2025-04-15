@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Search, X, ChevronRight, Command } from "lucide-react";
+import { Search, X, Command } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
@@ -53,6 +53,25 @@ const SearchBar: React.FC = () => {
     setSearchHistory(prev => prev.filter(i => i !== item));
   };
 
+  // Create a ref to track the dropdown menu
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  // Handle blur event more safely
+  const handleBlur = (e: React.FocusEvent) => {
+    // Short delay to allow clicking dropdown items
+    setTimeout(() => {
+      // Check if the new active element is inside our dropdown or input
+      const currentActiveElement = document.activeElement;
+      const dropdownContainsActive = dropdownRef.current?.contains(currentActiveElement as Node);
+      const inputContainsActive = inputRef.current?.contains(currentActiveElement as Node);
+      
+      if (!dropdownContainsActive && !inputContainsActive) {
+        setIsFocused(false);
+      }
+    }, 150);
+  };
+
   return (
     <div className="relative">
       <form 
@@ -74,14 +93,8 @@ const SearchBar: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
-            onBlur={(e) => {
-              // Delay to allow clicking on dropdown items
-              setTimeout(() => {
-                if (!e.currentTarget.contains(document.activeElement)) {
-                  setIsFocused(false);
-                }
-              }, 200);
-            }}
+            onBlur={handleBlur}
+            ref={inputRef}
           />
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
           
@@ -105,6 +118,7 @@ const SearchBar: React.FC = () => {
         <AnimatePresence>
           {isFocused && (
             <motion.div 
+              ref={dropdownRef}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
