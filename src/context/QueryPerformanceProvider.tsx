@@ -37,7 +37,7 @@ export const QueryPerformanceProvider: React.FC<QueryPerformanceProviderProps> =
         refetchOnMount: true,
         refetchOnReconnect: true,
         // استخدام البيانات القديمة أثناء تحديث البيانات
-        keepPreviousData: true,
+        placeholderData: 'keepPrevious', // Updated from keepPreviousData
       },
       mutations: {
         // تقليل عدد عمليات إعادة المحاولة للطلبات المتعلقة بالتعديل
@@ -51,13 +51,20 @@ export const QueryPerformanceProvider: React.FC<QueryPerformanceProviderProps> =
         retryDelay: attemptIndex => Math.min(1000 * Math.pow(1.3, attemptIndex), 5000),
       }
     },
-    // تكوين ذاكرة التخزين المؤقت لتحسين الأداء
-    queryCache: {
-      onError: (error) => {
-        console.error(`Global query error:`, error);
-      }
-    }
   }), []);
+
+  // Set up global error handler
+  React.useEffect(() => {
+    const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
+      if (event.type === 'error' && event.error) {
+        console.error(`Global query error:`, event.error);
+      }
+    });
+    
+    return () => {
+      unsubscribe();
+    };
+  }, [queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>

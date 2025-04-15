@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
 import { useActivityLog } from "@/hooks/useActivityLog";
@@ -147,7 +147,7 @@ const Profile = () => {
               <ProfileContent
                 profileData={profileData}
                 userEmail={user?.email || ""}
-                userInitials={getUserInitials()}
+                userInitials={getUserInitials}
                 onUpdateProfile={handleUpdateProfile}
                 onChangePassword={handleChangePassword}
                 onLogoutOtherSessions={handleLogoutOtherSessions}

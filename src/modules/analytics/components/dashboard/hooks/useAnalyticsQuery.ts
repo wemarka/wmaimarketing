@@ -209,6 +209,7 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
     enabled: !!user,
     // عدم إعادة التحميل عند التركيز على النافذة لتقليل الطلبات غير الضرورية
     refetchOnWindowFocus: false,
+    placeholderData: 'keepPrevious', // updated from keepPreviousData
   });
   
   return {
