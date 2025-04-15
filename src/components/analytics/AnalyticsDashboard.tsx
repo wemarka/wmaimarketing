@@ -2,10 +2,11 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, Heart, MousePointerClick, DollarSign, AlertTriangle } from "lucide-react";
+import { Eye, Heart, MousePointerClick, DollarSign, AlertTriangle, RefreshCw } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import PostStatusTracker from "./PostStatusTracker";
 import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
 
 // Import the components from the new modular structure
 import {
@@ -25,12 +26,16 @@ export const AnalyticsDashboard = () => {
     platformData,
     analyticsData,
     isUsingFallbackData,
-    handlePeriodChange
+    handlePeriodChange,
+    refreshData
   } = useDashboardData();
   const { t } = useTranslation();
 
   if (loading) {
-    return <div>{t("common.loading", "Loading analytics data...")}</div>;
+    return <div className="flex items-center justify-center p-8">
+      <RefreshCw className="h-6 w-6 animate-spin text-primary mr-2" />
+      <span>{t("common.loading", "Loading analytics data...")}</span>
+    </div>;
   }
 
   return (
@@ -39,11 +44,21 @@ export const AnalyticsDashboard = () => {
         <Alert variant="warning" className="mb-4">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>{t("analytics.fallbackData.title", "استخدام البيانات الاحتياطية")}</AlertTitle>
-          <AlertDescription>
-            {t(
-              "analytics.fallbackData.description",
-              "تعذر الاتصال بالخادم، نعرض لك بيانات مخزنة مسبقًا. سنحاول تحديثها فور استعادة الاتصال."
-            )}
+          <AlertDescription className="flex justify-between items-center">
+            <span>
+              {t(
+                "analytics.fallbackData.description",
+                "تعذر الاتصال بالخادم، نعرض لك بيانات مخزنة مسبقًا. سنحاول تحديثها فور استعادة الاتصال."
+              )}
+            </span>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="ml-2 flex items-center gap-1"
+              onClick={refreshData}
+            >
+              <RefreshCw className="h-3 w-3" /> {t("common.retry", "إعادة المحاولة")}
+            </Button>
           </AlertDescription>
         </Alert>
       )}
@@ -88,13 +103,50 @@ export const AnalyticsDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <OverviewChart data={overviewData} />
-        <PlatformBreakdown data={platformData} />
+        <Card className="md:col-span-3 relative">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span>{t("dashboard.charts.overview.title", "نظرة عامة")}</span>
+              {isUsingFallbackData && (
+                <Badge variant="outline" className="text-amber-500 border-amber-500">
+                  {t("analytics.cachedData", "بيانات مخزنة مؤقتًا")}
+                </Badge>
+              )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <OverviewChart data={overviewData} />
+          </CardContent>
+        </Card>
+        
+        <Card className="md:col-span-2 relative">
+          <CardHeader>
+            <CardTitle>{t("dashboard.charts.platforms.title", "المنصات")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PlatformBreakdown data={platformData} />
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <EngagementMetrics data={engagementData} />
-        <PostStatusTracker />
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("dashboard.charts.engagement.title", "التفاعل")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <EngagementMetrics data={engagementData} />
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("dashboard.posts.tracker.title", "حالة المنشورات")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PostStatusTracker />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
