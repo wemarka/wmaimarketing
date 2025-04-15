@@ -5,8 +5,15 @@ import { cn } from "@/lib/utils";
 import { Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useTheme } from "next-themes";
 
 const SidebarHeader: React.FC = () => {
+  const { theme } = useTheme();
+  
+  const logoSrc = theme === "dark" 
+    ? "/WM_MARKETING_LOGO_DARK.png" 
+    : "/WM_MARKETING_LOGO.png";
+
   return (
     <Header className="p-4">
       <Link to="/" className="flex items-center gap-2 px-2 relative">
@@ -33,7 +40,11 @@ const SidebarHeader: React.FC = () => {
               repeat: Infinity
             }}
           >
-            <Sparkles className="h-5 w-5 text-white relative z-10" />
+            <img 
+              src={logoSrc} 
+              alt="WM Marketing Logo" 
+              className="h-5 w-5 relative z-10 object-contain"
+            />
           </motion.div>
         </div>
         <div>
