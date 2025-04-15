@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,6 +15,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 interface AdContentGeneratorProps {
   onContentGenerated?: (content: string, hashtags?: string[]) => void;
 }
+
+const MotionButton = motion(Button);
 
 const AdContentGenerator: React.FC<AdContentGeneratorProps> = ({ onContentGenerated }) => {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -355,7 +356,7 @@ const AdContentGenerator: React.FC<AdContentGeneratorProps> = ({ onContentGenera
               show: { opacity: 1, y: 0 }
             }}
           >
-            <Button 
+            <MotionButton 
               onClick={handleGenerate} 
               disabled={isGenerating || !product}
               className="relative overflow-hidden transition-all"
@@ -388,7 +389,7 @@ const AdContentGenerator: React.FC<AdContentGeneratorProps> = ({ onContentGenera
                   }}
                 />
               )}
-            </Button>
+            </MotionButton>
           </motion.div>
         </motion.div>
       </div>
