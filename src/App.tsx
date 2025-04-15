@@ -1,4 +1,3 @@
-
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "@/components/ui/toaster";
@@ -25,6 +24,7 @@ import SchedulerSettings from "./pages/SchedulerSettings";
 import ContentTools from "./pages/ContentTools";
 import Integration from "./pages/Integration";
 import AIStudio from "./pages/AIStudio";
+import AdContentGenerator from "./pages/AdContentGenerator";
 
 // New Module Pages
 import GenerateAd from "./modules/ai-generator/pages/GenerateAd";

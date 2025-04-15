@@ -1,4 +1,3 @@
-
 // Export marketing components - commenting out imports until components are implemented
 // export { default as CampaignCard } from './CampaignCard';
 // export { default as CampaignSchedule } from './CampaignSchedule';
@@ -27,3 +26,6 @@ Object.assign(AudienceSelector, { placeholderNotice });
 Object.assign(BudgetPlanner, { placeholderNotice });
 Object.assign(CreativeAssetSelector, { placeholderNotice });
 Object.assign(CampaignInsights, { placeholderNotice });
+
+// Ad Content Generator
+export { default as AdContentGenerator } from './ad-content/AdContentGenerator';
