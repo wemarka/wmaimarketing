@@ -59,9 +59,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (!user) return;
     
     try {
+      console.log("Refreshing profile for user:", user.id);
       const profileData = await fetchProfile(user.id);
       if (profileData) {
         setProfile(profileData);
+        console.log("Profile refreshed successfully:", profileData);
       }
     } catch (error) {
       console.error('Error refreshing profile:', error);
@@ -95,7 +97,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             setSession(newSession);
             
             const profileData = await fetchProfile(newSession.user.id);
-            if (isMounted) setProfile(profileData);
+            if (isMounted) {
+              setProfile(profileData);
+              console.log("Profile set after sign in:", profileData);
+            }
             
             const language = profileData?.app_metadata?.language || 'en';
             toast({
@@ -135,7 +140,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(currentSession.user);
         setSession(currentSession);
         const profileData = await fetchProfile(currentSession.user.id);
-        if (isMounted) setProfile(profileData);
+        if (isMounted) {
+          setProfile(profileData);
+          console.log("Profile set after session check:", profileData);
+        }
       }
       
       // Always mark loading as false after the initial check

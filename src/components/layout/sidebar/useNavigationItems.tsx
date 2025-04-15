@@ -6,10 +6,12 @@ import { useAuth } from "@/context/AuthContext";
 
 export const useNavigationItems = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { profile } = useAuth();
   
   // Get user role from the auth context, default to 'user' if not available
-  const userRole = user?.role || 'user';
+  const userRole = profile?.role || 'user';
+  
+  console.log("useNavigationItems - Current user role:", userRole);
   
   // Get role-based navigation items
   const {

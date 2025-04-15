@@ -28,7 +28,8 @@ const RoleBasedGuard = ({
     console.log("RoleBasedGuard - Loading:", loading);
     console.log("RoleBasedGuard - User:", user ? "authenticated" : "not authenticated");
     console.log("RoleBasedGuard - Role:", profile?.role);
-  }, [loading, user, profile]);
+    console.log("RoleBasedGuard - Allowed Roles:", allowedRoles);
+  }, [loading, user, profile, allowedRoles]);
 
   // Handle loading state and timing
   useEffect(() => {
@@ -115,6 +116,9 @@ const RoleBasedGuard = ({
   // Then check if user has required role
   const userRole = profile?.role || 'user';
   const hasRequiredRole = allowedRoles.includes(userRole);
+
+  console.log("RoleBasedGuard - User role:", userRole);
+  console.log("RoleBasedGuard - Has required role:", hasRequiredRole);
 
   if (!hasRequiredRole) {
     console.log(`RoleBasedGuard - User role ${userRole} not in allowed roles:`, allowedRoles);
