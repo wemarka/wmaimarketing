@@ -1,63 +1,81 @@
 
 import React from "react";
-import { useTranslation } from "react-i18next";
-import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { NotificationItemProps } from "./types";
 import NotificationIcon from "./NotificationIcon";
 
-const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onMarkAsRead }) => {
-  const { t, i18n } = useTranslation();
-  const isRTL = i18n.language === "ar";
-  const isUnread = !notification.read;
+export const NotificationItem: React.FC<NotificationItemProps> = ({
+  notification,
+  onMarkAsRead,
+}) => {
+  const navigate = useNavigate();
   
   const handleClick = () => {
-    if (isUnread) {
+    if (!notification.read) {
       onMarkAsRead(notification.id);
+    }
+    
+    if (notification.actionUrl) {
+      navigate(notification.actionUrl);
+    }
+  };
+  
+  const handleActionClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onMarkAsRead(notification.id);
+    
+    if (notification.actionUrl) {
+      navigate(notification.actionUrl);
     }
   };
   
   return (
-    <div 
-      className={cn(
-        "flex p-3 border-b last:border-0 gap-3 transition-colors",
-        isUnread && "bg-muted/40",
-        notification.urgent && "bg-red-50 dark:bg-red-950/20"
-      )}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ scale: 1.01 }}
+      className={`p-3 border-b last:border-b-0 cursor-pointer flex gap-3 ${
+        !notification.read ? "bg-slate-50 dark:bg-slate-800/50" : ""
+      }`}
       onClick={handleClick}
     >
-      <div className={cn("mt-1", isRTL && "order-last")}>
-        <NotificationIcon 
-          type={notification.type} 
-          urgent={notification.urgent || false}
-        />
-      </div>
+      <NotificationIcon 
+        type={notification.type} 
+        urgent={notification.urgent || false}
+      />
       
       <div className="flex-1">
-        <h4 className={cn("font-medium text-sm", isUnread && "font-semibold")}>
-          {notification.title}
-        </h4>
-        <p className="text-muted-foreground text-sm mt-1">{notification.message}</p>
-        <div className="flex items-center justify-between mt-2">
+        <div className="flex justify-between items-start">
+          <h4 className={`text-sm font-medium ${!notification.read ? "font-semibold" : ""}`}>
+            {notification.title}
+          </h4>
           <span className="text-xs text-muted-foreground">{notification.time}</span>
-          
-          {notification.actionUrl && notification.actionText && (
+        </div>
+        
+        <p className="text-xs text-muted-foreground mt-1">{notification.message}</p>
+        
+        {notification.actionUrl && notification.actionText && (
+          <div className="mt-2">
             <Button 
-              asChild 
               variant="ghost" 
               size="sm" 
-              className="h-7 px-2 text-xs"
+              className="h-7 px-2 text-xs flex gap-1 items-center text-beauty-purple hover:bg-beauty-purple/10 hover:text-beauty-purple"
+              onClick={handleActionClick}
             >
-              <a href={notification.actionUrl} className="flex items-center gap-1">
-                {notification.actionText}
-                <ExternalLink className="h-3 w-3 ml-1" />
-              </a>
+              {notification.actionText}
+              <ExternalLink size={12} />
             </Button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-    </div>
+      
+      {!notification.read && (
+        <div className="h-2 w-2 rounded-full bg-beauty-purple mt-1 flex-shrink-0"></div>
+      )}
+    </motion.div>
   );
 };
 

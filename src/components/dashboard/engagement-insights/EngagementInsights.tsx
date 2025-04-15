@@ -25,6 +25,11 @@ const EngagementInsights: React.FC = () => {
   };
 
   const currentData = getCurrentData();
+  
+  // تحديث الفترة الزمنية
+  const handleTimeRangeChange = (value: string) => {
+    setTimeRange(value);
+  };
 
   return (
     <Card>
@@ -37,7 +42,7 @@ const EngagementInsights: React.FC = () => {
         </div>
         <PeriodSelector 
           value={timeRange}
-          onChange={setTimeRange}
+          onChange={handleTimeRangeChange}
           compareMode={compareMode}
           onCompareModeToggle={() => setCompareMode(!compareMode)}
         />

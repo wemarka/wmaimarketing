@@ -1,339 +1,242 @@
-import React, { useState } from "react";
-import { format, isAfter, isBefore, isToday, addDays } from "date-fns";
-import { ar } from "date-fns/locale";
-import { CheckCircle2, Calendar, AlertTriangle, Clock, Trash2, Plus } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { TaskReminder } from "@/components/dashboard/notifications/types";
-import { cn } from "@/lib/utils";
-import AddTaskDialog from "./AddTaskDialog";
 
-interface TaskReminderItemProps {
-  task: TaskReminder;
+import React, { useState } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { PlusCircle, AlertTriangle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useSchedulerData } from "./hooks/useSchedulerData";
+import { TaskReminder as TaskReminderType } from "@/components/dashboard/notifications/types";
+import { format, isAfter, isBefore } from "date-fns";
+import { ar } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+
+// مكون لعرض عنصر مهمة واحدة
+const TaskItem: React.FC<{
+  task: TaskReminderType;
   onComplete: (id: string) => void;
   onDelete: (id: string) => void;
-}
-
-const TaskReminderItem: React.FC<TaskReminderItemProps> = ({ 
-  task, 
-  onComplete, 
-  onDelete 
-}) => {
+}> = ({ task, onComplete, onDelete }) => {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+  
   const dueDate = new Date(task.dueDate);
   const isOverdue = isBefore(dueDate, new Date()) && !task.completed;
-  const isDueToday = isToday(dueDate) && !task.completed;
-  const isDueSoon = isBefore(dueDate, addDays(new Date(), 2)) && !isToday(dueDate) && !task.completed;
   
-  const priorityColors = {
-    low: "bg-blue-100 text-blue-700",
-    medium: "bg-amber-100 text-amber-700",
-    high: "bg-red-100 text-red-700"
-  };
+  const formattedDate = format(dueDate, "d MMM", { locale: isRTL ? ar : undefined });
   
-  const statusClass = cn(
-    "flex items-center text-xs",
-    task.completed ? "text-green-600" : 
-    isOverdue ? "text-red-600" :
-    isDueToday ? "text-amber-600" : "text-slate-600"
-  );
-
   return (
-    <div className={cn(
-      "border rounded-lg p-3 relative transition-colors",
-      task.completed ? "bg-green-50 border-green-200" :
-      isOverdue ? "bg-red-50 border-red-200" :
-      isDueToday ? "bg-amber-50 border-amber-200" :
-      isDueSoon ? "bg-blue-50 border-blue-200" : "bg-card border-border"
-    )}>
+    <motion.div
+      initial={{ opacity: 0, y: 5 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`p-3 border rounded-md ${
+        task.completed 
+          ? "border-slate-200 bg-slate-50/50" 
+          : isOverdue 
+            ? "border-red-200 bg-red-50/50" 
+            : task.priority === "high" 
+              ? "border-amber-200 bg-amber-50/50"
+              : "border-slate-200"
+      } mb-2`}
+    >
       <div className="flex justify-between items-start">
-        <div className="flex items-start gap-3">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className={cn(
-              "h-6 w-6 rounded-full",
-              task.completed ? "text-green-600 hover:text-green-700" : 
-              "text-muted-foreground hover:text-primary"
-            )}
-            onClick={() => onComplete(task.id)}
-          >
-            <CheckCircle2 className="h-5 w-5" fill={task.completed ? "currentColor" : "none"} />
-            <span className="sr-only">Mark as complete</span>
-          </Button>
-          
+        <div className="flex items-start gap-2">
+          <input 
+            type="checkbox" 
+            checked={task.completed}
+            onChange={() => onComplete(task.id)}
+            className="mt-1"
+          />
           <div>
-            <h3 className={cn(
-              "font-medium",
-              task.completed && "line-through text-muted-foreground"
-            )}>
-              {task.title}
-            </h3>
-            
+            <div className="flex items-center gap-2">
+              <span className={`font-medium ${task.completed ? "line-through text-muted-foreground" : ""}`}>
+                {task.title}
+              </span>
+              {isOverdue && !task.completed && (
+                <span className="inline-flex items-center text-xs text-red-500 font-medium">
+                  <AlertTriangle size={12} className="mr-1" /> {t("tasks.overdue")}
+                </span>
+              )}
+            </div>
             {task.description && (
-              <p className={cn(
-                "text-sm text-muted-foreground mt-1",
-                task.completed && "line-through"
-              )}>
+              <p className={`text-xs ${task.completed ? "line-through text-muted-foreground" : "text-muted-foreground"}`}>
                 {task.description}
               </p>
             )}
-            
-            <div className="flex items-center gap-3 mt-2">
-              <Badge variant="secondary" className={priorityColors[task.priority]}>
-                {task.priority === "low" ? "منخفضة" : 
-                 task.priority === "medium" ? "متوسطة" : "عالية"}
-              </Badge>
-              
-              <div className={statusClass}>
-                <Calendar className="h-3.5 w-3.5 mr-1" />
-                {format(dueDate, "d MMMM", { locale: ar })}
-              </div>
-              
-              {task.assignee && (
-                <div className="text-xs text-muted-foreground">
-                  {task.assignee}
-                </div>
-              )}
+            <div className="text-xs text-muted-foreground mt-1 flex gap-2">
+              <span>{formattedDate}</span>
+              <span className={`px-1 rounded text-xs ${
+                task.priority === "high" ? "bg-red-100 text-red-700" :
+                task.priority === "medium" ? "bg-amber-100 text-amber-700" :
+                "bg-green-100 text-green-700"
+              }`}>
+                {task.priority === "high" ? t("priority.high") :
+                task.priority === "medium" ? t("priority.medium") :
+                t("priority.low")}
+              </span>
             </div>
           </div>
         </div>
         
         <Button 
           variant="ghost" 
-          size="icon" 
-          className="h-7 w-7 text-muted-foreground hover:text-destructive"
+          size="sm" 
+          className="h-6 w-6 p-0 rounded-full hover:bg-red-100 hover:text-red-500"
           onClick={() => onDelete(task.id)}
         >
-          <Trash2 className="h-4 w-4" />
-          <span className="sr-only">Delete task</span>
+          &times;
         </Button>
       </div>
-      
-      {(isOverdue || isDueToday) && !task.completed && (
-        <div className={cn(
-          "absolute top-3 right-3 flex items-center text-xs font-medium",
-          isOverdue ? "text-red-600" : "text-amber-600"
-        )}>
-          {isOverdue ? (
-            <>
-              <AlertTriangle className="h-3.5 w-3.5 mr-1" />
-              متأخرة
-            </>
-          ) : (
-            <>
-              <Clock className="h-3.5 w-3.5 mr-1" />
-              اليوم
-            </>
-          )}
-        </div>
-      )}
+    </motion.div>
+  );
+};
+
+// مكون لعرض قائمة بالمهام
+export const TaskReminderList: React.FC<{
+  tasks: TaskReminderType[];
+  onComplete: (id: string) => void;
+  onDelete: (id: string) => void;
+}> = ({ tasks, onComplete, onDelete }) => {
+  return (
+    <div className="space-y-1">
+      {tasks.map((task) => (
+        <TaskItem 
+          key={task.id} 
+          task={task} 
+          onComplete={onComplete}
+          onDelete={onDelete}
+        />
+      ))}
     </div>
   );
 };
 
-interface TaskReminderListProps {
-  tasks: TaskReminder[];
-  onComplete: (id: string) => void;
-  onDelete: (id: string) => void;
-}
+// مكون القطعة الرئيسية للمهام
+export const TaskReminderWidget: React.FC = () => {
+  const { t } = useTranslation();
+  const { toast } = useToast();
+  const { taskReminders } = useSchedulerData();
+  const [tasks, setTasks] = useState<TaskReminderType[]>(taskReminders || []);
+  
+  const onComplete = (id: string) => {
+    setTasks(prev => prev.map(task => 
+      task.id === id ? { ...task, completed: !task.completed } : task
+    ));
+    
+    toast({
+      title: t("tasks.statusChanged"),
+      description: t("tasks.statusUpdated"),
+    });
+  };
+  
+  const onDelete = (id: string) => {
+    setTasks(prev => prev.filter(task => task.id !== id));
+    
+    toast({
+      title: t("tasks.deleted"),
+      description: t("tasks.taskRemoved"),
+    });
+  };
+  
+  const onAddTask = () => {
+    // في تطبيق حقيقي، هنا يمكن فتح نافذة حوار لإضافة مهمة
+    toast({
+      title: t("tasks.addNew"),
+      description: t("tasks.createTask"),
+    });
+  };
 
-const TaskReminderList: React.FC<TaskReminderListProps> = ({ 
-  tasks, 
-  onComplete, 
-  onDelete 
-}) => {
-  // Group tasks by status
-  const overdueTasks = tasks.filter(task => 
+  // فصل المهام إلى مجموعات: متأخرة، اليوم، قادمة، مكتملة
+  const overdueActiveTasks = tasks.filter(task => 
     !task.completed && isBefore(new Date(task.dueDate), new Date())
   );
   
-  const todayTasks = tasks.filter(task => 
-    !task.completed && isToday(new Date(task.dueDate))
-  );
+  const todayActiveTasks = tasks.filter(task => {
+    const taskDate = new Date(task.dueDate);
+    const today = new Date();
+    return (
+      !task.completed && 
+      taskDate.getDate() === today.getDate() &&
+      taskDate.getMonth() === today.getMonth() &&
+      taskDate.getFullYear() === today.getFullYear()
+    );
+  });
   
-  const upcomingTasks = tasks.filter(task => 
-    !task.completed && 
-    isAfter(new Date(task.dueDate), new Date()) &&
-    !isToday(new Date(task.dueDate))
+  const upcomingActiveTasks = tasks.filter(task => 
+    !task.completed && isAfter(new Date(task.dueDate), new Date())
   );
   
   const completedTasks = tasks.filter(task => task.completed);
-
+  
   return (
-    <div className="space-y-5">
-      {overdueTasks.length > 0 && (
-        <div>
-          <h3 className="font-medium text-red-600 flex items-center mb-2">
-            <AlertTriangle className="h-4 w-4 mr-1.5" />
-            مهام متأخرة ({overdueTasks.length})
-          </h3>
-          <div className="space-y-2">
-            {overdueTasks.map(task => (
-              <TaskReminderItem 
-                key={task.id} 
-                task={task} 
-                onComplete={onComplete} 
-                onDelete={onDelete}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-      
-      {todayTasks.length > 0 && (
-        <div>
-          <h3 className="font-medium text-amber-600 flex items-center mb-2">
-            <Clock className="h-4 w-4 mr-1.5" />
-            مهام اليوم ({todayTasks.length})
-          </h3>
-          <div className="space-y-2">
-            {todayTasks.map(task => (
-              <TaskReminderItem 
-                key={task.id} 
-                task={task} 
-                onComplete={onComplete} 
-                onDelete={onDelete}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-      
-      {upcomingTasks.length > 0 && (
-        <div>
-          <h3 className="font-medium text-blue-600 flex items-center mb-2">
-            <Calendar className="h-4 w-4 mr-1.5" />
-            مهام قادمة ({upcomingTasks.length})
-          </h3>
-          <div className="space-y-2">
-            {upcomingTasks.map(task => (
-              <TaskReminderItem 
-                key={task.id} 
-                task={task} 
-                onComplete={onComplete} 
-                onDelete={onDelete}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-      
-      {completedTasks.length > 0 && (
-        <div>
-          <h3 className="font-medium text-green-600 flex items-center mb-2">
-            <CheckCircle2 className="h-4 w-4 mr-1.5" />
-            مهام مكتملة ({completedTasks.length})
-          </h3>
-          <div className="space-y-2">
-            {completedTasks.map(task => (
-              <TaskReminderItem 
-                key={task.id} 
-                task={task} 
-                onComplete={onComplete} 
-                onDelete={onDelete}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-interface TaskReminderWidgetProps {
-  className?: string;
-}
-
-const TaskReminderWidget: React.FC<TaskReminderWidgetProps> = ({ className }) => {
-  // Mock task data - in a real application, this would come from an API or state
-  const [tasks, setTasks] = React.useState<TaskReminder[]>([
-    {
-      id: "1",
-      title: "مراجعة محتوى منشور التجميل",
-      description: "التأكد من محتوى منشور مجموعة التجميل الصيفية",
-      dueDate: new Date().toISOString(), // Today
-      priority: "high",
-      completed: false,
-      relatedPostId: "post-123"
-    },
-    {
-      id: "2",
-      title: "تحضير صور المنتجات الجديدة",
-      description: "تجهيز صور للمنتجات الجديدة للإعلان القادم",
-      dueDate: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), // Yesterday
-      priority: "medium",
-      completed: false
-    },
-    {
-      id: "3",
-      title: "كتابة نص إعلان الشتاء",
-      description: "تحضير نص الإعلان للمجموعة الشتوية القادمة",
-      dueDate: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString(), // 2 days from now
-      priority: "low",
-      completed: false,
-      assignee: "سارة أحمد"
-    },
-    {
-      id: "4",
-      title: "تحليل أداء الحملة السابقة",
-      description: "مراجعة تقارير الأداء والإحصائيات",
-      dueDate: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), // 3 days ago
-      priority: "high",
-      completed: true
-    },
-  ]);
-
-  const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
-
-  const handleCompleteTask = (id: string) => {
-    setTasks(tasks.map(task => 
-      task.id === id ? { ...task, completed: !task.completed } : task
-    ));
-  };
-
-  const handleDeleteTask = (id: string) => {
-    setTasks(tasks.filter(task => task.id !== id));
-  };
-
-  const handleAddTask = (newTask: TaskReminder) => {
-    setTasks([newTask, ...tasks]);
-  };
-
-  return (
-    <Card className={cn("h-full", className)}>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle className="text-lg">تذكيرات المهام</CardTitle>
-          <CardDescription>
-            {tasks.filter(t => !t.completed).length} مهام مطلوبة
-          </CardDescription>
-        </div>
+    <Card className="h-full">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle>{t("tasks.reminders")}</CardTitle>
         <Button 
-          onClick={() => setIsAddTaskOpen(true)}
-          variant="outline" 
+          variant="ghost" 
           size="sm"
-          className="h-8"
+          className="h-8 flex items-center gap-1"
+          onClick={onAddTask}
         >
-          <Plus className="h-4 w-4 ml-1" />
-          مهمة جديدة
+          <PlusCircle className="h-4 w-4" />
+          {t("tasks.addNew")}
         </Button>
       </CardHeader>
-      <CardContent>
-        <TaskReminderList 
-          tasks={tasks} 
-          onComplete={handleCompleteTask} 
-          onDelete={handleDeleteTask} 
-        />
+      <CardContent className="overflow-auto max-h-[500px]">
+        {tasks.length > 0 ? (
+          <div className="space-y-4">
+            {overdueActiveTasks.length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium text-red-500 mb-2">{t("tasks.overdue")}</h3>
+                <TaskReminderList 
+                  tasks={overdueActiveTasks} 
+                  onComplete={onComplete}
+                  onDelete={onDelete}
+                />
+              </div>
+            )}
+            
+            {todayActiveTasks.length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium mb-2">{t("tasks.today")}</h3>
+                <TaskReminderList 
+                  tasks={todayActiveTasks} 
+                  onComplete={onComplete}
+                  onDelete={onDelete}
+                />
+              </div>
+            )}
+            
+            {upcomingActiveTasks.length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium mb-2">{t("tasks.upcoming")}</h3>
+                <TaskReminderList 
+                  tasks={upcomingActiveTasks} 
+                  onComplete={onComplete}
+                  onDelete={onDelete}
+                />
+              </div>
+            )}
+            
+            {completedTasks.length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">{t("tasks.completed")}</h3>
+                <TaskReminderList 
+                  tasks={completedTasks} 
+                  onComplete={onComplete}
+                  onDelete={onDelete}
+                />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-muted-foreground">
+            {t("tasks.noTasks")}
+          </div>
+        )}
       </CardContent>
-      
-      <AddTaskDialog 
-        open={isAddTaskOpen} 
-        onOpenChange={setIsAddTaskOpen}
-        onAddTask={handleAddTask}
-      />
     </Card>
   );
 };
 
-export { TaskReminderWidget, TaskReminderList, TaskReminderItem };
+export default TaskReminderWidget;

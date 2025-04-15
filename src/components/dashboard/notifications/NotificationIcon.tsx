@@ -1,27 +1,48 @@
 
 import React from "react";
-import { CheckCircle, Calendar, AlertCircle, Bell, MessageCircle, Zap, ClipboardList } from "lucide-react";
+import { Bell, CheckCircle, Calendar, AlertTriangle, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationIconProps } from "./types";
 
-const NotificationIcon: React.FC<NotificationIconProps> = ({ type, className, urgent }) => {
-  // If urgent is true, return the urgent icon regardless of type
-  if (urgent) {
-    return <Zap className={cn("h-5 w-5 text-red-500", className)} />;
-  }
+export const NotificationIcon: React.FC<NotificationIconProps> = ({ 
+  type, 
+  className,
+  urgent = false
+}) => {
+  const iconClass = cn(
+    "h-4 w-4",
+    className,
+    urgent ? "text-red-500" : 
+      type === "approval" ? "text-amber-500" :
+      type === "post" ? "text-blue-500" :
+      type === "task" ? "text-green-500" :
+      "text-slate-500"
+  );
 
-  switch (type) {
-    case "task":
-      return <ClipboardList className={cn("h-5 w-5 text-indigo-500", className)} />;
-    case "post":
-      return <Calendar className={cn("h-5 w-5 text-beauty-purple", className)} />;
-    case "approval":
-      return <AlertCircle className={cn("h-5 w-5 text-amber-500", className)} />;
-    case "message":
-      return <MessageCircle className={cn("h-5 w-5 text-blue-500", className)} />;
-    default:
-      return <Bell className={cn("h-5 w-5 text-blue-500", className)} />;
-  }
+  const bgClass = cn(
+    "h-8 w-8 rounded-full flex items-center justify-center",
+    urgent ? "bg-red-100" : 
+      type === "approval" ? "bg-amber-100" :
+      type === "post" ? "bg-blue-100" :
+      type === "task" ? "bg-green-100" :
+      "bg-slate-100"
+  );
+
+  return (
+    <div className={bgClass}>
+      {urgent ? (
+        <AlertTriangle className={iconClass} />
+      ) : type === "approval" ? (
+        <Bell className={iconClass} />
+      ) : type === "post" ? (
+        <Calendar className={iconClass} />
+      ) : type === "task" ? (
+        <CheckCircle className={iconClass} />
+      ) : (
+        <Info className={iconClass} />
+      )}
+    </div>
+  );
 };
 
 export default NotificationIcon;
