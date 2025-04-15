@@ -1,20 +1,20 @@
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { PostData, StatusInfo } from "../types";
 import { CheckCircle, Clock, LoaderCircle, XCircle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 export const usePostStatus = () => {
   const [viewType, setViewType] = useState<"cards" | "chart">("cards");
-  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [platformFilter, setPlatformFilter] = useState<string>("all");
   const [dateFilter, setDateFilter] = useState<string>("all");
   const { toast } = useToast();
 
-  // بيانات توضيحية للحالات
-  const statuses: StatusInfo[] = [
+  // تحسين أداء بيانات الحالات
+  const statuses: StatusInfo[] = React.useMemo(() => [
     {
       icon: <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500" />,
       label: "تم نشر 12 منشوراً",
@@ -47,24 +47,32 @@ export const usePostStatus = () => {
       borderClass: "border-red-200 dark:border-red-900",
       count: 2
     }
-  ];
+  ], []);
 
-  // بيانات للمنشورات - ستكون من قاعدة البيانات في التطبيق الحقيقي
-  const postsData: PostData[] = [
-    { id: "1", title: "أهم صيحات مكياج الصيف", status: "published", date: "2025-04-10", platform: "instagram" },
-    { id: "2", title: "كيفية اختيار أحمر الشفاه المناسب", status: "published", date: "2025-04-08", priority: "high", platform: "facebook" },
-    { id: "3", title: "نصائح للعناية بالبشرة", status: "scheduled", date: "2025-04-18", platform: "tiktok" },
-    { id: "4", title: "مستحضرات أساسية في حقيبة المكياج", status: "scheduled", date: "2025-04-20", priority: "medium", platform: "facebook" },
-    { id: "5", title: "أحدث منتجات العناية بالشعر", status: "pending", date: "2025-04-15", platform: "instagram" },
-    { id: "6", title: "طرق تطبيق كريم الأساس للبشرة الجافة", status: "rejected", date: "2025-04-05", platform: "tiktok" },
-    { id: "7", title: "منتجات طبيعية للعناية بالبشرة", status: "published", date: "2025-04-12", priority: "low", platform: "instagram" },
-    { id: "8", title: "أفضل أنواع العطور النسائية", status: "pending", date: "2025-04-17", platform: "facebook" },
-    { id: "9", title: "أحدث قصات الشعر لموسم الصيف", status: "scheduled", date: "2025-04-25", platform: "instagram", priority: "high" },
-    { id: "10", title: "مقارنة بين منتجات العناية بالبشرة", status: "rejected", date: "2025-04-03", platform: "facebook" }
-  ];
+  // استخدام useQuery لتحسين الأداء في جلب البيانات
+  const { data: postsData = [], isLoading } = useQuery({
+    queryKey: ["post-status"],
+    queryFn: async (): Promise<PostData[]> => {
+      // محاكاة جلب البيانات - في التطبيق الحقيقي سيتم استبدالها بطلب API
+      return [
+        { id: "1", title: "أهم صيحات مكياج الصيف", status: "published", date: "2025-04-10", platform: "instagram" },
+        { id: "2", title: "كيفية اختيار أحمر الشفاه المناسب", status: "published", date: "2025-04-08", priority: "high", platform: "facebook" },
+        { id: "3", title: "نصائح للعناية بالبشرة", status: "scheduled", date: "2025-04-18", platform: "tiktok" },
+        { id: "4", title: "مستحضرات أساسية في حقيبة المكياج", status: "scheduled", date: "2025-04-20", priority: "medium", platform: "facebook" },
+        { id: "5", title: "أحدث منتجات العناية بالشعر", status: "pending", date: "2025-04-15", platform: "instagram" },
+        { id: "6", title: "طرق تطبيق كريم الأساس للبشرة الجافة", status: "rejected", date: "2025-04-05", platform: "tiktok" },
+        { id: "7", title: "منتجات طبيعية للعناية بالبشرة", status: "published", date: "2025-04-12", priority: "low", platform: "instagram" },
+        { id: "8", title: "أفضل أنواع العطور النسائية", status: "pending", date: "2025-04-17", platform: "facebook" },
+        { id: "9", title: "أحدث قصات الشعر لموسم الصيف", status: "scheduled", date: "2025-04-25", platform: "instagram", priority: "high" },
+        { id: "10", title: "مقارنة بين منتجات العناية بالبشرة", status: "rejected", date: "2025-04-03", platform: "facebook" }
+      ];
+    },
+    staleTime: 5 * 60 * 1000, // 5 دقائق
+    cacheTime: 10 * 60 * 1000, // 10 دقائق
+  });
 
-  // التحقق من تاريخ المنشور ضمن الفلتر المحدد
-  const isWithinDateFilter = (postDate: string): boolean => {
+  // تحسين الأداء: استخدام useCallback للدالة
+  const isWithinDateFilter = useCallback((postDate: string): boolean => {
     if (dateFilter === "all") return true;
     
     const today = new Date();
@@ -89,38 +97,36 @@ export const usePostStatus = () => {
     }
     
     return true;
-  };
+  }, [dateFilter]);
 
-  // حساب مجموع المنشورات
-  const totalPosts = statuses.reduce((sum, status) => sum + status.count, 0);
+  // تحسين الأداء: استخدام useMemo لحساب القيم المشتقة
+  const totalPosts = React.useMemo(() => {
+    return statuses.reduce((sum, status) => sum + status.count, 0);
+  }, [statuses]);
 
-  // تصفية البيانات حسب البحث والفلتر
-  const filteredPosts = postsData.filter((post) => {
-    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || post.status === statusFilter;
-    const matchesPlatform = platformFilter === "all" || post.platform === platformFilter;
-    const matchesDate = isWithinDateFilter(post.date);
-    
-    return matchesSearch && matchesStatus && matchesPlatform && matchesDate;
-  });
+  // تحسين الأداء: استخدام useMemo لتصفية البيانات
+  const filteredPosts = React.useMemo(() => {
+    return postsData.filter((post) => {
+      const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus = statusFilter === "all" || post.status === statusFilter;
+      const matchesPlatform = platformFilter === "all" || post.platform === platformFilter;
+      const matchesDate = isWithinDateFilter(post.date);
+      
+      return matchesSearch && matchesStatus && matchesPlatform && matchesDate;
+    });
+  }, [postsData, searchQuery, statusFilter, platformFilter, isWithinDateFilter]);
 
-  // إعادة تحميل البيانات (محاكاة)
-  const handleRefresh = () => {
-    setIsLoading(true);
-    
-    // محاكاة طلب شبكة
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "تم تحديث البيانات",
-        description: "تم تحديث حالة المنشورات بنجاح",
-      });
-    }, 1500);
-  };
+  // تحسين الأداء: استخدام useCallback لمعالجي الأحداث
+  const handleRefresh = useCallback(() => {
+    toast({
+      title: "تم تحديث البيانات",
+      description: "تم تحديث حالة المنشورات بنجاح",
+    });
+  }, [toast]);
 
-  const toggleViewType = () => {
+  const toggleViewType = useCallback(() => {
     setViewType(viewType === "cards" ? "chart" : "cards");
-  };
+  }, [viewType]);
 
   return {
     viewType,

@@ -8,14 +8,16 @@ import PostStatusTracker from "./PostStatusTracker";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 
-// Import the components from the new modular structure
+// استيراد المكونات من البنية الجديدة
 import {
   OverviewChart,
   EngagementMetrics,
   PlatformBreakdown,
   StatisticCard,
-  useDashboardData
 } from "@/modules/analytics/components/dashboard";
+
+// استخدام Hook المُحسّن للبيانات
+import { useDashboardData } from "@/modules/dashboard/components/useDashboardData";
 
 export const AnalyticsDashboard = () => {
   const {
@@ -31,11 +33,14 @@ export const AnalyticsDashboard = () => {
   } = useDashboardData();
   const { t } = useTranslation();
 
+  // تحسين عرض حالة التحميل
   if (loading) {
-    return <div className="flex items-center justify-center p-8">
-      <RefreshCw className="h-6 w-6 animate-spin text-primary mr-2" />
-      <span>{t("common.loading", "Loading analytics data...")}</span>
-    </div>;
+    return (
+      <div className="flex items-center justify-center p-8">
+        <RefreshCw className="h-6 w-6 animate-spin text-primary mr-2" />
+        <span>{t("common.loading", "جاري تحميل بيانات التحليلات...")}</span>
+      </div>
+    );
   }
 
   return (

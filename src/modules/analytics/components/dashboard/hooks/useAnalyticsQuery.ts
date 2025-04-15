@@ -39,7 +39,7 @@ export interface AnalyticsQueryResult {
   isError: boolean;
   error: Error | null;
   refetch: () => Promise<any>;
-  isUsingFallbackData: boolean; // Flag to indicate if using fallback data
+  isUsingFallbackData: boolean;
 }
 
 export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
@@ -48,13 +48,17 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
   const { logActivity } = useCreateActivity();
   const queryConfig = useQueryConfig("analyticsData");
 
-  // Generate cache keys based on user and period
+  // تحسين أداء التخزين المؤقت
+  const cacheTime = 10 * 60 * 1000; // 10 دقائق
+  const staleTime = 5 * 60 * 1000; // 5 دقائق
+
+  // توليد مفاتيح التخزين المؤقت بناءً على المستخدم والفترة
   const getCacheKey = (dataType: string) => {
     if (!user) return null;
     return `analytics_${dataType}_${user.id}_${period}`;
   };
   
-  // استخدام React Query لتخزين البيانات في الذاكرة المؤقتة
+  // استخدام React Query لتخزين البيانات في الذاكرة المؤقتة بكفاءة
   const queryResult = useQuery({
     queryKey: ["analytics", period, user?.id],
     queryFn: async (): Promise<{
@@ -71,7 +75,7 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
       let usingFallbackData = false;
       
       try {
-        // Set up cache keys
+        // تحسين التخزين المؤقت للبيانات
         const accountsCacheKey = getCacheKey("accounts");
         const postsCacheKey = getCacheKey("posts");
         
@@ -130,14 +134,9 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
           change: changePercentages
         };
         
-        // Store results in cache with longer TTL for better offline experience
-        if (dailyData.length > 0) {
-          setCachedData(`analytics_overview_${user.id}_${period}`, dailyData, 2 * 60 * 60 * 1000); // 2 hours
-        }
-        
-        if (dailyEngagementData.length > 0) {
-          setCachedData(`analytics_engagement_${user.id}_${period}`, dailyEngagementData, 2 * 60 * 60 * 1000);
-        }
+        // تخزين النتائج في ذاكرة التخزين المؤقت لتجربة أفضل دون اتصال
+        setCachedData(`analytics_overview_${user.id}_${period}`, dailyData, cacheTime);
+        setCachedData(`analytics_engagement_${user.id}_${period}`, dailyEngagementData, cacheTime);
         
         logActivity("analytics_data_fetched", "تم جلب بيانات التحليلات بنجاح").catch(console.error);
         
@@ -149,12 +148,12 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
           usingFallbackData
         };
       } catch (error) {
-        // Try to get data from cache first
+        // محاولة استرجاع البيانات من التخزين المؤقت أولاً
         const cachedOverviewData = getCachedData<OverviewData[]>(getCacheKey("overview") || "") || getFallbackOverviewData();
         const cachedEngagementData = getCachedData<EngagementData[]>(getCacheKey("engagement") || "") || getFallbackEngagementData();
         const cachedPlatformData = getCachedData<PlatformData[]>(getCacheKey("platform") || "") || getFallbackPlatformData();
         
-        // Only show toast notification if it was a resource error
+        // إظهار إشعار فقط إذا كان الخطأ في الموارد
         const errorType = getErrorType(error);
         if (errorType === ErrorType.RESOURCE_ERROR) {
           handleSupabaseError(error, "fetching analytics data");
@@ -162,13 +161,12 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
           console.error("Error fetching analytics data:", error);
         }
         
-        // Log the activity with a catch for additional error handling
+        // تسجيل النشاط مع التقاط أي أخطاء إضافية
         logActivity("analytics_data_error", "حدث خطأ أثناء جلب بيانات التحليلات").catch(console.error);
         
-        // Set the fallback flag
         usingFallbackData = true;
         
-        // Return cached or fallback data
+        // إرجاع البيانات المخزنة مؤقتًا أو البيانات الاحتياطية
         return {
           overviewData: cachedOverviewData,
           engagementData: cachedEngagementData,
@@ -178,42 +176,41 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
         };
       }
     },
-    // إضافة خيارات التخزين المؤقت
+    // تحسين إعدادات التخزين المؤقت
     ...queryConfig,
-    // Enhanced retry strategy for different types of errors
+    staleTime: staleTime, // لا يعاد تحميل البيانات إلا بعد 5 دقائق من آخر طلب
+    cacheTime: cacheTime, // الاحتفاظ بالبيانات في الذاكرة لمدة 10 دقائق
+    // استراتيجية إعادة المحاولة المحسنة لأنواع مختلفة من الأخطاء
     retry: (failureCount, error: any) => {
       const errorType = getErrorType(error);
       
-      // Don't retry auth errors as they won't resolve without user action
+      // عدم إعادة محاولة أخطاء المصادقة لأنها لن تحل دون تدخل المستخدم
       if (errorType === ErrorType.AUTH_ERROR) return false;
       
-      // For resource errors, retry more times but with longer delays
+      // لأخطاء الموارد، حاول أكثر مع تأخيرات أطول
       if (errorType === ErrorType.RESOURCE_ERROR) {
-        return failureCount < 3;
+        return failureCount < 2; // تقليل عدد المحاولات من 3 إلى 2
       }
       
-      // For network errors, retry a few times
+      // لأخطاء الشبكة، حاول بضع مرات
       if (errorType === ErrorType.NETWORK_ERROR) {
         return failureCount < 2;
       }
       
-      // For other errors, just retry once
+      // للأخطاء الأخرى، حاول مرة واحدة فقط
       return failureCount < 1;
     },
     retryDelay: attemptIndex => {
-      // Exponential backoff with jitter for better distribution of retries
-      const base = Math.min(1000 * 2 ** attemptIndex, 30000); // max 30 seconds
-      const jitter = Math.random() * 1000; // add up to 1 second of jitter
+      // تأخير تصاعدي مع تشويش لتوزيع أفضل لإعادة المحاولات
+      const base = Math.min(1000 * 2 ** attemptIndex, 15000); // تحسين: تقليل الحد الأقصى من 30 إلى 15 ثانية
+      const jitter = Math.random() * 1000; // إضافة ما يصل إلى ثانية واحدة من التشويش
       return base + jitter;
     },
     enabled: !!user,
-    // Don't refetch on window focus to reduce unnecessary requests
+    // عدم إعادة التحميل عند التركيز على النافذة لتقليل الطلبات غير الضرورية
     refetchOnWindowFocus: false,
-    // Increase stale time to reduce unnecessary fetches
-    staleTime: 5 * 60 * 1000 // 5 minutes
   });
   
-  // Return the query result with a flag indicating if we're using fallback data
   return {
     overviewData: queryResult.data?.overviewData || getFallbackOverviewData(),
     engagementData: queryResult.data?.engagementData || getFallbackEngagementData(),

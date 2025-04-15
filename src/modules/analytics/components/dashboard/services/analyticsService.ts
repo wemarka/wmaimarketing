@@ -1,9 +1,11 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { fetchWithRetry } from "@/lib/supabaseClient";
 import { SupabaseSocialAccount, PostWithInsights, TimeRange } from "../types/dashboardTypes";
 import { formatDateForChart, generateDailyDataPoints } from "../utils/analyticsUtils";
 import { OverviewData, EngagementData, PlatformData } from "../types";
 
+// تحسين التخزين المؤقت مع وقت انتهاء الصلاحية للأداء الأفضل
 const cacheWithExpiry = {
   set: (key: string, value: any, ttl: number) => {
     const now = new Date();
@@ -29,6 +31,7 @@ const cacheWithExpiry = {
   }
 };
 
+// تحسين أداء جلب الحسابات الاجتماعية
 export const fetchSocialAccounts = async (userId: string) => {
   const cacheKey = `social_accounts_${userId}`;
   const cachedData = cacheWithExpiry.get(cacheKey);
@@ -38,6 +41,7 @@ export const fetchSocialAccounts = async (userId: string) => {
   }
   
   try {
+    // استخدام fetchWithRetry للتعامل مع أخطاء الشبكة بشكل أفضل
     const { data, error } = await fetchWithRetry<SupabaseSocialAccount[]>(
       "social_accounts",
       queryBuilder => queryBuilder
@@ -48,6 +52,7 @@ export const fetchSocialAccounts = async (userId: string) => {
     if (error) throw error;
     
     if (data) {
+      // تخزين البيانات مؤقتًا لمدة 30 دقيقة
       cacheWithExpiry.set(cacheKey, data, 30 * 60 * 1000);
     }
     
@@ -58,6 +63,7 @@ export const fetchSocialAccounts = async (userId: string) => {
   }
 };
 
+// تحسين أداء جلب المنشورات
 export const fetchPosts = async (userId: string, timeRange: TimeRange) => {
   const cacheKey = `posts_${userId}_${timeRange.start}_${timeRange.end}`;
   const cachedData = cacheWithExpiry.get(cacheKey);
@@ -67,6 +73,7 @@ export const fetchPosts = async (userId: string, timeRange: TimeRange) => {
   }
   
   try {
+    // استخدام fetchWithRetry للتعامل مع أخطاء الشبكة بشكل أفضل
     const { data, error } = await fetchWithRetry<PostWithInsights[]>(
       "posts",
       queryBuilder => queryBuilder
@@ -80,6 +87,7 @@ export const fetchPosts = async (userId: string, timeRange: TimeRange) => {
     if (error) throw error;
     
     if (data) {
+      // تخزين البيانات مؤقتًا لمدة 30 دقيقة
       cacheWithExpiry.set(cacheKey, data, 30 * 60 * 1000);
     }
     
@@ -90,6 +98,7 @@ export const fetchPosts = async (userId: string, timeRange: TimeRange) => {
   }
 };
 
+// تحسين معالجة بيانات الحسابات الاجتماعية
 export const processSocialAccountsData = (
   socialAccounts: SupabaseSocialAccount[]
 ): { 
@@ -100,37 +109,51 @@ export const processSocialAccountsData = (
   totalConversions: number,
   platformData: PlatformData[]
 } => {
+  // تهيئة البيانات الأولية
   const platforms: Record<string, number> = {};
   let totalImpressions = 0;
   let totalEngagement = 0;
   let totalClicks = 0;
   let totalConversions = 0;
   
-  if (socialAccounts && socialAccounts.length > 0) {
-    socialAccounts.forEach((account) => {
-      const platform = account.platform;
-      
-      if (!platforms[platform]) {
-        platforms[platform] = 0;
-      }
-      
-      if (account.insights && typeof account.insights === 'object') {
-        const insights = account.insights as Record<string, number>;
-        const impressions = insights.impressions || 0;
-        
-        platforms[platform] += impressions;
-        totalImpressions += impressions;
-        
-        if (insights.engagement) totalEngagement += insights.engagement;
-        if (insights.clicks) totalClicks += insights.clicks;
-        if (insights.conversions) totalConversions += insights.conversions;
-      }
-    });
+  // تجنب المعالجة المكثفة إذا لم تكن هناك حسابات
+  if (!socialAccounts || socialAccounts.length === 0) {
+    return {
+      platforms,
+      totalImpressions,
+      totalEngagement,
+      totalClicks,
+      totalConversions,
+      platformData: []
+    };
   }
   
+  // معالجة البيانات
+  socialAccounts.forEach((account) => {
+    const platform = account.platform;
+    
+    if (!platforms[platform]) {
+      platforms[platform] = 0;
+    }
+    
+    if (account.insights && typeof account.insights === 'object') {
+      const insights = account.insights as Record<string, number>;
+      const impressions = insights.impressions || 0;
+      
+      platforms[platform] += impressions;
+      totalImpressions += impressions;
+      
+      if (insights.engagement) totalEngagement += insights.engagement;
+      if (insights.clicks) totalClicks += insights.clicks;
+      if (insights.conversions) totalConversions += insights.conversions;
+    }
+  });
+  
+  // تحسين تنسيق بيانات المنصات
   const formattedPlatformData: PlatformData[] = Object.keys(platforms).map(platform => {
     const percentage = totalImpressions > 0 ? Math.round(platforms[platform] / totalImpressions * 100) : 0;
     
+    // تخصيص ألوان المنصات
     let iconColor = 'bg-gray-100 text-gray-700';
     if (platform.toLowerCase() === 'instagram') {
       iconColor = 'bg-pink-100 text-pink-600';
@@ -157,6 +180,7 @@ export const processSocialAccountsData = (
   };
 };
 
+// تحسين معالجة بيانات المنشورات
 export const processPostsData = (
   posts: PostWithInsights[], 
   timeRange: TimeRange
@@ -164,27 +188,39 @@ export const processPostsData = (
   dailyData: OverviewData[],
   dailyEngagementData: EngagementData[]
 } => {
+  // إنشاء نقاط البيانات اليومية
   const dailyData = generateDailyDataPoints(timeRange.start, timeRange.end);
   const dailyEngagementData = generateDailyDataPoints(timeRange.start, timeRange.end);
   
-  if (posts && posts.length > 0) {
-    posts.forEach((post) => {
-      const date = new Date(post.created_at);
-      const dateStr = formatDateForChart(date);
-      
-      const dayIndex = dailyData.findIndex(day => day.name === dateStr);
-      if (dayIndex >= 0 && post.insights) {
-        dailyData[dayIndex].impressions += (post.insights.impressions || 0);
-        dailyData[dayIndex].engagement += (post.insights.engagement || 0);
-        dailyData[dayIndex].clicks += (post.insights.clicks || 0);
-        dailyData[dayIndex].revenue += (post.insights.revenue || 0);
-        
-        dailyEngagementData[dayIndex].likes += (post.insights.likes || 0);
-        dailyEngagementData[dayIndex].comments += (post.insights.comments || 0);
-        dailyEngagementData[dayIndex].shares += (post.insights.shares || 0);
-      }
-    });
+  // تجنب المعالجة المكثفة إذا لم تكن هناك منشورات
+  if (!posts || posts.length === 0) {
+    return { dailyData, dailyEngagementData };
   }
+  
+  // إنشاء خريطة لتسريع البحث
+  const dayMap = new Map();
+  dailyData.forEach((day, index) => {
+    dayMap.set(day.name, index);
+  });
+  
+  // معالجة بيانات المنشورات
+  posts.forEach((post) => {
+    const date = new Date(post.created_at);
+    const dateStr = formatDateForChart(date);
+    
+    const dayIndex = dayMap.get(dateStr);
+    
+    if (dayIndex !== undefined && post.insights) {
+      dailyData[dayIndex].impressions += (post.insights.impressions || 0);
+      dailyData[dayIndex].engagement += (post.insights.engagement || 0);
+      dailyData[dayIndex].clicks += (post.insights.clicks || 0);
+      dailyData[dayIndex].revenue += (post.insights.revenue || 0);
+      
+      dailyEngagementData[dayIndex].likes += (post.insights.likes || 0);
+      dailyEngagementData[dayIndex].comments += (post.insights.comments || 0);
+      dailyEngagementData[dayIndex].shares += (post.insights.shares || 0);
+    }
+  });
   
   return { 
     dailyData, 

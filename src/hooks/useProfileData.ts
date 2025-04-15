@@ -11,39 +11,44 @@ export const useProfileData = () => {
   const queryClient = useQueryClient();
   const queryConfig = useQueryConfig("userProfile");
   
-  // استخدام React Query لجلب بيانات الملف الشخصي
+  // تحسين الأداء: زيادة وقت التخزين المؤقت وتقليل عمليات إعادة التحميل
+  const staleTime = 5 * 60 * 1000; // 5 دقائق
+  const cacheTime = 30 * 60 * 1000; // 30 دقيقة
+  
+  // استخدام React Query لجلب بيانات الملف الشخصي بأداء محسن
   const { data: profileData, isLoading: loading } = useQuery({
     queryKey: ["profile", user?.id],
     queryFn: async (): Promise<ProfileData | null> => {
       if (!user) return null;
       
-      console.log("Fetching profile for user:", user.id);
-      
-      // الحصول على الملف الشخصي باستخدام select
-      const { data: profile, error: selectError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      if (selectError) {
-        console.error("Error fetching profile:", selectError);
-        
-        // إذا لم يكن الملف الشخصي موجودًا، قم بإنشائه
-        if (selectError.code === 'PGRST116') {
-          console.log("Profile not found, attempting to create one");
-          const newProfile = await createProfileFn();
-          return newProfile;
+      try {
+        // الحصول على الملف الشخصي باستخدام select
+        const { data: profile, error: selectError } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+  
+        if (selectError) {
+          // إذا لم يكن الملف الشخصي موجودًا، قم بإنشائه
+          if (selectError.code === 'PGRST116') {
+            const newProfile = await createProfileFn();
+            return newProfile;
+          }
+          
+          throw selectError;
         }
-        
-        throw selectError;
+  
+        return profile as ProfileData;
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        throw error;
       }
-
-      console.log("Fetched profile:", profile);
-      return profile as ProfileData;
     },
     ...queryConfig,
     enabled: !!user, // تمكين الاستعلام فقط إذا كان المستخدم متاحًا
+    staleTime: staleTime, // تقليل عدد مرات إعادة التحميل
+    cacheTime: cacheTime, // زيادة وقت التخزين المؤقت
     meta: {
       onError: (error: any) => {
         console.error("Error in profile operation:", error);
@@ -71,20 +76,14 @@ export const useProfileData = () => {
         created_at: new Date().toISOString()
       };
       
-      console.log("Creating new profile:", newProfile);
-      
       const { data, error } = await supabase
         .from("profiles")
         .insert(newProfile)
         .select()
         .single();
         
-      if (error) {
-        console.error("Error creating profile:", error);
-        throw error;
-      }
+      if (error) throw error;
       
-      console.log("Created profile:", data);
       return data as ProfileData;
     } catch (error) {
       console.error("Error creating profile:", error);
@@ -97,7 +96,6 @@ export const useProfileData = () => {
           .single();
           
         if (data) {
-          console.log("Found profile on retry:", data);
           return data as ProfileData;
         }
       } catch (retryError) {
@@ -107,11 +105,10 @@ export const useProfileData = () => {
     }
   };
 
-  // استخدام React Query Mutation لإنشاء الملف الشخصي
+  // تحسين استخدام React Query Mutation للأداء الأفضل
   const createProfileMutation = useMutation({
     mutationFn: createProfileFn,
     onSuccess: (data) => {
-      // تحديث التخزين المؤقت بعد إنشاء الملف الشخصي بنجاح
       queryClient.setQueryData(["profile", user?.id], data);
     }
   });
