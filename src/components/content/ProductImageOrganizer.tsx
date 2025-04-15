@@ -14,26 +14,26 @@ const ProductImageOrganizer: React.FC = () => {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-2">نظام إدارة صور المنتجات</h1>
+        <h1 className="text-2xl font-bold mb-2">{t("productImageOrganizer.title", "Product Image Management System")}</h1>
         <p className="text-muted-foreground">
-          تنظيم وتصنيف وتحليل صور منتجات العناية بالبشرة والمكياج
+          {t("productImageOrganizer.subtitle", "Organize, categorize, and analyze skincare and makeup product images")}
         </p>
       </div>
       
       <Card>
         <CardHeader>
-          <CardTitle>أدوات إنتاج المحتوى البصري</CardTitle>
+          <CardTitle>{t("productImageOrganizer.cardTitle", "Visual Content Production Tools")}</CardTitle>
           <CardDescription>
-            تنظيم وتحليل وإدارة الصور والأصول البصرية للشركة
+            {t("productImageOrganizer.cardDescription", "Organize, analyze, and manage company images and visual assets")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="gallery" className="w-full">
             <TabsList className="mb-4 flex flex-wrap">
-              <TabsTrigger value="gallery">معرض الصور</TabsTrigger>
-              <TabsTrigger value="analysis">تحليل الألوان</TabsTrigger>
-              <TabsTrigger value="auto-analysis">التحليل التلقائي</TabsTrigger>
-              <TabsTrigger value="library">مكتبة الأصول</TabsTrigger>
+              <TabsTrigger value="gallery">{t("productImageOrganizer.tabs.gallery", "Image Gallery")}</TabsTrigger>
+              <TabsTrigger value="analysis">{t("productImageOrganizer.tabs.analysis", "Color Analysis")}</TabsTrigger>
+              <TabsTrigger value="auto-analysis">{t("productImageOrganizer.tabs.autoAnalysis", "Auto Analysis")}</TabsTrigger>
+              <TabsTrigger value="library">{t("productImageOrganizer.tabs.library", "Assets Library")}</TabsTrigger>
             </TabsList>
             
             <TabsContent value="gallery">

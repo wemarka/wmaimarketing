@@ -44,14 +44,14 @@ const DashboardAnnouncement = () => {
             <div className="flex items-center gap-2 mb-1">
               <Sparkles className="h-5 w-5 text-beauty-purple" />
               <p className="text-sm font-medium text-beauty-purple bg-beauty-purple/10 px-2 py-0.5 rounded">
-                {t("dashboard.announcement.new", "New")}
+                {t("dashboard.announcement.new")}
               </p>
             </div>
             <h3 className="text-xl font-semibold mb-2">
-              {t("dashboard.announcement.title", "Unlock Premium AI Features Today!")}
+              {t("dashboard.announcement.title")}
             </h3>
             <p className="text-muted-foreground mb-4 max-w-lg">
-              {t("dashboard.announcement.description", "Get early access to our advanced AI content generation tools and boost your marketing performance with intelligent insights.")}
+              {t("dashboard.announcement.description")}
             </p>
             
             <div className="flex items-center gap-2 mb-4">
@@ -67,7 +67,7 @@ const DashboardAnnouncement = () => {
               onClick={() => navigate("/ai-studio")} 
               className="bg-beauty-purple hover:bg-beauty-purple/90 flex items-center gap-2"
             >
-              {t("dashboard.announcement.action", "Try AI Studio Now")}
+              {t("dashboard.announcement.action")}
               <Sparkles className="h-4 w-4" />
             </Button>
           </motion.div>
@@ -78,21 +78,21 @@ const DashboardAnnouncement = () => {
             <CheckCircle className="h-5 w-5 text-green-500 mr-2 rtl:ml-2 rtl:mr-0" />
             <div className="text-left rtl:text-right">
               <p className="text-lg font-semibold">+50</p>
-              <p className="text-xs text-muted-foreground">{t("dashboard.announcement.stats.templates", "AI Templates")}</p>
+              <p className="text-xs text-muted-foreground">{t("dashboard.announcement.stats.templates")}</p>
             </div>
           </div>
           <div className="p-4 text-center flex items-center">
             <CheckCircle className="h-5 w-5 text-green-500 mr-2 rtl:ml-2 rtl:mr-0" />
             <div className="text-left rtl:text-right">
-              <p className="text-lg font-semibold">{t("dashboard.announcement.stats.unlimitedLabel", "Unlimited")}</p>
-              <p className="text-xs text-muted-foreground">{t("dashboard.announcement.stats.contentCreation", "Content Creation")}</p>
+              <p className="text-lg font-semibold">{t("dashboard.announcement.stats.unlimitedLabel")}</p>
+              <p className="text-xs text-muted-foreground">{t("dashboard.announcement.stats.contentCreation")}</p>
             </div>
           </div>
           <div className="p-4 text-center flex items-center">
             <CheckCircle className="h-5 w-5 text-green-500 mr-2 rtl:ml-2 rtl:mr-0" />
             <div className="text-left rtl:text-right">
-              <p className="text-lg font-semibold">{t("dashboard.announcement.stats.priorityLabel", "Priority")}</p>
-              <p className="text-xs text-muted-foreground">{t("dashboard.announcement.stats.supportUpdates", "Support & Updates")}</p>
+              <p className="text-lg font-semibold">{t("dashboard.announcement.stats.priorityLabel")}</p>
+              <p className="text-xs text-muted-foreground">{t("dashboard.announcement.stats.supportUpdates")}</p>
             </div>
           </div>
         </div>

@@ -14,7 +14,9 @@
     "back": "رجوع",
     "error": "خطأ",
     "operationFailed": "فشلت العملية",
-    "generating": "جاري التوليد..."
+    "generating": "جاري التوليد...",
+    "loading": "جاري التحميل...",
+    "more": "خيارات أكثر"
   },
   "scheduler": {
     "title": "جدولة منشور جديد",
@@ -51,7 +53,23 @@
       "selectPlatform": "الرجاء اختيار منصة أولاً"
     },
     "crossPostError": "خطأ في النشر المتعدد",
-    "crossPostErrorDesc": "حدث خطأ أثناء إنشاء المنشورات المتعددة"
+    "crossPostErrorDesc": "حدث خطأ أثناء إنشاء المنشورات المتعددة",
+    "platforms": {
+      "instagram": "انستقرام",
+      "facebook": "فيسبوك",
+      "tiktok": "تيك توك",
+      "twitter": "تويتر",
+      "linkedin": "لينكد إن",
+      "pinterest": "بنترست"
+    },
+    "postTypes": {
+      "regular": "عادي",
+      "carousel": "معرض صور",
+      "story": "قصة",
+      "reel": "ريل",
+      "ad": "إعلان",
+      "promotion": "ترويج"
+    }
   },
   "integration": {
     "accountDisconnected": "تم فصل الحساب",
@@ -182,7 +200,9 @@
         "post": "المنشورات",
         "task": "المهام",
         "system": "النظام"
-      }
+      },
+      "title": "الإشعارات",
+      "markAllRead": "تعليم الكل كمقروء"
     }
   },
   "sidebar": {
@@ -227,5 +247,24 @@
     "upgradeAccess": "يمكنك الترقية للوصول إلى جميع الميزات",
     "upgradeNow": "ترقية الآن",
     "signOut": "تسجيل الخروج"
+  },
+  "profile": {
+    "tabs": {
+      "account": "الملف الشخصي",
+      "security": "الأمان",
+      "activity": "سجل النشاط"
+    }
+  },
+  "productImageOrganizer": {
+    "title": "نظام إدارة صور المنتجات",
+    "subtitle": "تنظيم وتصنيف وتحليل صور منتجات العناية بالبشرة والمكياج",
+    "cardTitle": "أدوات إنتاج المحتوى البصري",
+    "cardDescription": "تنظيم وتحليل وإدارة الصور والأصول البصرية للشركة",
+    "tabs": {
+      "gallery": "معرض الصور",
+      "analysis": "تحليل الألوان",
+      "autoAnalysis": "التحليل التلقائي",
+      "library": "مكتبة الأصول"
+    }
   }
 }

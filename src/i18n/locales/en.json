@@ -14,7 +14,9 @@
     "back": "Back",
     "error": "Error",
     "operationFailed": "Operation failed",
-    "generating": "Generating..."
+    "generating": "Generating...",
+    "loading": "Loading...",
+    "more": "More options"
   },
   "scheduler": {
     "title": "Schedule New Post",
@@ -51,7 +53,23 @@
       "selectPlatform": "Please select a platform first"
     },
     "crossPostError": "Cross Post Error",
-    "crossPostErrorDesc": "An error occurred while creating cross posts"
+    "crossPostErrorDesc": "An error occurred while creating cross posts",
+    "platforms": {
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "tiktok": "TikTok",
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "pinterest": "Pinterest"
+    },
+    "postTypes": {
+      "regular": "Regular",
+      "carousel": "Carousel",
+      "story": "Story",
+      "reel": "Reel",
+      "ad": "Advertisement",
+      "promotion": "Promotion"
+    }
   },
   "integration": {
     "accountDisconnected": "Account Disconnected",
@@ -182,7 +200,9 @@
         "post": "Posts",
         "task": "Tasks",
         "system": "System"
-      }
+      },
+      "title": "Notifications",
+      "markAllRead": "Mark all as read"
     }
   },
   "sidebar": {
@@ -227,5 +247,24 @@
     "upgradeAccess": "Upgrade to access all features",
     "upgradeNow": "Upgrade Now",
     "signOut": "Sign Out"
+  },
+  "profile": {
+    "tabs": {
+      "account": "Profile",
+      "security": "Security",
+      "activity": "Activity Log"
+    }
+  },
+  "productImageOrganizer": {
+    "title": "Product Image Management System",
+    "subtitle": "Organize, categorize, and analyze skincare and makeup product images",
+    "cardTitle": "Visual Content Production Tools",
+    "cardDescription": "Organize, analyze, and manage company images and visual assets",
+    "tabs": {
+      "gallery": "Image Gallery",
+      "analysis": "Color Analysis",
+      "autoAnalysis": "Auto Analysis",
+      "library": "Assets Library"
+    }
   }
 }

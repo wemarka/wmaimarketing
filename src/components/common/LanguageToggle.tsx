@@ -20,9 +20,6 @@ const LanguageToggle: React.FC = () => {
       title: newLanguage === "ar" ? "تم تغيير اللغة" : "Language Changed",
       description: newLanguage === "ar" ? "تم التغيير إلى العربية" : "Changed to English",
     });
-
-    // Update document direction for RTL/LTR support
-    document.documentElement.dir = newLanguage === "ar" ? "rtl" : "ltr";
   };
 
   return (

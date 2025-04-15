@@ -7,6 +7,7 @@ import PersonalInfoCard from "./PersonalInfoCard";
 import PasswordManagementCard from "./PasswordManagementCard";
 import ActivityLog from "./ActivityLog";
 import ActivateAdminButton from "./ActivateAdminButton";
+import { useTranslation } from "react-i18next";
 
 interface ProfileTabsProps {
   profileData: ProfileData;
@@ -37,15 +38,17 @@ const ProfileTabs = ({
   activeTab,
   onTabChange,
 }: ProfileTabsProps) => {
+  const { t } = useTranslation();
+  
   // Check if this user is the target admin - can be any email you want to designate
   const isTargetAdmin = true; // Allow any user to activate admin during development
 
   return (
     <Tabs value={activeTab} onValueChange={onTabChange}>
       <TabsList className="grid w-full grid-cols-3">
-        <TabsTrigger value="account">الملف الشخصي</TabsTrigger>
-        <TabsTrigger value="security">الأمان</TabsTrigger>
-        <TabsTrigger value="activity">سجل النشاط</TabsTrigger>
+        <TabsTrigger value="account">{t("profile.tabs.account", "Profile")}</TabsTrigger>
+        <TabsTrigger value="security">{t("profile.tabs.security", "Security")}</TabsTrigger>
+        <TabsTrigger value="activity">{t("profile.tabs.activity", "Activity Log")}</TabsTrigger>
       </TabsList>
 
       <TabsContent value="account" className="space-y-4">

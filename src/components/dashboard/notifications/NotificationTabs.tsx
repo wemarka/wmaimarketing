@@ -35,7 +35,7 @@ const NotificationTabs: React.FC<NotificationTabsProps> = ({
             <Badge
               variant="secondary"
               className={cn(
-                "absolute -top-2 -right-1 h-4 min-w-4 p-0 flex items-center justify-center text-[10px] rtl:-left-1 rtl:-right-auto",
+                "absolute -top-2 -right-1 h-4 min-w-4 p-0 flex items-center justify-center text-[10px] rtl:-left-1 rtl:right-auto",
                 tab.id === "all" ? "bg-beauty-pink text-white" : "bg-muted-foreground/20"
               )}
             >

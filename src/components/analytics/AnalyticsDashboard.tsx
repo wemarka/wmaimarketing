@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, Heart, MousePointerClick, DollarSign } from "lucide-react";
 import PostStatusTracker from "./PostStatusTracker";
+import { useTranslation } from "react-i18next";
 
 // Import the components from the new modular structure
 import {
@@ -24,16 +25,17 @@ export const AnalyticsDashboard = () => {
     analyticsData,
     handlePeriodChange
   } = useDashboardData();
+  const { t } = useTranslation();
 
   if (loading) {
-    return <div>Loading analytics data...</div>;
+    return <div>{t("common.loading", "Loading analytics data...")}</div>;
   }
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <StatisticCard
-          title="المشاهدات"
+          title={t("dashboard.stats.impressions.title")}
           value={analyticsData.impressions.toLocaleString()}
           change={analyticsData.change.impressions.toString()}
           icon={<Eye className="h-5 w-5 text-blue-600" />}
@@ -42,7 +44,7 @@ export const AnalyticsDashboard = () => {
         />
         
         <StatisticCard
-          title="نسبة التفاعل"
+          title={t("dashboard.stats.engagement.title")}
           value={`${analyticsData.engagement}%`}
           change={analyticsData.change.engagement.toString()}
           icon={<Heart className="h-5 w-5 text-pink-600" />}
@@ -51,7 +53,7 @@ export const AnalyticsDashboard = () => {
         />
         
         <StatisticCard
-          title="نسبة النقرات"
+          title={t("dashboard.stats.averageClicks.title")}
           value={`${analyticsData.clicks}%`}
           change={analyticsData.change.clicks.toString()}
           icon={<MousePointerClick className="h-5 w-5 text-amber-600" />}
@@ -60,7 +62,7 @@ export const AnalyticsDashboard = () => {
         />
         
         <StatisticCard
-          title="التحويلات"
+          title={t("dashboard.stats.conversion.title")}
           value={analyticsData.conversions.toLocaleString()}
           change={analyticsData.change.conversions.toString()}
           icon={<DollarSign className="h-5 w-5 text-green-600" />}

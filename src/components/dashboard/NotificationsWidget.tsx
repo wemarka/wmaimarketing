@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTranslation } from "react-i18next";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 import { 
   NotificationTabs, 
@@ -15,15 +15,16 @@ import {
 
 const NotificationsWidget = () => {
   const { t } = useTranslation();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<string>("all");
   
   // Sample notification data
   const [notifications, setNotifications] = useState<Notification[]>([
     {
       id: "1",
-      title: "منشور جديد بانتظار الموافقة",
-      message: "يوجد منشور جديد بعنوان 'أفضل منتجات العناية بالبشرة' بانتظار موافقتك",
-      time: "قبل 10 دقائق",
+      title: t("notifications.new.approval", "New post awaiting approval"),
+      message: t("notifications.new.approvalDesc", "There's a new post titled 'Best Skincare Products' awaiting your approval"),
+      time: t("notifications.time.minutes", "10 minutes ago"),
       type: "approval",
       read: false,
       urgent: true,
@@ -31,35 +32,35 @@ const NotificationsWidget = () => {
     },
     {
       id: "2",
-      title: "تم جدولة منشور للنشر غداً",
-      message: "سيتم نشر المنشور 'نصائح للعناية بالبشرة' غداً الساعة 10:00 صباحاً",
-      time: "قبل 2 ساعة",
+      title: t("notifications.scheduled.post", "Post scheduled for tomorrow"),
+      message: t("notifications.scheduled.postDesc", "The post 'Skincare Tips' will be published tomorrow at 10:00 AM"),
+      time: t("notifications.time.hours", "2 hours ago"),
       type: "post",
       read: false,
       actionUrl: "/scheduler"
     },
     {
       id: "3",
-      title: "اكتمال مهمة 'تحديث صور المنتجات'",
-      message: "تم الانتهاء من تحديث صور المنتجات بنجاح",
-      time: "قبل 1 يوم",
+      title: t("notifications.completed.task", "Task 'Update Product Images' completed"),
+      message: t("notifications.completed.taskDesc", "Product images have been successfully updated"),
+      time: t("notifications.time.day", "1 day ago"),
       type: "task",
       read: true,
       actionUrl: "/content-tools"
     },
     {
       id: "4",
-      title: "تحديث النظام",
-      message: "تم تحديث النظام إلى الإصدار الجديد بنجاح",
-      time: "قبل 2 يوم",
+      title: t("notifications.system.update", "System Update"),
+      message: t("notifications.system.updateDesc", "The system has been successfully updated to the latest version"),
+      time: t("notifications.time.days", "2 days ago"),
       type: "system",
       read: true
     },
     {
       id: "5",
-      title: "تذكير: موعد نشر حملة إعلانية",
-      message: "لديك حملة إعلانية مجدولة للنشر اليوم الساعة 3:00 عصراً",
-      time: "قبل 5 ساعات",
+      title: t("notifications.reminder.campaign", "Reminder: Ad campaign scheduled"),
+      message: t("notifications.reminder.campaignDesc", "You have an ad campaign scheduled for today at 3:00 PM"),
+      time: t("notifications.time.hours", "5 hours ago"),
       type: "post",
       read: false,
       urgent: true,
@@ -91,8 +92,8 @@ const NotificationsWidget = () => {
     );
     
     toast({
-      title: "تم تعليم جميع الإشعارات كمقروءة",
-      description: "تم تحديث الإشعارات بنجاح"
+      title: t("dashboard.notifications.markAllReadSuccess", "All notifications marked as read"),
+      description: t("dashboard.notifications.updated", "Notifications have been updated")
     });
   };
 
@@ -105,7 +106,7 @@ const NotificationsWidget = () => {
     <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="flex items-center">
-          <CardTitle>{t("dashboard.notifications.title", "الإشعارات")}</CardTitle>
+          <CardTitle>{t("dashboard.notifications.title")}</CardTitle>
           {getUnreadCount() > 0 && (
             <Badge className="mr-2 bg-beauty-pink text-white ml-2" variant="secondary">
               {getUnreadCount()}
@@ -119,7 +120,7 @@ const NotificationsWidget = () => {
           onClick={markAllAsRead}
           disabled={getUnreadCount() === 0}
         >
-          {t("dashboard.notifications.markAllRead", "تعليم الكل كمقروء")}
+          {t("dashboard.notifications.markAllRead")}
         </Button>
       </CardHeader>
       
