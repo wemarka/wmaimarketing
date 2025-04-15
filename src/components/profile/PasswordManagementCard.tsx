@@ -4,15 +4,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import ChangePasswordForm from "./ChangePasswordForm";
 import { motion } from "framer-motion";
 import { KeyRound } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
 interface PasswordManagementCardProps {
   onChangePassword: (data: any) => Promise<void>;
   isChangingPassword: boolean;
+  onLogoutOtherSessions?: () => Promise<void>;
+  loggingOut?: boolean;
 }
 
 const PasswordManagementCard = ({
   onChangePassword,
-  isChangingPassword
+  isChangingPassword,
+  onLogoutOtherSessions,
+  loggingOut = false
 }: PasswordManagementCardProps) => {
   return (
     <motion.div
@@ -42,6 +48,24 @@ const PasswordManagementCard = ({
             onChangePassword={onChangePassword} 
             isChangingPassword={isChangingPassword}
           />
+          
+          {onLogoutOtherSessions && (
+            <div className="mt-6 border-t pt-4">
+              <h3 className="text-lg font-medium mb-3">الجلسات النشطة</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                يمكنك تسجيل الخروج من جميع الجلسات الأخرى على جميع الأجهزة
+              </p>
+              <Button 
+                variant="outline" 
+                className="w-full flex items-center justify-center"
+                onClick={onLogoutOtherSessions}
+                disabled={loggingOut}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                {loggingOut ? "جاري تسجيل الخروج..." : "تسجيل الخروج من الجلسات الأخرى"}
+              </Button>
+            </div>
+          )}
           
           <div className="mt-6 p-4 rounded-md bg-blue-50 border border-blue-200">
             <h4 className="text-sm font-medium text-blue-700 mb-2">نصائح لكلمة مرور قوية:</h4>
