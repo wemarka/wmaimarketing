@@ -2,9 +2,10 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart } from "lucide-react";
+import { BarChart, Download } from "lucide-react";
 import AnalyticsDashboard from "@/components/analytics/AnalyticsDashboard";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 const AnalyticsTab = () => {
   const [activeMetric, setActiveMetric] = useState<string>("engagement");
@@ -16,22 +17,28 @@ const AnalyticsTab = () => {
           <h2 className="text-2xl font-bold">التحليلات</h2>
           <p className="text-muted-foreground">عرض ملخص للبيانات التحليلية</p>
         </div>
-        <Button variant="outline" size="sm" className="flex items-center gap-2">
-          <BarChart className="h-4 w-4" />
+        <Button variant="outline" size="sm" className="flex items-center gap-2 border-beauty-purple/20 hover:bg-beauty-purple/5 text-beauty-purple">
+          <Download className="h-4 w-4" />
           <span>صدّر التقرير</span>
         </Button>
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="mb-4">
-          <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
-          <TabsTrigger value="content">أداء المحتوى</TabsTrigger>
-          <TabsTrigger value="audience">الجمهور</TabsTrigger>
+        <TabsList className="mb-4 bg-background border border-muted rounded-lg p-1">
+          <TabsTrigger value="overview" className="rounded-md data-[state=active]:bg-beauty-purple/10 data-[state=active]:text-beauty-purple">
+            نظرة عامة
+          </TabsTrigger>
+          <TabsTrigger value="content" className="rounded-md data-[state=active]:bg-beauty-purple/10 data-[state=active]:text-beauty-purple">
+            أداء المحتوى
+          </TabsTrigger>
+          <TabsTrigger value="audience" className="rounded-md data-[state=active]:bg-beauty-purple/10 data-[state=active]:text-beauty-purple">
+            الجمهور
+          </TabsTrigger>
         </TabsList>
-        <TabsContent value="overview" className="mt-0">
+        <TabsContent value="overview" className="mt-0 animate-fade-in">
           <AnalyticsDashboard />
         </TabsContent>
-        <TabsContent value="content" className="mt-0">
+        <TabsContent value="content" className="mt-0 animate-fade-in">
           <Card>
             <CardHeader>
               <CardTitle>أداء المحتوى</CardTitle>
@@ -43,7 +50,7 @@ const AnalyticsTab = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        <TabsContent value="audience" className="mt-0">
+        <TabsContent value="audience" className="mt-0 animate-fade-in">
           <Card>
             <CardHeader>
               <CardTitle>تحليل الجمهور</CardTitle>

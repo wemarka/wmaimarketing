@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -16,6 +16,7 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
+import { BarChart3, Table } from "lucide-react";
 
 interface EngagementData {
   name: string;
@@ -37,12 +38,18 @@ const EngagementMetrics: React.FC<EngagementMetricsProps> = ({ data }) => {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="chart">
-          <TabsList className="mb-4">
-            <TabsTrigger value="chart">الرسم البياني</TabsTrigger>
-            <TabsTrigger value="detail">التفاصيل</TabsTrigger>
+          <TabsList className="mb-4 bg-background border border-muted rounded-lg p-1 w-fit">
+            <TabsTrigger value="chart" className="rounded-md flex items-center gap-1.5 data-[state=active]:bg-beauty-purple/10 data-[state=active]:text-beauty-purple">
+              <BarChart3 className="h-4 w-4" />
+              <span>الرسم البياني</span>
+            </TabsTrigger>
+            <TabsTrigger value="detail" className="rounded-md flex items-center gap-1.5 data-[state=active]:bg-beauty-purple/10 data-[state=active]:text-beauty-purple">
+              <Table className="h-4 w-4" />
+              <span>التفاصيل</span>
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="chart">
+          <TabsContent value="chart" className="animate-fade-in">
             <ChartContainer
               config={{
                 likes: { label: "الإعجابات", color: "#9b87f5" },
@@ -64,21 +71,21 @@ const EngagementMetrics: React.FC<EngagementMetricsProps> = ({ data }) => {
             </ChartContainer>
           </TabsContent>
 
-          <TabsContent value="detail">
+          <TabsContent value="detail" className="animate-fade-in">
             <div className="border rounded-lg overflow-hidden">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-muted/50">
-                    <th className="text-right p-3">التاريخ</th>
-                    <th className="text-right p-3">الإعجابات</th>
-                    <th className="text-right p-3">التعليقات</th>
-                    <th className="text-right p-3">المشاركات</th>
-                    <th className="text-right p-3">المجموع</th>
+                  <tr className="bg-beauty-purple/5 border-b">
+                    <th className="text-right p-3 text-beauty-purple font-medium">التاريخ</th>
+                    <th className="text-right p-3 text-beauty-purple font-medium">الإعجابات</th>
+                    <th className="text-right p-3 text-beauty-purple font-medium">التعليقات</th>
+                    <th className="text-right p-3 text-beauty-purple font-medium">المشاركات</th>
+                    <th className="text-right p-3 text-beauty-purple font-medium">المجموع</th>
                   </tr>
                 </thead>
                 <tbody>
                   {data.map((item, index) => (
-                    <tr key={index} className="border-t">
+                    <tr key={index} className={index % 2 === 0 ? "bg-muted/20" : "bg-background"}>
                       <td className="p-3">{item.name}</td>
                       <td className="p-3">{item.likes}</td>
                       <td className="p-3">{item.comments}</td>
