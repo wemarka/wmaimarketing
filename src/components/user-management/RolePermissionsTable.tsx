@@ -32,6 +32,12 @@ const RolePermissionsTable: React.FC<RolePermissionTableProps> = ({ onEditRole }
       badge: "bg-red-100 text-red-800 hover:bg-red-100",
     },
     {
+      name: "manager" as AppRole,
+      title: "مسؤول",
+      description: "إدارة الفرق والمشاريع والتقارير",
+      badge: "bg-orange-100 text-orange-800 hover:bg-orange-100",
+    },
+    {
       name: "marketing" as AppRole,
       title: "تسويق",
       description: "إدارة المحتوى والحملات التسويقية",
@@ -42,6 +48,18 @@ const RolePermissionsTable: React.FC<RolePermissionTableProps> = ({ onEditRole }
       title: "مصمم",
       description: "إنشاء وتحرير الصور والإعلانات",
       badge: "bg-purple-100 text-purple-800 hover:bg-purple-100",
+    },
+    {
+      name: "editor" as AppRole,
+      title: "محرر",
+      description: "إنشاء وتحرير المحتوى النصي",
+      badge: "bg-cyan-100 text-cyan-800 hover:bg-cyan-100",
+    },
+    {
+      name: "analyst" as AppRole,
+      title: "محلل",
+      description: "الوصول للتحليلات وتقارير الأداء",
+      badge: "bg-green-100 text-green-800 hover:bg-green-100",
     },
     {
       name: "user" as AppRole,
@@ -62,14 +80,18 @@ const RolePermissionsTable: React.FC<RolePermissionTableProps> = ({ onEditRole }
     { id: 8, name: "إنشاء إعلانات", group: "الإعلانات" },
     { id: 9, name: "جدولة النشر", group: "النشر" },
     { id: 10, name: "وصول للتحليلات", group: "التقارير" },
+    { id: 11, name: "إنشاء تقارير", group: "التقارير" },
+    { id: 12, name: "إدارة الفرق", group: "الإدارة" },
   ];
 
   const permissionMap: Record<AppRole, number[]> = {
-    admin: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    admin: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    manager: [1, 2, 4, 5, 9, 10, 11, 12],
     marketing: [4, 5, 6, 7, 8, 9, 10],
     designer: [4, 5, 7, 8],
-    user: [],
-    manager: [1, 2, 4, 5, 9, 10] // Added this role to match the AppRole type
+    editor: [4, 5, 7],
+    analyst: [10, 11],
+    user: []
   };
 
   const hasPermission = (role: AppRole, permissionId: number) => {

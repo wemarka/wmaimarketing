@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { UserPlus, Shield, UserCheck } from "lucide-react";
+import { UserPlus, Shield, UserCheck, Users, EnvelopeOpen } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import {
   Card,
@@ -17,6 +17,7 @@ import SearchBar from "@/components/user-management/SearchBar";
 import AddUserDialog from "@/components/user-management/AddUserDialog";
 import ManageRoleDialog from "@/components/user-management/ManageRoleDialog";
 import RolePermissionsTable from "@/components/user-management/RolePermissionsTable";
+import InvitationsTab from "@/components/user-management/InvitationsTab";
 import { useToast } from "@/hooks/use-toast";
 
 const UserManagement = () => {
@@ -39,7 +40,7 @@ const UserManagement = () => {
     activateSpecificUser
   } = useUserManagement();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<"users" | "roles">("users");
+  const [activeTab, setActiveTab] = useState<"users" | "roles" | "invitations">("users");
 
   // Effect to activate abdalrhmanalhosary@gmail.com as admin when the component loads
   useEffect(() => {
@@ -97,10 +98,20 @@ const UserManagement = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "users" | "roles")}>
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "users" | "roles" | "invitations")}>
               <TabsList className="mb-6">
-                <TabsTrigger value="users">المستخدمون</TabsTrigger>
-                <TabsTrigger value="roles">الأدوار والصلاحيات</TabsTrigger>
+                <TabsTrigger value="users" className="flex items-center">
+                  <Users className="ml-2 h-4 w-4" />
+                  المستخدمون
+                </TabsTrigger>
+                <TabsTrigger value="invitations" className="flex items-center">
+                  <EnvelopeOpen className="ml-2 h-4 w-4" />
+                  الدعوات
+                </TabsTrigger>
+                <TabsTrigger value="roles" className="flex items-center">
+                  <Shield className="ml-2 h-4 w-4" />
+                  الأدوار والصلاحيات
+                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="users" className="space-y-4">
@@ -121,6 +132,10 @@ const UserManagement = () => {
                 />
               </TabsContent>
 
+              <TabsContent value="invitations">
+                <InvitationsTab />
+              </TabsContent>
+
               <TabsContent value="roles">
                 <div className="space-y-6">
                   <div className="bg-muted/50 p-4 rounded-lg">
@@ -129,12 +144,14 @@ const UserManagement = () => {
                       <h3 className="text-lg font-medium">نظام الأدوار والصلاحيات</h3>
                     </div>
                     <p className="text-sm text-muted-foreground mb-2">
-                      يوفر النظام أربعة أدوار أساسية بصلاحيات مختلفة:
+                      يوفر النظام أدوار متعددة بصلاحيات مختلفة:
                     </p>
                     <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mr-4">
                       <li><strong>مدير</strong> - وصول كامل لجميع ميزات النظام وإدارة المستخدمين</li>
                       <li><strong>تسويق</strong> - إدارة المحتوى والحملات التسويقية والتحليلات</li>
                       <li><strong>مصمم</strong> - إنشاء وتحرير المحتوى البصري والإعلانات</li>
+                      <li><strong>محرر</strong> - إنشاء وتحرير المحتوى النصي (دور جديد)</li>
+                      <li><strong>محلل</strong> - الوصول للتحليلات وتقارير الأداء (دور جديد)</li>
                       <li><strong>مستخدم</strong> - وصول محدود لعرض المحتوى</li>
                     </ul>
                   </div>
