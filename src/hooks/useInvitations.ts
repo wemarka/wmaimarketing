@@ -166,6 +166,14 @@ export const useInvitations = () => {
     }
   };
 
+  // تحديد نوع البيانات الدقيق للتحقق من صلاحية الدعوة
+  type ValidationResult = {
+    valid: boolean;
+    email?: string;
+    role?: string;
+    message?: string;
+  };
+
   const validateInvitationToken = async (token: string) => {
     setLoading(true);
     try {
@@ -174,7 +182,7 @@ export const useInvitations = () => {
 
       if (error) throw error;
       
-      return data as { valid: boolean; email?: string; role?: string; message?: string };
+      return data as ValidationResult;
     } catch (error: any) {
       console.error("Error validating invitation:", error);
       toast({
@@ -213,7 +221,7 @@ export const useInvitations = () => {
       const result = data as unknown as { success: boolean; message?: string; email?: string; role?: string };
       
       // إذا تم التسجيل بنجاح، قم بتسجيل الدخول
-      if (result.success && validationResult.email) {
+      if (result.success && validationResult.valid && validationResult.email) {
         await supabase.auth.signInWithPassword({
           email: validationResult.email,
           password: password
