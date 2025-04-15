@@ -2,8 +2,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { 
-  Sidebar,
-  SidebarContent,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupContent,
@@ -32,9 +30,15 @@ interface SidebarNavGroupProps {
   title: string;
   items: NavItem[];
   compact?: boolean;
+  currentPath?: string;
 }
 
-const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({ title, items, compact = false }) => {
+const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({ 
+  title, 
+  items, 
+  compact = false, 
+  currentPath = "" 
+}) => {
   // Animation variants for staggered children
   const menuItemVariants = {
     hidden: { opacity: 0, x: -20 },
@@ -63,26 +67,29 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({ title, items, compact
                 whileTap={{ scale: 0.97 }}
               >
                 <NavLink to={item.to} className="w-full">
-                  {({ isActive }) => 
-                    compact ? (
+                  {({ isActive }) => {
+                    // Consider both NavLink active state and direct path comparison
+                    const active = isActive || currentPath === item.to;
+                    
+                    return compact ? (
                       <TooltipProvider delayDuration={300}>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <SidebarMenuButton
-                              isActive={isActive}
+                              isActive={active}
                               variant={item.variant}
                               className={cn(
                                 "flex justify-center", 
                                 item.className, 
                                 "transition-all duration-300 rounded-lg",
-                                isActive 
+                                active 
                                   ? "bg-beauty-purple/15 dark:bg-beauty-purple/30 shadow-sm" 
                                   : "hover:bg-beauty-purple/10 dark:hover:bg-beauty-purple/20"
                               )}
                             >
                               <span className={cn(
                                 "transition-all text-center",
-                                isActive 
+                                active 
                                   ? "text-beauty-purple scale-110" 
                                   : "text-muted-foreground group-hover:text-beauty-purple/80"
                               )}>
@@ -105,20 +112,20 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({ title, items, compact
                       </TooltipProvider>
                     ) : (
                       <SidebarMenuButton
-                        isActive={isActive}
+                        isActive={active}
                         tooltip={item.tooltip}
                         variant={item.variant}
                         className={cn(
                           item.className, 
                           "transition-all duration-300 rounded-lg",
-                          isActive 
+                          active 
                             ? "bg-beauty-purple/15 dark:bg-beauty-purple/30 shadow-sm" 
                             : "hover:bg-beauty-purple/10 dark:hover:bg-beauty-purple/20"
                         )}
                       >
                         <span className={cn(
                           "transition-all",
-                          isActive 
+                          active 
                             ? "text-beauty-purple scale-110" 
                             : "text-muted-foreground group-hover:text-beauty-purple/80"
                         )}>
@@ -126,7 +133,7 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({ title, items, compact
                         </span>
                         <span className={cn(
                           "mr-2 transition-all",
-                          isActive ? "font-medium text-beauty-purple" : "font-normal"
+                          active ? "font-medium text-beauty-purple" : "font-normal"
                         )}>
                           {item.label}
                         </span>
@@ -136,7 +143,7 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({ title, items, compact
                             className={cn(
                               "mr-auto text-xs",
                               !item.badgeVariant && (
-                                isActive 
+                                active 
                                   ? "bg-beauty-purple/15 text-beauty-purple hover:bg-beauty-purple/20 border border-beauty-purple/20" 
                                   : "bg-muted text-muted-foreground hover:bg-muted/80"
                               )
@@ -146,7 +153,7 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({ title, items, compact
                           </Badge>
                         )}
                       </SidebarMenuButton>
-                    )
+                    )}
                   }
                 </NavLink>
               </motion.div>

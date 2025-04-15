@@ -1,6 +1,6 @@
 
-import React, { useState } from "react";
-import { Sidebar, SidebarContent, SidebarFooter } from "@/components/ui/sidebar";
+import React, { useState, useEffect } from "react";
+import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
@@ -9,14 +9,17 @@ import { useNavigationItems } from "./sidebar/useNavigationItems";
 import SidebarNavGroup from "./sidebar/SidebarNavGroup";
 import SidebarHeader from "./sidebar/SidebarHeader";
 import ThemeToggle from "./sidebar/ThemeToggle";
-import UserProfile from "./sidebar/UserProfile";
+import SidebarFooter from "./sidebar/SidebarFooter";
+import { useLocation } from "react-router-dom";
 
 const AppSidebar = () => {
-  const { profile, user } = useAuth();
+  const { profile } = useAuth();
   const isMobile = useMediaQuery("(max-width: 767px)");
   const [expanded, setExpanded] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const location = useLocation();
   
+  // Get navigation items based on user role
   const { 
     mainNavItems, 
     mediaNavItems, 
@@ -25,12 +28,21 @@ const AppSidebar = () => {
     documentationItems 
   } = useNavigationItems();
   
+  useEffect(() => {
+    // Auto collapse sidebar on mobile
+    if (isMobile) {
+      setExpanded(false);
+    }
+  }, [isMobile]);
+  
   const toggleExpanded = () => {
     setExpanded(!expanded);
   };
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
+    // Apply dark mode class to document if needed
+    document.documentElement.classList.toggle('dark', !isDarkMode);
   };
   
   return (
@@ -52,6 +64,7 @@ const AppSidebar = () => {
             title="الرئيسية"
             items={mainNavItems}
             compact={!expanded}
+            currentPath={location.pathname}
           />
           
           {/* Media & Marketing Navigation Group */}
@@ -59,6 +72,7 @@ const AppSidebar = () => {
             title="الوسائط والتسويق"
             items={mediaNavItems}
             compact={!expanded}
+            currentPath={location.pathname}
           />
           
           {/* Products Navigation Group */}
@@ -66,6 +80,7 @@ const AppSidebar = () => {
             title="المنتجات"
             items={productItems}
             compact={!expanded}
+            currentPath={location.pathname}
           />
           
           {/* Management Navigation Group */}
@@ -73,6 +88,7 @@ const AppSidebar = () => {
             title="الإدارة"
             items={managementItems}
             compact={!expanded}
+            currentPath={location.pathname}
           />
           
           {/* Documentation Navigation Group */}
@@ -80,6 +96,7 @@ const AppSidebar = () => {
             title="المستندات"
             items={documentationItems}
             compact={!expanded}
+            currentPath={location.pathname}
           />
         </ScrollArea>
         
@@ -91,16 +108,7 @@ const AppSidebar = () => {
         />
       </SidebarContent>
       
-      <SidebarFooter className={cn(
-        "py-4 border-t", 
-        expanded ? "px-5" : "px-2 justify-center"
-      )}>
-        <UserProfile 
-          expanded={expanded} 
-          profile={profile} 
-          userEmail={user?.email}
-        />
-      </SidebarFooter>
+      <SidebarFooter expanded={expanded} />
     </Sidebar>
   );
 };
