@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { UserCheck } from 'lucide-react';
+import { UserCheck, ShieldAlert } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -12,15 +12,13 @@ interface ActivateAdminButtonProps {
 }
 
 const ActivateAdminButton: React.FC<ActivateAdminButtonProps> = ({ className }) => {
-  const { user } = useAuth();
+  const { user, refreshProfile } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = React.useState(false);
 
   const activateAdminUser = async () => {
     setLoading(true);
     try {
-      const targetEmail = "abdalrhmanalhosary@gmail.com";
-      
       // If this is the current user, use their ID
       const userId = user?.id;
       
@@ -37,12 +35,15 @@ const ActivateAdminButton: React.FC<ActivateAdminButtonProps> = ({ className }) 
         await supabase.from("user_activity_log").insert({
           user_id: userId,
           activity_type: "admin_activation",
-          description: `تم تفعيل المستخدم ${targetEmail} كمدير`
+          description: `تم تفعيل المستخدم كمدير للتطوير`
         });
+        
+        // Refresh the profile to get updated role
+        await refreshProfile();
         
         toast({
           title: "تم التفعيل بنجاح",
-          description: "تم تفعيل الحساب كمدير بنجاح، يرجى تسجيل الخروج وإعادة الدخول لتطبيق التغييرات",
+          description: "تم تفعيل الحساب كمدير بنجاح. يمكنك الآن الوصول لجميع ميزات النظام للتطوير",
         });
       } else {
         toast({
@@ -70,8 +71,17 @@ const ActivateAdminButton: React.FC<ActivateAdminButtonProps> = ({ className }) 
       variant="outline"
       disabled={loading}
     >
-      <UserCheck className="mr-2 h-4 w-4" />
-      {loading ? "جاري التفعيل..." : "تفعيل كمدير"}
+      {loading ? (
+        <>
+          <UserCheck className="mr-2 h-4 w-4 animate-spin" />
+          جاري التفعيل...
+        </>
+      ) : (
+        <>
+          <ShieldAlert className="mr-2 h-4 w-4" />
+          تفعيل كمدير للتطوير
+        </>
+      )}
     </Button>
   );
 };

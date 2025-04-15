@@ -6,6 +6,9 @@ import ProfileSidebar from "./ProfileSidebar";
 import ProfileTabs from "./ProfileTabs";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { motion } from "framer-motion";
+import ActivateAdminButton from "./ActivateAdminButton";
+import { Button } from "../ui/button";
+import { useAuth } from "@/context/AuthContext";
 
 interface ProfileContentProps {
   profileData: ProfileData;
@@ -41,6 +44,7 @@ const ProfileContent = ({
   onTabChange
 }: ProfileContentProps) => {
   const isMobile = useIsMobile();
+  const { user } = useAuth();
   
   // For mobile: When sidebar tab is clicked, update the main tabs
   const handleTabChange = (tab: string) => {
@@ -54,6 +58,21 @@ const ProfileContent = ({
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
+      {/* Developer Admin Activation Button (visible during development) */}
+      <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <h3 className="font-medium text-amber-800">وضع المطور</h3>
+            <p className="text-sm text-amber-700">
+              هذه المنطقة مخصصة للمطورين فقط. استخدم الزر أدناه لتفعيل صلاحيات المدير للتطوير.
+            </p>
+          </div>
+          <ActivateAdminButton 
+            className="bg-amber-600 text-white hover:bg-amber-700" 
+          />
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 lg:gap-8">
         {/* Profile sidebar */}
         <ProfileSidebar
