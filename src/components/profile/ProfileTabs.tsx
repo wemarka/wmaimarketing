@@ -51,8 +51,9 @@ const ProfileTabs = ({
       <TabsContent value="account" className="space-y-4">
         <PersonalInfoCard 
           profileData={profileData} 
+          userEmail={userEmail}
           onUpdateProfile={onUpdateProfile}
-          updating={updating}
+          isUpdating={updating}
         />
         
         {isTargetAdmin && profileData.role !== "admin" && (
@@ -64,10 +65,9 @@ const ProfileTabs = ({
       
       <TabsContent value="security" className="space-y-4">
         <PasswordManagementCard
-          userEmail={userEmail}
           onChangePassword={onChangePassword}
           onLogoutOtherSessions={onLogoutOtherSessions}
-          changingPassword={changingPassword}
+          isChangingPassword={changingPassword}
           loggingOut={loggingOut}
         />
       </TabsContent>
@@ -75,7 +75,7 @@ const ProfileTabs = ({
       <TabsContent value="activity">
         <ActivityLog 
           activities={activities}
-          loading={activitiesLoading}
+          isLoading={activitiesLoading}
         />
       </TabsContent>
     </Tabs>
