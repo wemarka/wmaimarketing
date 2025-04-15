@@ -12,7 +12,7 @@ export const usePasswordManagement = () => {
     setChangingPassword(true);
     try {
       const { error } = await supabase.auth.updateUser({
-        password: data.newPassword,
+        password: data.new_password,
       });
 
       if (error) throw error;

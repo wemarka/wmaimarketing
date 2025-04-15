@@ -10,6 +10,8 @@ export interface PasswordFormValues {
   confirm_password: string;
 }
 
+export type AppRole = 'admin' | 'marketing' | 'designer' | 'user' | 'manager' | 'editor' | 'analyst';
+
 export interface ProfileData {
   id: string;
   first_name?: string;
@@ -17,4 +19,5 @@ export interface ProfileData {
   avatar_url?: string;
   created_at?: string;
   updated_at?: string;
+  role?: AppRole;
 }
