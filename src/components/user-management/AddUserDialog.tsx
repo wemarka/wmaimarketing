@@ -18,13 +18,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { AppRole } from "@/types/profile";
 
 interface NewUser {
   email: string;
   password: string;
   first_name: string;
   last_name: string;
-  role: string;
+  role: AppRole;
 }
 
 interface AddUserDialogProps {
@@ -102,7 +103,7 @@ const AddUserDialog = ({
             </label>
             <Select
               value={newUser.role}
-              onValueChange={(value) => setNewUser({ ...newUser, role: value })}
+              onValueChange={(value: AppRole) => setNewUser({ ...newUser, role: value })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="اختر الدور" />

@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Eye, MoreVertical, PenLine, Shield, UserX } from "lucide-react";
+import { AppRole } from "@/types/profile";
 
 interface User {
   id: string;
@@ -25,7 +26,7 @@ interface User {
   first_name: string | null;
   last_name: string | null;
   avatar_url: string | null;
-  role: string;
+  role: AppRole;
   created_at: string;
 }
 
@@ -56,7 +57,7 @@ const UserTable = ({ users, loading, searchTerm, onManageRole }: UserTableProps)
     return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
   };
 
-  const getRoleBadge = (role: string) => {
+  const getRoleBadge = (role: AppRole) => {
     switch (role) {
       case "admin":
         return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">مدير</Badge>;

@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   Table,
@@ -13,9 +14,10 @@ import { useAuth } from "@/context/AuthContext";
 import { useCreateActivity } from "@/hooks/useCreateActivity";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { AppRole } from "@/types/profile";
 
 interface RolePermissionTableProps {
-  onEditRole?: (role: string) => void;
+  onEditRole?: (role: AppRole) => void;
 }
 
 const RolePermissionsTable: React.FC<RolePermissionTableProps> = ({ onEditRole }) => {
@@ -24,25 +26,25 @@ const RolePermissionsTable: React.FC<RolePermissionTableProps> = ({ onEditRole }
   
   const roles = [
     {
-      name: "admin",
+      name: "admin" as AppRole,
       title: "مدير",
       description: "وصول كامل للنظام وإدارة المستخدمين",
       badge: "bg-red-100 text-red-800 hover:bg-red-100",
     },
     {
-      name: "marketing",
+      name: "marketing" as AppRole,
       title: "تسويق",
       description: "إدارة المحتوى والحملات التسويقية",
       badge: "bg-blue-100 text-blue-800 hover:bg-blue-100",
     },
     {
-      name: "designer",
+      name: "designer" as AppRole,
       title: "مصمم",
       description: "إنشاء وتحرير الصور والإعلانات",
       badge: "bg-purple-100 text-purple-800 hover:bg-purple-100",
     },
     {
-      name: "user",
+      name: "user" as AppRole,
       title: "مستخدم",
       description: "وصول أساسي للمشاهدة",
       badge: "bg-gray-100 text-gray-800 hover:bg-gray-100",
@@ -62,18 +64,19 @@ const RolePermissionsTable: React.FC<RolePermissionTableProps> = ({ onEditRole }
     { id: 10, name: "وصول للتحليلات", group: "التقارير" },
   ];
 
-  const permissionMap = {
+  const permissionMap: Record<AppRole, number[]> = {
     admin: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     marketing: [4, 5, 6, 7, 8, 9, 10],
     designer: [4, 5, 7, 8],
     user: [],
+    manager: [1, 2, 4, 5, 9, 10] // Added this role to match the AppRole type
   };
 
-  const hasPermission = (role: string, permissionId: number) => {
-    return permissionMap[role as keyof typeof permissionMap].includes(permissionId);
+  const hasPermission = (role: AppRole, permissionId: number) => {
+    return permissionMap[role].includes(permissionId);
   };
   
-  const handleEditRole = (role: string) => {
+  const handleEditRole = (role: AppRole) => {
     if (onEditRole) {
       logActivity("role_change", `تم بدء تحرير دور ${roles.find(r => r.name === role)?.title || role}`);
       

@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertCircle, Info, Shield } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AppRole } from "@/types/profile";
 
 interface User {
   id: string;
@@ -29,7 +30,7 @@ interface User {
   first_name: string | null;
   last_name: string | null;
   avatar_url: string | null;
-  role: string;
+  role: AppRole;
   created_at: string;
 }
 
@@ -148,7 +149,7 @@ const ManageRoleDialog = ({
                 </label>
                 <Select
                   value={selectedUser.role}
-                  onValueChange={(value) =>
+                  onValueChange={(value: AppRole) =>
                     setSelectedUser({ ...selectedUser, role: value })
                   }
                 >
