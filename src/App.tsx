@@ -4,6 +4,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import RequireAuth from "@/components/auth/RequireAuth";
+import RoleBasedGuard from "@/components/auth/RoleBasedGuard";
 
 // Pages
 import Index from "./pages/Index";
@@ -97,26 +98,26 @@ function App() {
               </RequireAuth>
             } />
             
-            {/* New Module Routes */}
+            {/* New Module Routes with Role-Based Protection */}
             <Route path="/generate-ad" element={
-              <RequireAuth>
+              <RoleBasedGuard allowedRoles={['admin', 'marketing', 'designer']}>
                 <GenerateAd />
-              </RequireAuth>
+              </RoleBasedGuard>
             } />
             <Route path="/schedule-post" element={
-              <RequireAuth>
+              <RoleBasedGuard allowedRoles={['admin', 'marketing']}>
                 <SchedulePost />
-              </RequireAuth>
+              </RoleBasedGuard>
             } />
             <Route path="/product/list" element={
-              <RequireAuth>
+              <RoleBasedGuard allowedRoles={['admin', 'marketing']}>
                 <ProductList />
-              </RequireAuth>
+              </RoleBasedGuard>
             } />
             <Route path="/product/add" element={
-              <RequireAuth>
+              <RoleBasedGuard allowedRoles={['admin', 'marketing']}>
                 <AddProduct />
-              </RequireAuth>
+              </RoleBasedGuard>
             } />
             
             {/* Protected Management Routes */}
@@ -126,26 +127,26 @@ function App() {
               </RequireAuth>
             } />
             <Route path="/users" element={
-              <RequireAuth>
+              <RoleBasedGuard allowedRoles={['admin', 'manager']}>
                 <UserManagement />
-              </RequireAuth>
+              </RoleBasedGuard>
             } />
             
             {/* Protected Analytics and Planning Routes */}
             <Route path="/analytics" element={
-              <RequireAuth>
+              <RoleBasedGuard allowedRoles={['admin', 'manager', 'marketing']}>
                 <Analytics />
-              </RequireAuth>
+              </RoleBasedGuard>
             } />
             <Route path="/scheduler" element={
-              <RequireAuth>
+              <RoleBasedGuard allowedRoles={['admin', 'manager', 'marketing']}>
                 <Scheduler />
-              </RequireAuth>
+              </RoleBasedGuard>
             } />
             <Route path="/scheduler-settings" element={
-              <RequireAuth>
+              <RoleBasedGuard allowedRoles={['admin', 'manager', 'marketing']}>
                 <SchedulerSettings />
-              </RequireAuth>
+              </RoleBasedGuard>
             } />
             <Route path="/documentation" element={
               <RequireAuth>
@@ -153,9 +154,9 @@ function App() {
               </RequireAuth>
             } />
             <Route path="/integration" element={
-              <RequireAuth>
+              <RoleBasedGuard allowedRoles={['admin', 'manager']}>
                 <Integration />
-              </RequireAuth>
+              </RoleBasedGuard>
             } />
             
             {/* 404 Route */}

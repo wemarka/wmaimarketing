@@ -1,202 +1,44 @@
 
 {
   "auth": {
-    "loading": "Loading...",
-    "verifyingUser": "Verifying your session...",
-    "loadingForSeconds": "Loading for {{seconds}} seconds",
-    "redirectingSoon": "Taking longer than expected. Redirecting you shortly..."
+    "verifyingUser": "Verifying user...",
+    "loadingForSeconds": "Loading for {{seconds}} seconds...",
+    "redirectingSoon": "You will be redirected soon...",
+    "verifyingUserRole": "Verifying user permissions...",
+    "accessDenied": "Access Denied",
+    "insufficientPermissions": "You don't have sufficient permissions to access this page"
   },
-  "sidebar": {
-    "groups": {
-      "main": "Main",
-      "mediaAnalytics": "Media & Analytics",
-      "management": "Management",
-      "documentation": "Documentation"
-    }
+  "common": {
+    "back": "Back",
+    "error": "Error",
+    "operationFailed": "Operation failed"
   },
-  "aiStudio": {
-    "title": "AI Studio",
-    "overview": {
-      "welcome": "Welcome to AI Studio",
-      "subtitle": "Explore our AI-powered tools to enhance your content creation and analysis",
-      "exploreAll": "Explore All Tools"
+  "scheduler": {
+    "title": "Schedule New Post",
+    "subtitle": "Create and schedule posts on social media platforms",
+    "contentSection": {
+      "title": "Content",
+      "description": "Create your post content"
     },
-    "tabs": {
-      "overview": "Overview",
-      "images": "Image Generator",
-      "content": "Content Enhancer",
-      "video": "Video Ideas",
-      "analyzer": "Content Analyzer"
+    "mediaSection": {
+      "title": "Media",
+      "description": "Add images or videos to your post"
     },
-    "capabilities": {
-      "contentEnhancement": {
-        "title": "Content Enhancement",
-        "description": "Improve your written content with AI suggestions and refinements"
-      },
-      "imageGeneration": {
-        "title": "Image Generation",
-        "description": "Create stunning images from text descriptions"
-      },
-      "videoIdeas": {
-        "title": "Video Ideas",
-        "description": "Generate creative concepts for your next video project"
-      },
-      "performanceAnalysis": {
-        "title": "Performance Analysis",
-        "description": "Analyze content performance and get AI-powered recommendations"
-      }
+    "settingsSection": {
+      "title": "Settings",
+      "description": "Choose platform, time and other settings"
     },
-    "common": {
-      "popular": "Popular",
-      "comingSoon": "Coming Soon",
-      "tryNow": "Try Now"
-    }
+    "crossPostingSection": {
+      "title": "Cross Posting",
+      "description": "Post content across multiple platforms automatically",
+      "disabled": "Enable cross posting to share content on multiple platforms at once",
+      "selectPlatform": "Please select a platform first"
+    },
+    "crossPostError": "Cross Post Error",
+    "crossPostErrorDesc": "An error occurred while creating cross posts"
   },
-  "dashboard": {
-    "greeting": {
-      "morning": "Good Morning",
-      "afternoon": "Good Afternoon",
-      "evening": "Good Evening",
-      "welcome": "Welcome to your marketing dashboard. Here's what's happening today."
-    },
-    "tabs": {
-      "overview": "Overview",
-      "marketing": "Marketing",
-      "content": "Content",
-      "analytics": "Analytics"
-    },
-    "actions": {
-      "customize": "Customize Dashboard"
-    },
-    "stats": {
-      "impressions": {
-        "title": "Impressions"
-      },
-      "engagement": {
-        "title": "Engagement Rate"
-      },
-      "conversion": {
-        "title": "Conversion Rate"
-      },
-      "totalViews": {
-        "title": "Total Views"
-      },
-      "averageEngagement": {
-        "title": "Avg. Engagement"
-      },
-      "averageClicks": {
-        "title": "Avg. Click Rate"
-      },
-      "roi": {
-        "title": "ROI"
-      }
-    },
-    "trends": {
-      "vsYesterday": "vs yesterday",
-      "vsLastWeek": "vs last week",
-      "vsLastMonth": "vs last month",
-      "vsLastYear": "vs last year"
-    },
-    "performance": {
-      "title": "Performance Overview",
-      "subtitle": "Track your key metrics over time",
-      "timePeriod": "Time period",
-      "periods": {
-        "7days": "Last 7 days",
-        "30days": "Last 30 days",
-        "3months": "Last 3 months",
-        "year": "This year"
-      },
-      "metrics": {
-        "impressions": "Impressions",
-        "engagement": "Engagement",
-        "conversions": "Conversions"
-      }
-    },
-    "marketing": {
-      "title": "Channel Performance",
-      "subtitle": "Compare performance across marketing channels",
-      "timeframe": "Last 30 days",
-      "currentPeriod": "Current period",
-      "previousPeriod": "Previous period"
-    },
-    "content": {
-      "title": "Recent Content Performance",
-      "subtitle": "Your best performing content from the last 7 days",
-      "types": {
-        "post": "Post",
-        "reel": "Reel",
-        "video": "Video"
-      }
-    },
-    "features": {
-      "imageUpload": {
-        "title": "Image Analysis",
-        "description": "Upload product images and get AI analysis for colors, angles, and product details."
-      },
-      "contentCreator": {
-        "title": "Content Creator",
-        "description": "Generate captions and hashtags in multiple languages for different social platforms."
-      },
-      "adGenerator": {
-        "title": "Ad Generator",
-        "description": "Create compelling ads with customizable backgrounds and styles."
-      },
-      "adDesigner": {
-        "title": "Ad Designer",
-        "description": "Design professional ads with advanced customization options."
-      },
-      "campaigns": {
-        "title": "Campaign Manager",
-        "description": "Plan, create, and track your marketing campaigns in one place."
-      },
-      "videoGenerator": {
-        "title": "Video Generator",
-        "description": "Create short marketing videos with animated text, effects, and music."
-      },
-      "scheduler": {
-        "title": "Content Scheduler",
-        "description": "Schedule and publish your content across multiple social platforms."
-      },
-      "analytics": {
-        "title": "Performance Analytics",
-        "description": "Track engagement, reach, and conversion metrics for your marketing campaigns."
-      },
-      "audienceInsights": {
-        "title": "Audience Insights",
-        "description": "Understand your audience demographics, interests, and behaviors."
-      },
-      "engagementMetrics": {
-        "title": "Engagement Metrics",
-        "description": "Measure how users interact with your content across platforms."
-      },
-      "aiStudio": {
-        "title": "AI Studio",
-        "description": "Leverage advanced AI tools to enhance your content creation process."
-      },
-      "openTool": "Open Tool"
-    },
-    "quickActions": {
-      "title": "Quick Actions",
-      "schedule": "Schedule Post",
-      "uploadImage": "Upload Image",
-      "createPost": "Create Post",
-      "viewAnalytics": "View Analytics",
-      "createCampaign": "Create Campaign",
-      "designAd": "Design Ad"
-    },
-    "announcement": {
-      "new": "NEW FEATURE",
-      "title": "Introducing AI Studio: Next-Gen Content Creation",
-      "description": "Create stunning images, enhance your content, and generate creative ideas with our new AI-powered tools.",
-      "action": "Explore AI Studio",
-      "stats": {
-        "templates": "AI Templates",
-        "unlimitedLabel": "Unlimited",
-        "contentCreation": "Content Creation",
-        "priorityLabel": "Priority",
-        "supportUpdates": "Support & Updates"
-      }
-    }
+  "integration": {
+    "accountDisconnected": "Account Disconnected",
+    "accountDisconnectedDesc": "Social media account has been disconnected successfully"
   }
 }

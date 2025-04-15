@@ -1,5 +1,8 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { BaseService } from "./BaseService";
+import { useTranslation } from "react-i18next";
+import { toast } from "@/hooks/use-toast";
 import { enhanceContent } from "@/lib/supabase/models";
 import { Post } from "@/lib/supabase/models";
 
@@ -10,6 +13,7 @@ export interface SchedulePostParams {
   scheduledAt: string;
   mediaUrls?: string[];
   campaignId?: string;
+  crossPostAccountIds?: string[];
 }
 
 export interface PostWithSuggestions extends Post {
@@ -19,187 +23,271 @@ export interface PostWithSuggestions extends Post {
   };
 }
 
+export class SchedulerService extends BaseService {
+  constructor() {
+    super('posts');
+    const { t } = useTranslation();
+    this.t = t;
+  }
+
+  async schedulePost(params: SchedulePostParams): Promise<Post> {
+    try {
+      const userId = await this.getCurrentUserId();
+      
+      const { data, error } = await supabase
+        .from(this.tableName)
+        .insert({
+          title: params.title,
+          content: params.content,
+          platform: params.platform,
+          scheduled_at: params.scheduledAt,
+          media_url: params.mediaUrls || [],
+          status: 'scheduled',
+          user_id: userId,
+          campaign_id: params.campaignId
+        })
+        .select()
+        .single();
+      
+      if (error) throw error;
+      
+      // Handle cross posting if needed
+      if (params.crossPostAccountIds?.length) {
+        await this.handleCrossPosts(params, data.id, userId);
+      }
+      
+      return data as Post;
+    } catch (error) {
+      return this.handleError(error, 'scheduling post');
+    }
+  }
+  
+  private async handleCrossPosts(
+    params: SchedulePostParams, 
+    parentPostId: string, 
+    userId: string
+  ): Promise<void> {
+    try {
+      // Get accounts info
+      const { data: accountsData } = await supabase
+        .from('social_accounts')
+        .select('id, platform')
+        .in('id', params.crossPostAccountIds || []);
+        
+      if (accountsData?.length) {
+        // Create cross-posts for each account
+        const crossPosts = accountsData.map(account => ({
+          title: params.title,
+          content: params.content,
+          platform: account.platform,
+          scheduled_at: params.scheduledAt,
+          media_url: params.mediaUrls || [],
+          status: 'scheduled',
+          campaign_id: params.campaignId,
+          user_id: userId,
+          parent_post_id: parentPostId
+        }));
+        
+        const { error } = await supabase
+          .from(this.tableName)
+          .insert(crossPosts);
+          
+        if (error) {
+          console.error("Error scheduling cross posts:", error);
+          toast({
+            title: this.t('scheduler.crossPostError'),
+            description: this.t('scheduler.crossPostErrorDesc'),
+            variant: "destructive"
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error handling cross posts:", error);
+    }
+  }
+
+  async getScheduledPosts(): Promise<Post[]> {
+    try {
+      const userId = await this.getCurrentUserId();
+      
+      const { data, error } = await supabase
+        .from(this.tableName)
+        .select('*')
+        .eq('user_id', userId)
+        .eq('status', 'scheduled')
+        .order('scheduled_at', { ascending: true });
+      
+      if (error) throw error;
+      
+      return data as Post[];
+    } catch (error) {
+      return this.handleError(error, 'fetching scheduled posts');
+    }
+  }
+
+  async getPendingPosts(): Promise<Post[]> {
+    try {
+      const userId = await this.getCurrentUserId();
+      
+      const { data, error } = await supabase
+        .from(this.tableName)
+        .select('*')
+        .eq('user_id', userId)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      
+      return data as Post[];
+    } catch (error) {
+      return this.handleError(error, 'fetching pending posts');
+    }
+  }
+
+  async updatePostStatus(postId: string, status: string): Promise<Post> {
+    try {
+      const { data, error } = await supabase
+        .from(this.tableName)
+        .update({ status })
+        .eq('id', postId)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      
+      return data as Post;
+    } catch (error) {
+      return this.handleError(error, 'updating post status');
+    }
+  }
+
+  async deletePost(postId: string): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from(this.tableName)
+        .delete()
+        .eq('id', postId);
+      
+      if (error) throw error;
+    } catch (error) {
+      this.handleError(error, 'deleting post');
+    }
+  }
+
+  async getCampaigns(): Promise<any[]> {
+    try {
+      const userId = await this.getCurrentUserId();
+      
+      const { data, error } = await supabase
+        .from('campaigns')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      
+      return data;
+    } catch (error) {
+      return this.handleError(error, 'fetching campaigns');
+    }
+  }
+
+  async getSocialAccounts(): Promise<any[]> {
+    try {
+      const userId = await this.getCurrentUserId();
+      
+      const { data, error } = await supabase
+        .from('social_accounts')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('status', 'active');
+      
+      if (error) throw error;
+      
+      return data;
+    } catch (error) {
+      return this.handleError(error, 'fetching social accounts');
+    }
+  }
+
+  async generateContentSuggestion(baseContent: string, platform: string): Promise<string> {
+    try {
+      const enhancementResult = await enhanceContent({
+        content: baseContent,
+        action: 'improve'
+      });
+      
+      return enhancementResult.result || baseContent;
+    } catch (error) {
+      console.error("Error generating content suggestion:", error);
+      return baseContent;
+    }
+  }
+
+  async generateHashtags(content: string, platform: string): Promise<string[]> {
+    try {
+      const hashtagsResult = await enhanceContent({
+        content,
+        action: 'hashtags'
+      });
+      
+      if (hashtagsResult.result) {
+        return hashtagsResult.result
+          .split(/\s+/)
+          .filter(tag => tag.startsWith('#'))
+          .map(tag => tag.replace('#', ''));
+      }
+      
+      return [];
+    } catch (error) {
+      console.error("Error generating hashtags:", error);
+      return [];
+    }
+  }
+}
+
+// Create a singleton instance of the scheduler service
+export const schedulerService = new SchedulerService();
+
+// Re-export the functions for backward compatibility 
 export const schedulePost = async (params: SchedulePostParams): Promise<Post> => {
-  const { data: user } = await supabase.auth.getUser();
-  
-  if (!user.user) {
-    throw new Error("User not authenticated");
-  }
-  
-  const { data, error } = await supabase
-    .from('posts')
-    .insert({
-      title: params.title,
-      content: params.content,
-      platform: params.platform,
-      scheduled_at: params.scheduledAt,
-      media_url: params.mediaUrls || [],
-      status: 'scheduled',
-      user_id: user.user.id,
-      campaign_id: params.campaignId
-    })
-    .select()
-    .single();
-  
-  if (error) {
-    console.error("Error scheduling post:", error);
-    throw error;
-  }
-  
-  return data as Post;
+  return schedulerService.schedulePost(params);
 };
 
 export const getScheduledPosts = async (): Promise<Post[]> => {
-  const { data: user } = await supabase.auth.getUser();
-  
-  if (!user.user) {
-    throw new Error("User not authenticated");
-  }
-  
-  const { data, error } = await supabase
-    .from('posts')
-    .select('*')
-    .eq('user_id', user.user.id)
-    .eq('status', 'scheduled')
-    .order('scheduled_at', { ascending: true });
-  
-  if (error) {
-    console.error("Error fetching scheduled posts:", error);
-    throw error;
-  }
-  
-  return data as Post[];
+  return schedulerService.getScheduledPosts();
 };
 
 export const getPendingPosts = async (): Promise<Post[]> => {
-  const { data: user } = await supabase.auth.getUser();
-  
-  if (!user.user) {
-    throw new Error("User not authenticated");
-  }
-  
-  const { data, error } = await supabase
-    .from('posts')
-    .select('*')
-    .eq('user_id', user.user.id)
-    .eq('status', 'pending')
-    .order('created_at', { ascending: false });
-  
-  if (error) {
-    console.error("Error fetching pending posts:", error);
-    throw error;
-  }
-  
-  return data as Post[];
+  return schedulerService.getPendingPosts();
 };
 
 export const updatePostStatus = async (postId: string, status: string): Promise<Post> => {
-  const { data, error } = await supabase
-    .from('posts')
-    .update({ status })
-    .eq('id', postId)
-    .select()
-    .single();
-  
-  if (error) {
-    console.error("Error updating post status:", error);
-    throw error;
-  }
-  
-  return data as Post;
+  return schedulerService.updatePostStatus(postId, status);
 };
 
 export const deletePost = async (postId: string): Promise<void> => {
-  const { error } = await supabase
-    .from('posts')
-    .delete()
-    .eq('id', postId);
-  
-  if (error) {
-    console.error("Error deleting post:", error);
-    throw error;
-  }
+  return schedulerService.deletePost(postId);
 };
 
 export const getCampaigns = async (): Promise<any[]> => {
-  const { data: user } = await supabase.auth.getUser();
-  
-  if (!user.user) {
-    throw new Error("User not authenticated");
-  }
-  
-  const { data, error } = await supabase
-    .from('campaigns')
-    .select('*')
-    .eq('user_id', user.user.id)
-    .order('created_at', { ascending: false });
-  
-  if (error) {
-    console.error("Error fetching campaigns:", error);
-    throw error;
-  }
-  
-  return data;
+  return schedulerService.getCampaigns();
 };
 
 export const getSocialAccounts = async (): Promise<any[]> => {
-  const { data: user } = await supabase.auth.getUser();
-  
-  if (!user.user) {
-    throw new Error("User not authenticated");
-  }
-  
-  const { data, error } = await supabase
-    .from('social_accounts')
-    .select('*')
-    .eq('user_id', user.user.id)
-    .eq('status', 'active');
-  
-  if (error) {
-    console.error("Error fetching social accounts:", error);
-    throw error;
-  }
-  
-  return data;
+  return schedulerService.getSocialAccounts();
 };
 
 export const generateContentSuggestion = async (
   baseContent: string,
   platform: string
 ): Promise<string> => {
-  try {
-    const enhancementResult = await enhanceContent({
-      content: baseContent,
-      action: 'improve'
-    });
-    
-    return enhancementResult.result || baseContent;
-  } catch (error) {
-    console.error("Error generating content suggestion:", error);
-    return baseContent;
-  }
+  return schedulerService.generateContentSuggestion(baseContent, platform);
 };
 
 export const generateHashtags = async (
   content: string,
   platform: string
 ): Promise<string[]> => {
-  try {
-    const hashtagsResult = await enhanceContent({
-      content,
-      action: 'hashtags'
-    });
-    
-    if (hashtagsResult.result) {
-      return hashtagsResult.result
-        .split(/\s+/)
-        .filter(tag => tag.startsWith('#'))
-        .map(tag => tag.replace('#', ''));
-    }
-    
-    return [];
-  } catch (error) {
-    console.error("Error generating hashtags:", error);
-    return [];
-  }
+  return schedulerService.generateHashtags(content, platform);
 };
