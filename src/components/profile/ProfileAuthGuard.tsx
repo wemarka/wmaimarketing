@@ -5,26 +5,28 @@ import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 interface ProfileAuthGuardProps {
   children: React.ReactNode;
 }
 
 const ProfileAuthGuard = ({ children }: ProfileAuthGuardProps) => {
-  const { user, loading } = useAuth();
+  const auth = useAuth();
   const location = useLocation();
   const { t } = useTranslation();
   const [loadingTime, setLoadingTime] = useState(0);
   const [showRedirectMessage, setShowRedirectMessage] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("ProfileAuthGuard - Loading:", loading);
-    console.log("ProfileAuthGuard - User:", user ? "authenticated" : "not authenticated");
-  }, [loading, user]);
+    console.log("ProfileAuthGuard - Loading:", auth.loading);
+    console.log("ProfileAuthGuard - User:", auth.user ? "authenticated" : "not authenticated");
+  }, [auth.loading, auth.user]);
 
   // Handle loading state and timing with improved timeout handling
   useEffect(() => {
-    if (loading) {
+    if (auth.loading) {
       const startTime = Date.now();
       const timer = setInterval(() => {
         const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
@@ -35,23 +37,17 @@ const ProfileAuthGuard = ({ children }: ProfileAuthGuardProps) => {
           setShowRedirectMessage(true);
         }
         
-        // Safety timeout to avoid infinite loading (after 3 seconds)
-        if (elapsedTime >= 3) {
-          console.log("ProfileAuthGuard - Safety timeout reached, forcing redirect");
+        // Safety timeout to avoid infinite loading (after 5 seconds)
+        if (elapsedTime >= 5) {
+          console.log("ProfileAuthGuard - Safety timeout reached, will try recovering");
           clearInterval(timer);
           setLoadingTime(0);
           setShowRedirectMessage(false);
           
-          // Show toast notification about timeout
-          toast({
-            title: "تجاوز وقت التحقق من الجلسة",
-            description: "يرجى تحديث الصفحة إذا استمرت هذه المشكلة",
-            variant: "destructive",
-            duration: 5000,
-          });
-          
-          // Force redirect to auth page
-          window.location.href = '/auth';
+          // Try to recover instead of forcing redirect
+          if (!auth.user) {
+            setAuthError("Session verification timed out. Please try refreshing the page.");
+          }
         }
       }, 500);
       
@@ -61,7 +57,7 @@ const ProfileAuthGuard = ({ children }: ProfileAuthGuardProps) => {
       setLoadingTime(0);
       setShowRedirectMessage(false);
     }
-  }, [loading]);
+  }, [auth.loading, auth.user]);
 
   // Animation variants
   const containerVariants = {
@@ -89,7 +85,31 @@ const ProfileAuthGuard = ({ children }: ProfileAuthGuardProps) => {
     }
   };
 
-  if (loading) {
+  // Handle refresh attempt
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
+  if (authError) {
+    return (
+      <div className="flex justify-center items-center h-[60vh]">
+        <div className="bg-card p-6 rounded-lg border shadow-sm max-w-lg w-full text-center">
+          <h2 className="text-xl font-semibold mb-2">حدث خطأ في التحقق من الجلسة</h2>
+          <p className="text-muted-foreground mb-4">{authError}</p>
+          <div className="flex gap-2 justify-center">
+            <Button onClick={handleRefresh}>
+              تحديث الصفحة
+            </Button>
+            <Button variant="outline" onClick={() => window.location.href = "/auth"}>
+              تسجيل الدخول
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (auth.loading) {
     return (
       <AnimatePresence mode="wait">
         <motion.div 
@@ -136,8 +156,12 @@ const ProfileAuthGuard = ({ children }: ProfileAuthGuardProps) => {
     );
   }
 
-  if (!user) {
+  if (!auth.user) {
     console.log("ProfileAuthGuard - Redirecting to auth page");
+    toast({
+      title: "تسجيل الدخول مطلوب",
+      description: "يجب تسجيل الدخول لعرض الملف الشخصي",
+    });
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 

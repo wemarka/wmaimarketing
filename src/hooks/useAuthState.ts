@@ -32,7 +32,7 @@ export const useAuthState = () => {
             first_name: "",
             last_name: "",
             avatar_url: null,
-            role: "user" as AppRole, // Cast to AppRole type
+            role: "user" as AppRole, // Cast to ensure type safety
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           };
@@ -74,7 +74,7 @@ export const useAuthState = () => {
         setLoading(false);
         setInitialLoadComplete(true);
       }
-    }, 3000);
+    }, 5000); // Increase timeout to give more time for auth
 
     // إعداد مستمع حالة المصادقة
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -89,21 +89,29 @@ export const useAuthState = () => {
             setUser(newSession.user);
             setSession(newSession);
             
-            const profileData = await fetchProfile(newSession.user.id);
-            if (isMounted) {
-              setProfile(profileData);
-              console.log("Profile set after sign in:", profileData);
-            }
+            // Delay profile fetch to avoid race conditions
+            setTimeout(async () => {
+              if (!isMounted) return;
+              const profileData = await fetchProfile(newSession.user.id);
+              if (isMounted) {
+                setProfile(profileData);
+                console.log("Profile set after sign in:", profileData);
+                setLoading(false);
+                setInitialLoadComplete(true);
+              }
+            }, 100);
           }
         } else if (event === 'SIGNED_OUT') {
           console.log("User signed out");
           setUser(null);
           setSession(null);
           setProfile(null);
-        }
-        
-        // مهم: دائما تحديث حالة التحميل بعد معالجة الأحداث
-        if (event && isMounted) {
+          if (isMounted) {
+            setLoading(false);
+            setInitialLoadComplete(true);
+          }
+        } else if (isMounted) {
+          // For other events, just update loading state
           setLoading(false);
           setInitialLoadComplete(true);
         }
@@ -120,16 +128,25 @@ export const useAuthState = () => {
       if (currentSession?.user) {
         setUser(currentSession.user);
         setSession(currentSession);
-        const profileData = await fetchProfile(currentSession.user.id);
+        
+        // Delay profile fetch to avoid race conditions
+        setTimeout(async () => {
+          if (!isMounted) return;
+          const profileData = await fetchProfile(currentSession.user.id);
+          if (isMounted) {
+            setProfile(profileData);
+            console.log("Profile set after session check:", profileData);
+            setLoading(false);
+            setInitialLoadComplete(true);
+          }
+        }, 100);
+      } else {
+        // No active session
         if (isMounted) {
-          setProfile(profileData);
-          console.log("Profile set after session check:", profileData);
+          setLoading(false);
+          setInitialLoadComplete(true);
         }
       }
-      
-      // دائما تعيين التحميل على false بعد الفحص الأولي
-      setLoading(false);
-      setInitialLoadComplete(true);
     }).catch(error => {
       console.error("Error getting session:", error);
       if (isMounted) {

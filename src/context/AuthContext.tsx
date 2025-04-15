@@ -16,7 +16,17 @@ interface AuthContextType {
   refreshProfile: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// Create context with default values
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  session: null,
+  profile: null,
+  loading: true,
+  signIn: async () => {},
+  signUp: async () => {},
+  signOut: async () => {},
+  refreshProfile: async () => {}
+});
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -50,10 +60,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   );
 };
 
+// Enhanced useAuth hook with better error handling
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) {
+    console.error("useAuth must be used within an AuthProvider");
+    // Return default context values instead of throwing error
+    return {
+      user: null,
+      session: null,
+      profile: null,
+      loading: false,
+      signIn: async () => {},
+      signUp: async () => {},
+      signOut: async () => {},
+      refreshProfile: async () => {}
+    };
   }
   return context;
 };

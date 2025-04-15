@@ -70,12 +70,23 @@ const Header = () => {
     return '';
   };
   
-  // Create a function to safely use the auth context
-  const AuthAwareUserMenu = () => {
+  // Safety wrapper to check auth context
+  const SafeAuthUserMenu = () => {
+    // Use try-catch to safely access auth context
     try {
-      const { user, profile, signOut } = useAuth();
+      const auth = useAuth();
       
-      if (!user) {
+      // If auth is loading or not initialized yet, show loading state
+      if (auth.loading) {
+        return (
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-24 bg-muted animate-pulse rounded"></div>
+          </div>
+        );
+      }
+      
+      // If no user after loading is complete, show login button
+      if (!auth.user) {
         return (
           <Link to="/auth">
             <Button>{currentLanguage === 'ar' ? 'تسجيل الدخول' : 'Login'}</Button>
@@ -83,26 +94,27 @@ const Header = () => {
         );
       }
       
+      // User is logged in, show user menu
       const getUserInitials = () => {
-        if (profile?.first_name && profile?.last_name) {
-          return `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase();
+        if (auth.profile?.first_name && auth.profile?.last_name) {
+          return `${auth.profile.first_name[0]}${auth.profile.last_name[0]}`.toUpperCase();
         }
         
-        if (profile?.first_name) {
-          return profile.first_name[0].toUpperCase();
+        if (auth.profile?.first_name) {
+          return auth.profile.first_name[0].toUpperCase();
         }
         
-        if (user?.email) {
-          return user.email[0].toUpperCase();
+        if (auth.user?.email) {
+          return auth.user.email[0].toUpperCase();
         }
         
         return 'U';
       };
 
-      const avatarUrl = profile?.avatar_url || '';
-      const userName = profile?.first_name 
-        ? `${profile.first_name} ${profile.last_name || ''}`
-        : user?.email || '';
+      const avatarUrl = auth.profile?.avatar_url || '';
+      const userName = auth.profile?.first_name 
+        ? `${auth.profile.first_name} ${auth.profile.last_name || ''}`
+        : auth.user?.email || '';
 
       return (
         <>
@@ -134,7 +146,7 @@ const Header = () => {
               <DropdownMenuLabel>
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">{userName}</p>
-                  <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                  <p className="text-xs leading-none text-muted-foreground">{auth.user.email}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
@@ -143,7 +155,7 @@ const Header = () => {
                   {currentLanguage === 'ar' ? 'الملف الشخصي' : 'Profile'}
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive focus:text-destructive">
+              <DropdownMenuItem onClick={() => auth.signOut()} className="cursor-pointer text-destructive focus:text-destructive">
                 <LogOut className="mr-2 h-4 w-4" />
                 {currentLanguage === 'ar' ? 'تسجيل الخروج' : 'Log out'}
               </DropdownMenuItem>
@@ -152,7 +164,8 @@ const Header = () => {
         </>
       );
     } catch (error) {
-      console.error("Auth provider not available for header:", error);
+      console.error("Error rendering user menu:", error);
+      // Fallback UI in case of error
       return (
         <Link to="/auth">
           <Button>{currentLanguage === 'ar' ? 'تسجيل الدخول' : 'Login'}</Button>
@@ -175,7 +188,7 @@ const Header = () => {
         
         <div className="flex items-center gap-4">
           <LanguageToggle />
-          <AuthAwareUserMenu />
+          <SafeAuthUserMenu />
         </div>
       </div>
     </header>
