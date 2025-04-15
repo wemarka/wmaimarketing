@@ -62,15 +62,21 @@ const AppSidebar = () => {
       
       <SidebarContent>
         {/* Time display */}
-        <div className="px-4 py-2">
+        <motion.div 
+          className="px-4 py-2"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <div className={cn(
-            "text-center p-2 rounded-md",
-            "bg-gradient-to-r from-beauty-pink/10 to-beauty-purple/10",
-            "text-muted-foreground text-sm"
+            "text-center p-2 rounded-lg",
+            "bg-gradient-to-r from-beauty-purple/20 to-beauty-pink/20",
+            "text-beauty-purple dark:text-beauty-lightpurple text-sm font-medium",
+            "border border-beauty-purple/10 shadow-sm"
           )}>
             {formattedTime}
           </div>
-        </div>
+        </motion.div>
         
         <ScrollArea className="h-[calc(100vh-13rem)]">
           <motion.div

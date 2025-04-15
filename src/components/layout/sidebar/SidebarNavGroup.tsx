@@ -39,7 +39,7 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({ title, items }) => {
   
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>{title}</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-beauty-purple/80 font-medium">{title}</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item, index) => (
@@ -50,6 +50,8 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({ title, items }) => {
                 animate="visible"
                 transition={{ delay: index * 0.05 }}
                 className="w-full"
+                whileHover={{ x: 5 }}
+                whileTap={{ scale: 0.97 }}
               >
                 <NavLink to={item.to} className="w-full">
                   {({ isActive }) => (
@@ -57,17 +59,23 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({ title, items }) => {
                       isActive={isActive}
                       tooltip={item.tooltip}
                       variant={item.variant}
-                      className={cn(item.className, "transition-all duration-200 group")}
+                      className={cn(
+                        item.className, 
+                        "transition-all duration-300 rounded-lg",
+                        isActive 
+                          ? "bg-beauty-purple/15 dark:bg-beauty-purple/30 shadow-sm" 
+                          : "hover:bg-beauty-purple/10 dark:hover:bg-beauty-purple/20"
+                      )}
                     >
                       <span className={cn(
                         "transition-all",
                         isActive 
-                          ? "text-primary scale-110" 
-                          : "text-muted-foreground group-hover:text-foreground/80"
+                          ? "text-beauty-purple scale-110" 
+                          : "text-muted-foreground group-hover:text-beauty-purple/80"
                       )}>{item.icon}</span>
                       <span className={cn(
                         "mr-2 transition-all",
-                        isActive ? "font-medium" : "font-normal"
+                        isActive ? "font-medium text-beauty-purple" : "font-normal"
                       )}>{item.label}</span>
                       {item.badgeText && (
                         <Badge 
@@ -76,7 +84,7 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({ title, items }) => {
                             "mr-auto text-xs",
                             !item.badgeVariant && (
                               isActive 
-                                ? "bg-primary/10 text-primary hover:bg-primary/20" 
+                                ? "bg-beauty-purple/15 text-beauty-purple hover:bg-beauty-purple/20 border border-beauty-purple/20" 
                                 : "bg-muted text-muted-foreground hover:bg-muted/80"
                             )
                           )}

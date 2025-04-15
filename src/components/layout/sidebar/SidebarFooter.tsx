@@ -45,29 +45,53 @@ const SidebarFooter: React.FC = () => {
 
   // Animation variants
   const buttonVariants = {
-    hover: { scale: 1.05, transition: { duration: 0.2 } }
+    hover: { scale: 1.03, transition: { duration: 0.2 } }
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 }
   };
 
   return (
     <Footer className="p-4">
-      <div className="flex flex-col gap-2">
+      <motion.div 
+        className="flex flex-col gap-2"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
         {/* User presence indicator */}
         {profile && (
-          <div className="flex items-center gap-2 mb-2 p-2 rounded-md bg-muted/30">
+          <motion.div 
+            variants={itemVariants}
+            className="flex items-center gap-2 mb-2 p-2 rounded-lg bg-muted/30 border border-border/50 shadow-sm"
+          >
             <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
             <span className="text-xs text-muted-foreground">متصل الآن</span>
-          </div>
+          </motion.div>
         )}
       
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <motion.div whileHover="hover" variants={buttonVariants}>
+            <motion.div variants={itemVariants}>
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="w-full justify-start"
+                className="w-full justify-start bg-beauty-purple/5 border-beauty-purple/20 hover:bg-beauty-purple/10 transition-all duration-300"
               >
-                <HelpCircle className="ml-2 h-4 w-4" />
+                <HelpCircle className="ml-2 h-4 w-4 text-beauty-purple" />
                 <span>المساعدة</span>
               </Button>
             </motion.div>
@@ -86,30 +110,30 @@ const SidebarFooter: React.FC = () => {
           </DropdownMenuContent>
         </DropdownMenu>
         
-        <motion.div whileHover="hover" variants={buttonVariants}>
+        <motion.div variants={itemVariants}>
           <Button 
             variant="outline" 
             size="sm" 
-            className="w-full justify-start"
+            className="w-full justify-start border-beauty-purple/20 hover:bg-beauty-purple/10 transition-all duration-300"
             onClick={handleSettings}
           >
-            <Settings className="ml-2 h-4 w-4" />
+            <Settings className="ml-2 h-4 w-4 text-beauty-purple" />
             <span>الإعدادات</span>
           </Button>
         </motion.div>
         
-        <motion.div whileHover="hover" variants={buttonVariants}>
+        <motion.div variants={itemVariants}>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={handleSignOut}
-            className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-100/50"
+            className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-100/50 transition-all duration-300"
           >
             <LogOut className="ml-2 h-4 w-4" />
             <span>تسجيل الخروج</span>
           </Button>
         </motion.div>
-      </div>
+      </motion.div>
     </Footer>
   );
 };
