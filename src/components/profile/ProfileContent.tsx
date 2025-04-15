@@ -14,7 +14,7 @@ interface ProfileContentProps {
   onUpdateProfile: (data: any) => Promise<void>;
   onChangePassword: (data: any) => Promise<void>;
   onLogoutOtherSessions: () => Promise<void>;
-  onAvatarChange: (url: string) => void;
+  onAvatarChange: (file: File) => void;
   updating: boolean;
   changingPassword: boolean;
   loggingOut: boolean;

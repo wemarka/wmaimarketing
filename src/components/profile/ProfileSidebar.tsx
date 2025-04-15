@@ -14,7 +14,7 @@ interface ProfileSidebarProps {
   firstName: string | null;
   lastName: string | null;
   role: string | null;
-  onAvatarChange: (url: string) => void;
+  onAvatarChange: (file: File) => void;
   activeTab?: string;
   onTabChange?: (tab: string) => void;
 }
