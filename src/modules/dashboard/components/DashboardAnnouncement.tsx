@@ -30,7 +30,7 @@ const DashboardAnnouncement = () => {
       <div className="grid md:grid-cols-8 overflow-hidden">
         <div className="md:col-span-5 bg-gradient-to-br from-beauty-purple/20 to-beauty-purple/5 p-6 relative">
           <button 
-            className="absolute top-4 right-4 hover:bg-slate-200/50 p-1 rounded-full transition-colors"
+            className="absolute top-4 right-4 rtl:left-4 rtl:right-auto hover:bg-slate-200/50 p-1 rounded-full transition-colors"
             onClick={() => setDismissed(true)}
           >
             <X className="h-4 w-4" />
@@ -44,20 +44,20 @@ const DashboardAnnouncement = () => {
             <div className="flex items-center gap-2 mb-1">
               <Sparkles className="h-5 w-5 text-beauty-purple" />
               <p className="text-sm font-medium text-beauty-purple bg-beauty-purple/10 px-2 py-0.5 rounded">
-                {t("dashboard.announcement.new")}
+                {t("dashboard.announcement.new", "New")}
               </p>
             </div>
             <h3 className="text-xl font-semibold mb-2">
-              {t("dashboard.announcement.title")}
+              {t("dashboard.announcement.title", "Unlock Premium AI Features Today!")}
             </h3>
             <p className="text-muted-foreground mb-4 max-w-lg">
-              {t("dashboard.announcement.description")}
+              {t("dashboard.announcement.description", "Get early access to our advanced AI content generation tools and boost your marketing performance with intelligent insights.")}
             </p>
             
             <div className="flex items-center gap-2 mb-4">
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm text-muted-foreground">
-                {t("dashboard.announcement.endsIn", { days: daysRemaining })}
+                {t("dashboard.announcement.endsIn", { days: daysRemaining }, "Ends in {{days}} days")}
               </span>
             </div>
             
@@ -67,7 +67,7 @@ const DashboardAnnouncement = () => {
               onClick={() => navigate("/ai-studio")} 
               className="bg-beauty-purple hover:bg-beauty-purple/90 flex items-center gap-2"
             >
-              {t("dashboard.announcement.action")}
+              {t("dashboard.announcement.action", "Try AI Studio Now")}
               <Sparkles className="h-4 w-4" />
             </Button>
           </motion.div>
@@ -75,24 +75,24 @@ const DashboardAnnouncement = () => {
         
         <div className="md:col-span-3 grid grid-cols-1 divide-y">
           <div className="p-4 text-center flex items-center">
-            <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-            <div className="text-left">
+            <CheckCircle className="h-5 w-5 text-green-500 mr-2 rtl:ml-2 rtl:mr-0" />
+            <div className="text-left rtl:text-right">
               <p className="text-lg font-semibold">+50</p>
-              <p className="text-xs text-muted-foreground">{t("dashboard.announcement.stats.templates")}</p>
+              <p className="text-xs text-muted-foreground">{t("dashboard.announcement.stats.templates", "AI Templates")}</p>
             </div>
           </div>
           <div className="p-4 text-center flex items-center">
-            <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-            <div className="text-left">
-              <p className="text-lg font-semibold">{t("dashboard.announcement.stats.unlimitedLabel")}</p>
-              <p className="text-xs text-muted-foreground">{t("dashboard.announcement.stats.contentCreation")}</p>
+            <CheckCircle className="h-5 w-5 text-green-500 mr-2 rtl:ml-2 rtl:mr-0" />
+            <div className="text-left rtl:text-right">
+              <p className="text-lg font-semibold">{t("dashboard.announcement.stats.unlimitedLabel", "Unlimited")}</p>
+              <p className="text-xs text-muted-foreground">{t("dashboard.announcement.stats.contentCreation", "Content Creation")}</p>
             </div>
           </div>
           <div className="p-4 text-center flex items-center">
-            <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-            <div className="text-left">
-              <p className="text-lg font-semibold">{t("dashboard.announcement.stats.priorityLabel")}</p>
-              <p className="text-xs text-muted-foreground">{t("dashboard.announcement.stats.supportUpdates")}</p>
+            <CheckCircle className="h-5 w-5 text-green-500 mr-2 rtl:ml-2 rtl:mr-0" />
+            <div className="text-left rtl:text-right">
+              <p className="text-lg font-semibold">{t("dashboard.announcement.stats.priorityLabel", "Priority")}</p>
+              <p className="text-xs text-muted-foreground">{t("dashboard.announcement.stats.supportUpdates", "Support & Updates")}</p>
             </div>
           </div>
         </div>

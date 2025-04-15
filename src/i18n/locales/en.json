@@ -6,7 +6,9 @@
     "redirectingSoon": "You will be redirected soon...",
     "verifyingUserRole": "Verifying user permissions...",
     "accessDenied": "Access Denied",
-    "insufficientPermissions": "You don't have sufficient permissions to access this page"
+    "insufficientPermissions": "You don't have sufficient permissions to access this page",
+    "login": "Login",
+    "title": "Authentication"
   },
   "common": {
     "back": "Back",
@@ -17,6 +19,13 @@
   "scheduler": {
     "title": "Schedule New Post",
     "subtitle": "Create and schedule posts on social media platforms",
+    "views": {
+      "list": "Posts List",
+      "calendar": "Calendar",
+      "organize": "Content Organizer",
+      "workflow": "Workflow",
+      "tasks": "Tasks"
+    },
     "contentSection": {
       "title": "Content",
       "description": "Create your post content",
@@ -62,6 +71,110 @@
       "month": "Month"
     },
     "compare": "Compare",
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "todayPriorities": "Today's Priorities",
+    "notifications": "Notifications",
+    "dailyReport": "Daily Report",
+    "priorities": {
+      "schedule": "Schedule 3 posts for new makeup products",
+      "review": "Review weekly ad campaign performance"
+    },
+    "tabs": {
+      "overview": "Overview", 
+      "marketing": "Marketing", 
+      "content": "Content", 
+      "analytics": "Analytics"
+    },
+    "actions": {
+      "customize": "Customize"
+    },
+    "announcement": {
+      "new": "New",
+      "title": "Unlock Premium AI Features Today!",
+      "description": "Get early access to our advanced AI content generation tools and boost your marketing performance with intelligent insights.",
+      "endsIn": "Ends in {{days}} days",
+      "action": "Try AI Studio Now",
+      "stats": {
+        "templates": "AI Templates",
+        "unlimitedLabel": "Unlimited",
+        "contentCreation": "Content Creation",
+        "priorityLabel": "Priority",
+        "supportUpdates": "Support & Updates"
+      }
+    },
+    "stats": {
+      "impressions": {
+        "title": "Impressions"
+      },
+      "engagement": {
+        "title": "Engagement Rate" 
+      },
+      "conversion": {
+        "title": "Conversion Rate"
+      },
+      "totalViews": {
+        "title": "Total Views"
+      },
+      "averageEngagement": {
+        "title": "Avg. Engagement"
+      },
+      "averageClicks": {
+        "title": "Avg. Clicks"
+      },
+      "roi": {
+        "title": "ROI"
+      }
+    },
+    "features": {
+      "adGenerator": {
+        "title": "Ad Generator",
+        "description": "Create compelling ads that convert for your products" 
+      },
+      "campaigns": {
+        "title": "Campaigns",
+        "description": "Create and manage marketing campaigns"
+      },
+      "adDesigner": {
+        "title": "Ad Designer",
+        "description": "Design beautiful ads with our visual editor"
+      },
+      "contentCreator": {
+        "title": "Content Creator",
+        "description": "Generate engaging content for your social platforms"
+      },
+      "videoGenerator": {
+        "title": "Video Generator",
+        "description": "Create professional marketing videos easily"
+      },
+      "aiStudio": {
+        "title": "AI Studio",
+        "description": "AI-powered content creation tools"
+      },
+      "imageUpload": {
+        "title": "Image Upload",
+        "description": "Upload and analyze product images"
+      },
+      "scheduler": {
+        "title": "Scheduler",
+        "description": "Schedule and publish your content"
+      },
+      "analytics": {
+        "title": "Analytics Dashboard",
+        "description": "View comprehensive analytics for your content"
+      },
+      "audienceInsights": {
+        "title": "Audience Insights",
+        "description": "Learn about your audience demographics and behavior"
+      },
+      "engagementMetrics": {
+        "title": "Engagement Metrics",
+        "description": "Track likes, comments, shares and other engagement metrics"
+      }
+    },
     "notifications": {
       "tabs": {
         "all": "All",
@@ -71,5 +184,48 @@
         "system": "System"
       }
     }
+  },
+  "sidebar": {
+    "groups": {
+      "main": "Main",
+      "mediaAnalytics": "Media & Analytics",
+      "management": "Management",
+      "documentation": "Documentation & Features"
+    },
+    "navigation": {
+      "dashboard": "Dashboard",
+      "imageAnalysis": "Image Analysis",
+      "adGenerator": "Ad Generator",
+      "contentCreator": "Content Creator",
+      "videoGenerator": "Video Generator",
+      "scheduler": "Schedule & Publish",
+      "analytics": "Analytics",
+      "profile": "Profile",
+      "userManagement": "User Management",
+      "integrations": "Integrations",
+      "projectPlan": "Project Plan",
+      "aiStudio": "AI Studio"
+    },
+    "tooltip": {
+      "dashboard": "Home Page",
+      "imageAnalysis": "Analyze Product Images",
+      "adGenerator": "Create Compelling Ads",
+      "contentCreator": "Create Outstanding Content",
+      "videoGenerator": "Create Professional Videos",
+      "scheduler": "Schedule and Publish Content",
+      "analytics": "Analyze Content Performance",
+      "profile": "Manage Your Account",
+      "userManagement": "Manage Your Team",
+      "integrations": "Connect with Other Services",
+      "projectPlan": "Project Plan & Documentation",
+      "aiStudio": "AI Studio"
+    },
+    "badge": {
+      "new": "New"
+    },
+    "trialUser": "Trial User",
+    "upgradeAccess": "Upgrade to access all features",
+    "upgradeNow": "Upgrade Now",
+    "signOut": "Sign Out"
   }
 }

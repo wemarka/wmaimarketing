@@ -6,7 +6,9 @@
     "redirectingSoon": "سيتم إعادة التوجيه قريباً...",
     "verifyingUserRole": "جاري التحقق من صلاحيات المستخدم...",
     "accessDenied": "تم رفض الوصول",
-    "insufficientPermissions": "ليس لديك الصلاحيات الكافية للوصول إلى هذه الصفحة"
+    "insufficientPermissions": "ليس لديك الصلاحيات الكافية للوصول إلى هذه الصفحة",
+    "login": "تسجيل الدخول",
+    "title": "المصادقة"
   },
   "common": {
     "back": "رجوع",
@@ -17,6 +19,13 @@
   "scheduler": {
     "title": "جدولة منشور جديد",
     "subtitle": "إنشاء وجدولة منشورات على منصات التواصل الاجتماعي",
+    "views": {
+      "list": "قائمة المنشورات",
+      "calendar": "التقويم",
+      "organize": "تنظيم المحتوى",
+      "workflow": "سير العمل",
+      "tasks": "المهام"
+    },
     "contentSection": {
       "title": "المحتوى",
       "description": "أنشئ محتوى منشورك",
@@ -62,6 +71,110 @@
       "month": "شهر"
     },
     "compare": "مقارنة",
+    "greeting": {
+      "morning": "صباح الخير",
+      "afternoon": "مساء الخير",
+      "evening": "طاب مساؤك"
+    },
+    "todayPriorities": "أولويات اليوم",
+    "notifications": "الإشعارات",
+    "dailyReport": "تقرير اليوم",
+    "priorities": {
+      "schedule": "جدولة 3 منشورات لمنتجات مكياج جديدة",
+      "review": "استعراض أداء الحملة الإعلانية الأسبوعية"
+    },
+    "tabs": {
+      "overview": "نظرة عامة", 
+      "marketing": "التسويق", 
+      "content": "المحتوى", 
+      "analytics": "التحليلات"
+    },
+    "actions": {
+      "customize": "تخصيص"
+    },
+    "announcement": {
+      "new": "جديد",
+      "title": "احصل على ميزات الذكاء الاصطناعي المتميزة اليوم!",
+      "description": "احصل على وصول مبكر لأدوات إنشاء المحتوى المتقدمة بالذكاء الاصطناعي وعزز أداء التسويق الخاص بك مع رؤى ذكية.",
+      "endsIn": "ينتهي خلال {{days}} أيام",
+      "action": "جرّب استوديو الذكاء الاصطناعي الآن",
+      "stats": {
+        "templates": "قوالب ذكاء اصطناعي",
+        "unlimitedLabel": "غير محدود",
+        "contentCreation": "إنشاء المحتوى",
+        "priorityLabel": "الأولوية",
+        "supportUpdates": "الدعم والتحديثات"
+      }
+    },
+    "stats": {
+      "impressions": {
+        "title": "المشاهدات"
+      },
+      "engagement": {
+        "title": "نسبة التفاعل" 
+      },
+      "conversion": {
+        "title": "نسبة التحويل"
+      },
+      "totalViews": {
+        "title": "إجمالي المشاهدات"
+      },
+      "averageEngagement": {
+        "title": "متوسط التفاعل"
+      },
+      "averageClicks": {
+        "title": "متوسط النقرات"
+      },
+      "roi": {
+        "title": "عائد الاستثمار"
+      }
+    },
+    "features": {
+      "adGenerator": {
+        "title": "منشئ الإعلانات",
+        "description": "إنشاء إعلانات مقنعة تحول لمنتجاتك" 
+      },
+      "campaigns": {
+        "title": "الحملات",
+        "description": "إنشاء وإدارة الحملات التسويقية"
+      },
+      "adDesigner": {
+        "title": "مصمم الإعلانات",
+        "description": "تصميم إعلانات جميلة مع محرر مرئي"
+      },
+      "contentCreator": {
+        "title": "منشئ المحتوى",
+        "description": "إنشاء محتوى جذاب لمنصات التواصل الاجتماعي"
+      },
+      "videoGenerator": {
+        "title": "منشئ الفيديو",
+        "description": "إنشاء مقاطع فيديو تسويقية احترافية بسهولة"
+      },
+      "aiStudio": {
+        "title": "استوديو الذكاء الاصطناعي",
+        "description": "أدوات إنشاء المحتوى المدعومة بالذكاء الاصطناعي"
+      },
+      "imageUpload": {
+        "title": "رفع الصور",
+        "description": "رفع وتحليل صور المنتجات"
+      },
+      "scheduler": {
+        "title": "جدولة المحتوى",
+        "description": "جدولة ونشر المحتوى الخاص بك"
+      },
+      "analytics": {
+        "title": "لوحة التحليلات",
+        "description": "عرض تحليلات شاملة للمحتوى الخاص بك"
+      },
+      "audienceInsights": {
+        "title": "تحليلات الجمهور",
+        "description": "تعرف على بيانات الجمهور وسلوكياتهم"
+      },
+      "engagementMetrics": {
+        "title": "مقاييس التفاعل",
+        "description": "تتبع الإعجابات والتعليقات والمشاركات وغيرها من مقاييس التفاعل"
+      }
+    },
     "notifications": {
       "tabs": {
         "all": "الكل",
@@ -71,5 +184,48 @@
         "system": "النظام"
       }
     }
+  },
+  "sidebar": {
+    "groups": {
+      "main": "الرئيسية",
+      "mediaAnalytics": "الوسائط والتحليلات",
+      "management": "الإدارة",
+      "documentation": "التوثيق والميزات"
+    },
+    "navigation": {
+      "dashboard": "لوحة التحكم",
+      "imageAnalysis": "تحليل الصور",
+      "adGenerator": "منشئ الإعلانات",
+      "contentCreator": "منشئ المحتوى",
+      "videoGenerator": "منشئ الفيديو",
+      "scheduler": "الجدولة والنشر",
+      "analytics": "التحليلات",
+      "profile": "الملف الشخصي",
+      "userManagement": "إدارة المستخدمين",
+      "integrations": "التكاملات",
+      "projectPlan": "خطة المشروع",
+      "aiStudio": "استوديو الذكاء الاصطناعي"
+    },
+    "tooltip": {
+      "dashboard": "الصفحة الرئيسية",
+      "imageAnalysis": "تحليل صور المنتجات",
+      "adGenerator": "إنشاء إعلانات جذابة",
+      "contentCreator": "إنشاء محتوى متميز",
+      "videoGenerator": "إنشاء فيديوهات احترافية",
+      "scheduler": "جدولة المحتوى ونشره",
+      "analytics": "تحليل أداء المحتوى",
+      "profile": "إدارة حسابك",
+      "userManagement": "إدارة فريق العمل",
+      "integrations": "ربط مع خدمات أخرى",
+      "projectPlan": "خطة المشروع والتوثيق",
+      "aiStudio": "استوديو الذكاء الاصطناعي"
+    },
+    "badge": {
+      "new": "جديد"
+    },
+    "trialUser": "مستخدم الإصدار التجريبي",
+    "upgradeAccess": "يمكنك الترقية للوصول إلى جميع الميزات",
+    "upgradeNow": "ترقية الآن",
+    "signOut": "تسجيل الخروج"
   }
 }

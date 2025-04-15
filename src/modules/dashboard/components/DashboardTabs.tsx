@@ -21,20 +21,20 @@ const DashboardTabs = () => {
       <div className="flex items-center justify-between mb-6">
         <TabsList>
           <TabsTrigger value="overview" className="px-5">
-            {t("dashboard.tabs.overview")}
+            {t("dashboard.tabs.overview", "Overview")}
           </TabsTrigger>
           <TabsTrigger value="marketing" className="px-5">
-            {t("dashboard.tabs.marketing")}
+            {t("dashboard.tabs.marketing", "Marketing")}
           </TabsTrigger>
           <TabsTrigger value="content" className="px-5">
-            {t("dashboard.tabs.content")}
+            {t("dashboard.tabs.content", "Content")}
           </TabsTrigger>
           <TabsTrigger value="analytics" className="px-5">
-            {t("dashboard.tabs.analytics")}
+            {t("dashboard.tabs.analytics", "Analytics")}
           </TabsTrigger>
         </TabsList>
         <Button variant="outline" size="sm">
-          {t("dashboard.actions.customize")}
+          {t("dashboard.actions.customize", "Customize")}
         </Button>
       </div>
       

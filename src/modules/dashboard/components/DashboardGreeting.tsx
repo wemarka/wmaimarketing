@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 const DashboardGreeting = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { profileData, loading } = useProfile();
   const [currentTime, setCurrentTime] = useState(new Date());
+  const currentLanguage = i18n.language;
   
   // Update time every minute
   useEffect(() => {
@@ -23,13 +24,13 @@ const DashboardGreeting = () => {
   
   const getGreeting = () => {
     const hour = currentTime.getHours();
-    if (hour < 12) return t("dashboard.greeting.morning");
-    if (hour < 18) return t("dashboard.greeting.afternoon");
-    return t("dashboard.greeting.evening");
+    if (hour < 12) return t("dashboard.greeting.morning", "Good morning");
+    if (hour < 18) return t("dashboard.greeting.afternoon", "Good afternoon");
+    return t("dashboard.greeting.evening", "Good evening");
   };
 
   const getCurrentDate = () => {
-    return currentTime.toLocaleDateString('ar-SA', {
+    return currentTime.toLocaleDateString(currentLanguage === 'ar' ? 'ar-SA' : 'en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -38,7 +39,7 @@ const DashboardGreeting = () => {
   };
   
   const getCurrentTime = () => {
-    return currentTime.toLocaleTimeString('ar-SA', {
+    return currentTime.toLocaleTimeString(currentLanguage === 'ar' ? 'ar-SA' : 'en-US', {
       hour: '2-digit',
       minute: '2-digit'
     });
@@ -47,10 +48,10 @@ const DashboardGreeting = () => {
   const greeting = getGreeting();
   const userName = profileData?.first_name || "";
   
-  // Daily priorities - can be connected to a real API later
+  // Daily priorities with translations
   const priorities = [
-    "جدولة 3 منشورات لمنتجات مكياج جديدة",
-    "استعراض أداء الحملة الإعلانية الأسبوعية"
+    t("dashboard.priorities.schedule", "Schedule 3 posts for new makeup products"),
+    t("dashboard.priorities.review", "Review weekly ad campaign performance")
   ];
 
   return (
@@ -82,7 +83,7 @@ const DashboardGreeting = () => {
           <div className="mt-4 md:mt-0 flex flex-col items-end gap-2">
             <div className="bg-white dark:bg-slate-800 py-2 px-4 rounded-lg shadow-sm w-full md:w-auto">
               <div className="flex items-center justify-between">
-                <p className="text-sm font-medium">أولويات اليوم</p>
+                <p className="text-sm font-medium">{t("dashboard.todayPriorities", "Today's Priorities")}</p>
                 <Badge variant="outline" className="text-xs">{priorities.length}</Badge>
               </div>
               <ul className="mt-1 text-sm">
@@ -102,11 +103,11 @@ const DashboardGreeting = () => {
             
             <div className="flex gap-2">
               <Button variant="outline" size="sm" className="text-xs">
-                <Bell className="h-3.5 w-3.5 mr-1" />
-                الإشعارات
+                <Bell className="h-3.5 w-3.5 mr-1 rtl:ml-1 rtl:mr-0" />
+                {t("dashboard.notifications", "Notifications")}
               </Button>
               <Button variant="outline" size="sm" className="text-xs">
-                تقرير اليوم
+                {t("dashboard.dailyReport", "Daily Report")}
               </Button>
             </div>
           </div>
