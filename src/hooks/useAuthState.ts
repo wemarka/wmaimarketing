@@ -4,7 +4,6 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from "@/integrations/supabase/client";
 import { ProfileData } from '@/types/profile';
 
-// Hook منفصل لإدارة حالة المصادقة
 export const useAuthState = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -24,6 +23,35 @@ export const useAuthState = () => {
 
       if (error) {
         console.error('Error fetching profile:', error);
+        
+        // إذا لم يكن الملف موجود، حاول إنشاء واحد
+        if (error.code === 'PGRST116') {
+          console.log("Profile not found, creating a new one");
+          const newProfileData = {
+            id: userId,
+            first_name: "",
+            last_name: "",
+            avatar_url: null,
+            role: "user",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          };
+          
+          const { data: createdProfile, error: insertError } = await supabase
+            .from('profiles')
+            .insert(newProfileData)
+            .select()
+            .single();
+            
+          if (insertError) {
+            console.error('Error creating profile:', insertError);
+            return null;
+          }
+          
+          console.log("Created profile:", createdProfile);
+          return createdProfile as ProfileData;
+        }
+        
         return null;
       }
       
@@ -46,7 +74,7 @@ export const useAuthState = () => {
         setLoading(false);
         setInitialLoadComplete(true);
       }
-    }, 3000); // تقليل من 5000
+    }, 3000);
 
     // إعداد مستمع حالة المصادقة
     const { data: { subscription } } = supabase.auth.onAuthStateChange(

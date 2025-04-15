@@ -25,18 +25,19 @@ const ActivateAdminButton: React.FC<ActivateAdminButtonProps> = ({ className }) 
       if (userId) {
         console.log("Activating admin for user:", userId);
         
-        // Update role to admin
-        const { error } = await supabase
+        // Update role to admin with direct SQL execution for more logging
+        const { error, data } = await supabase
           .from('profiles')
           .update({ role: 'admin' as AppRole })
-          .eq('id', userId);
+          .eq('id', userId)
+          .select();
           
         if (error) {
           console.error("Error updating role:", error);
           throw error;
         }
         
-        console.log("Admin role updated successfully");
+        console.log("Admin role updated successfully:", data);
         
         // Log this action
         await supabase.from("user_activity_log").insert({
@@ -48,9 +49,14 @@ const ActivateAdminButton: React.FC<ActivateAdminButtonProps> = ({ className }) 
         // Refresh the profile to get updated role
         await refreshProfile();
         
+        // Force refresh the page to update navigation items
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+        
         toast({
           title: "تم التفعيل بنجاح",
-          description: "تم تفعيل الحساب كمدير بنجاح. يمكنك الآن الوصول لجميع ميزات النظام للتطوير",
+          description: "تم تفعيل الحساب كمدير بنجاح. سيتم تحديث الصفحة تلقائيًا.",
         });
       } else {
         toast({
