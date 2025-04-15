@@ -19,15 +19,15 @@ const PostsHeader = ({ loading, postsCount, viewMode, onToggleView }: PostsHeade
     <div className="flex flex-row items-center justify-between">
       <div>
         <CardTitle className="text-lg font-medium">المنشورات القادمة</CardTitle>
-        <CardDescription>
-          {loading ? (
-            <span className="inline-block">
-              <Skeleton className="h-4 w-32" />
-            </span>
-          ) : (
-            `${postsCount} منشور مجدول للأيام القادمة`
-          )}
-        </CardDescription>
+        {loading ? (
+          <div className="mt-1">
+            <Skeleton className="h-4 w-32" />
+          </div>
+        ) : (
+          <CardDescription>
+            {`${postsCount} منشور مجدول للأيام القادمة`}
+          </CardDescription>
+        )}
       </div>
       <div className="flex items-center gap-2">
         <Button 
