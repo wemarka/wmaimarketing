@@ -7,8 +7,9 @@ import {
   getCampaigns, 
   getSocialAccounts, 
   generateContentSuggestion,
-  generateHashtags
-} from "../services/schedulerService";
+  generateHashtags,
+  SocialAccount
+} from "../services/integrationService";
 
 export const useSchedulePost = () => {
   const { t } = useTranslation();
@@ -22,11 +23,13 @@ export const useSchedulePost = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [selectedCampaign, setSelectedCampaign] = useState("");
-  const [socialAccounts, setSocialAccounts] = useState<any[]>([]);
+  const [socialAccounts, setSocialAccounts] = useState<SocialAccount[]>([]);
+  const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   const [hashtags, setHashtags] = useState<string[]>([]);
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [mediaUrls, setMediaUrls] = useState<string[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [enableCrossPosting, setEnableCrossPosting] = useState(false);
 
   useEffect(() => {
     loadCampaigns();
@@ -48,6 +51,42 @@ export const useSchedulePost = () => {
       setSocialAccounts(accountsData);
     } catch (error) {
       console.error("Error loading social accounts:", error);
+    }
+  };
+
+  // إضافة وظيفة جديدة للتعامل مع اختيار الحسابات للمشاركة المتعددة
+  const handleAccountToggle = (accountId: string, isChecked: boolean) => {
+    if (isChecked) {
+      setSelectedAccounts(prev => [...prev, accountId]);
+    } else {
+      setSelectedAccounts(prev => prev.filter(id => id !== accountId));
+    }
+  };
+
+  // تحديث وظيفة لتبديل حالة المشاركة المتعددة
+  const toggleCrossPosting = (enabled: boolean) => {
+    setEnableCrossPosting(enabled);
+    if (!enabled) {
+      setSelectedAccounts([]);
+    } else if (platform) {
+      // عند تفعيل المشاركة المتعددة، اختر تلقائياً الحساب الأساسي للمنصة المحددة
+      const primaryAccount = socialAccounts.find(account => account.platform === platform);
+      if (primaryAccount) {
+        setSelectedAccounts([primaryAccount.id]);
+      }
+    }
+  };
+
+  // تحديث وظيفة لاختيار المنصة بحيث تختار تلقائياً الحسابات المرتبطة بها
+  const handlePlatformChange = (selectedPlatform: string) => {
+    setPlatform(selectedPlatform);
+    
+    if (enableCrossPosting) {
+      // عند تغيير المنصة مع تفعيل المشاركة المتعددة، اختر الحساب الرئيسي لتلك المنصة
+      const primaryAccount = socialAccounts.find(account => account.platform === selectedPlatform);
+      if (primaryAccount) {
+        setSelectedAccounts([primaryAccount.id]);
+      }
     }
   };
 
@@ -110,6 +149,11 @@ export const useSchedulePost = () => {
       // Upload media files and get URLs
       // For now, just use the preview URLs as placeholders
       const uploadedUrls = previewUrls.length ? previewUrls : [];
+
+      // تحضير قائمة الحسابات للنشر
+      const accountsToPost = enableCrossPosting && selectedAccounts.length 
+        ? selectedAccounts 
+        : [];
       
       // Schedule the post
       await schedulePost({
@@ -118,10 +162,15 @@ export const useSchedulePost = () => {
         platform,
         scheduledAt: scheduledDate.toISOString(),
         mediaUrls: uploadedUrls,
-        campaignId: selectedCampaign || undefined
+        campaignId: selectedCampaign || undefined,
+        crossPostAccountIds: accountsToPost, // إضافة الحسابات للمشاركة المتعددة
       });
       
-      toast.success(t("scheduler.success.postScheduled"));
+      toast.success(
+        enableCrossPosting && selectedAccounts.length > 1
+          ? t("scheduler.success.postScheduledMultiple", {count: selectedAccounts.length})
+          : t("scheduler.success.postScheduled")
+      );
       
       // Reset the form
       resetForm();
@@ -145,6 +194,8 @@ export const useSchedulePost = () => {
     setHashtags([]);
     setMediaFiles([]);
     setPreviewUrls([]);
+    setSelectedAccounts([]);
+    setEnableCrossPosting(false);
   };
 
   return {
@@ -155,7 +206,7 @@ export const useSchedulePost = () => {
     suggestedContent,
     setSuggestedContent,
     platform,
-    setPlatform,
+    setPlatform: handlePlatformChange,
     selectedDate,
     setSelectedDate,
     selectedTime,
@@ -169,6 +220,10 @@ export const useSchedulePost = () => {
     hashtags,
     mediaFiles,
     previewUrls,
+    selectedAccounts,
+    enableCrossPosting,
+    toggleCrossPosting,
+    handleAccountToggle,
     handleMediaChange,
     removeMedia,
     handleGenerateSuggestion,
