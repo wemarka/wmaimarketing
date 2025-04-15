@@ -1,8 +1,12 @@
 
 import React from "react";
 import { CheckCircle, Calendar, AlertCircle, Bell, MessageCircle, Zap, ClipboardList } from "lucide-react";
-import { NotificationIconProps } from "./types";
 import { cn } from "@/lib/utils";
+
+interface NotificationIconProps {
+  type: string;
+  className?: string;
+}
 
 const NotificationIcon: React.FC<NotificationIconProps> = ({ type, className }) => {
   switch (type) {

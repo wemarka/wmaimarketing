@@ -27,3 +27,19 @@ export interface NotificationItemProps {
   notification: Notification;
   onMarkAsRead: (id: string) => void;
 }
+
+export interface TaskReminder {
+  id: string;
+  title: string;
+  description?: string;
+  dueDate: string;
+  priority: 'low' | 'medium' | 'high';
+  completed: boolean;
+  assignee?: string;
+  relatedPostId?: string;
+}
+
+export interface NotificationIconProps {
+  type: string;
+  className?: string;
+}

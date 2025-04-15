@@ -36,9 +36,9 @@ const EngagementInsights: React.FC = () => {
           </p>
         </div>
         <PeriodSelector 
-          timeRange={timeRange}
+          value={timeRange}
+          onChange={setTimeRange}
           compareMode={compareMode}
-          onTimeRangeChange={setTimeRange}
           onCompareModeToggle={() => setCompareMode(!compareMode)}
         />
       </CardHeader>

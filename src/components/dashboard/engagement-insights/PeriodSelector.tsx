@@ -7,9 +7,16 @@ import { useTranslation } from "react-i18next";
 interface PeriodSelectorProps {
   value: string;
   onChange: (value: string) => void;
+  compareMode?: boolean;
+  onCompareModeToggle?: () => void;
 }
 
-export const PeriodSelector = ({ value, onChange }: PeriodSelectorProps) => {
+export const PeriodSelector = ({ 
+  value, 
+  onChange,
+  compareMode,
+  onCompareModeToggle
+}: PeriodSelectorProps) => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
   
@@ -26,13 +33,17 @@ export const PeriodSelector = ({ value, onChange }: PeriodSelectorProps) => {
         </SelectContent>
       </Select>
       
-      <Button 
-        variant="outline" 
-        size="sm"
-        className={isRTL ? "mr-2" : "ml-2"}
-      >
-        {t("dashboard.compare", "Compare")}
-      </Button>
+      {onCompareModeToggle && (
+        <Button 
+          variant="outline" 
+          size="sm"
+          className={isRTL ? "mr-2" : "ml-2"}
+          onClick={onCompareModeToggle}
+          data-state={compareMode ? "active" : "inactive"}
+        >
+          {t("dashboard.compare", "Compare")}
+        </Button>
+      )}
     </div>
   );
 };
