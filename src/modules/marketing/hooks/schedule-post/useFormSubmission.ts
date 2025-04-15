@@ -2,11 +2,10 @@
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { schedulePost } from "../../services/integrationService";
-import { UseSchedulePostState } from "./types";
+import { UseSchedulePostStateWithSetters } from "./types";
 
 export const useFormSubmission = (
-  state: UseSchedulePostState & {
-    setIsSubmitting: React.Dispatch<React.SetStateAction<boolean>>;
+  state: UseSchedulePostStateWithSetters & {
     resetForm: () => void;
   }
 ) => {

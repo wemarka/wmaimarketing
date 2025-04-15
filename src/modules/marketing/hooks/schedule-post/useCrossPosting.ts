@@ -1,10 +1,7 @@
 
-import { UseSchedulePostState } from "./types";
+import { UseSchedulePostStateWithSetters } from "./types";
 
-export const useCrossPosting = (state: UseSchedulePostState & {
-  setSelectedAccounts: React.Dispatch<React.SetStateAction<string[]>>;
-  setEnableCrossPosting: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+export const useCrossPosting = (state: UseSchedulePostStateWithSetters) => {
   const { 
     platform, 
     socialAccounts, 

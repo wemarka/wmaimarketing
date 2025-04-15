@@ -4,9 +4,9 @@ import {
   getCampaigns, 
   getSocialAccounts,
 } from "../../services/integrationService";
-import { UseSchedulePostState } from "./types";
+import { UseSchedulePostState, UseSchedulePostStateSetters, UseSchedulePostStateWithSetters } from "./types";
 
-export const useSchedulePostState = (): UseSchedulePostState => {
+export const useSchedulePostState = (): UseSchedulePostStateWithSetters => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [suggestedContent, setSuggestedContent] = useState("");
@@ -50,36 +50,38 @@ export const useSchedulePostState = (): UseSchedulePostState => {
 
   return {
     title,
-    setTitle,
     content,
-    setContent,
     suggestedContent,
-    setSuggestedContent,
     platform,
-    setPlatform,
     selectedDate,
-    setSelectedDate,
     selectedTime,
-    setSelectedTime,
     isGenerating,
-    setIsGenerating,
     isSubmitting,
-    setIsSubmitting,
     campaigns,
     selectedCampaign,
-    setSelectedCampaign,
     socialAccounts,
     selectedAccounts,
-    setSelectedAccounts,
     hashtags,
-    setHashtags,
     mediaFiles,
-    setMediaFiles,
     mediaUrls,
-    setMediaUrls,
     previewUrls,
-    setPreviewUrls,
     enableCrossPosting,
-    setEnableCrossPosting,
+    
+    // Include all setters
+    setTitle,
+    setContent,
+    setSuggestedContent,
+    setPlatform,
+    setSelectedDate,
+    setSelectedTime,
+    setIsGenerating,
+    setIsSubmitting,
+    setSelectedCampaign,
+    setSelectedAccounts,
+    setHashtags,
+    setMediaFiles,
+    setMediaUrls,
+    setPreviewUrls,
+    setEnableCrossPosting
   };
 };

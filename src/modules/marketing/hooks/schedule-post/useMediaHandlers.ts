@@ -1,11 +1,8 @@
 
-import { UseSchedulePostState } from "./types";
+import { UseSchedulePostStateWithSetters } from "./types";
 
-export const useMediaHandlers = (state: UseSchedulePostState & {
-  setMediaFiles: React.Dispatch<React.SetStateAction<File[]>>;
-  setPreviewUrls: React.Dispatch<React.SetStateAction<string[]>>;
-}) => {
-  const { setMediaFiles, setPreviewUrls } = state;
+export const useMediaHandlers = (state: UseSchedulePostStateWithSetters) => {
+  const { setMediaFiles, setPreviewUrls, previewUrls } = state;
 
   const handleMediaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files || event.target.files.length === 0) return;
@@ -22,7 +19,9 @@ export const useMediaHandlers = (state: UseSchedulePostState & {
     setMediaFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
     
     // Revoke the URL to prevent memory leaks
-    URL.revokeObjectURL(state.previewUrls[index]);
+    if (previewUrls[index]) {
+      URL.revokeObjectURL(previewUrls[index]);
+    }
     setPreviewUrls(prevUrls => prevUrls.filter((_, i) => i !== index));
   };
 

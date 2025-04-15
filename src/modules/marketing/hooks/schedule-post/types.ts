@@ -1,5 +1,6 @@
 
 import { SocialAccount } from "../../services/integrationService";
+import { Dispatch, SetStateAction } from "react";
 
 export interface UseSchedulePostState {
   title: string;
@@ -21,14 +22,25 @@ export interface UseSchedulePostState {
   isSubmitting: boolean;
 }
 
+export interface UseSchedulePostStateSetters {
+  setTitle: Dispatch<SetStateAction<string>>;
+  setContent: Dispatch<SetStateAction<string>>;
+  setSuggestedContent: Dispatch<SetStateAction<string>>;
+  setPlatform: Dispatch<SetStateAction<string>>;
+  setSelectedDate: Dispatch<SetStateAction<Date | undefined>>;
+  setSelectedTime: Dispatch<SetStateAction<string>>;
+  setSelectedCampaign: Dispatch<SetStateAction<string>>;
+  setSelectedAccounts: Dispatch<SetStateAction<string[]>>;
+  setHashtags: Dispatch<SetStateAction<string[]>>;
+  setMediaFiles: Dispatch<SetStateAction<File[]>>;
+  setMediaUrls: Dispatch<SetStateAction<string[]>>;
+  setPreviewUrls: Dispatch<SetStateAction<string[]>>;
+  setEnableCrossPosting: Dispatch<SetStateAction<boolean>>;
+  setIsGenerating: Dispatch<SetStateAction<boolean>>;
+  setIsSubmitting: Dispatch<SetStateAction<boolean>>;
+}
+
 export interface UseSchedulePostActions {
-  setTitle: (title: string) => void;
-  setContent: (content: string) => void;
-  setSuggestedContent: (content: string) => void;
-  setPlatform: (platform: string) => void;
-  setSelectedDate: (date: Date | undefined) => void;
-  setSelectedTime: (time: string) => void;
-  setSelectedCampaign: (campaignId: string) => void;
   handleAccountToggle: (accountId: string, isChecked: boolean) => void;
   toggleCrossPosting: (enabled: boolean) => void;
   handleMediaChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -39,3 +51,5 @@ export interface UseSchedulePostActions {
 }
 
 export type UseSchedulePostReturn = UseSchedulePostState & UseSchedulePostActions;
+
+export type UseSchedulePostStateWithSetters = UseSchedulePostState & UseSchedulePostStateSetters;

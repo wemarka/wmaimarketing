@@ -2,13 +2,9 @@
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { generateContentSuggestion, generateHashtags } from "../../services/integrationService";
-import { UseSchedulePostState } from "./types";
+import { UseSchedulePostStateWithSetters } from "./types";
 
-export const useContentGeneration = (state: UseSchedulePostState & {
-  setIsGenerating: React.Dispatch<React.SetStateAction<boolean>>;
-  setSuggestedContent: React.Dispatch<React.SetStateAction<string>>;
-  setHashtags: React.Dispatch<React.SetStateAction<string[]>>;
-}) => {
+export const useContentGeneration = (state: UseSchedulePostStateWithSetters) => {
   const { t } = useTranslation();
   const { 
     content, 
