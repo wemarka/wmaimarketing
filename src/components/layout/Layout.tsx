@@ -5,6 +5,7 @@ import { SidebarProvider, SidebarRail, SidebarInset } from "@/components/ui/side
 import AppSidebar from "./AppSidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileNavbar from "./MobileNavbar";
+import { useAuth } from "@/context/AuthContext";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,11 +13,24 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const isMobile = useIsMobile();
+  
+  // We need to wrap the Layout content with error boundary to catch Auth context errors
+  // This provides a fallback if the auth context is not available
+  const AuthAwareSidebar = () => {
+    try {
+      // This will throw if AuthProvider is not available
+      useAuth();
+      return <AppSidebar />;
+    } catch (error) {
+      console.error("Auth provider not available for sidebar:", error);
+      return null;
+    }
+  };
 
   return (
     <SidebarProvider defaultOpen={!isMobile}>
       <div className="flex min-h-screen w-full bg-background">
-        <AppSidebar />
+        <AuthAwareSidebar />
         <SidebarRail />
         
         <SidebarInset>

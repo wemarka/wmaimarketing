@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const Header = () => {
-  const { user, profile, signOut } = useAuth();
   const location = useLocation();
   const { t, i18n } = useTranslation();
   const currentLanguage = i18n.language;
@@ -71,26 +70,96 @@ const Header = () => {
     return '';
   };
   
-  const getUserInitials = () => {
-    if (profile?.first_name && profile?.last_name) {
-      return `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase();
-    }
-    
-    if (profile?.first_name) {
-      return profile.first_name[0].toUpperCase();
-    }
-    
-    if (user?.email) {
-      return user.email[0].toUpperCase();
-    }
-    
-    return 'U';
-  };
+  // Create a function to safely use the auth context
+  const AuthAwareUserMenu = () => {
+    try {
+      const { user, profile, signOut } = useAuth();
+      
+      if (!user) {
+        return (
+          <Link to="/auth">
+            <Button>{currentLanguage === 'ar' ? 'تسجيل الدخول' : 'Login'}</Button>
+          </Link>
+        );
+      }
+      
+      const getUserInitials = () => {
+        if (profile?.first_name && profile?.last_name) {
+          return `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase();
+        }
+        
+        if (profile?.first_name) {
+          return profile.first_name[0].toUpperCase();
+        }
+        
+        if (user?.email) {
+          return user.email[0].toUpperCase();
+        }
+        
+        return 'U';
+      };
 
-  const avatarUrl = profile?.avatar_url || '';
-  const userName = profile?.first_name 
-    ? `${profile.first_name} ${profile.last_name || ''}`
-    : user?.email || '';
+      const avatarUrl = profile?.avatar_url || '';
+      const userName = profile?.first_name 
+        ? `${profile.first_name} ${profile.last_name || ''}`
+        : user?.email || '';
+
+      return (
+        <>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="relative hover:bg-secondary"
+          >
+            <Bell className="h-5 w-5" />
+            <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive text-[10px] text-destructive-foreground flex items-center justify-center">
+              3
+            </span>
+          </Button>
+          
+          <Separator orientation="vertical" className="h-6" />
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="hover:bg-secondary rounded-full">
+                <Avatar className="h-9 w-9 border-2 border-border hover:border-primary transition-colors">
+                  {avatarUrl ? <AvatarImage src={avatarUrl} /> : null}
+                  <AvatarFallback className="bg-beauty-purple/10 text-beauty-purple">
+                    {getUserInitials()}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{userName}</p>
+                  <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to="/profile" className="cursor-pointer">
+                  {currentLanguage === 'ar' ? 'الملف الشخصي' : 'Profile'}
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive focus:text-destructive">
+                <LogOut className="mr-2 h-4 w-4" />
+                {currentLanguage === 'ar' ? 'تسجيل الخروج' : 'Log out'}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
+      );
+    } catch (error) {
+      console.error("Auth provider not available for header:", error);
+      return (
+        <Link to="/auth">
+          <Button>{currentLanguage === 'ar' ? 'تسجيل الدخول' : 'Login'}</Button>
+        </Link>
+      );
+    }
+  };
 
   return (
     <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -106,58 +175,7 @@ const Header = () => {
         
         <div className="flex items-center gap-4">
           <LanguageToggle />
-          
-          {user ? (
-            <>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="relative hover:bg-secondary"
-              >
-                <Bell className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive text-[10px] text-destructive-foreground flex items-center justify-center">
-                  3
-                </span>
-              </Button>
-              
-              <Separator orientation="vertical" className="h-6" />
-              
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="hover:bg-secondary rounded-full">
-                    <Avatar className="h-9 w-9 border-2 border-border hover:border-primary transition-colors">
-                      {avatarUrl ? <AvatarImage src={avatarUrl} /> : null}
-                      <AvatarFallback className="bg-beauty-purple/10 text-beauty-purple">
-                        {getUserInitials()}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{userName}</p>
-                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/profile" className="cursor-pointer">
-                      {currentLanguage === 'ar' ? 'الملف الشخصي' : 'Profile'}
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive focus:text-destructive">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    {currentLanguage === 'ar' ? 'تسجيل الخروج' : 'Log out'}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </>
-          ) : (
-            <Link to="/auth">
-              <Button>{currentLanguage === 'ar' ? 'تسجيل الدخول' : 'Login'}</Button>
-            </Link>
-          )}
+          <AuthAwareUserMenu />
         </div>
       </div>
     </header>
