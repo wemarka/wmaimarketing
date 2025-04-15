@@ -84,7 +84,7 @@ const AppSidebar = () => {
                 <Avatar className="h-10 w-10 border-2 border-white hover:border-purple-200 transition-all duration-200">
                   <img
                     src={profile?.avatar_url || "https://github.com/shadcn.png"}
-                    alt={profile?.full_name || "User"}
+                    alt={profile ? `${profile.first_name} ${profile.last_name}` : "User"}
                     className="object-cover"
                   />
                 </Avatar>
