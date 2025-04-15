@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useAnalyticsQuery } from "../analytics/components/dashboard/hooks/useAnalyticsQuery";
+import { useAnalyticsQuery } from "@/modules/analytics/components/dashboard/hooks/useAnalyticsQuery";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useToast } from "@/hooks/use-toast";
 

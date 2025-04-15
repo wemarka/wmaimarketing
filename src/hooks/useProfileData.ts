@@ -13,7 +13,7 @@ export const useProfileData = () => {
   
   // تحسين الأداء: زيادة وقت التخزين المؤقت وتقليل عمليات إعادة التحميل
   const staleTime = 5 * 60 * 1000; // 5 دقائق
-  const cacheTime = 30 * 60 * 1000; // 30 دقيقة
+  const gcTime = 30 * 60 * 1000; // 30 دقيقة
   
   // استخدام React Query لجلب بيانات الملف الشخصي بأداء محسن
   const { data: profileData, isLoading: loading } = useQuery({
@@ -48,7 +48,7 @@ export const useProfileData = () => {
     ...queryConfig,
     enabled: !!user, // تمكين الاستعلام فقط إذا كان المستخدم متاحًا
     staleTime: staleTime, // تقليل عدد مرات إعادة التحميل
-    cacheTime: cacheTime, // زيادة وقت التخزين المؤقت
+    gcTime: gcTime, // زيادة وقت التخزين المؤقت
     meta: {
       onError: (error: any) => {
         console.error("Error in profile operation:", error);

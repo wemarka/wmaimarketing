@@ -49,7 +49,7 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
   const queryConfig = useQueryConfig("analyticsData");
 
   // تحسين أداء التخزين المؤقت
-  const cacheTime = 10 * 60 * 1000; // 10 دقائق
+  const gcTime = 10 * 60 * 1000; // 10 دقائق
   const staleTime = 5 * 60 * 1000; // 5 دقائق
 
   // توليد مفاتيح التخزين المؤقت بناءً على المستخدم والفترة
@@ -135,8 +135,8 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
         };
         
         // تخزين النتائج في ذاكرة التخزين المؤقت لتجربة أفضل دون اتصال
-        setCachedData(`analytics_overview_${user.id}_${period}`, dailyData, cacheTime);
-        setCachedData(`analytics_engagement_${user.id}_${period}`, dailyEngagementData, cacheTime);
+        setCachedData(`analytics_overview_${user.id}_${period}`, dailyData, gcTime);
+        setCachedData(`analytics_engagement_${user.id}_${period}`, dailyEngagementData, gcTime);
         
         logActivity("analytics_data_fetched", "تم جلب بيانات التحليلات بنجاح").catch(console.error);
         
@@ -179,7 +179,7 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
     // تحسين إعدادات التخزين المؤقت
     ...queryConfig,
     staleTime: staleTime, // لا يعاد تحميل البيانات إلا بعد 5 دقائق من آخر طلب
-    cacheTime: cacheTime, // الاحتفاظ بالبيانات في الذاكرة لمدة 10 دقائق
+    gcTime: gcTime, // الاحتفاظ بالبيانات في الذاكرة لمدة 10 دقائق
     // استراتيجية إعادة المحاولة المحسنة لأنواع مختلفة من الأخطاء
     retry: (failureCount, error: any) => {
       const errorType = getErrorType(error);
