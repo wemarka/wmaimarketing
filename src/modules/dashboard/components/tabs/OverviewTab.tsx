@@ -15,9 +15,7 @@ const OverviewTab = () => {
         <h2 className="text-2xl font-bold">{t("dashboard.overview.title", "النظرة العامة")}</h2>
         <div className="flex items-center space-x-2 space-x-reverse">
           
-          <button className="p-1 rounded-md hover:bg-muted text-muted-foreground">
-            <Grid className="h-4 w-4" />
-          </button>
+          
         </div>
       </div>
       
