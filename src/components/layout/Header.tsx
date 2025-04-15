@@ -13,6 +13,11 @@ import { useProfile } from "@/hooks/useProfile";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 
+import SearchBar from "./header/SearchBar";
+import ThemeToggle from "./header/ThemeToggle";
+import NotificationsPopover from "./header/NotificationsPopover";
+import UserMenu from "./header/UserMenu";
+
 const getPageTitle = (pathname: string) => {
   const paths = {
     "/": "الرئيسية",
