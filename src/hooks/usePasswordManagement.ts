@@ -43,10 +43,9 @@ export const usePasswordManagement = () => {
     setLoggingOut(true);
     
     try {
-      const { error } = await supabase.auth.refreshSession({
-        refreshOptions: {
-          onlyCurrentSession: true,
-        }
+      // Fix: Use signOut with the scope parameter instead of refreshSession with refreshOptions
+      const { error } = await supabase.auth.signOut({ 
+        scope: 'others' 
       });
       
       if (error) throw error;
