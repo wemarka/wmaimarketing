@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -13,12 +12,6 @@ import { useAuth } from "@/context/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
-
-// Import the components
-import SearchBar from "./header/SearchBar";
-import ThemeToggle from "./header/ThemeToggle";
-import NotificationsPopover from "./header/NotificationsPopover";
-import UserMenu from "./header/UserMenu";
 
 const getPageTitle = (pathname: string) => {
   const paths = {
@@ -54,7 +47,6 @@ const Header: React.FC = () => {
   const currentLanguage = i18n.language;
   const [showFullHeader, setShowFullHeader] = useState(true);
   
-  // Update time every minute
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -100,7 +92,6 @@ const Header: React.FC = () => {
   const greeting = getGreeting();
   const userName = profileData?.first_name || "";
   
-  // Daily priorities
   const priorities = [
     t("dashboard.priorities.schedule", "جدولة 3 منشورات لمنتجات مكياج جديدة"),
     t("dashboard.priorities.review", "استعراض أداء الحملة الإعلانية الأسبوعية")
@@ -118,7 +109,7 @@ const Header: React.FC = () => {
         "sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
       )}
     >
-      <div className="container px-4">
+      <div className="w-full px-4 md:px-6 lg:px-8 xl:px-12">
         <AnimatePresence>
           {showFullHeader && (
             <motion.div
@@ -128,16 +119,16 @@ const Header: React.FC = () => {
               transition={{ duration: 0.3 }}
               className="overflow-hidden"
             >
-              <div className="bg-gradient-to-r from-beauty-purple/25 via-beauty-purple/15 to-transparent py-6 px-6 rounded-xl shadow-sm border border-beauty-purple/10 dark:border-beauty-purple/5 my-3">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+              <div className="bg-gradient-to-r from-beauty-purple/25 via-beauty-purple/15 to-transparent py-6 px-6 rounded-xl shadow-sm border border-beauty-purple/10 dark:border-beauty-purple/5 my-3 w-full">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between w-full">
                   <motion.div 
-                    className="flex items-center gap-3"
+                    className="flex items-center gap-3 w-full"
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.4, delay: 0.1 }}
                   >
                     <SidebarTrigger>
-                      <Button variant="ghost" size="icon" className="md:hidden hover:bg-beauty-purple/10 hover:text-beauty-purple">
+                      <Button variant="ghost" size="icon" className="md:hidden hover:bg-beauty-purple/10">
                         <Menu className="h-5 w-5" />
                         <span className="sr-only">تبديل القائمة</span>
                       </Button>
@@ -174,7 +165,7 @@ const Header: React.FC = () => {
                   </motion.div>
                   
                   <motion.div 
-                    className="mt-4 md:mt-0 flex flex-wrap items-center justify-between gap-4"
+                    className="mt-4 md:mt-0 flex flex-wrap items-center justify-between gap-4 w-full"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2, duration: 0.4 }}
@@ -197,19 +188,12 @@ const Header: React.FC = () => {
                     </div>
                     
                     <div className="flex items-center gap-2 sm:gap-3">
-                      {/* Search Bar Component */}
                       <SearchBar />
-                      
-                      {/* Theme Toggle Component */}
                       <ThemeToggle />
-                      
-                      {/* Notifications Component */}
                       <NotificationsPopover
                         notificationCount={notificationCount}
                         onNotificationClick={handleNotificationClick}
                       />
-                      
-                      {/* User Menu Component */}
                       <UserMenu
                         userEmail={user?.email}
                         onSignOut={() => signOut && signOut()}
@@ -222,37 +206,38 @@ const Header: React.FC = () => {
           )}
         </AnimatePresence>
         
-        {/* عنوان الصفحة */}
         <motion.div 
-          className="flex h-14 items-center"
+          className="flex h-14 items-center w-full"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="flex items-center gap-2">
-            {!showFullHeader && (
-              <SidebarTrigger>
-                <Button variant="ghost" size="icon" className="md:hidden hover:bg-beauty-purple/10">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SidebarTrigger>
-            )}
+          <div className="flex items-center gap-2 w-full justify-between">
             <div className="flex items-center gap-2">
-              {location.pathname === "/dashboard" && <LayoutDashboard className="h-5 w-5 text-beauty-purple" />}
-              <h2 className="text-lg font-semibold">{getPageTitle(location.pathname)}</h2>
+              {!showFullHeader && (
+                <SidebarTrigger>
+                  <Button variant="ghost" size="icon" className="md:hidden hover:bg-beauty-purple/10">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SidebarTrigger>
+              )}
+              <div className="flex items-center gap-2">
+                {location.pathname === "/dashboard" && <LayoutDashboard className="h-5 w-5 text-beauty-purple" />}
+                <h2 className="text-lg font-semibold">{getPageTitle(location.pathname)}</h2>
+              </div>
             </div>
+            
+            {!showFullHeader && (
+              <div className="flex items-center gap-2">
+                <SearchBar />
+                <ThemeToggle />
+                <NotificationsPopover
+                  notificationCount={notificationCount}
+                  onNotificationClick={handleNotificationClick}
+                />
+              </div>
+            )}
           </div>
-          
-          {!showFullHeader && (
-            <div className="ml-auto flex items-center gap-2">
-              <SearchBar />
-              <ThemeToggle />
-              <NotificationsPopover
-                notificationCount={notificationCount}
-                onNotificationClick={handleNotificationClick}
-              />
-            </div>
-          )}
         </motion.div>
       </div>
     </motion.header>
