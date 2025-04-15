@@ -29,7 +29,8 @@ const RoleBasedGuard = ({
     console.log("RoleBasedGuard - User:", user ? "authenticated" : "not authenticated");
     console.log("RoleBasedGuard - Role:", profile?.role);
     console.log("RoleBasedGuard - Allowed Roles:", allowedRoles);
-  }, [loading, user, profile, allowedRoles]);
+    console.log("RoleBasedGuard - Path:", location.pathname);
+  }, [loading, user, profile, allowedRoles, location.pathname]);
 
   // Handle loading state and timing
   useEffect(() => {
@@ -50,14 +51,6 @@ const RoleBasedGuard = ({
           clearInterval(timer);
           setLoadingTime(0);
           setShowRedirectMessage(false);
-          
-          // Show toast notification about timeout
-          toast({
-            title: "تجاوز وقت التحقق من الصلاحيات",
-            description: "يرجى تحديث الصفحة إذا استمرت هذه المشكلة",
-            variant: "destructive",
-            duration: 5000,
-          });
         }
       }, 500);
       
@@ -113,9 +106,14 @@ const RoleBasedGuard = ({
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  // Then check if user has required role
+  // Get user role, defaulting to 'user' if not found
+  // Fixed: Ensure we always have a role value
   const userRole = profile?.role || 'user';
-  const hasRequiredRole = allowedRoles.includes(userRole);
+  
+  // Check if user has required role - make case insensitive
+  const normalizedUserRole = userRole.toLowerCase();
+  const normalizedAllowedRoles = allowedRoles.map(role => role.toLowerCase());
+  const hasRequiredRole = normalizedAllowedRoles.includes(normalizedUserRole);
 
   console.log("RoleBasedGuard - User role:", userRole);
   console.log("RoleBasedGuard - Has required role:", hasRequiredRole);
@@ -123,6 +121,7 @@ const RoleBasedGuard = ({
   if (!hasRequiredRole) {
     console.log(`RoleBasedGuard - User role ${userRole} not in allowed roles:`, allowedRoles);
     
+    // Show access denied toast
     toast({
       title: t('auth.accessDenied'),
       description: t('auth.insufficientPermissions'),

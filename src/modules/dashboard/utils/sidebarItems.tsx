@@ -29,6 +29,12 @@ interface NavItem {
 }
 
 export const useRBACSidebar = (userRole: string = 'user') => {
+  // Normalize the role to lowercase for case-insensitive comparison
+  const normalizedUserRole = userRole.toLowerCase();
+  
+  console.log("useRBACSidebar - User role:", userRole);
+  console.log("useRBACSidebar - Normalized user role:", normalizedUserRole);
+
   // Define groups of navigation items with role-based access control
   const dashboardItems = [
     {
@@ -169,9 +175,25 @@ export const useRBACSidebar = (userRole: string = 'user') => {
     }
   ];
 
-  // Filter items based on user role
+  // Enhanced filter function with case-insensitive comparison
   const filterByRole = (items: NavItem[]) => {
-    return items.filter(item => !item.roles || item.roles.includes(userRole));
+    return items.filter(item => {
+      // If no roles specified, show to everyone
+      if (!item.roles || item.roles.length === 0) {
+        return true;
+      }
+      
+      // Convert all roles to lowercase for case-insensitive comparison
+      const normalizedRoles = item.roles.map(role => role.toLowerCase());
+      
+      // Special case: 'admin' role should see everything
+      if (normalizedUserRole === 'admin') {
+        return true;
+      }
+      
+      // Check if user's role is in the allowed roles
+      return normalizedRoles.includes(normalizedUserRole);
+    });
   };
 
   return {

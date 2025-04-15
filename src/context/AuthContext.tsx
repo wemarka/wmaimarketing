@@ -33,11 +33,11 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  // استخدام hooks المنفصلة
+  // Use separate hooks
   const { user, session, profile, loading, setProfile } = useAuthState();
   const { authLoading, refreshProfile, signIn, signUp, signOut } = useAuthMethods(profile, setProfile);
 
-  // دمج حالات التحميل
+  // Merge loading states
   const isLoading = loading || authLoading;
 
   // Log current user info

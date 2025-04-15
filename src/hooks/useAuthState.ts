@@ -11,7 +11,7 @@ export const useAuthState = () => {
   const [loading, setLoading] = useState(true);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
-  // دالة لجلب الملف الشخصي للمستخدم
+  // Function to fetch user profile
   const fetchProfile = async (userId: string) => {
     try {
       console.log("Fetching profile for user:", userId);
@@ -24,7 +24,7 @@ export const useAuthState = () => {
       if (error) {
         console.error('Error fetching profile:', error);
         
-        // إذا لم يكن الملف موجود، حاول إنشاء واحد
+        // If profile not found, try to create one
         if (error.code === 'PGRST116') {
           console.log("Profile not found, creating a new one");
           const newProfileData = {
@@ -56,7 +56,17 @@ export const useAuthState = () => {
       }
       
       console.log("Fetched profile:", data);
-      return data as ProfileData;
+      
+      // Ensure role is valid, default to 'user' if not
+      const validRole = data.role && ['admin', 'user', 'marketing', 'designer'].includes(data.role) 
+        ? data.role 
+        : 'user';
+      
+      // Return profile with validated role
+      return {
+        ...data,
+        role: validRole
+      } as ProfileData;
     } catch (error) {
       console.error('Error fetching profile:', error);
       return null;
@@ -67,16 +77,16 @@ export const useAuthState = () => {
     let isMounted = true;
     let timeoutId: NodeJS.Timeout;
 
-    // تعيين مهلة أمان لمنع التحميل اللانهائي
+    // Set safety timeout to prevent infinite loading
     timeoutId = setTimeout(() => {
       if (isMounted && loading) {
         console.log("Auth loading timeout reached - forcing loading to false");
         setLoading(false);
         setInitialLoadComplete(true);
       }
-    }, 5000); // Increase timeout to give more time for auth
+    }, 5000); // 5-second timeout
 
-    // إعداد مستمع حالة المصادقة
+    // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {
         console.log("Auth state change event:", event);
@@ -118,7 +128,7 @@ export const useAuthState = () => {
       }
     );
 
-    // التحقق من وجود جلسة
+    // Check for existing session
     console.log("Checking for existing session...");
     supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
       if (!isMounted) return;

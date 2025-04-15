@@ -1,11 +1,11 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Header from "./Header";
 import { SidebarProvider, SidebarRail, SidebarInset } from "@/components/ui/sidebar";
 import AppSidebar from "./AppSidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileNavbar from "./MobileNavbar";
-import { AuthContext } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,17 +13,12 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const isMobile = useIsMobile();
-  const [authAvailable, setAuthAvailable] = useState<boolean>(false);
+  // Use the auth hook directly - no more conditional hooks
+  const auth = useAuth();
   
-  // Check for auth context availability using the context directly
-  // instead of using useAuth() hook inside useEffect
-  const authContext = React.useContext(AuthContext);
-
-  // Set auth availability on mount
-  useEffect(() => {
-    setAuthAvailable(!!authContext);
-  }, [authContext]);
-
+  // Auth is available if we have a user
+  const authAvailable = !!auth.user;
+  
   return (
     <SidebarProvider defaultOpen={!isMobile}>
       <div className="flex min-h-screen w-full bg-background">
