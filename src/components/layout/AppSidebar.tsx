@@ -103,6 +103,7 @@ const AppSidebar = () => {
     }
   ];
   
+  // Fixed the isActive function to not use Boolean as a function
   const isActive = (path) => {
     if (path === '/' && location.pathname === '/') return true;
     if (path === '/' && location.pathname !== '/') return false;
