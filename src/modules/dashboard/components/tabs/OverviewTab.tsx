@@ -7,6 +7,7 @@ import EngagementInsights from "@/modules/dashboard/components/engagement-insigh
 import CampaignTracker from "@/modules/dashboard/components/campaign-tracker/CampaignTracker";
 import UpcomingPosts from "@/modules/dashboard/components/upcoming-posts/UpcomingPosts";
 import AnalyticsSummary from "../analytics/AnalyticsSummary";
+import NewsUpdates from "../news/NewsUpdates";
 
 const OverviewTab = () => {
   const { t } = useTranslation();
@@ -41,6 +42,9 @@ const OverviewTab = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <UpcomingPosts />
+          </div>
+          <div className="lg:col-span-1">
+            <NewsUpdates />
           </div>
         </div>
       </div>
