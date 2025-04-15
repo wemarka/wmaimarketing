@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { setCachedData, getCachedData, requestQueue } from "@/lib/errorHandlers";
@@ -46,7 +47,7 @@ export const useCreateActivity = () => {
 
     try {
       // Use the request queue to manage concurrent requests
-      const { data, error } = await requestQueue.add(() => 
+      const result = await requestQueue.add(() => 
         supabase
           .from("user_activity_log")
           .insert(activityData)
@@ -54,14 +55,14 @@ export const useCreateActivity = () => {
           .single()
       );
 
-      if (error) throw error;
+      if (result.error) throw result.error;
 
       // On successful insert, remove this activity from pending
       const updatedActivities = (getCachedData<any[]>("pending_activities") || [])
         .filter(a => a.id !== cacheKey);
       setCachedData("pending_activities", updatedActivities);
 
-      return data;
+      return result.data;
     } catch (error) {
       console.error("Error logging activity:", error);
       // Keep in pending cache for later sync
@@ -87,13 +88,13 @@ export const useCreateActivity = () => {
         // Skip the timestamp and pending flag when sending to server
         const { pending, id, created_at, ...activityData } = activity;
         
-        const { error } = await requestQueue.add(() => 
+        const result = await requestQueue.add(() => 
           supabase
             .from("user_activity_log")
             .insert(activityData)
         );
         
-        if (error) {
+        if (result.error) {
           stillPending.push(activity);
         } else {
           syncedCount++;
