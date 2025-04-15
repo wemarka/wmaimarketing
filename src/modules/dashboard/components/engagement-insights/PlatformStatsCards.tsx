@@ -52,15 +52,15 @@ const PlatformStatsCards: React.FC<PlatformStatsCardsProps> = ({
   loading = false 
 }) => {
   // Calculate percentage changes
-  const calculateChange = (current: number, previous: number) => {
+  const calculateChange = (current: number, previous: number): number => {
     if (previous === 0) return 100;
-    return ((current - previous) / previous * 100).toFixed(1);
+    return parseFloat(((current - previous) / previous * 100).toFixed(1));
   };
 
-  const instagramChange = parseFloat(calculateChange(currentTotals.instagram, prevTotals.instagram));
-  const facebookChange = parseFloat(calculateChange(currentTotals.facebook, prevTotals.facebook));
-  const tiktokChange = parseFloat(calculateChange(currentTotals.tiktok, prevTotals.tiktok));
-  const emailChange = parseFloat(calculateChange(currentTotals.email, prevTotals.email));
+  const instagramChange = calculateChange(currentTotals.instagram, prevTotals.instagram);
+  const facebookChange = calculateChange(currentTotals.facebook, prevTotals.facebook);
+  const tiktokChange = calculateChange(currentTotals.tiktok, prevTotals.tiktok);
+  const emailChange = calculateChange(currentTotals.email, prevTotals.email);
 
   if (loading) {
     return (

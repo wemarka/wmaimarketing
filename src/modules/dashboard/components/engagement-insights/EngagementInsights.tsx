@@ -7,6 +7,7 @@ import PeriodSelector from "./PeriodSelector";
 import EngagementChart from "./EngagementChart";
 import PlatformStatsCards from "./PlatformStatsCards";
 import { engagementData, prevWeekData, calculateTotals } from "./engagementData";
+import { EngagementDataPoint, PlatformTotals } from "./types";
 
 const EngagementInsights: React.FC = () => {
   const { t } = useTranslation();
@@ -16,11 +17,11 @@ const EngagementInsights: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   
   // Calculate totals for the current and previous periods
-  const currentTotals = calculateTotals(engagementData);
-  const prevTotals = calculateTotals(prevWeekData);
+  const currentTotals: PlatformTotals = calculateTotals(engagementData);
+  const prevTotals: PlatformTotals = calculateTotals(prevWeekData);
   
   // Change data based on selected time range
-  const getCurrentData = () => {
+  const getCurrentData = (): EngagementDataPoint[] => {
     if (timeRange === "week") return engagementData;
     if (timeRange === "month") return engagementData.concat(engagementData);
     if (timeRange === "day") return engagementData.slice(0, 3);

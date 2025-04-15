@@ -36,8 +36,8 @@ const PendingPostsWidget = () => {
                 post={post}
                 index={index}
                 viewMode={viewMode}
-                onApprove={handleApprove}
-                onReject={handleReject}
+                onApprove={() => handleApprove(post.id)}
+                onReject={() => handleReject(post.id)}
               />
             ))}
           </div>

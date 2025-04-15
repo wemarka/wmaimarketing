@@ -11,22 +11,11 @@ import {
   Legend
 } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
-
-interface DataPoint {
-  name: string;
-  instagram?: number;
-  facebook?: number;
-  tiktok?: number;
-  email?: number;
-  prevInstagram?: number;
-  prevFacebook?: number;
-  prevTiktok?: number;
-  prevEmail?: number;
-}
+import { EngagementDataPoint } from "./types";
 
 interface EngagementChartProps {
-  currentData: DataPoint[];
-  prevWeekData?: DataPoint[];
+  currentData: EngagementDataPoint[];
+  prevWeekData?: EngagementDataPoint[];
   compareMode?: boolean;
   loading?: boolean;
 }
@@ -40,20 +29,23 @@ const EngagementChart: React.FC<EngagementChartProps> = ({
   // Combine current and previous data for comparison mode
   const combinedData = compareMode 
     ? currentData.map((item, index) => {
-        const prevItem = prevWeekData[index] || {};
+        const prevItem = prevWeekData[index] || { day: '', instagram: 0, facebook: 0, tiktok: 0 };
         return {
-          name: item.name,
+          name: item.day,
           instagram: item.instagram,
           facebook: item.facebook,
           tiktok: item.tiktok,
-          email: item.email,
           prevInstagram: prevItem.instagram,
           prevFacebook: prevItem.facebook,
           prevTiktok: prevItem.tiktok,
-          prevEmail: prevItem.email,
         };
       })
-    : currentData;
+    : currentData.map((item) => ({
+        name: item.day,
+        instagram: item.instagram,
+        facebook: item.facebook,
+        tiktok: item.tiktok,
+      }));
     
   if (loading) {
     return (
@@ -110,13 +102,6 @@ const EngagementChart: React.FC<EngagementChartProps> = ({
             stroke="#000000" 
             strokeWidth={2}
           />
-          <Line 
-            type="monotone" 
-            dataKey="email" 
-            name="Email" 
-            stroke="#9b87f5" 
-            strokeWidth={2}
-          />
           
           {/* Previous period lines (only visible in compare mode) */}
           {compareMode && (
@@ -144,15 +129,6 @@ const EngagementChart: React.FC<EngagementChartProps> = ({
                 dataKey="prevTiktok" 
                 name="TikTok (سابق)" 
                 stroke="#000000" 
-                strokeWidth={1.5}
-                strokeDasharray="5 5"
-                opacity={0.7}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="prevEmail" 
-                name="Email (سابق)" 
-                stroke="#9b87f5" 
                 strokeWidth={1.5}
                 strokeDasharray="5 5"
                 opacity={0.7}
