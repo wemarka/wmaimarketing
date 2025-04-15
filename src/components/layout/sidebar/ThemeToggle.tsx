@@ -3,7 +3,6 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -33,21 +32,16 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
               size="icon"
               onClick={toggleDarkMode}
               className={cn(
-                "h-9 w-9 rounded-md transition-all duration-200",
+                "h-9 w-9 rounded-md",
                 expanded ? "h-9 w-9" : "h-8 w-8",
                 isDarkMode ? "bg-slate-800 text-yellow-400 hover:text-yellow-300" : "text-slate-600 hover:text-slate-900"
               )}
             >
-              <motion.div
-                animate={{ rotate: isDarkMode ? 180 : 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                {isDarkMode ? (
-                  <Moon className="h-[1.2rem] w-[1.2rem]" />
-                ) : (
-                  <Sun className="h-[1.2rem] w-[1.2rem]" />
-                )}
-              </motion.div>
+              {isDarkMode ? (
+                <Moon className="h-[1.2rem] w-[1.2rem]" />
+              ) : (
+                <Sun className="h-[1.2rem] w-[1.2rem]" />
+              )}
               <span className="sr-only">
                 {isDarkMode ? "تفعيل الوضع الفاتح" : "تفعيل الوضع الداكن"}
               </span>

@@ -30,7 +30,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+      <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-900">
         <AppSidebar />
         <div className="flex-1 flex flex-col">
           <Header />

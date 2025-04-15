@@ -15,7 +15,6 @@ import {
 import { UserCircle, Settings, LogOut } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { motion } from "framer-motion";
 
 interface UserProfileProps {
   expanded: boolean;
@@ -53,13 +52,11 @@ const UserProfile: React.FC<UserProfileProps> = ({ expanded, profile, userEmail 
         <Tooltip>
           <TooltipTrigger asChild>
             <DropdownMenuTrigger asChild>
-              <motion.div 
+              <div 
                 className={cn(
-                  "flex items-center cursor-pointer p-2 rounded-lg hover:bg-muted transition-all duration-200",
+                  "flex items-center cursor-pointer p-2 rounded-lg hover:bg-muted",
                   expanded ? "w-full" : "w-auto justify-center"
                 )}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
               >
                 <Avatar className="h-8 w-8 border-2 border-beauty-purple/20">
                   <AvatarImage src={profile?.avatar_url || ""} alt={displayName} />
@@ -74,7 +71,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ expanded, profile, userEmail 
                     <p className="text-xs text-muted-foreground truncate">{displayRole}</p>
                   </div>
                 )}
-              </motion.div>
+              </div>
             </DropdownMenuTrigger>
           </TooltipTrigger>
           

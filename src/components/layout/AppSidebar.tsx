@@ -52,6 +52,8 @@ const AppSidebar = () => {
     setIsDarkMode(!isDarkMode);
     // Apply dark mode class to document
     document.documentElement.classList.toggle('dark', !isDarkMode);
+    // Store preference in localStorage
+    localStorage.setItem('theme', !isDarkMode ? 'dark' : 'light');
   };
   
   return (

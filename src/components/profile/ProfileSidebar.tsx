@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { User, Shield, Clock, UserCog, FileText } from "lucide-react";
 import ProfilePicture from "./ProfilePicture";
-import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
@@ -37,12 +36,6 @@ const ProfileSidebar = ({
     }
   };
 
-  // Animation variants for buttons
-  const buttonVariants = {
-    inactive: { scale: 1 },
-    active: { scale: 1.03 }
-  };
-
   const sidebarItems = [
     { id: 'account', icon: <User className="ml-2 h-4 w-4" />, label: 'معلومات الحساب' },
     { id: 'security', icon: <Shield className="ml-2 h-4 w-4" />, label: 'الأمان' },
@@ -55,12 +48,8 @@ const ProfileSidebar = ({
   ];
 
   return (
-    <motion.div 
+    <div 
       className="space-y-6 bg-card p-6 rounded-lg shadow-sm border border-border/40 backdrop-blur-sm"
-      initial={{ opacity: 0, x: -30 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5 }}
-      whileHover={{ boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
     >
       <ProfilePicture 
         avatarUrl={avatarUrl} 
@@ -69,41 +58,23 @@ const ProfileSidebar = ({
       />
       
       <div className="flex flex-col items-center">
-        <motion.h3 
-          className="font-medium text-lg bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          whileHover={{ scale: 1.03 }}
-        >
+        <h3 className="font-medium text-lg bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
           {firstName || lastName ? `${firstName || ''} ${lastName || ''}` : 'المستخدم'}
-        </motion.h3>
-        <motion.span
-          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary mt-1"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-        >
+        </h3>
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary mt-1">
           {role || 'مستخدم'}
-        </motion.span>
+        </span>
       </div>
       
       <Separator className="my-2 bg-border/60" />
       
       <nav className="flex flex-col space-y-1.5">
         {sidebarItems.map(item => (
-          <motion.div 
-            key={item.id}
-            variants={buttonVariants}
-            initial="inactive"
-            animate={activeTab === item.id ? "active" : "inactive"}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
-          >
+          <div key={item.id}>
             <Button 
               variant={activeTab === item.id ? "default" : "ghost"} 
               className={cn(
-                "justify-start w-full transition-all text-sm",
+                "justify-start w-full text-sm",
                 activeTab === item.id 
                   ? "bg-primary/10 text-primary hover:bg-primary/20 font-medium" 
                   : "hover:bg-muted/50"
@@ -113,18 +84,14 @@ const ProfileSidebar = ({
               {item.icon}
               <span>{item.label}</span>
             </Button>
-          </motion.div>
+          </div>
         ))}
         
         {!isMobile && (
           <>
             <Separator className="my-2 bg-border/60" />
             {extraItems.map(item => (
-              <motion.div
-                key={item.id}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-              >
+              <div key={item.id}>
                 <Button 
                   variant="ghost" 
                   className="justify-start w-full text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -132,12 +99,12 @@ const ProfileSidebar = ({
                   {item.icon}
                   <span>{item.label}</span>
                 </Button>
-              </motion.div>
+              </div>
             ))}
           </>
         )}
       </nav>
-    </motion.div>
+    </div>
   );
 };
 
