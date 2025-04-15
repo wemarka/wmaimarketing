@@ -42,6 +42,11 @@
     --beauty-purple: 252 75% 60%;
     --beauty-purple-light: 252 95% 85%;
     --beauty-gold: 43 74% 59%;
+    
+    /* Softtech Colors */
+    --softtech-blue: 195 100% 47%;
+    --softtech-blue-light: 195 100% 90%;
+    --softtech-gray: 220 14% 96%;
   }
 
   .dark {
@@ -81,6 +86,11 @@
     --beauty-purple: 252 75% 65%;
     --beauty-purple-light: 252 50% 25%;
     --beauty-gold: 43 60% 50%;
+    
+    /* Softtech Colors Dark */
+    --softtech-blue: 195 100% 40%;
+    --softtech-blue-light: 195 70% 20%;
+    --softtech-gray: 220 10% 20%;
   }
 }
 
@@ -96,18 +106,38 @@
 /* Custom styling for the sidebar */
 @layer components {
   .sidebar-icon {
-    @apply w-6 h-6 mx-auto text-gray-500 hover:text-gray-700 transition-all duration-300;
+    @apply w-5 h-5 mx-auto text-gray-700 transition-all duration-300;
   }
   
   .sidebar-icon.active {
-    @apply text-purple-600;
+    @apply text-blue-500;
   }
 
-  .dropdown-menu-item {
-    @apply flex items-center px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer transition-colors;
+  .sidebar-item {
+    @apply flex items-center px-3 py-2 text-sm rounded-lg cursor-pointer transition-colors hover:bg-gray-100;
   }
   
-  .dropdown-menu {
-    @apply py-2 mt-2 bg-white dark:bg-gray-900 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none;
+  .sidebar-item.active {
+    @apply text-blue-500;
+  }
+  
+  .sidebar-notification {
+    @apply absolute right-3 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-medium;
+  }
+  
+  .sidebar-switch {
+    @apply h-5 w-9 rounded-full relative inline-flex items-center bg-gray-200;
+  }
+  
+  .sidebar-switch.active {
+    @apply bg-blue-500;
+  }
+  
+  .sidebar-switch-thumb {
+    @apply w-4 h-4 rounded-full bg-white transition-transform transform;
+  }
+  
+  .sidebar-switch.active .sidebar-switch-thumb {
+    @apply translate-x-4;
   }
 }
