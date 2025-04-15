@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 
 interface PeriodSelectorProps {
-  value: string;
+  value?: string;
+  timeRange?: string; // Added timeRange as an alternative prop name
   onChange: (value: string) => void;
   compareMode?: boolean;
   onCompareModeToggle?: () => void;
@@ -13,6 +14,7 @@ interface PeriodSelectorProps {
 
 export const PeriodSelector = ({ 
   value, 
+  timeRange,
   onChange,
   compareMode,
   onCompareModeToggle
@@ -20,11 +22,14 @@ export const PeriodSelector = ({
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
   
+  // Use timeRange if value is not provided
+  const selectedValue = value || timeRange || "";
+  
   return (
     <div className="flex items-center gap-4 justify-end mb-4">
-      <Select value={value} onValueChange={onChange}>
+      <Select value={selectedValue} onValueChange={onChange}>
         <SelectTrigger className="w-[120px]">
-          <SelectValue>{t(`dashboard.timeRanges.${value}`, value)}</SelectValue>
+          <SelectValue>{t(`dashboard.timeRanges.${selectedValue}`, selectedValue)}</SelectValue>
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="day">{t("dashboard.timeRanges.day")}</SelectItem>

@@ -1,5 +1,4 @@
 
-
 export interface Notification {
   id: string;
   title: string;
@@ -45,4 +44,3 @@ export interface NotificationIconProps {
   className?: string;
   urgent?: boolean;
 }
-

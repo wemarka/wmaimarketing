@@ -1,48 +1,60 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
+import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { NotificationItemProps } from "./types";
 import NotificationIcon from "./NotificationIcon";
-import { useTranslation } from "react-i18next";
 
 const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onMarkAsRead }) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
-
+  const isUnread = !notification.read;
+  
   const handleClick = () => {
-    if (!notification.read) {
+    if (isUnread) {
       onMarkAsRead(notification.id);
     }
   };
-
+  
   return (
-    <div
-      onClick={handleClick}
+    <div 
       className={cn(
-        "bg-background border rounded-md p-3 cursor-pointer transition-colors",
-        notification.urgent ? "bg-destructive/5 border-destructive/10" : "hover:bg-muted/50",
-        !notification.read ? "border-accent" : "border-border"
+        "flex p-3 border-b last:border-0 gap-3 transition-colors",
+        isUnread && "bg-muted/40",
+        notification.urgent && "bg-red-50 dark:bg-red-950/20"
       )}
+      onClick={handleClick}
     >
-      <div className="flex items-start gap-3">
-        <div className={cn("mt-1", isRTL ? "order-last" : "")}>
-          <NotificationIcon type={notification.type} urgent={notification.urgent} />
-        </div>
-        <div className="flex-1">
-          <h4 className={cn("font-medium", !notification.read && "font-semibold")}>{notification.title}</h4>
-          <p className="text-muted-foreground text-sm mt-0.5">{notification.message}</p>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-xs text-muted-foreground">{notification.time}</span>
-            {notification.actionUrl && (
-              <Link to={notification.actionUrl} className="no-underline">
-                <Button size="sm" variant="secondary" className="h-7 text-xs">
-                  {notification.actionText || (isRTL ? "عرض" : "View")}
-                </Button>
-              </Link>
-            )}
-          </div>
+      <div className={cn("mt-1", isRTL && "order-last")}>
+        <NotificationIcon 
+          type={notification.type} 
+          urgent={notification.urgent || false}
+        />
+      </div>
+      
+      <div className="flex-1">
+        <h4 className={cn("font-medium text-sm", isUnread && "font-semibold")}>
+          {notification.title}
+        </h4>
+        <p className="text-muted-foreground text-sm mt-1">{notification.message}</p>
+        <div className="flex items-center justify-between mt-2">
+          <span className="text-xs text-muted-foreground">{notification.time}</span>
+          
+          {notification.actionUrl && notification.actionText && (
+            <Button 
+              asChild 
+              variant="ghost" 
+              size="sm" 
+              className="h-7 px-2 text-xs"
+            >
+              <a href={notification.actionUrl} className="flex items-center gap-1">
+                {notification.actionText}
+                <ExternalLink className="h-3 w-3 ml-1" />
+              </a>
+            </Button>
+          )}
         </div>
       </div>
     </div>
