@@ -32,7 +32,7 @@ const PlatformStatsCards: React.FC<PlatformStatsCardsProps> = ({
   }
 
   return (
-    <div className="grid grid-cols-3 gap-4 mt-6">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
       <Card className="bg-pink-50 border-pink-100">
         <CardContent className="p-4">
           <h3 className="text-pink-700 font-medium mb-1">انستجرام</h3>

@@ -3,7 +3,7 @@ import React from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
-import { GitCompareIcon } from "lucide-react";
+import CompareIcon from "../icons/CompareIcon";
 
 interface PeriodSelectorProps {
   value?: string;
@@ -49,7 +49,7 @@ export const PeriodSelector = ({
           onClick={onCompareModeToggle}
           data-state={compareMode ? "active" : "inactive"}
         >
-          <GitCompareIcon className="h-4 w-4 mr-2" />
+          <CompareIcon className="h-4 w-4 mr-2" />
           {t("dashboard.compare", "مقارنة")}
         </Button>
       )}

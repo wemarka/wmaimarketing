@@ -10,6 +10,7 @@ import PostStatusTracker from "@/components/analytics/PostStatusTracker";
 import RecentActivity from "@/components/dashboard/RecentActivity";
 import UpcomingPosts from "@/components/dashboard/UpcomingPosts";
 import DashboardAnnouncement from "@/modules/dashboard/components/DashboardAnnouncement";
+import { CampaignTracker } from "@/components/dashboard/campaign-tracker";
 
 const OverviewTab = () => {
   const { t } = useTranslation();
@@ -58,6 +59,8 @@ const OverviewTab = () => {
           <PostStatusTracker />
         </div>
       </div>
+      
+      <CampaignTracker />
       
       <div className="grid md:grid-cols-2 gap-6">
         <RecentActivity />
