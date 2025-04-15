@@ -206,6 +206,11 @@ export const useInvitations = () => {
         throw new Error(validationResult.message || "الدعوة غير صالحة");
       }
       
+      // تأكد من وجود البريد الإلكتروني قبل المتابعة
+      if (!validationResult.email) {
+        throw new Error("بيانات الدعوة غير مكتملة");
+      }
+      
       // التسجيل باستخدام الدالة المخصصة
       const { data, error } = await supabase
         .rpc('register_from_invitation', { 
