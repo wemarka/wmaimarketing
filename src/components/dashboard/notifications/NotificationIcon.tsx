@@ -2,13 +2,14 @@
 import React from "react";
 import { CheckCircle, Calendar, AlertCircle, Bell, MessageCircle, Zap, ClipboardList } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { NotificationIconProps } from "./types";
 
-interface NotificationIconProps {
-  type: string;
-  className?: string;
-}
+const NotificationIcon: React.FC<NotificationIconProps> = ({ type, className, urgent }) => {
+  // If urgent is true, return the urgent icon regardless of type
+  if (urgent) {
+    return <Zap className={cn("h-5 w-5 text-red-500", className)} />;
+  }
 
-const NotificationIcon: React.FC<NotificationIconProps> = ({ type, className }) => {
   switch (type) {
     case "task":
       return <ClipboardList className={cn("h-5 w-5 text-indigo-500", className)} />;
@@ -18,8 +19,6 @@ const NotificationIcon: React.FC<NotificationIconProps> = ({ type, className }) 
       return <AlertCircle className={cn("h-5 w-5 text-amber-500", className)} />;
     case "message":
       return <MessageCircle className={cn("h-5 w-5 text-blue-500", className)} />;
-    case "urgent":
-      return <Zap className={cn("h-5 w-5 text-red-500", className)} />;
     default:
       return <Bell className={cn("h-5 w-5 text-blue-500", className)} />;
   }

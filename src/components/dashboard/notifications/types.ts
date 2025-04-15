@@ -1,4 +1,5 @@
 
+
 export interface Notification {
   id: string;
   title: string;
@@ -42,4 +43,6 @@ export interface TaskReminder {
 export interface NotificationIconProps {
   type: string;
   className?: string;
+  urgent?: boolean;
 }
+
