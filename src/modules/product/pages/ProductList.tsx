@@ -41,7 +41,7 @@ const ProductList = () => {
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [categories, setCategories] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all"); // Changed from empty string to "all"
   const [sortBy, setSortBy] = useState<string>("newest");
   
   useEffect(() => {
@@ -89,7 +89,7 @@ const ProductList = () => {
       );
     }
     
-    if (selectedCategory) {
+    if (selectedCategory && selectedCategory !== "all") { // Changed to check for "all"
       filtered = filtered.filter(product => product.category === selectedCategory);
     }
     
@@ -195,10 +195,10 @@ const ProductList = () => {
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                   <SelectTrigger className="w-[160px]">
                     <Filter className="h-4 w-4 ml-2" />
-                    <span className="ml-2">{selectedCategory || t("products.allCategories")}</span>
+                    <span className="ml-2">{selectedCategory === "all" ? t("products.allCategories") : selectedCategory}</span>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">{t("products.allCategories")}</SelectItem>
+                    <SelectItem value="all">{t("products.allCategories")}</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category} value={category}>{category}</SelectItem>
                     ))}
