@@ -13,10 +13,10 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import {
-  RotateCw, // استبدال ArrowPathIcon
-  Plus, // استبدال PlusIcon
-  X, // استبدال XMarkIcon
-  Mail // استبدال EnvelopeIcon
+  RotateCw,
+  Plus,
+  X,
+  Mail
 } from "lucide-react";
 import { format } from "date-fns";
 import CreateInvitationDialog from "./CreateInvitationDialog";
