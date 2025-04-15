@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -110,8 +111,8 @@ export const useProfileData = () => {
         });
       }
     },
-    // Using placeholderData instead of keepPreviousData
-    placeholderData: 'keepPrevious',
+    // Using proper placeholderData function instead of string
+    placeholderData: (previousData) => previousData,
     // تقليل عمليات إعادة التحميل
     refetchOnWindowFocus: false,
     refetchOnMount: false,

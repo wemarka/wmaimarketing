@@ -1,4 +1,3 @@
-
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -187,7 +186,7 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
       // عدم إعادة محاولة أخطاء المصادقة لأنها لن تحل دون تدخل المستخدم
       if (errorType === ErrorType.AUTH_ERROR) return false;
       
-      // لأخطاء الموارد، حاول أكثر مع تأخيرات أطول
+      // لأخطاء الموارد، حاول أكث�� مع تأخيرات أطول
       if (errorType === ErrorType.RESOURCE_ERROR) {
         return failureCount < 2; // تقليل عدد المحاولات من 3 إلى 2
       }
@@ -209,7 +208,7 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
     enabled: !!user,
     // عدم إعادة التحميل عند التركيز على النافذة لتقليل الطلبات غير الضرورية
     refetchOnWindowFocus: false,
-    placeholderData: 'keepPrevious', // updated from keepPreviousData
+    placeholderData: previousData => previousData, // Using function instead of string
   });
   
   return {

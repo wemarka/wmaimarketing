@@ -37,7 +37,7 @@ export const QueryPerformanceProvider: React.FC<QueryPerformanceProviderProps> =
         refetchOnMount: true,
         refetchOnReconnect: true,
         // استخدام البيانات القديمة أثناء تحديث البيانات
-        placeholderData: 'keepPrevious', // Updated from keepPreviousData
+        placeholderData: previousData => previousData, // Using function format instead of string
       },
       mutations: {
         // تقليل عدد عمليات إعادة المحاولة للطلبات المتعلقة بالتعديل
@@ -53,10 +53,11 @@ export const QueryPerformanceProvider: React.FC<QueryPerformanceProviderProps> =
     },
   }), []);
 
-  // Set up global error handler
+  // Set up global error handler with proper type checking
   React.useEffect(() => {
-    const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
-      if (event.type === 'error' && event.error) {
+    const unsubscribe = queryClient.getQueryCache().subscribe(event => {
+      // Check if this is an error event by checking if error property exists
+      if (event.type === 'error' && event.error instanceof Error) {
         console.error(`Global query error:`, event.error);
       }
     });
@@ -70,7 +71,7 @@ export const QueryPerformanceProvider: React.FC<QueryPerformanceProviderProps> =
     <QueryClientProvider client={queryClient}>
       {children}
       {process.env.NODE_ENV === 'development' && (
-        <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+        <ReactQueryDevtools initialIsOpen={false} position="bottom" />
       )}
     </QueryClientProvider>
   );

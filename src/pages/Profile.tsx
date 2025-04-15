@@ -32,6 +32,7 @@ const Profile = () => {
   
   const { activities, loading: activitiesLoading } = useActivityLog();
   const { logActivity } = useCreateActivity();
+  const { toast } = useToast(); // Import toast from useToast hook
   const [loggingOut, setLoggingOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSecurityTestOpen, setIsSecurityTestOpen] = useState(false);
