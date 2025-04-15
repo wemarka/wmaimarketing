@@ -2,7 +2,8 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, Heart, MousePointerClick, DollarSign } from "lucide-react";
+import { Eye, Heart, MousePointerClick, DollarSign, AlertTriangle } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import PostStatusTracker from "./PostStatusTracker";
 import { useTranslation } from "react-i18next";
 
@@ -23,6 +24,7 @@ export const AnalyticsDashboard = () => {
     engagementData,
     platformData,
     analyticsData,
+    isUsingFallbackData,
     handlePeriodChange
   } = useDashboardData();
   const { t } = useTranslation();
@@ -33,6 +35,19 @@ export const AnalyticsDashboard = () => {
 
   return (
     <div className="space-y-4">
+      {isUsingFallbackData && (
+        <Alert variant="warning" className="mb-4">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>{t("analytics.fallbackData.title", "استخدام البيانات الاحتياطية")}</AlertTitle>
+          <AlertDescription>
+            {t(
+              "analytics.fallbackData.description",
+              "تعذر الاتصال بالخادم، نعرض لك بيانات مخزنة مسبقًا. سنحاول تحديثها فور استعادة الاتصال."
+            )}
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <StatisticCard
           title={t("dashboard.stats.impressions.title")}

@@ -4,33 +4,90 @@ import { SupabaseSocialAccount, PostWithInsights, TimeRange } from "../types/das
 import { formatDateForChart, generateDailyDataPoints } from "../utils/analyticsUtils";
 import { OverviewData, EngagementData, PlatformData } from "../types";
 
-export const fetchSocialAccounts = async (userId: string) => {
-  const { data, error } = await fetchWithRetry<SupabaseSocialAccount[]>(
-    "social_accounts",
-    queryBuilder => queryBuilder
-      .select("platform, insights")
-      .eq("user_id", userId)
-  );
+const cacheWithExpiry = {
+  set: (key: string, value: any, ttl: number) => {
+    const now = new Date();
+    const item = {
+      value,
+      expiry: now.getTime() + ttl,
+    };
+    localStorage.setItem(key, JSON.stringify(item));
+  },
+  get: (key: string) => {
+    const itemStr = localStorage.getItem(key);
+    if (!itemStr) return null;
     
-  if (error) throw error;
+    const item = JSON.parse(itemStr);
+    const now = new Date();
+    
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    
+    return item.value;
+  }
+};
+
+export const fetchSocialAccounts = async (userId: string) => {
+  const cacheKey = `social_accounts_${userId}`;
+  const cachedData = cacheWithExpiry.get(cacheKey);
   
-  return data || [];
+  if (cachedData) {
+    return cachedData;
+  }
+  
+  try {
+    const { data, error } = await fetchWithRetry<SupabaseSocialAccount[]>(
+      "social_accounts",
+      queryBuilder => queryBuilder
+        .select("platform, insights")
+        .eq("user_id", userId)
+    );
+      
+    if (error) throw error;
+    
+    if (data) {
+      cacheWithExpiry.set(cacheKey, data, 30 * 60 * 1000);
+    }
+    
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching social accounts:", error);
+    return [];
+  }
 };
 
 export const fetchPosts = async (userId: string, timeRange: TimeRange) => {
-  const { data, error } = await fetchWithRetry<PostWithInsights[]>(
-    "posts",
-    queryBuilder => queryBuilder
-      .select("*")
-      .eq("user_id", userId)
-      .gte("created_at", timeRange.start)
-      .lte("created_at", timeRange.end)
-      .order("created_at", { ascending: true })
-  );
-    
-  if (error) throw error;
+  const cacheKey = `posts_${userId}_${timeRange.start}_${timeRange.end}`;
+  const cachedData = cacheWithExpiry.get(cacheKey);
   
-  return data || [];
+  if (cachedData) {
+    return cachedData;
+  }
+  
+  try {
+    const { data, error } = await fetchWithRetry<PostWithInsights[]>(
+      "posts",
+      queryBuilder => queryBuilder
+        .select("*")
+        .eq("user_id", userId)
+        .gte("created_at", timeRange.start)
+        .lte("created_at", timeRange.end)
+        .order("created_at", { ascending: true })
+    );
+      
+    if (error) throw error;
+    
+    if (data) {
+      cacheWithExpiry.set(cacheKey, data, 30 * 60 * 1000);
+    }
+    
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    return [];
+  }
 };
 
 export const processSocialAccountsData = (

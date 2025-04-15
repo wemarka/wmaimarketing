@@ -25,6 +25,7 @@ export async function safeQuery<T = any>(
     const result = await query(queryBuilder);
     return result;
   } catch (err) {
+    console.error("Error in safeQuery:", err);
     return {
       data: null,
       error: err instanceof Error ? err.message : "An unknown error occurred"
@@ -45,26 +46,91 @@ export async function fetchWithRetry<T = any>(
   delay = 1000
 ): Promise<{ data: T | null; error: PostgrestError | string | null }> {
   let attempts = 0;
+  let lastError: PostgrestError | string | null = null;
 
   while (attempts < retries) {
-    const result = await safeQuery<T>(tableName, query);
-    
-    // If successful or no resource error, return immediately
-    if (!result.error || (typeof result.error === 'object' && result.error?.code !== 'PGRST116')) {
+    try {
+      const result = await safeQuery<T>(tableName, query);
+      
+      // If successful, return immediately
+      if (!result.error) {
+        return result;
+      }
+      
+      // Store the error
+      lastError = result.error;
+      
+      // Resource limitations error or rate limiting
+      if ((typeof result.error === 'object' && 
+           (result.error?.code === 'PGRST116' || 
+            result.error?.message?.includes('insufficient resources') || 
+            result.error?.message?.includes('ERR_INSUFFICIENT_RESOURCES'))) || 
+          (typeof result.error === 'string' && 
+           (result.error.includes('insufficient resources') || 
+            result.error.includes('ERR_INSUFFICIENT_RESOURCES')))) {
+        
+        // Increment attempt counter
+        attempts++;
+        
+        // If we've used all retries, break the loop
+        if (attempts >= retries) {
+          break;
+        }
+        
+        // Wait before retry with exponential backoff
+        await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, attempts - 1)));
+        continue;
+      }
+      
+      // For non-resource errors, return immediately
       return result;
+      
+    } catch (err) {
+      // Handle unexpected errors
+      console.error("Error in fetchWithRetry:", err);
+      lastError = err instanceof Error ? err.message : "An unknown error occurred";
+      attempts++;
+      
+      // If we've used all retries, break the loop
+      if (attempts >= retries) {
+        break;
+      }
+      
+      // Wait before retry with exponential backoff
+      await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, attempts - 1)));
     }
-    
-    // Increment attempt counter
-    attempts++;
-    
-    // If we've used all retries, return the error
-    if (attempts >= retries) {
-      return result;
-    }
-    
-    // Wait before retry with exponential backoff
-    await new Promise(resolve => setTimeout(resolve, delay * attempts));
   }
   
-  return { data: null, error: "Maximum retries exceeded" };
+  return { data: null, error: lastError };
+}
+
+/**
+ * Safe wrapper for Supabase transactions
+ * @param operations Array of database operations to execute
+ */
+export async function safeTransaction<T = any>(
+  operations: (() => Promise<{ data: any; error: PostgrestError | null }>)[]
+): Promise<{ data: T | null; error: PostgrestError | string | null }> {
+  try {
+    let results: any[] = [];
+    let hasError = false;
+    
+    for (const operation of operations) {
+      const result = await operation();
+      
+      if (result.error) {
+        return { data: null, error: result.error };
+      }
+      
+      results.push(result.data);
+    }
+    
+    return { data: results as unknown as T, error: null };
+  } catch (err) {
+    console.error("Error in safeTransaction:", err);
+    return {
+      data: null,
+      error: err instanceof Error ? err.message : "An unknown error occurred"
+    };
+  }
 }

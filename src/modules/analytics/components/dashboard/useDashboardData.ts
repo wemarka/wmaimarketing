@@ -17,7 +17,8 @@ export const useDashboardData = () => {
     analyticsData,
     isLoading,
     isError,
-    refetch
+    refetch,
+    isUsingFallbackData
   } = useAnalyticsQuery(period);
   
   // هذه الدالة تتعامل مع تغييرات حالة واجهة المستخدم وإعادة جلب البيانات عند التغيير
@@ -58,6 +59,7 @@ export const useDashboardData = () => {
     period,
     loading: isLoading,
     isError,
+    isUsingFallbackData,
     overviewData,
     engagementData,
     platformData,
