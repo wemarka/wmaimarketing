@@ -5,7 +5,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { navigationItems, NavigationGroup } from "./sidebar/SidebarNavItems";
+import { useNavigationItems } from "./sidebar/useNavigationItems";
+import SidebarNavGroup from "./sidebar/SidebarNavGroup";
 import SidebarHeader from "./sidebar/SidebarHeader";
 import ThemeToggle from "./sidebar/ThemeToggle";
 import UserProfile from "./sidebar/UserProfile";
@@ -15,8 +16,15 @@ const AppSidebar = () => {
   const isMobile = useMediaQuery("(max-width: 767px)");
   const [expanded, setExpanded] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [activeItem, setActiveItem] = useState("dashboard");
-
+  
+  const { 
+    mainNavItems, 
+    mediaNavItems, 
+    productItems, 
+    managementItems,
+    documentationItems 
+  } = useNavigationItems();
+  
   const toggleExpanded = () => {
     setExpanded(!expanded);
   };
@@ -39,16 +47,40 @@ const AppSidebar = () => {
         />
         
         <ScrollArea className="flex-1 w-full">
-          {/* Navigation Groups */}
-          {navigationItems.map((group) => (
-            <NavigationGroup
-              key={group.id}
-              group={group}
-              expanded={expanded}
-              activeItem={activeItem}
-              setActiveItem={setActiveItem}
-            />
-          ))}
+          {/* Main Navigation Group */}
+          <SidebarNavGroup
+            title="الرئيسية"
+            items={mainNavItems}
+            compact={!expanded}
+          />
+          
+          {/* Media & Marketing Navigation Group */}
+          <SidebarNavGroup
+            title="الوسائط والتسويق"
+            items={mediaNavItems}
+            compact={!expanded}
+          />
+          
+          {/* Products Navigation Group */}
+          <SidebarNavGroup
+            title="المنتجات"
+            items={productItems}
+            compact={!expanded}
+          />
+          
+          {/* Management Navigation Group */}
+          <SidebarNavGroup
+            title="الإدارة"
+            items={managementItems}
+            compact={!expanded}
+          />
+          
+          {/* Documentation Navigation Group */}
+          <SidebarNavGroup
+            title="المستندات"
+            items={documentationItems}
+            compact={!expanded}
+          />
         </ScrollArea>
         
         {/* Dark mode toggle */}

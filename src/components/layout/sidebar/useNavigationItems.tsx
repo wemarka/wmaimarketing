@@ -123,3 +123,5 @@ export const useNavigationItems = () => {
     documentationItems
   };
 };
+
+export default useNavigationItems;
