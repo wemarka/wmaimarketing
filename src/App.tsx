@@ -1,3 +1,4 @@
+
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "@/components/ui/toaster";
@@ -25,6 +26,7 @@ import ContentTools from "./pages/ContentTools";
 import Integration from "./pages/Integration";
 import AIStudio from "./pages/AIStudio";
 import AdContentGenerator from "./pages/AdContentGenerator";
+import NotificationCenter from "./pages/NotificationCenter";
 
 // New Module Pages
 import GenerateAd from "./modules/ai-generator/pages/GenerateAd";
@@ -95,6 +97,13 @@ function App() {
             <Route path="/ad-designer" element={
               <RequireAuth>
                 <AdDesigner />
+              </RequireAuth>
+            } />
+            
+            {/* Notifications */}
+            <Route path="/notifications" element={
+              <RequireAuth>
+                <NotificationCenter />
               </RequireAuth>
             } />
             

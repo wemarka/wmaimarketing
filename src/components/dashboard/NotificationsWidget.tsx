@@ -7,6 +7,8 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/components/ui/use-toast";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { ExternalLink } from "lucide-react";
 
 import { 
   NotificationTabs, 
@@ -165,15 +167,28 @@ const NotificationsWidget = () => {
           )}
         </div>
         
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={markAllAsRead}
-          disabled={getUnreadCount() === 0}
-          className="text-sm"
-        >
-          {t("dashboard.notifications.markAllRead", "Mark all as read")}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={markAllAsRead}
+            disabled={getUnreadCount() === 0}
+            className="text-sm"
+          >
+            {t("dashboard.notifications.markAllRead", "Mark all as read")}
+          </Button>
+          
+          <Link to="/notifications" className="flex items-center">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="flex items-center gap-1 text-beauty-purple"
+            >
+              {t("dashboard.notifications.viewAll", "View all")}
+              <ExternalLink className="h-3 w-3 ml-1" />
+            </Button>
+          </Link>
+        </div>
       </CardHeader>
       
       <CardContent className="p-4">

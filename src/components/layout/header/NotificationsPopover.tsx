@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 
 import NotificationHeader from "./notification/NotificationHeader";
 import NotificationTabs from "./notification/NotificationTabs";
@@ -59,10 +60,6 @@ const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({
   const [notificationsData, setNotificationsData] = useState(notifications);
 
   const handleViewAllClick = () => {
-    toast({
-      title: "عرض كل الإشعارات",
-      description: "سيتم توجيهك إلى صفحة الإشعارات",
-    });
     onNotificationClick();
     setOpen(false);
   };
@@ -145,9 +142,11 @@ const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({
         </Tabs>
         
         <div className="p-2 flex justify-center border-t">
-          <Button variant="link" size="sm" className="text-xs" onClick={handleViewAllClick}>
-            عرض كل الإشعارات
-          </Button>
+          <Link to="/notifications">
+            <Button variant="link" size="sm" className="text-xs" onClick={handleViewAllClick}>
+              عرض كل الإشعارات
+            </Button>
+          </Link>
         </div>
       </PopoverContent>
     </Popover>
