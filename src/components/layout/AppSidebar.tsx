@@ -1,102 +1,101 @@
 
-import React, { useState, useEffect } from "react";
-import { Sidebar, SidebarContent, SidebarSeparator } from "@/components/ui/sidebar";
+import React from "react";
+import { Sidebar, SidebarContent, SidebarFooter } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useTranslation } from "react-i18next";
-import SidebarHeader from "./sidebar/SidebarHeader";
-import SidebarFooter from "./sidebar/SidebarFooter";
-import SidebarNavGroup from "./sidebar/SidebarNavGroup";
-import { useNavigationItems } from "./sidebar/useNavigationItems";
+import { 
+  Bell, 
+  Search, 
+  Hash, 
+  Layout, 
+  FileText, 
+  PlayCircle, 
+  Grid
+} from "lucide-react";
 import { motion } from "framer-motion";
-import { useAuth } from "@/context/AuthContext";
+import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { Clock } from "lucide-react";
+import { NavLink } from "react-router-dom";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useAuth } from "@/context/AuthContext";
 
 const AppSidebar = () => {
-  const { t } = useTranslation();
   const { profile } = useAuth();
-  const {
-    mainNavItems,
-    mediaNavItems,
-    managementItems,
-    documentationItems,
-    productItems
-  } = useNavigationItems();
-  const [currentTime, setCurrentTime] = useState(new Date());
 
-  // Update time every minute
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Animation variants for staggered children
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05,
-        delayChildren: 0.1
-      }
-    }
-  };
-
-  // Format time for Arabic locale
-  const formattedTime = currentTime.toLocaleTimeString('ar-SA', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  });
+  // Sidebar navigation items
+  const navigationItems = [
+    { id: "home", icon: <Hash className="h-5 w-5" />, to: "/dashboard", label: "الرئيسية" },
+    { id: "notifications", icon: <Bell className="h-5 w-5" />, to: "/notifications", label: "الإشعارات" },
+    { id: "search", icon: <Search className="h-5 w-5" />, to: "/search", label: "البحث" },
+    { id: "content", icon: <Layout className="h-5 w-5" />, to: "/content-tools", label: "المحتوى" },
+    { id: "documents", icon: <FileText className="h-5 w-5" />, to: "/documentation", label: "المستندات" },
+    { id: "media", icon: <PlayCircle className="h-5 w-5" />, to: "/video-generator", label: "الوسائط" },
+    { id: "apps", icon: <Grid className="h-5 w-5" />, to: "/scheduler", label: "التطبيقات" }
+  ];
 
   return (
     <Sidebar variant="inset">
-      <SidebarHeader />
-      
-      <SidebarContent>
-        {/* Time display */}
-        <div className="mx-4 my-2 flex items-center justify-center p-2 rounded-lg bg-beauty-purple/5 dark:bg-beauty-purple/10 border border-beauty-purple/10">
-          <Clock className="h-4 w-4 text-beauty-purple mr-2" />
-          <span className="text-sm text-beauty-purple font-medium">{formattedTime}</span>
-        </div>
+      <SidebarContent className="flex flex-col items-center py-4">
+        {/* Logo */}
+        <NavLink to="/" className="mb-6">
+          <div className="bg-black rounded-full p-2 w-10 h-10 flex items-center justify-center">
+            <Hash className="text-white h-6 w-6" />
+          </div>
+        </NavLink>
         
-        <ScrollArea className="h-[calc(100vh-13rem)]">
-          <motion.div 
-            initial="hidden" 
-            animate="visible" 
-            variants={containerVariants} 
-            className="pb-8"
-          >
-            <SidebarNavGroup compact title={t("sidebar.groups.main")} items={mainNavItems} />
-
-            <SidebarSeparator />
-            
-            <SidebarNavGroup compact title={t("sidebar.groups.mediaAnalytics")} items={mediaNavItems} />
-
-            {productItems.length > 0 && (
-              <>
-                <SidebarSeparator />
-                <SidebarNavGroup compact title={t("sidebar.groups.products")} items={productItems} />
-              </>
-            )}
-
-            {profile?.role === 'admin' || profile?.role === 'manager' ? (
-              <>
-                <SidebarSeparator />
-                <SidebarNavGroup compact title={t("sidebar.groups.management")} items={managementItems} />
-              </>
-            ) : null}
-
-            <SidebarSeparator />
-            
-            <SidebarNavGroup compact title={t("sidebar.groups.documentation")} items={documentationItems} />
-          </motion.div>
+        <ScrollArea className="flex-1 w-full">
+          <div className="flex flex-col items-center space-y-6">
+            {/* Navigation Items */}
+            {navigationItems.map((item) => (
+              <TooltipProvider key={item.id} delayDuration={300}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <NavLink
+                      to={item.to}
+                      className={({ isActive }) =>
+                        cn(
+                          "w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-200",
+                          isActive ? "bg-purple-100 text-purple-700" : "text-gray-500 hover:text-gray-800"
+                        )
+                      }
+                    >
+                      <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {item.icon}
+                      </motion.div>
+                    </NavLink>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    <p>{item.label}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ))}
+          </div>
         </ScrollArea>
       </SidebarContent>
       
-      <SidebarFooter />
+      <SidebarFooter className="pb-4 flex justify-center">
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <NavLink to="/profile" className="block">
+                <Avatar className="h-10 w-10 border-2 border-white hover:border-purple-200 transition-all duration-200">
+                  <img
+                    src={profile?.avatar_url || "https://github.com/shadcn.png"}
+                    alt={profile?.full_name || "User"}
+                    className="object-cover"
+                  />
+                </Avatar>
+              </NavLink>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>الملف الشخصي</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </SidebarFooter>
     </Sidebar>
   );
 };
