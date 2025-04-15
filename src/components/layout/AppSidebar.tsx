@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { SidebarContent } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -103,12 +102,12 @@ const AppSidebar = () => {
     }
   ];
   
-  // Fixed the isActive function to not use Boolean as a function
-  const isActive = (path) => {
+  const isActive = (path: string) => {
+    // Exact match for root and dashboard
     if (path === '/' && location.pathname === '/') return true;
-    if (path === '/' && location.pathname !== '/') return false;
     if (path === '/dashboard' && location.pathname === '/dashboard') return true;
     
+    // For other routes, check if current path starts with the given path
     return location.pathname.startsWith(path);
   };
   
