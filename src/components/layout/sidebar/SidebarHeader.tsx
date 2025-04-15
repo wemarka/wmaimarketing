@@ -1,27 +1,54 @@
-import React from "react";
-import { SidebarHeader as Header } from "@/components/ui/sidebar";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { useTheme } from "next-themes";
-const SidebarHeader: React.FC = () => {
-  const {
-    theme
-  } = useTheme();
 
-  // Determine which logo to display based on the current theme
-  const logoSrc = theme === "dark" ? "/WM_MARKETING_LOGO_DARK.png" : "/WM_MARKETING_LOGO.png";
-  return <Header className="p-4">
-      <Link to="/" className="flex items-center justify-center">
-        <motion.img initial={{
-        opacity: 0,
-        scale: 0.8
-      }} animate={{
-        opacity: 1,
-        scale: 1
-      }} transition={{
-        duration: 0.3
-      }} src={logoSrc} alt="WM Marketing" className="h-10 w-auto object-contain" />
-      </Link>
-    </Header>;
+import React from "react";
+import { cn } from "@/lib/utils";
+import { ChevronRight } from "lucide-react";
+
+interface SidebarHeaderProps {
+  expanded: boolean;
+  toggleExpanded: () => void;
+  isMobile: boolean;
+}
+
+const SidebarHeader: React.FC<SidebarHeaderProps> = ({ expanded, toggleExpanded, isMobile }) => {
+  return (
+    <div className={cn(
+      "flex items-center mb-8 w-full",
+      expanded ? "justify-between" : "justify-center"
+    )}>
+      {expanded ? (
+        <div className="flex items-center">
+          <div className="bg-white rounded-lg border border-blue-200 p-2 flex items-center justify-center">
+            <img 
+              src="/lovable-uploads/4e8f9347-a119-4c61-b2c3-d97ad429f0db.png" 
+              alt="Softtech" 
+              className="h-6 w-6" 
+            />
+          </div>
+          <div className="ml-3">
+            <h3 className="text-base font-semibold text-gray-800">Softtech</h3>
+            <span className="text-xs text-gray-500">Technology</span>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white rounded-lg border border-blue-200 p-2 flex items-center justify-center">
+          <img 
+            src="/lovable-uploads/4e8f9347-a119-4c61-b2c3-d97ad429f0db.png" 
+            alt="Softtech" 
+            className="h-6 w-6" 
+          />
+        </div>
+      )}
+      
+      {!isMobile && (
+        <button 
+          onClick={toggleExpanded}
+          className="p-1 rounded-md hover:bg-gray-100 text-gray-500"
+        >
+          <ChevronRight className={cn("h-5 w-5 transition-transform", expanded ? "" : "rotate-180")} />
+        </button>
+      )}
+    </div>
+  );
 };
+
 export default SidebarHeader;
