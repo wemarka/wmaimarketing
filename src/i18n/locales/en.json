@@ -8,7 +8,8 @@
     "accessDenied": "Access Denied",
     "insufficientPermissions": "You don't have sufficient permissions to access this page",
     "login": "Login",
-    "title": "Authentication"
+    "title": "Authentication",
+    "loading": "Loading..."
   },
   "common": {
     "back": "Back",
@@ -202,7 +203,10 @@
         "system": "System"
       },
       "title": "Notifications",
-      "markAllRead": "Mark all as read"
+      "markAllRead": "Mark all as read",
+      "markAllReadSuccess": "All notifications marked as read",
+      "updated": "Notifications have been updated",
+      "noNotifications": "No notifications to display"
     }
   },
   "sidebar": {
@@ -224,7 +228,9 @@
       "userManagement": "User Management",
       "integrations": "Integrations",
       "projectPlan": "Project Plan",
-      "aiStudio": "AI Studio"
+      "aiStudio": "AI Studio",
+      "schedulePost": "Create Post",
+      "products": "Products"
     },
     "tooltip": {
       "dashboard": "Home Page",
@@ -238,7 +244,9 @@
       "userManagement": "Manage Your Team",
       "integrations": "Connect with Other Services",
       "projectPlan": "Project Plan & Documentation",
-      "aiStudio": "AI Studio"
+      "aiStudio": "AI Studio",
+      "schedulePost": "Create a new post and publish it",
+      "products": "Manage and view products"
     },
     "badge": {
       "new": "New"
@@ -265,6 +273,34 @@
       "analysis": "Color Analysis",
       "autoAnalysis": "Auto Analysis",
       "library": "Assets Library"
+    }
+  },
+  "notifications": {
+    "new": {
+      "approval": "New post awaiting approval",
+      "approvalDesc": "There's a new post titled 'Best Skincare Products' awaiting your approval"
+    },
+    "scheduled": {
+      "post": "Post scheduled for tomorrow",
+      "postDesc": "The post 'Skincare Tips' will be published tomorrow at 10:00 AM"
+    },
+    "completed": {
+      "task": "Task 'Update Product Images' completed",
+      "taskDesc": "Product images have been successfully updated"
+    },
+    "system": {
+      "update": "System Update",
+      "updateDesc": "The system has been successfully updated to the latest version"
+    },
+    "reminder": {
+      "campaign": "Reminder: Ad campaign scheduled",
+      "campaignDesc": "You have an ad campaign scheduled for today at 3:00 PM"
+    },
+    "time": {
+      "minutes": "10 minutes ago",
+      "hours": "2 hours ago",
+      "day": "1 day ago",
+      "days": "2 days ago"
     }
   }
 }

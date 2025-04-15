@@ -15,6 +15,7 @@ import {
   MessageSquare,
   Database
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface NavItem {
   id: string;
@@ -29,6 +30,7 @@ interface NavItem {
 }
 
 export const useRBACSidebar = (userRole: string = 'user') => {
+  const { t, i18n } = useTranslation();
   // Normalize the role to lowercase for case-insensitive comparison
   const normalizedUserRole = userRole.toLowerCase();
   
@@ -41,8 +43,8 @@ export const useRBACSidebar = (userRole: string = 'user') => {
       id: 'dashboard',
       to: "/dashboard",
       icon: <LayoutDashboard className="h-5 w-5" />,
-      label: "لوحة التحكم",
-      tooltip: "عرض لوحة التحكم الرئيسية",
+      label: t("sidebar.navigation.dashboard"),
+      tooltip: t("sidebar.tooltip.dashboard"),
       roles: ['admin', 'manager', 'marketing', 'designer', 'user']
     }
   ];
@@ -52,32 +54,32 @@ export const useRBACSidebar = (userRole: string = 'user') => {
       id: 'image-upload',
       to: "/image-upload",
       icon: <Image className="h-5 w-5" />,
-      label: "تحليل الصور",
-      tooltip: "تحليل وتصنيف الصور",
+      label: t("sidebar.navigation.imageAnalysis"),
+      tooltip: t("sidebar.tooltip.imageAnalysis"),
       roles: ['admin', 'manager', 'marketing', 'designer', 'user']
     },
     {
       id: 'ad-generator',
       to: "/ad-generator",
       icon: <Sparkles className="h-5 w-5" />,
-      label: "توليد الإعلانات",
-      tooltip: "أداة توليد الإعلانات بالذكاء الاصطناعي",
+      label: t("sidebar.navigation.adGenerator"),
+      tooltip: t("sidebar.tooltip.adGenerator"),
       roles: ['admin', 'manager', 'marketing', 'designer']
     },
     {
       id: 'content-creator',
       to: "/content-creator",
       icon: <FileText className="h-5 w-5" />,
-      label: "منشئ المحتوى",
-      tooltip: "إنشاء محتوى نصي للمنشورات",
+      label: t("sidebar.navigation.contentCreator"),
+      tooltip: t("sidebar.tooltip.contentCreator"),
       roles: ['admin', 'manager', 'marketing', 'designer']
     },
     {
       id: 'video-generator',
       to: "/video-generator",
       icon: <Video className="h-5 w-5" />,
-      label: "منشئ الفيديو",
-      tooltip: "إنشاء فيديوهات من الصور",
+      label: t("sidebar.navigation.videoGenerator"),
+      tooltip: t("sidebar.tooltip.videoGenerator"),
       roles: ['admin', 'manager', 'marketing', 'designer']
     }
   ];
@@ -87,17 +89,17 @@ export const useRBACSidebar = (userRole: string = 'user') => {
       id: 'scheduler',
       to: "/scheduler",
       icon: <CalendarDays className="h-5 w-5" />,
-      label: "الجدولة والنشر",
-      tooltip: "جدولة ونشر المحتوى على منصات التواصل",
+      label: t("sidebar.navigation.scheduler"),
+      tooltip: t("sidebar.tooltip.scheduler"),
       roles: ['admin', 'manager', 'marketing']
     },
     {
       id: 'schedule-post',
       to: "/schedule-post",
       icon: <MessageSquare className="h-5 w-5" />,
-      label: "إنشاء منشور",
-      tooltip: "إنشاء منشور جديد ونشره",
-      badgeText: "جديد",
+      label: t("sidebar.navigation.schedulePost", "Create Post"),
+      tooltip: t("sidebar.tooltip.schedulePost", "Create a new post and publish it"),
+      badgeText: t("sidebar.badge.new"),
       variant: "outline" as const,
       className: "bg-beauty-purple/5 border border-beauty-purple/20",
       roles: ['admin', 'manager', 'marketing']
@@ -109,8 +111,8 @@ export const useRBACSidebar = (userRole: string = 'user') => {
       id: 'analytics',
       to: "/analytics",
       icon: <BarChart className="h-5 w-5" />,
-      label: "التحليلات",
-      tooltip: "عرض تحليلات المنصات والأداء",
+      label: t("sidebar.navigation.analytics"),
+      tooltip: t("sidebar.tooltip.analytics"),
       roles: ['admin', 'manager', 'marketing']
     }
   ];
@@ -120,8 +122,8 @@ export const useRBACSidebar = (userRole: string = 'user') => {
       id: 'product-list',
       to: "/product/list",
       icon: <Package2 className="h-5 w-5" />,
-      label: "المنتجات",
-      tooltip: "إدارة المنتجات وعرضها",
+      label: t("sidebar.navigation.products", "Products"),
+      tooltip: t("sidebar.tooltip.products", "Manage and view products"),
       roles: ['admin', 'manager', 'marketing']
     }
   ];
@@ -131,24 +133,24 @@ export const useRBACSidebar = (userRole: string = 'user') => {
       id: 'users',
       to: "/users",
       icon: <Users className="h-5 w-5" />,
-      label: "إدارة المستخدمين",
-      tooltip: "إدارة وصلاحيات المستخدمين",
+      label: t("sidebar.navigation.userManagement"),
+      tooltip: t("sidebar.tooltip.userManagement"),
       roles: ['admin', 'manager']
     },
     {
       id: 'profile',
       to: "/profile",
       icon: <Settings className="h-5 w-5" />,
-      label: "الإعدادات",
-      tooltip: "إعدادات الحساب والنظام",
+      label: t("sidebar.navigation.profile"),
+      tooltip: t("sidebar.tooltip.profile"),
       roles: ['admin', 'manager', 'marketing', 'designer', 'user']
     },
     {
       id: 'integration',
       to: "/integration",
       icon: <Database className="h-5 w-5" />,
-      label: "الدمج والتكامل",
-      tooltip: "إعدادات تكاملات النظام",
+      label: t("sidebar.navigation.integrations"),
+      tooltip: t("sidebar.tooltip.integrations"),
       roles: ['admin', 'manager']
     }
   ];
@@ -158,19 +160,19 @@ export const useRBACSidebar = (userRole: string = 'user') => {
       id: 'documentation',
       to: "/documentation",
       icon: <FileQuestion className="h-5 w-5" />,
-      label: "خطة المشروع",
-      tooltip: "عرض خطة تطوير المشروع",
+      label: t("sidebar.navigation.projectPlan"),
+      tooltip: t("sidebar.tooltip.projectPlan"),
       roles: ['admin', 'manager', 'marketing', 'designer', 'user']
     },
     {
       id: 'ai-studio',
       to: "/ai-studio",
       icon: <Sparkles className="h-5 w-5 text-beauty-gold" />,
-      label: "استوديو الذكاء",
-      tooltip: "استوديو الذكاء الاصطناعي",
+      label: t("sidebar.navigation.aiStudio"),
+      tooltip: t("sidebar.tooltip.aiStudio"),
       variant: "outline" as const,
       className: "bg-beauty-purple/5 border border-beauty-purple/20",
-      badgeText: "جديد",
+      badgeText: t("sidebar.badge.new"),
       roles: ['admin', 'manager', 'marketing', 'designer']
     }
   ];

@@ -9,8 +9,9 @@ import ContentTab from "./tabs/ContentTab";
 import AnalyticsTab from "./tabs/AnalyticsTab";
 
 const DashboardTabs = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState("overview");
+  const isRTL = i18n.language === "ar";
 
   return (
     <Tabs 
@@ -19,22 +20,22 @@ const DashboardTabs = () => {
       onValueChange={(value) => setActiveTab(value)}
     >
       <div className="flex items-center justify-between mb-6">
-        <TabsList>
+        <TabsList className={isRTL ? "space-x-reverse" : ""}>
           <TabsTrigger value="overview" className="px-5">
-            {t("dashboard.tabs.overview", "Overview")}
+            {t("dashboard.tabs.overview")}
           </TabsTrigger>
           <TabsTrigger value="marketing" className="px-5">
-            {t("dashboard.tabs.marketing", "Marketing")}
+            {t("dashboard.tabs.marketing")}
           </TabsTrigger>
           <TabsTrigger value="content" className="px-5">
-            {t("dashboard.tabs.content", "Content")}
+            {t("dashboard.tabs.content")}
           </TabsTrigger>
           <TabsTrigger value="analytics" className="px-5">
-            {t("dashboard.tabs.analytics", "Analytics")}
+            {t("dashboard.tabs.analytics")}
           </TabsTrigger>
         </TabsList>
         <Button variant="outline" size="sm">
-          {t("dashboard.actions.customize", "Customize")}
+          {t("dashboard.actions.customize")}
         </Button>
       </div>
       

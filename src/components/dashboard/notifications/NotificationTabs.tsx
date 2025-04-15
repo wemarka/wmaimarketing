@@ -11,7 +11,8 @@ const NotificationTabs: React.FC<NotificationTabsProps> = ({
   onTabChange,
   getUnreadCount
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
   
   const tabs = [
     { id: "all", label: t("dashboard.notifications.tabs.all"), type: "all" },
@@ -35,7 +36,8 @@ const NotificationTabs: React.FC<NotificationTabsProps> = ({
             <Badge
               variant="secondary"
               className={cn(
-                "absolute -top-2 -right-1 h-4 min-w-4 p-0 flex items-center justify-center text-[10px] rtl:-left-1 rtl:right-auto",
+                "absolute -top-2 -right-1 h-4 min-w-4 p-0 flex items-center justify-center text-[10px]",
+                isRTL ? "-left-1 right-auto" : "-right-1 left-auto",
                 tab.id === "all" ? "bg-beauty-pink text-white" : "bg-muted-foreground/20"
               )}
             >

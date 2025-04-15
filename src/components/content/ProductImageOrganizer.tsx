@@ -9,31 +9,32 @@ import AssetsLibrary from "./assets-library/AssetsLibrary";
 import AutoImageAnalyzer from "./AutoImageAnalyzer";
 
 const ProductImageOrganizer: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
   
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-2">{t("productImageOrganizer.title", "Product Image Management System")}</h1>
+        <h1 className="text-2xl font-bold mb-2">{t("productImageOrganizer.title")}</h1>
         <p className="text-muted-foreground">
-          {t("productImageOrganizer.subtitle", "Organize, categorize, and analyze skincare and makeup product images")}
+          {t("productImageOrganizer.subtitle")}
         </p>
       </div>
       
       <Card>
         <CardHeader>
-          <CardTitle>{t("productImageOrganizer.cardTitle", "Visual Content Production Tools")}</CardTitle>
+          <CardTitle>{t("productImageOrganizer.cardTitle")}</CardTitle>
           <CardDescription>
-            {t("productImageOrganizer.cardDescription", "Organize, analyze, and manage company images and visual assets")}
+            {t("productImageOrganizer.cardDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="gallery" className="w-full">
-            <TabsList className="mb-4 flex flex-wrap">
-              <TabsTrigger value="gallery">{t("productImageOrganizer.tabs.gallery", "Image Gallery")}</TabsTrigger>
-              <TabsTrigger value="analysis">{t("productImageOrganizer.tabs.analysis", "Color Analysis")}</TabsTrigger>
-              <TabsTrigger value="auto-analysis">{t("productImageOrganizer.tabs.autoAnalysis", "Auto Analysis")}</TabsTrigger>
-              <TabsTrigger value="library">{t("productImageOrganizer.tabs.library", "Assets Library")}</TabsTrigger>
+            <TabsList className={`mb-4 flex flex-wrap ${isRTL ? "space-x-reverse" : ""}`}>
+              <TabsTrigger value="gallery">{t("productImageOrganizer.tabs.gallery")}</TabsTrigger>
+              <TabsTrigger value="analysis">{t("productImageOrganizer.tabs.analysis")}</TabsTrigger>
+              <TabsTrigger value="auto-analysis">{t("productImageOrganizer.tabs.autoAnalysis")}</TabsTrigger>
+              <TabsTrigger value="library">{t("productImageOrganizer.tabs.library")}</TabsTrigger>
             </TabsList>
             
             <TabsContent value="gallery">

@@ -11,7 +11,8 @@ interface ScheduledPostsProps {
 }
 
 const ScheduledPosts: React.FC<ScheduledPostsProps> = ({ posts }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
   
   // Platform icons mapping
   const platformIcons = {

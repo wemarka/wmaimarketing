@@ -1,60 +1,51 @@
 
 import React from "react";
-import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { NotificationItemProps } from "./types";
 import NotificationIcon from "./NotificationIcon";
-import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
-const NotificationItem: React.FC<NotificationItemProps> = ({
-  notification,
-  onMarkAsRead,
-}) => {
-  const handleAction = () => {
-    if (notification.actionUrl) {
-      window.location.href = notification.actionUrl;
+const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onMarkAsRead }) => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
+  const handleClick = () => {
+    if (!notification.read) {
+      onMarkAsRead(notification.id);
     }
-    onMarkAsRead(notification.id);
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 5 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2 }}
+    <div
+      onClick={handleClick}
       className={cn(
-        "flex items-start p-3 rounded-md border transition-colors",
-        notification.read
-          ? "bg-background"
-          : "bg-blue-50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/30",
-        notification.urgent && !notification.read && "border-red-200 dark:border-red-900/30 bg-red-50 dark:bg-red-900/10"
+        "bg-background border rounded-md p-3 cursor-pointer transition-colors",
+        notification.urgent ? "bg-destructive/5 border-destructive/10" : "hover:bg-muted/50",
+        !notification.read ? "border-accent" : "border-border"
       )}
     >
-      <div className="mt-1 mr-3">
-        <NotificationIcon type={notification.type} />
-      </div>
-      <div className="flex-grow">
-        <div className="flex justify-between items-start">
-          <h4 className={cn("text-sm font-medium", !notification.read && "font-bold")}>
-            {notification.title}
-          </h4>
-          <span className="text-xs text-muted-foreground mr-1">{notification.time}</span>
+      <div className="flex items-start gap-3">
+        <div className={cn("mt-1", isRTL ? "order-last" : "")}>
+          <NotificationIcon type={notification.type} urgent={notification.urgent} />
         </div>
-        <p className="text-sm text-muted-foreground mt-0.5 mb-1.5">{notification.message}</p>
-        {notification.actionUrl && (
-          <div className="flex justify-end">
-            <Button
-              size="sm"
-              variant={notification.urgent ? "destructive" : "outline"}
-              className="text-xs h-7 mt-1"
-              onClick={handleAction}
-            >
-              {notification.urgent ? "اتخاذ إجراء فوري" : "عرض التفاصيل"}
-            </Button>
+        <div className="flex-1">
+          <h4 className={cn("font-medium", !notification.read && "font-semibold")}>{notification.title}</h4>
+          <p className="text-muted-foreground text-sm mt-0.5">{notification.message}</p>
+          <div className="flex items-center justify-between mt-2">
+            <span className="text-xs text-muted-foreground">{notification.time}</span>
+            {notification.actionUrl && (
+              <Link to={notification.actionUrl} className="no-underline">
+                <Button size="sm" variant="secondary" className="h-7 text-xs">
+                  {notification.actionText || (isRTL ? "عرض" : "View")}
+                </Button>
+              </Link>
+            )}
           </div>
-        )}
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

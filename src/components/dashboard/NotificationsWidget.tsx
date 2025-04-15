@@ -14,9 +14,10 @@ import {
 } from "./notifications";
 
 const NotificationsWidget = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<string>("all");
+  const isRTL = i18n.language === "ar";
   
   // Sample notification data
   const [notifications, setNotifications] = useState<Notification[]>([
@@ -28,7 +29,8 @@ const NotificationsWidget = () => {
       type: "approval",
       read: false,
       urgent: true,
-      actionUrl: "/scheduler?tab=workflow"
+      actionUrl: "/scheduler?tab=workflow",
+      actionText: isRTL ? "اتخاذ إجراء فوري" : "Take Action"
     },
     {
       id: "2",
@@ -37,7 +39,8 @@ const NotificationsWidget = () => {
       time: t("notifications.time.hours", "2 hours ago"),
       type: "post",
       read: false,
-      actionUrl: "/scheduler"
+      actionUrl: "/scheduler",
+      actionText: isRTL ? "عرض التفاصيل" : "View Details"
     },
     {
       id: "3",
@@ -108,7 +111,7 @@ const NotificationsWidget = () => {
         <div className="flex items-center">
           <CardTitle>{t("dashboard.notifications.title")}</CardTitle>
           {getUnreadCount() > 0 && (
-            <Badge className="mr-2 bg-beauty-pink text-white ml-2" variant="secondary">
+            <Badge className={`${isRTL ? "mr-2" : "ml-2"} bg-beauty-pink text-white`} variant="secondary">
               {getUnreadCount()}
             </Badge>
           )}

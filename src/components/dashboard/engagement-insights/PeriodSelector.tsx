@@ -1,32 +1,23 @@
 
 import React from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 
 interface PeriodSelectorProps {
-  timeRange: string;
-  compareMode: boolean;
-  onTimeRangeChange: (value: string) => void;
-  onCompareModeToggle: () => void;
+  value: string;
+  onChange: (value: string) => void;
 }
 
-const PeriodSelector: React.FC<PeriodSelectorProps> = ({
-  timeRange,
-  compareMode,
-  onTimeRangeChange,
-  onCompareModeToggle,
-}) => {
-  const { t } = useTranslation();
-
+export const PeriodSelector = ({ value, onChange }: PeriodSelectorProps) => {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+  
   return (
-    <div className="flex items-center gap-2">
-      <Select 
-        defaultValue={timeRange} 
-        onValueChange={onTimeRangeChange}
-      >
-        <SelectTrigger className="w-[130px]">
-          <SelectValue placeholder={t("dashboard.timeRanges.week")} />
+    <div className="flex items-center gap-4 justify-end mb-4">
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger className="w-[120px]">
+          <SelectValue>{t(`dashboard.timeRanges.${value}`, value)}</SelectValue>
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="day">{t("dashboard.timeRanges.day")}</SelectItem>
@@ -35,13 +26,13 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({
         </SelectContent>
       </Select>
       
-      <Badge 
-        variant={compareMode ? "default" : "outline"}
-        className="cursor-pointer"
-        onClick={onCompareModeToggle}
+      <Button 
+        variant="outline" 
+        size="sm"
+        className={isRTL ? "mr-2" : "ml-2"}
       >
-        {t("dashboard.compare")}
-      </Badge>
+        {t("dashboard.compare", "Compare")}
+      </Button>
     </div>
   );
 };
