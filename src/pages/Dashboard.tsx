@@ -2,7 +2,7 @@
 import React from "react";
 import Layout from "@/components/layout/Layout";
 import { DashboardGreeting, DashboardTabs } from "@/modules/dashboard/components";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const Dashboard = () => {
   return (
