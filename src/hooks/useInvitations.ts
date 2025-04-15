@@ -167,14 +167,14 @@ export const useInvitations = () => {
   };
 
   // تحديد نوع البيانات الدقيق للتحقق من صلاحية الدعوة
-  type ValidationResult = {
+  interface ValidationResult {
     valid: boolean;
     email?: string;
     role?: string;
     message?: string;
-  };
+  }
 
-  const validateInvitationToken = async (token: string) => {
+  const validateInvitationToken = async (token: string): Promise<ValidationResult> => {
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -182,7 +182,9 @@ export const useInvitations = () => {
 
       if (error) throw error;
       
-      return data as ValidationResult;
+      // نتأكد من عودة البيانات بالشكل المتوقع
+      const result = data as ValidationResult;
+      return result;
     } catch (error: any) {
       console.error("Error validating invitation:", error);
       toast({
@@ -196,7 +198,15 @@ export const useInvitations = () => {
     }
   };
 
-  const registerFromInvitation = async (token: string, password: string, firstName: string, lastName: string) => {
+  // تعريف نوع لنتائج التسجيل
+  interface RegistrationResult {
+    success: boolean;
+    message?: string;
+    email?: string;
+    role?: string;
+  }
+
+  const registerFromInvitation = async (token: string, password: string, firstName: string, lastName: string): Promise<RegistrationResult> => {
     setLoading(true);
     try {
       // أولاً نتحقق من صلاحية الدعوة
@@ -223,10 +233,10 @@ export const useInvitations = () => {
       if (error) throw error;
       
       // تحويل البيانات المرجعة إلى الصيغة المتوقعة
-      const result = data as unknown as { success: boolean; message?: string; email?: string; role?: string };
+      const result = data as unknown as RegistrationResult;
       
       // إذا تم التسجيل بنجاح، قم بتسجيل الدخول
-      if (result.success && validationResult.valid && validationResult.email) {
+      if (result.success && validationResult.email) {
         await supabase.auth.signInWithPassword({
           email: validationResult.email,
           password: password
