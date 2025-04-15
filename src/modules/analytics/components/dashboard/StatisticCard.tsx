@@ -40,9 +40,9 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      whileHover={{ y: -5 }}
+      whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(155, 135, 245, 0.1), 0 8px 10px -6px rgba(155, 135, 245, 0.1)" }}
     >
-      <Card className="overflow-hidden hover:shadow-md transition-all dark:border-slate-700">
+      <Card className="overflow-hidden hover:shadow-md transition-all duration-300 border-beauty-purple/10 dark:border-beauty-purple/20">
         <CardContent className={cn(
           "p-6",
           isMobile && "p-4"
@@ -51,7 +51,7 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
             <div>
               <p className="text-sm text-muted-foreground mb-1">{title}</p>
               <p className={cn(
-                "text-2xl font-semibold",
+                "text-2xl font-semibold bg-gradient-to-r from-beauty-purple to-beauty-lightpurple bg-clip-text text-transparent",
                 isMobile && "text-xl"
               )}>{value}</p>
               <div className={cn(
@@ -81,7 +81,7 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
           </div>
           
           {showExceptionalPerformance && (
-            <div className="mt-3 pt-3 border-t dark:border-slate-700">
+            <div className="mt-3 pt-3 border-t dark:border-slate-700 border-beauty-purple/10">
               <div className="text-xs text-green-600 dark:text-green-500 flex items-center">
                 <Sparkles className="h-3 w-3 mr-1" />
                 <span>أداء استثنائي مقارنة بالفترات السابقة</span>

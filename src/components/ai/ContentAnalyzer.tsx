@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Search } from "lucide-react";
+import { Search, Sparkles } from "lucide-react";
 import ErrorAlert from "./image-generator/ErrorAlert";
 import AnalyzerForm from "./content-analyzer/AnalyzerForm";
 import AnalysisResult from "./content-analyzer/AnalysisResult";
@@ -66,15 +66,23 @@ const ContentAnalyzer: React.FC = () => {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Search className="h-5 w-5 text-beauty-purple" />
-          تحليل المحتوى
-        </CardTitle>
-        <CardDescription>تحليل فعالية المحتوى التسويقي والجمهور المستهدف ومدى ملاءمته لمحركات البحث</CardDescription>
+    <Card className="border-beauty-purple/20 overflow-hidden">
+      <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 border-b border-beauty-purple/10">
+        <div className="flex items-center gap-2">
+          <div className="p-2 bg-beauty-purple/10 rounded-full">
+            <Search className="h-5 w-5 text-beauty-purple" />
+          </div>
+          <CardTitle>تحليل المحتوى</CardTitle>
+        </div>
+        <CardDescription className="mt-2">
+          تحليل فعالية المحتوى التسويقي والجمهور المستهدف ومدى ملاءمته لمحركات البحث
+          <div className="inline-flex items-center gap-1 ml-2 text-beauty-purple">
+            <Sparkles className="h-3 w-3" />
+            <span className="text-xs font-medium">مدعوم بالذكاء الاصطناعي</span>
+          </div>
+        </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6">
         <ErrorAlert errorMessage={errorMessage} />
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
