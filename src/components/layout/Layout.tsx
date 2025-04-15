@@ -2,10 +2,10 @@
 import React, { useEffect } from "react";
 import Header from "./Header";
 import AppSidebar from "./AppSidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import MobileNavbar from "./MobileNavbar";
 import { useLocation } from "react-router-dom";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,6 +13,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
+  const isMobile = useMediaQuery("(max-width: 767px)");
   
   // Handle theme based on system preference or stored value
   useEffect(() => {
@@ -29,21 +30,22 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, []);
 
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-900">
-        <AppSidebar />
-        <div className="flex-1 flex flex-col">
-          <Header />
-          <main className={cn(
-            "flex-1 p-4 md:p-6",
-            location.pathname === "/dashboard" && "bg-gray-50 dark:bg-gray-900"
-          )}>
-            {children}
-          </main>
-        </div>
-        <MobileNavbar />
+    <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-900">
+      <AppSidebar />
+      <div className={cn(
+        "flex-1 flex flex-col",
+        isMobile ? "mr-0" : "mr-0 md:mr-[70px] lg:mr-64"
+      )}>
+        <Header />
+        <main className={cn(
+          "flex-1 p-4 md:p-6",
+          location.pathname === "/dashboard" && "bg-gray-50 dark:bg-gray-900"
+        )}>
+          {children}
+        </main>
       </div>
-    </SidebarProvider>
+      {isMobile && <MobileNavbar />}
+    </div>
   );
 };
 
