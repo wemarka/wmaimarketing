@@ -53,11 +53,12 @@ export const QueryPerformanceProvider: React.FC<QueryPerformanceProviderProps> =
     },
   }), []);
 
-  // Set up global error handler with proper type checking
+  // Set up global error handler with the correct event typing
   React.useEffect(() => {
+    // Subscribe to query cache with proper type handling
     const unsubscribe = queryClient.getQueryCache().subscribe(event => {
-      // Check if this is an error event by checking if error property exists
-      if (event.type === 'error' && event.error instanceof Error) {
+      // Handle all events that might have an error property
+      if ('error' in event && event.error) {
         console.error(`Global query error:`, event.error);
       }
     });
