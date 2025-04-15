@@ -20,7 +20,7 @@ const SidebarHeader: React.FC = () => {
         scale: 1
       }} transition={{
         duration: 0.3
-      }} src={logoSrc} alt="WM Marketing" className="h-10 w-auto object-fill" />
+      }} src={logoSrc} alt="WM Marketing" className="h-10 w-auto object-contain" />
       </Link>
     </Header>;
 };
