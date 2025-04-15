@@ -25,9 +25,19 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
   statuses,
   totalPosts
 }) => {
+  // Calculate counts for each status
+  const statusCounts = statuses.reduce((acc, status) => {
+    acc[status.id] = status.value;
+    return acc;
+  }, { all: totalPosts } as Record<string, number>);
+
   return (
     <Tabs defaultValue={statusFilter} className="w-full" onValueChange={onStatusFilterChange}>
-      <TabsFilter statusFilter={statusFilter} />
+      <TabsFilter 
+        statusFilter={statusFilter} 
+        onStatusChange={onStatusFilterChange}
+        counts={statusCounts}
+      />
       
       <AnimatePresence mode="wait">
         <TabsContent value="all" className="outline-none">
