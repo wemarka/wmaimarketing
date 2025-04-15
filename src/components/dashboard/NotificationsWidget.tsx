@@ -1,11 +1,12 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/components/ui/use-toast";
+import { motion } from "framer-motion";
 
 import { 
   NotificationTabs, 
@@ -19,7 +20,7 @@ const NotificationsWidget = () => {
   const [activeTab, setActiveTab] = useState<string>("all");
   const isRTL = i18n.language === "ar";
   
-  // Sample notification data
+  // Sample notification data with a new message notification
   const [notifications, setNotifications] = useState<Notification[]>([
     {
       id: "1",
@@ -41,6 +42,16 @@ const NotificationsWidget = () => {
       read: false,
       actionUrl: "/scheduler",
       actionText: isRTL ? "عرض التفاصيل" : "View Details"
+    },
+    {
+      id: "6",
+      title: t("notifications.new.message", "New message from Marketing team"),
+      message: t("notifications.new.messageDesc", "The marketing team sent you a message about the upcoming campaign"),
+      time: t("notifications.time.minutes", "30 minutes ago"),
+      type: "message",
+      read: false,
+      actionUrl: "/messages",
+      actionText: isRTL ? "قراءة الرسالة" : "Read Message"
     },
     {
       id: "3",
@@ -86,6 +97,15 @@ const NotificationsWidget = () => {
         notification.id === id ? { ...notification, read: true } : notification
       )
     );
+    
+    // Show toast for newly read notification
+    const notification = notifications.find(n => n.id === id);
+    if (notification && !notification.read) {
+      toast({
+        title: t("dashboard.notifications.markedAsRead", "Notification marked as read"),
+        description: notification.title
+      });
+    }
   };
   
   // Mark all notifications as read
@@ -105,15 +125,43 @@ const NotificationsWidget = () => {
     setActiveTab(value);
   };
 
+  // Simulate a new notification every 30 seconds (for demo purposes)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const hasUnread = notifications.some(n => !n.read);
+      if (!hasUnread) {
+        const newNotification: Notification = {
+          id: `new-${Date.now()}`,
+          title: t("notifications.new.insight", "New engagement insight available"),
+          message: t("notifications.new.insightDesc", "Your latest post is performing 20% better than average"),
+          time: t("notifications.time.now", "Just now"),
+          type: "post",
+          read: false,
+          actionUrl: "/analytics"
+        };
+        
+        setNotifications(prev => [newNotification, ...prev].slice(0, 10));
+      }
+    }, 30000);
+    
+    return () => clearInterval(interval);
+  }, [notifications, t]);
+
   return (
     <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="flex items-center">
-          <CardTitle>{t("dashboard.notifications.title")}</CardTitle>
+          <CardTitle>{t("dashboard.notifications.title", "Notifications")}</CardTitle>
           {getUnreadCount() > 0 && (
-            <Badge className={`${isRTL ? "mr-2" : "ml-2"} bg-beauty-pink text-white`} variant="secondary">
-              {getUnreadCount()}
-            </Badge>
+            <motion.div
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 500, damping: 20 }}
+            >
+              <Badge className={`${isRTL ? "mr-2" : "ml-2"} bg-beauty-pink text-white`} variant="secondary">
+                {getUnreadCount()}
+              </Badge>
+            </motion.div>
           )}
         </div>
         
@@ -122,8 +170,9 @@ const NotificationsWidget = () => {
           size="sm" 
           onClick={markAllAsRead}
           disabled={getUnreadCount() === 0}
+          className="text-sm"
         >
-          {t("dashboard.notifications.markAllRead")}
+          {t("dashboard.notifications.markAllRead", "Mark all as read")}
         </Button>
       </CardHeader>
       

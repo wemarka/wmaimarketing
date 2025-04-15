@@ -1,51 +1,73 @@
 
 import React from "react";
-import { useTranslation } from "react-i18next";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "react-i18next";
 import { NotificationTabsProps } from "./types";
-import { cn } from "@/lib/utils";
 
-const NotificationTabs: React.FC<NotificationTabsProps> = ({
-  activeTab,
-  onTabChange,
-  getUnreadCount
+const NotificationTabs: React.FC<NotificationTabsProps> = ({ 
+  activeTab, 
+  onTabChange, 
+  getUnreadCount 
 }) => {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
   
-  const tabs = [
-    { id: "all", label: t("dashboard.notifications.tabs.all"), type: "all" },
-    { id: "approval", label: t("dashboard.notifications.tabs.approval"), type: "approval" },
-    { id: "post", label: t("dashboard.notifications.tabs.post"), type: "post" },
-    { id: "task", label: t("dashboard.notifications.tabs.task"), type: "task" },
-    { id: "system", label: t("dashboard.notifications.tabs.system"), type: "system" }
-  ];
-
   return (
-    <TabsList className="grid grid-cols-5 mb-4">
-      {tabs.map((tab) => (
-        <TabsTrigger
-          key={tab.id}
-          value={tab.id}
-          className={cn("flex items-center justify-center gap-1.5 relative")}
-          onClick={() => onTabChange(tab.id)}
-        >
-          {tab.label}
-          {getUnreadCount(tab.type) > 0 && (
-            <Badge
-              variant="secondary"
-              className={cn(
-                "absolute -top-2 -right-1 h-4 min-w-4 p-0 flex items-center justify-center text-[10px]",
-                isRTL ? "-left-1 right-auto" : "-right-1 left-auto",
-                tab.id === "all" ? "bg-beauty-pink text-white" : "bg-muted-foreground/20"
-              )}
-            >
-              {getUnreadCount(tab.type)}
-            </Badge>
-          )}
-        </TabsTrigger>
-      ))}
+    <TabsList className="grid grid-cols-6 mb-3">
+      <TabsTrigger value="all" className="relative">
+        {t("dashboard.notifications.tabs.all")}
+        {getUnreadCount() > 0 && (
+          <Badge variant="secondary" className="absolute top-0 right-0 translate-x-1 -translate-y-1 bg-beauty-pink text-white text-[10px] min-w-4 h-4 flex items-center justify-center p-0 rounded-full">
+            {getUnreadCount()}
+          </Badge>
+        )}
+      </TabsTrigger>
+      
+      <TabsTrigger value="approval" className="relative">
+        {t("dashboard.notifications.tabs.approval")}
+        {getUnreadCount("approval") > 0 && (
+          <Badge variant="secondary" className="absolute top-0 right-0 translate-x-1 -translate-y-1 bg-amber-500 text-white text-[10px] min-w-4 h-4 flex items-center justify-center p-0 rounded-full">
+            {getUnreadCount("approval")}
+          </Badge>
+        )}
+      </TabsTrigger>
+      
+      <TabsTrigger value="post" className="relative">
+        {t("dashboard.notifications.tabs.post")}
+        {getUnreadCount("post") > 0 && (
+          <Badge variant="secondary" className="absolute top-0 right-0 translate-x-1 -translate-y-1 bg-blue-500 text-white text-[10px] min-w-4 h-4 flex items-center justify-center p-0 rounded-full">
+            {getUnreadCount("post")}
+          </Badge>
+        )}
+      </TabsTrigger>
+      
+      <TabsTrigger value="task" className="relative">
+        {t("dashboard.notifications.tabs.task")}
+        {getUnreadCount("task") > 0 && (
+          <Badge variant="secondary" className="absolute top-0 right-0 translate-x-1 -translate-y-1 bg-green-500 text-white text-[10px] min-w-4 h-4 flex items-center justify-center p-0 rounded-full">
+            {getUnreadCount("task")}
+          </Badge>
+        )}
+      </TabsTrigger>
+      
+      <TabsTrigger value="message" className="relative">
+        {t("dashboard.notifications.tabs.message", "رسائل")}
+        {getUnreadCount("message") > 0 && (
+          <Badge variant="secondary" className="absolute top-0 right-0 translate-x-1 -translate-y-1 bg-purple-500 text-white text-[10px] min-w-4 h-4 flex items-center justify-center p-0 rounded-full">
+            {getUnreadCount("message")}
+          </Badge>
+        )}
+      </TabsTrigger>
+      
+      <TabsTrigger value="system" className="relative">
+        {t("dashboard.notifications.tabs.system")}
+        {getUnreadCount("system") > 0 && (
+          <Badge variant="secondary" className="absolute top-0 right-0 translate-x-1 -translate-y-1 bg-slate-500 text-white text-[10px] min-w-4 h-4 flex items-center justify-center p-0 rounded-full">
+            {getUnreadCount("system")}
+          </Badge>
+        )}
+      </TabsTrigger>
     </TabsList>
   );
 };
