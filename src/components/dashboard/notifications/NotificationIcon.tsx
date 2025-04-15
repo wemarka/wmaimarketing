@@ -1,13 +1,13 @@
 
 import React from "react";
-import { CheckCircle, Calendar, AlertCircle, Bell, MessageCircle, Zap } from "lucide-react";
+import { CheckCircle, Calendar, AlertCircle, Bell, MessageCircle, Zap, ClipboardList } from "lucide-react";
 import { NotificationIconProps } from "./types";
 import { cn } from "@/lib/utils";
 
 const NotificationIcon: React.FC<NotificationIconProps> = ({ type, className }) => {
   switch (type) {
     case "task":
-      return <CheckCircle className={cn("h-5 w-5 text-green-500", className)} />;
+      return <ClipboardList className={cn("h-5 w-5 text-indigo-500", className)} />;
     case "post":
       return <Calendar className={cn("h-5 w-5 text-beauty-purple", className)} />;
     case "approval":

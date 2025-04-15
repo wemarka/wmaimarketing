@@ -1,11 +1,11 @@
-
 import { useState } from "react";
 import { ScheduledPost, CalendarPost, SocialAccount, ApprovalItem, ContentItem } from "../types";
+import { TaskReminder } from "@/components/dashboard/notifications/types";
 
 export const useSchedulerData = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("upcoming");
-  const [mainView, setMainView] = useState<"list" | "calendar" | "organize" | "workflow">("list");
+  const [mainView, setMainView] = useState<"list" | "calendar" | "organize" | "workflow" | "tasks">("list");
   
   // Sample data for scheduled posts
   const scheduledPosts: ScheduledPost[] = [
@@ -214,6 +214,44 @@ export const useSchedulerData = () => {
     { name: "محمد علي", role: "مدير المنتج", status: "متاح" }
   ];
 
+  // Sample data for tasks
+  const taskReminders: TaskReminder[] = [
+    {
+      id: "task-1",
+      title: "مراجعة محتوى منشور مجموعة الصيف",
+      description: "التأكد من محتوى منشور مجموعة التجميل الصيفية",
+      dueDate: new Date().toISOString(), // Today
+      priority: "high",
+      completed: false,
+      relatedPostId: "1"
+    },
+    {
+      id: "task-2",
+      title: "إنشاء هاشتاغات لمنشور الشعر الجديد",
+      description: "اختيار أفضل الهاشتاغات لمنتج العناية بالشعر الجديد",
+      dueDate: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), // Yesterday
+      priority: "medium",
+      completed: false,
+      relatedPostId: "2"
+    },
+    {
+      id: "task-3",
+      title: "تحضير صور منشور مجموعة الخريف",
+      description: "تجميع صور المنتجات وتجهيزها للمنشور",
+      dueDate: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString(), // 2 days from now
+      priority: "low",
+      completed: false,
+    },
+    {
+      id: "task-4",
+      title: "تحليل أداء منشورات الأسبوع الماضي",
+      description: "تحليل البيانات وإعداد تقرير مختصر",
+      dueDate: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(), // 3 days ago
+      priority: "high",
+      completed: true
+    },
+  ];
+
   return {
     isDialogOpen,
     setIsDialogOpen,
@@ -227,6 +265,7 @@ export const useSchedulerData = () => {
     socialAccounts,
     approvalItems,
     contentItems,
-    workflowApprovers
+    workflowApprovers,
+    taskReminders
   };
 };

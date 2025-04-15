@@ -14,6 +14,7 @@ import PostsList from "@/components/scheduler/components/PostsList";
 import SidebarWidgets from "@/components/scheduler/components/SidebarWidgets";
 import WorkflowSidebar from "@/components/scheduler/components/WorkflowSidebar";
 import ContentOrganizerSidebar from "@/components/scheduler/components/ContentOrganizerSidebar";
+import { TaskReminderWidget } from "@/components/scheduler/TaskReminder";
 
 const Scheduler = () => {
   const { t } = useTranslation();
@@ -44,6 +45,7 @@ const Scheduler = () => {
             <TabsTrigger value="calendar">{t("scheduler.views.calendar", "التقويم")}</TabsTrigger>
             <TabsTrigger value="organize">{t("scheduler.views.organize", "تنظيم المحتوى")}</TabsTrigger>
             <TabsTrigger value="workflow">{t("scheduler.views.workflow", "سير العمل")}</TabsTrigger>
+            <TabsTrigger value="tasks">{t("scheduler.views.tasks", "المهام")}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="list" className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -77,6 +79,15 @@ const Scheduler = () => {
               <ApprovalWorkflow approvals={approvalItems} />
             </div>
             <WorkflowSidebar approvers={workflowApprovers} />
+          </TabsContent>
+          
+          <TabsContent value="tasks" className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="md:col-span-2">
+              <TaskReminderWidget />
+            </div>
+            <div className="space-y-6">
+              <SidebarWidgets view="tasks" />
+            </div>
           </TabsContent>
         </Tabs>
 

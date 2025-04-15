@@ -11,6 +11,9 @@ export interface Notification {
   read: boolean;
   urgent?: boolean;
   actionUrl?: string;
+  dueDate?: string; // add due date for task-related notifications
+  assignee?: string; // add assignee for task-related notifications
+  relatedItemId?: string; // ID of related item (post, approval, etc.)
 }
 
 export interface NotificationIconProps {
@@ -33,4 +36,28 @@ export interface NotificationTabsProps {
   activeTab: string;
   onTabChange: (value: string) => void;
   getUnreadCount: (type?: string) => number;
+}
+
+// Task reminder related types
+export interface TaskReminder {
+  id: string;
+  title: string;
+  description: string;
+  dueDate: string;
+  priority: "low" | "medium" | "high";
+  completed: boolean;
+  relatedPostId?: string;
+  assignee?: string;
+}
+
+export interface TaskReminderProps {
+  task: TaskReminder;
+  onComplete: (id: string) => void;
+  onDelete: (id: string) => void;
+}
+
+export interface TaskListProps {
+  tasks: TaskReminder[];
+  onComplete: (id: string) => void;
+  onDelete: (id: string) => void;
 }
