@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Sidebar, SidebarContent, SidebarSeparator } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -9,13 +10,11 @@ import { useNavigationItems } from "./sidebar/useNavigationItems";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
+import { Clock } from "lucide-react";
+
 const AppSidebar = () => {
-  const {
-    t
-  } = useTranslation();
-  const {
-    profile
-  } = useAuth();
+  const { t } = useTranslation();
+  const { profile } = useAuth();
   const {
     mainNavItems,
     mediaNavItems,
@@ -35,9 +34,7 @@ const AppSidebar = () => {
 
   // Animation variants for staggered children
   const containerVariants = {
-    hidden: {
-      opacity: 0
-    },
+    hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
@@ -53,41 +50,55 @@ const AppSidebar = () => {
     minute: '2-digit',
     hour12: true
   });
-  return <Sidebar variant="inset">
+
+  return (
+    <Sidebar variant="inset">
       <SidebarHeader />
       
       <SidebarContent>
         {/* Time display */}
-        
+        <div className="mx-4 my-2 flex items-center justify-center p-2 rounded-lg bg-beauty-purple/5 dark:bg-beauty-purple/10 border border-beauty-purple/10">
+          <Clock className="h-4 w-4 text-beauty-purple mr-2" />
+          <span className="text-sm text-beauty-purple font-medium">{formattedTime}</span>
+        </div>
         
         <ScrollArea className="h-[calc(100vh-13rem)]">
-          <motion.div initial="hidden" animate="visible" variants={containerVariants} className="pb-8" // Add bottom padding for better scroll experience
-        >
-            <SidebarNavGroup title={t("sidebar.groups.main")} items={mainNavItems} />
+          <motion.div 
+            initial="hidden" 
+            animate="visible" 
+            variants={containerVariants} 
+            className="pb-8"
+          >
+            <SidebarNavGroup compact title={t("sidebar.groups.main")} items={mainNavItems} />
 
             <SidebarSeparator />
             
-            <SidebarNavGroup title={t("sidebar.groups.mediaAnalytics")} items={mediaNavItems} />
+            <SidebarNavGroup compact title={t("sidebar.groups.mediaAnalytics")} items={mediaNavItems} />
 
-            {productItems.length > 0 && <>
+            {productItems.length > 0 && (
+              <>
                 <SidebarSeparator />
-                <SidebarNavGroup title={t("sidebar.groups.products")} items={productItems} />
-              </>}
+                <SidebarNavGroup compact title={t("sidebar.groups.products")} items={productItems} />
+              </>
+            )}
 
-            {profile?.role === 'admin' || profile?.role === 'manager' ? <>
+            {profile?.role === 'admin' || profile?.role === 'manager' ? (
+              <>
                 <SidebarSeparator />
-                
-                <SidebarNavGroup title={t("sidebar.groups.management")} items={managementItems} />
-              </> : null}
+                <SidebarNavGroup compact title={t("sidebar.groups.management")} items={managementItems} />
+              </>
+            ) : null}
 
             <SidebarSeparator />
             
-            <SidebarNavGroup title={t("sidebar.groups.documentation")} items={documentationItems} />
+            <SidebarNavGroup compact title={t("sidebar.groups.documentation")} items={documentationItems} />
           </motion.div>
         </ScrollArea>
       </SidebarContent>
       
       <SidebarFooter />
-    </Sidebar>;
+    </Sidebar>
+  );
 };
+
 export default AppSidebar;

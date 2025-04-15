@@ -12,7 +12,6 @@ import {
   Users,
   Settings,
   Sparkles,
-  Layers,
   Image,
   BookOpen,
   Code,
@@ -20,8 +19,11 @@ import {
   Palette,
   Package,
   PackagePlus,
-  ShoppingCart
+  ShoppingCart,
+  Video,
+  FileImage
 } from "lucide-react";
+import { CompareIcon } from "@/components/dashboard/icons";
 import { cn } from "@/lib/utils";
 
 export const useNavigationItems = () => {
@@ -52,8 +54,9 @@ export const useNavigationItems = () => {
   // Enhance content items
   const contentItems = rawContentItems.map(item => ({
     ...item,
-    icon: item.id.includes('asset') ? <Image className="h-5 w-5" /> :
+    icon: item.id.includes('asset') ? <FileImage className="h-5 w-5" /> :
           item.id.includes('ai') ? <Sparkles className="h-5 w-5 text-beauty-gold" /> :
+          item.id.includes('video') ? <Video className="h-5 w-5 text-red-500" /> :
           <FileText className="h-5 w-5" />,
     tooltip: t(`sidebar.tooltips.${item.id}`, item.label),
     badgeText: item.id.includes('ai') ? t('sidebar.badges.ai') : undefined,
@@ -71,7 +74,7 @@ export const useNavigationItems = () => {
   const analyticsItems = rawAnalyticsItems.map(item => ({
     ...item,
     icon: item.id.includes('campaign') ? <Megaphone className="h-5 w-5" /> :
-          item.id.includes('content') ? <Layers className="h-5 w-5" /> :
+          item.id.includes('content') ? <CompareIcon className="h-5 w-5" /> :
           <BarChart2 className="h-5 w-5" />,
     tooltip: t(`sidebar.tooltips.${item.id}`, item.label),
     badgeText: item.id.includes('dashboard') ? t('sidebar.badges.new') : undefined,
