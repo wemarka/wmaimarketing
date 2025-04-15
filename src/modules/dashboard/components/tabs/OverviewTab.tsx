@@ -11,12 +11,18 @@ import RecentActivity from "@/components/dashboard/RecentActivity";
 import UpcomingPosts from "@/components/dashboard/UpcomingPosts";
 import DashboardAnnouncement from "@/modules/dashboard/components/DashboardAnnouncement";
 import CampaignTracker from "@/modules/dashboard/components/campaign-tracker";
+import QuickStats from "@/modules/dashboard/components/QuickStats";
 
 const OverviewTab = () => {
   const { t } = useTranslation();
   
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* إضافة مكون الإحصائيات السريعة الجديد */}
+      <div className="mb-8">
+        <QuickStats />
+      </div>
+      
       <div className="grid xl:grid-cols-3 gap-6">
         <StatCard
           icon={<Eye className="h-5 w-5 text-beauty-purple" />}
