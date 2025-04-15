@@ -1,7 +1,5 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { BaseService } from "./BaseService";
-import { useTranslation } from "react-i18next";
 import { toast } from "@/hooks/use-toast";
 import { enhanceContent } from "@/lib/supabase/models";
 import { Post } from "@/lib/supabase/models";
@@ -26,8 +24,6 @@ export interface PostWithSuggestions extends Post {
 export class SchedulerService extends BaseService {
   constructor() {
     super('posts');
-    const { t } = useTranslation();
-    this.t = t;
   }
 
   async schedulePost(params: SchedulePostParams): Promise<Post> {
@@ -95,8 +91,8 @@ export class SchedulerService extends BaseService {
         if (error) {
           console.error("Error scheduling cross posts:", error);
           toast({
-            title: this.t('scheduler.crossPostError'),
-            description: this.t('scheduler.crossPostErrorDesc'),
+            title: "Cross Post Error",
+            description: "An error occurred while creating cross posts",
             variant: "destructive"
           });
         }

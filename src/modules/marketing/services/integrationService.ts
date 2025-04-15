@@ -1,7 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { BaseService } from "./BaseService";
-import { useTranslation } from "react-i18next";
+import { toast } from "@/hooks/use-toast";
 
 export interface SocialAccount {
   id: string;
@@ -29,6 +29,7 @@ export interface PlatformStats {
   engagement: number;
   posts: number;
   lastUpdated: string;
+  growth?: number;
 }
 
 export interface SchedulePostParams {
@@ -72,8 +73,6 @@ export {
 export class SocialIntegrationService extends BaseService {
   constructor() {
     super('social_accounts');
-    const { t } = useTranslation();
-    this.t = t;
   }
   
   async getSocialAccounts(): Promise<SocialAccount[]> {
@@ -162,8 +161,8 @@ export class SocialIntegrationService extends BaseService {
       if (error) throw error;
       
       toast({
-        title: this.t('integration.accountDisconnected'),
-        description: this.t('integration.accountDisconnectedDesc')
+        title: "Account Disconnected",
+        description: "Social media account has been disconnected successfully"
       });
     } catch (error) {
       this.handleError(error, 'disconnecting account');
