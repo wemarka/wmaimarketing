@@ -1,42 +1,20 @@
+
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { 
-  Bell, 
-  Search, 
-  Moon, 
-  Sun, 
-  Settings,
-  Menu,
-  User,
-  LogOut,
-  HelpCircle,
-  Lock,
-  UserCog
+  Menu
 } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuGroup,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/context/AuthContext";
-import { Avatar } from "@/components/ui/avatar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { motion } from "framer-motion";
-import { useToast } from "@/components/ui/use-toast";
-import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
+
+// Import the new components
+import SearchBar from "./header/SearchBar";
+import ThemeToggle from "./header/ThemeToggle";
+import NotificationsPopover from "./header/NotificationsPopover";
+import UserMenu from "./header/UserMenu";
 
 const getPageTitle = (pathname: string) => {
   const paths = {
@@ -58,10 +36,7 @@ const Header: React.FC = () => {
   const { user, signOut } = useAuth();
   const [lastScrollTop, setLastScrollTop] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
   const [notificationCount, setNotificationCount] = useState(4);
-  const { theme, setTheme } = useTheme();
-  const { toast } = useToast();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -75,24 +50,6 @@ const Header: React.FC = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [lastScrollTop]);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      toast({
-        title: "جاري البحث",
-        description: `تبحث عن: ${searchQuery}`,
-      });
-    }
-  };
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-    toast({
-      title: "تم تغيير السمة",
-      description: `تم التبديل إلى الوضع ${theme === "dark" ? "الفاتح" : "الداكن"}`,
-    });
-  };
 
   const handleNotificationClick = () => {
     setNotificationCount(0);
@@ -128,159 +85,23 @@ const Header: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-4">
-          <form onSubmit={handleSearch} className="relative hidden md:block">
-            <Input 
-              placeholder="بحث سريع..."
-              className="w-[200px] lg:w-[300px] h-9 pl-9 rounded-full bg-muted/30 border-muted"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-          </form>
+          {/* Search Bar Component */}
+          <SearchBar />
           
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-            className="rounded-full h-9 w-9"
-          >
-            {theme === "dark" ? (
-              <Sun className="h-5 w-5 text-yellow-500" />
-            ) : (
-              <Moon className="h-5 w-5 text-slate-600" />
-            )}
-          </Button>
+          {/* Theme Toggle Component */}
+          <ThemeToggle />
           
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full h-9 w-9 relative">
-                <Bell className="h-5 w-5" />
-                {notificationCount > 0 && (
-                  <Badge 
-                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-[10px] bg-red-500"
-                    variant="destructive"
-                  >
-                    {notificationCount}
-                  </Badge>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[320px] p-0" align="end">
-              <div className="p-4 border-b">
-                <h3 className="font-medium text-lg">الإشعارات</h3>
-              </div>
-              <div className="max-h-[300px] overflow-y-auto">
-                <div className="p-3 border-b hover:bg-muted/40 cursor-pointer" onClick={handleNotificationClick}>
-                  <div className="flex items-start gap-2">
-                    <Badge variant="secondary" className="mt-1 bg-purple-100 text-purple-700 border-0">تسويق</Badge>
-                    <div>
-                      <p className="text-sm font-medium">إحصائيات الحملة الأخيرة جاهزة</p>
-                      <p className="text-xs text-muted-foreground">منذ ٢٠ دقيقة</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-3 border-b hover:bg-muted/40 cursor-pointer" onClick={handleNotificationClick}>
-                  <div className="flex items-start gap-2">
-                    <Badge variant="secondary" className="mt-1 bg-blue-100 text-blue-700 border-0">تعليق</Badge>
-                    <div>
-                      <p className="text-sm font-medium">علق شخص ما على منشورك "أفضل منتجات العناية للبشرة"</p>
-                      <p className="text-xs text-muted-foreground">منذ ساعتين</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-3 border-b hover:bg-muted/40 cursor-pointer" onClick={handleNotificationClick}>
-                  <div className="flex items-start gap-2">
-                    <Badge variant="secondary" className="mt-1 bg-green-100 text-green-700 border-0">نشر</Badge>
-                    <div>
-                      <p className="text-sm font-medium">تم نشر المحتوى المجدول بنجاح</p>
-                      <p className="text-xs text-muted-foreground">منذ ٥ ساعات</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="p-3 flex justify-center border-t">
-                <Button variant="link" size="sm" className="text-xs">
-                  عرض كل الإشعارات
-                </Button>
-              </div>
-            </PopoverContent>
-          </Popover>
+          {/* Notifications Component */}
+          <NotificationsPopover
+            notificationCount={notificationCount}
+            onNotificationClick={handleNotificationClick}
+          />
           
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="gap-2 pl-2">
-                <Avatar className="h-8 w-8">
-                  <div className="bg-primary/20 text-primary flex h-full w-full items-center justify-center rounded-full">
-                    {user?.email?.charAt(0).toUpperCase() || 'ب'}
-                  </div>
-                </Avatar>
-                <div className="hidden md:flex flex-col items-start">
-                  <span className="text-sm font-medium">
-                    {user?.email?.split('@')[0] || 'بيوتي'}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    مدير
-                  </span>
-                </div>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <div className="p-2 border-b">
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user?.email}</p>
-                    <p className="text-xs leading-none text-muted-foreground">حساب مديرة</p>
-                  </div>
-                </DropdownMenuLabel>
-              </div>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem asChild>
-                  <a href="/profile" className="cursor-pointer flex items-center">
-                    <User className="ml-2 h-4 w-4" />
-                    <span>الملف الشخصي</span>
-                  </a>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <a href="/profile?tab=settings" className="cursor-pointer flex items-center">
-                    <Settings className="ml-2 h-4 w-4" />
-                    <span>الإعدادات</span>
-                  </a>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <a href="/profile?tab=security" className="cursor-pointer flex items-center">
-                    <Lock className="ml-2 h-4 w-4" />
-                    <span>الأمان والخصوصية</span>
-                  </a>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem asChild>
-                  <a href="/documentation" className="cursor-pointer flex items-center">
-                    <HelpCircle className="ml-2 h-4 w-4" />
-                    <span>المساعدة</span>
-                  </a>
-                </DropdownMenuItem>
-                {user?.email === "admin@beauti.com" && (
-                  <DropdownMenuItem asChild>
-                    <a href="/users" className="cursor-pointer flex items-center">
-                      <UserCog className="ml-2 h-4 w-4" />
-                      <span>إدارة المستخدمين</span>
-                    </a>
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                className="text-red-500 focus:text-red-500 hover:text-red-500 flex items-center"
-                onClick={() => signOut && signOut()}
-              >
-                <LogOut className="ml-2 h-4 w-4" />
-                <span>تسجيل الخروج</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* User Menu Component */}
+          <UserMenu
+            userEmail={user?.email}
+            onSignOut={() => signOut && signOut()}
+          />
         </div>
       </div>
     </motion.header>
