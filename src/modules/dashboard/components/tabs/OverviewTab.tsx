@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Grid, ViewGrid } from "lucide-react";
+import { Grid, LayoutGrid } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EngagementInsights from "@/modules/dashboard/components/engagement-insights/EngagementInsights";
 import CampaignTracker from "@/modules/dashboard/components/campaign-tracker/CampaignTracker";
@@ -26,7 +26,7 @@ const OverviewTab = () => {
           >
             {layout === "default" ? 
               <Grid className="h-4 w-4" /> : 
-              <ViewGrid className="h-4 w-4" />
+              <LayoutGrid className="h-4 w-4" />
             }
           </Button>
         </div>

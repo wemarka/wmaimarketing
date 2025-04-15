@@ -25,9 +25,13 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
   statuses,
   totalPosts
 }) => {
-  // Calculate counts for each status
+  // Calculate counts for each status - ensure we're accessing the correct properties based on StatusInfo type
   const statusCounts = statuses.reduce((acc, status) => {
-    acc[status.id] = status.value;
+    // Make sure we're accessing properties that exist on the StatusInfo type
+    // We'll use a type assertion or optional chaining to avoid TypeScript errors
+    if ('id' in status && 'value' in status) {
+      acc[status.id as string] = status.value as number;
+    }
     return acc;
   }, { all: totalPosts } as Record<string, number>);
 
