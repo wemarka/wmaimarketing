@@ -2,7 +2,6 @@
 import React from "react";
 import { SidebarHeader as Header } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
@@ -11,8 +10,8 @@ const SidebarHeader: React.FC = () => {
   const { theme } = useTheme();
   
   const logoSrc = theme === "dark" 
-    ? "/WM_MARKETING_LOGO_DARK.png" 
-    : "/WM_MARKETING_LOGO.png";
+    ? "/lovable-uploads/34b84fab-23bb-473d-aeea-351b3cc705f2.png" 
+    : "/lovable-uploads/34b84fab-23bb-473d-aeea-351b3cc705f2.png";
 
   return (
     <Header className="p-4">
@@ -42,8 +41,8 @@ const SidebarHeader: React.FC = () => {
           >
             <img 
               src={logoSrc} 
-              alt="WM Marketing Logo" 
-              className="h-5 w-5 relative z-10 object-contain"
+              alt="بيوتي منصة التسويق الذكية" 
+              className="h-8 w-8 relative z-10 object-contain"
             />
           </motion.div>
         </div>
