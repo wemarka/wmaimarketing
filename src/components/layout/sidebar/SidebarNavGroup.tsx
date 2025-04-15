@@ -1,6 +1,6 @@
 
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { 
   SidebarGroup,
   SidebarGroupLabel,
@@ -36,13 +36,26 @@ interface SidebarNavGroupProps {
 const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({ 
   title, 
   items, 
-  compact = false, 
+  compact = false,
   currentPath = "" 
 }) => {
+  const location = useLocation();
+  
   // Animation variants for staggered children
   const menuItemVariants = {
     hidden: { opacity: 0, x: -20 },
     visible: { opacity: 1, x: 0 }
+  };
+  
+  // Helper function to determine if route is active (exact match or parent route)
+  const isRouteActive = (path: string, currentPath: string) => {
+    if (path === '/' && currentPath === '/') return true;
+    if (path === '/' && currentPath !== '/') return false;
+    
+    // Special case for dashboard
+    if (path === '/dashboard' && currentPath === '/dashboard') return true;
+    
+    return currentPath.startsWith(path);
   };
   
   return (
@@ -68,8 +81,8 @@ const SidebarNavGroup: React.FC<SidebarNavGroupProps> = ({
               >
                 <NavLink to={item.to} className="w-full">
                   {({ isActive }) => {
-                    // Consider both NavLink active state and direct path comparison
-                    const active = isActive || currentPath === item.to;
+                    // Enhanced active state detection
+                    const active = isActive || isRouteActive(item.to, location.pathname);
                     
                     return compact ? (
                       <TooltipProvider delayDuration={300}>

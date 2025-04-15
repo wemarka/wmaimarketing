@@ -49,6 +49,8 @@ export const useNavigationItems = () => {
     ...item,
     icon: <LayoutDashboard className="h-5 w-5" />,
     tooltip: t(`sidebar.tooltips.${item.id}`, item.label),
+    badgeText: item.id === 'dashboard' ? t('sidebar.badges.active') : undefined,
+    badgeVariant: 'default',
   }));
   
   // Enhance content items

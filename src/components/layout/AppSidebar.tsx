@@ -32,23 +32,32 @@ const AppSidebar = () => {
     // Auto collapse sidebar on mobile
     if (isMobile) {
       setExpanded(false);
+    } else {
+      // On larger screens, expand by default
+      setExpanded(true);
     }
   }, [isMobile]);
   
+  // Check if dark mode is already active in system
+  useEffect(() => {
+    const isDark = document.documentElement.classList.contains('dark');
+    setIsDarkMode(isDark);
+  }, []);
+
   const toggleExpanded = () => {
     setExpanded(!expanded);
   };
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
-    // Apply dark mode class to document if needed
+    // Apply dark mode class to document
     document.documentElement.classList.toggle('dark', !isDarkMode);
   };
   
   return (
     <Sidebar variant="inset" className="border-r">
       <SidebarContent className={cn(
-        "flex flex-col py-6 transition-all duration-300 bg-white",
+        "flex flex-col py-6 transition-all duration-300 bg-white dark:bg-gray-900",
         expanded ? "items-start px-5" : "items-center px-2"
       )}>
         {/* Logo and company info */}
