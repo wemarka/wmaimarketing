@@ -3,9 +3,11 @@ import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { PasswordFormValues } from "@/types/profile";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export const usePasswordManagement = () => {
-  const { supabase } = useAuth();
+  // Remove dependency on supabase from AuthContext as it doesn't exist there
+  const { user } = useAuth();
   const [changingPassword, setChangingPassword] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   
@@ -13,6 +15,7 @@ export const usePasswordManagement = () => {
     setChangingPassword(true);
     
     try {
+      // Use the imported supabase client directly instead
       const { error } = await supabase.auth.updateUser({
         password: data.new_password
       });
@@ -22,7 +25,7 @@ export const usePasswordManagement = () => {
       toast({
         title: "تم تغيير كلمة المرور",
         description: "تم تغيير كلمة المرور بنجاح",
-        variant: "success",
+        variant: "default", // Change from 'success' to 'default'
       });
       
     } catch (error: any) {
@@ -51,7 +54,7 @@ export const usePasswordManagement = () => {
       toast({
         title: "تم تسجيل الخروج",
         description: "تم تسجيل الخروج من الجلسات الأخرى بنجاح",
-        variant: "success",
+        variant: "default", // Change from 'success' to 'default'
       });
       
     } catch (error: any) {

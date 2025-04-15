@@ -23,7 +23,9 @@ export const useProfile = () => {
 
   const {
     changingPassword,
-    onChangePassword
+    changePassword, // This was incorrectly referenced as onChangePassword
+    loggingOut,
+    logoutOtherSessions
   } = usePasswordManagement();
 
   return {
@@ -31,10 +33,12 @@ export const useProfile = () => {
     loading,
     updating,
     changingPassword,
+    loggingOut,
     onUpdateProfile,
-    onChangePassword,
+    onChangePassword: changePassword, // Map to match the external API
     updateAvatarUrl,
     getUserInitials,
-    createProfile
+    createProfile,
+    onLogoutOtherSessions: logoutOtherSessions // Map for consistency
   };
 };

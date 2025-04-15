@@ -1,11 +1,9 @@
-
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import ChangePasswordForm from "./ChangePasswordForm";
 import { motion } from "framer-motion";
-import { KeyRound } from "lucide-react";
+import { KeyRound, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
 
 interface PasswordManagementCardProps {
   onChangePassword: (data: any) => Promise<void>;
@@ -73,7 +71,7 @@ const PasswordManagementCard = ({
               <li>استخدم 8 أحرف على الأقل</li>
               <li>دمج بين الأحرف الكبيرة والصغيرة</li>
               <li>استخدم الأرقام والرموز الخاصة</li>
-              <li>تجنب المعلومات الشخصية المعروفة</li>
+              <li>��جنب المعلومات الشخصية المعروفة</li>
               <li>استخدم كلمات مرور مختلفة للحسابات المختلفة</li>
             </ul>
           </div>
