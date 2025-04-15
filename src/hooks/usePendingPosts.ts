@@ -6,7 +6,7 @@ export interface PendingPost {
   id: string;
   title: string;
   content: string;
-  platform: string;
+  platform: "instagram" | "facebook" | "tiktok";  // Updated to be a union type instead of string
   createdAt: string;
   scheduledFor?: string;
   author: {
