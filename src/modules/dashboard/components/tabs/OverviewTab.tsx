@@ -4,13 +4,13 @@ import { useTranslation } from "react-i18next";
 import { Eye, Heart, MousePointerClick } from "lucide-react";
 import { StatCard } from "@/modules/dashboard/components";
 import NotificationsWidget from "@/components/dashboard/NotificationsWidget";
-import EngagementInsights from "@/components/dashboard/EngagementInsights";
+import EngagementInsights from "@/modules/dashboard/components/engagement-insights";
 import PerformanceSummary from "@/components/dashboard/PerformanceSummary";
 import PostStatusTracker from "@/components/analytics/PostStatusTracker";
 import RecentActivity from "@/components/dashboard/RecentActivity";
 import UpcomingPosts from "@/components/dashboard/UpcomingPosts";
 import DashboardAnnouncement from "@/modules/dashboard/components/DashboardAnnouncement";
-import { CampaignTracker } from "@/components/dashboard/campaign-tracker";
+import CampaignTracker from "@/modules/dashboard/components/campaign-tracker";
 
 const OverviewTab = () => {
   const { t } = useTranslation();
