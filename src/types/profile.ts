@@ -1,12 +1,14 @@
 
 import { z } from "zod";
 
+export type AppRole = "admin" | "manager" | "marketing" | "designer" | "user";
+
 export interface ProfileData {
   id: string;
   first_name: string;
   last_name: string;
   avatar_url: string | null;
-  role: string;
+  role: AppRole;
   updated_at: string;
   created_at: string;
   app_metadata?: {

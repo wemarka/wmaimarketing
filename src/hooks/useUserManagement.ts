@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { AppRole } from "@/types/profile";
 
 interface User {
   id: string;
@@ -9,7 +10,7 @@ interface User {
   first_name: string | null;
   last_name: string | null;
   avatar_url: string | null;
-  role: string;
+  role: AppRole;
   created_at: string;
 }
 
@@ -32,7 +33,7 @@ export const useUserManagement = () => {
     password: "",
     first_name: "",
     last_name: "",
-    role: "user",
+    role: "user" as AppRole,
   });
 
   // Fetch users
@@ -69,7 +70,7 @@ export const useUserManagement = () => {
           first_name: profile.first_name,
           last_name: profile.last_name,
           avatar_url: profile.avatar_url,
-          role: profile.role || "user",
+          role: profile.role || "user" as AppRole,
           created_at: profile.created_at,
         }));
         
@@ -144,7 +145,7 @@ export const useUserManagement = () => {
           password: "",
           first_name: "",
           last_name: "",
-          role: "user",
+          role: "user" as AppRole,
         });
         
         fetchUsers();

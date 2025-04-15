@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { ProfileData } from "@/types/profile";
+import { ProfileData, AppRole } from "@/types/profile";
 import { useQueryConfig } from "@/hooks/useQueryConfig";
 
 export const useProfileData = () => {
@@ -66,7 +66,7 @@ export const useProfileData = () => {
         first_name: "",
         last_name: "",
         avatar_url: null,
-        role: "user",
+        role: "user" as AppRole,
         updated_at: new Date().toISOString(),
         created_at: new Date().toISOString()
       };
