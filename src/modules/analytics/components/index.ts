@@ -7,3 +7,5 @@ export { default as ProductionCostAnalysis } from './ProductionCostAnalysis';
 export { default as ContentRecommendations } from './ContentRecommendations';
 export { default as PostPerformance } from './PostPerformance';
 export { default as PostStatusTracker } from './PostStatusTracker';
+export { default as MediaAnalytics } from './post-performance/MediaAnalytics';
+export { default as MediaTypePerformance } from './post-performance/MediaPerformanceCard';

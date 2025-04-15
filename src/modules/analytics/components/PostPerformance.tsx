@@ -6,11 +6,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ResponsiveContainer, BarChart, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar, Line } from "recharts";
-import { Eye, Heart, MessageSquare, Share2, TrendingUp } from "lucide-react";
+import { Eye, Heart, MessageSquare, Share2, TrendingUp, Filter, Download, RefreshCw } from "lucide-react";
+import MediaAnalytics from "./post-performance/MediaAnalytics";
 
 const PostPerformance = () => {
   const [platform, setPlatform] = useState("all");
   const [sortBy, setSortBy] = useState("engagement");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [timePeriod, setTimePeriod] = useState("month");
   
   // Mock data for charts
   const lineChartData = [
@@ -23,6 +26,16 @@ const PostPerformance = () => {
     { name: "يوليو", views: 3490, engagement: 4300, amt: 2100 },
   ];
   
+  const handleRefresh = () => {
+    // في التطبيق الحقيقي، هنا سنقوم بإعادة جلب البيانات
+    console.log("تحديث البيانات...");
+  };
+  
+  const handleExport = () => {
+    // في التطبيق الحقيقي، هنا سنقوم بتصدير البيانات
+    console.log("تصدير البيانات...");
+  };
+  
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -31,7 +44,12 @@ const PostPerformance = () => {
           <p className="text-muted-foreground">تحليل تفاعل الجمهور مع المحتوى المنشور</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Input placeholder="بحث في المنشورات" className="w-[180px]" />
+          <Input 
+            placeholder="بحث في المنشورات" 
+            className="w-[180px]" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
           <Select value={platform} onValueChange={setPlatform}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="المنصة" />
@@ -44,8 +62,28 @@ const PostPerformance = () => {
               <SelectItem value="twitter">تويتر</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline">اختيار التاريخ</Button>
-          <Button variant="outline">تصدير البيانات</Button>
+          <Select value={timePeriod} onValueChange={setTimePeriod}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="الفترة" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="week">آخر أسبوع</SelectItem>
+              <SelectItem value="month">آخر شهر</SelectItem>
+              <SelectItem value="quarter">آخر 3 أشهر</SelectItem>
+              <SelectItem value="year">آخر سنة</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button variant="outline" size="icon">
+            <Filter className="h-4 w-4" />
+          </Button>
+          <Button variant="outline" onClick={handleRefresh} className="flex items-center gap-2">
+            <RefreshCw className="h-4 w-4" />
+            تحديث
+          </Button>
+          <Button variant="outline" onClick={handleExport} className="flex items-center gap-2">
+            <Download className="h-4 w-4" />
+            تصدير
+          </Button>
         </div>
       </div>
       
@@ -106,6 +144,7 @@ const PostPerformance = () => {
         <TabsList>
           <TabsTrigger value="stats">الإحصائيات</TabsTrigger>
           <TabsTrigger value="posts">المنشورات</TabsTrigger>
+          <TabsTrigger value="media">الوسائط</TabsTrigger>
           <TabsTrigger value="comparison">المقارنة</TabsTrigger>
           <TabsTrigger value="trends">الاتجاهات</TabsTrigger>
         </TabsList>
@@ -217,15 +256,19 @@ const PostPerformance = () => {
         </TabsContent>
         
         <TabsContent value="posts" className="space-y-6 mt-6">
-          {/* محتوى تحليلات المنشورات */}
+          <p className="text-muted-foreground text-center py-20">محتوى تحليلات المنشورات سيتم عرضه هنا</p>
+        </TabsContent>
+        
+        <TabsContent value="media" className="mt-6">
+          <MediaAnalytics />
         </TabsContent>
         
         <TabsContent value="comparison" className="space-y-6 mt-6">
-          {/* محتوى مقارنة المنشورات */}
+          <p className="text-muted-foreground text-center py-20">محتوى مقارنة المنشورات سيتم عرضه هنا</p>
         </TabsContent>
         
         <TabsContent value="trends" className="space-y-6 mt-6">
-          {/* محتوى تحليلات الاتجاهات */}
+          <p className="text-muted-foreground text-center py-20">محتوى تحليلات الاتجاهات سيتم عرضه هنا</p>
         </TabsContent>
       </Tabs>
     </div>
