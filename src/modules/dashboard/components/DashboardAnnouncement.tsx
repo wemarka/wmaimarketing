@@ -57,7 +57,7 @@ const DashboardAnnouncement = () => {
             <div className="flex items-center gap-2 mb-4">
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm text-muted-foreground">
-                {t("dashboard.announcement.endsIn", { days: daysRemaining }, "Ends in {{days}} days")}
+                {t("dashboard.announcement.endsIn", { days: daysRemaining })}
               </span>
             </div>
             
