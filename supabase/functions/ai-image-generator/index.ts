@@ -8,24 +8,21 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
-    if (!ANTHROPIC_API_KEY) {
-      throw new Error('ANTHROPIC_API_KEY is not set');
+    const STABILITY_API_KEY = Deno.env.get('STABILITY_API_KEY');
+    if (!STABILITY_API_KEY) {
+      throw new Error('STABILITY_API_KEY is not set');
     }
 
-    const { prompt, size, style, productImage } = await req.json();
+    const { prompt, size, style } = await req.json();
 
     if (!prompt) {
       return new Response(
-        JSON.stringify({
-          error: "Missing required field: prompt is required",
-        }),
+        JSON.stringify({ error: "Missing required field: prompt" }),
         {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -33,29 +30,9 @@ serve(async (req) => {
       );
     }
 
-    // Prepare additional style description based on the requested style
-    let styleDescription = "";
-    switch (style) {
-      case "glamour":
-        styleDescription = "صورة فاخرة وأنيقة لمنتج تجميلي، بإضاءة احترافية، خلفية راقية،";
-        break;
-      case "natural":
-        styleDescription = "صورة طبيعية بإضاءة ناعمة لمنتج تجميلي، أسلوب بسيط وواقعي، خلفية هادئة،";
-        break;
-      case "vibrant":
-        styleDescription = "صورة نابضة بالحياة ذات ألوان زاهية لمنتج تجميلي، خلفية عصرية جذابة،";
-        break;
-      default:
-        styleDescription = "صورة احترافية لمنتج تجميلي،";
-    }
-
-    // Prepare final prompt
-    const finalPrompt = `${styleDescription} ${prompt}، تصوير عالي الجودة، صورة فوتوغرافية احترافية لعرض المنتج في أفضل صورة`;
-    console.log("Generating image with prompt:", finalPrompt);
-
-    // Parse size to get dimensions
+    // Get dimensions based on size parameter
     let width = 1024;
-    let height = 1024; // Default to square format
+    let height = 1024;
     if (size) {
       const [w, h] = size.split("x").map(Number);
       if (w && h) {
@@ -64,111 +41,58 @@ serve(async (req) => {
       }
     }
 
-    // Call Claude 3 API
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    // Enhance prompt based on style
+    let enhancedPrompt = prompt;
+    if (style) {
+      switch(style) {
+        case "glamour":
+          enhancedPrompt += ", luxury beauty product photography, professional lighting, elegant";
+          break;
+        case "natural":
+          enhancedPrompt += ", natural beauty product photography, soft lighting, minimalist";
+          break;
+        case "vibrant":
+          enhancedPrompt += ", vibrant colors, high-energy beauty product photography, dynamic";
+          break;
+      }
+    }
+
+    console.log("Generating image with prompt:", enhancedPrompt);
+
+    const response = await fetch('https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image', {
       method: 'POST',
       headers: {
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${STABILITY_API_KEY}`,
+        'Accept': 'application/json'
       },
       body: JSON.stringify({
-        model: 'claude-3-opus-20240229',
-        max_tokens: 1024,
-        messages: [
+        text_prompts: [
           {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: `Generate an image for a beauty product advertisement with these details: ${finalPrompt}`
-              }
-            ]
+            text: enhancedPrompt,
+            weight: 1
           }
         ],
-        system: "You are an expert in generating beauty product advertisements. Create attractive, professional product images.",
-        tools: [
-          {
-            name: "image_generation",
-            description: "Generate an image based on a text description",
-            input_schema: {
-              type: "object",
-              properties: {
-                prompt: {
-                  type: "string",
-                  description: "The prompt to generate an image from"
-                },
-                width: {
-                  type: "integer",
-                  description: "Width of the image in pixels"
-                },
-                height: {
-                  type: "integer",
-                  description: "Height of the image in pixels"
-                }
-              },
-              required: ["prompt"]
-            }
-          }
-        ],
-        tool_choice: {
-          name: "image_generation",
-          input: {
-            prompt: finalPrompt,
-            width: width,
-            height: height
-          }
-        }
-      }),
+        cfg_scale: 7,
+        height: height,
+        width: width,
+        steps: 30,
+        samples: 1
+      })
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Anthropic API error:', JSON.stringify(errorData, null, 2));
-      
-      // Handle common API errors with clear messages
-      if (errorData.error?.type === "authentication_error") {
-        return new Response(
-          JSON.stringify({ 
-            error: "Authentication error with Anthropic API. Please check your API key." 
-          }),
-          {
-            status: 401,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
-      }
-      
-      // Return more specific error information
-      return new Response(
-        JSON.stringify({ 
-          error: `Error from Anthropic API: ${errorData.error?.message || 'Unknown error'}`,
-          details: errorData 
-        }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
+      const error = await response.json();
+      throw new Error(`Stability AI API error: ${JSON.stringify(error)}`);
     }
 
     const data = await response.json();
-    
-    // Extract image URL from response
-    let imageUrl = null;
-    for (const item of data.content) {
-      if (item.type === 'image') {
-        imageUrl = item.source.url;
-        break;
-      }
-    }
-
-    if (!imageUrl) {
-      throw new Error('No image was generated');
-    }
+    const imageBase64 = data.artifacts[0].base64;
 
     return new Response(
-      JSON.stringify({ imageUrl }),
+      JSON.stringify({ 
+        imageUrl: `data:image/png;base64,${imageBase64}`
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
@@ -178,7 +102,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: error.message,
-        stack: error.stack 
+        stack: error.stack
       }),
       {
         status: 500,
