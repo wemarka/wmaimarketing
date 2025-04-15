@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from "@/integrations/supabase/client";
-import { ProfileData } from '@/types/profile';
+import { ProfileData, AppRole } from '@/types/profile';
 
 export const useAuthState = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -32,7 +32,7 @@ export const useAuthState = () => {
             first_name: "",
             last_name: "",
             avatar_url: null,
-            role: "user",
+            role: "user" as AppRole, // Cast to AppRole type
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           };

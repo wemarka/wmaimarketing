@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { supabase } from "@/integrations/supabase/client";
-import { ProfileData } from '@/types/profile';
+import { ProfileData, AppRole } from '@/types/profile';
 
 export const useAuthMethods = (profile: ProfileData | null, setProfile: (profile: ProfileData | null) => void) => {
   const [authLoading, setAuthLoading] = useState(false);
@@ -65,7 +65,7 @@ export const useAuthMethods = (profile: ProfileData | null, setProfile: (profile
   };
 
   // تحديث البيانات الشخصية
-  const refreshProfile = async () => {
+  const refreshProfile = async (): Promise<void> => {
     try {
       setAuthLoading(true);
       
@@ -94,7 +94,7 @@ export const useAuthMethods = (profile: ProfileData | null, setProfile: (profile
       console.log("Profile refreshed successfully:", data);
       setProfile(data);
       
-      return data;
+      // Changed to explicitly return void by removing the return statement
     } catch (error: any) {
       console.error('Error refreshing profile:', error.message);
       throw error;

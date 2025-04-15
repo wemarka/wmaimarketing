@@ -28,7 +28,7 @@ const ActivateAdminButton: React.FC<ActivateAdminButtonProps> = ({ className }) 
         // Update role to admin with direct SQL execution for more logging
         const { error, data } = await supabase
           .from('profiles')
-          .update({ role: 'admin' as AppRole })
+          .update({ role: 'admin' as AppRole }) // Cast to AppRole type
           .eq('id', userId)
           .select();
           
