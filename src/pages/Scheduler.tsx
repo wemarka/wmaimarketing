@@ -39,7 +39,7 @@ const Scheduler = () => {
       <div className="max-w-6xl mx-auto space-y-6">
         <SchedulerHeader onNewPostClick={() => setIsDialogOpen(true)} />
 
-        <Tabs value={mainView} onValueChange={(value) => setMainView(value as any)}>
+        <Tabs value={mainView} onValueChange={(value) => setMainView(value)}>
           <TabsList className="mb-4">
             <TabsTrigger value="list">{t("scheduler.views.list", "قائمة المنشورات")}</TabsTrigger>
             <TabsTrigger value="calendar">{t("scheduler.views.calendar", "التقويم")}</TabsTrigger>
