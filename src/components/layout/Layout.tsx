@@ -4,6 +4,7 @@ import Header from "./Header";
 import AppSidebar from "./AppSidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import MobileNavbar from "./MobileNavbar";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             {children}
           </main>
         </div>
+        <MobileNavbar />
       </div>
     </SidebarProvider>
   );

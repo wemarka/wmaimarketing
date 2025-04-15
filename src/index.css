@@ -37,6 +37,11 @@
     --sidebar-ring: 240 5% 64.9%;
     --sidebar-muted: 240 4.8% 95.9%;
     --sidebar-muted-foreground: 240 3.8% 46.1%;
+    
+    /* Beauty Colors */
+    --beauty-purple: 252 75% 60%;
+    --beauty-purple-light: 252 95% 85%;
+    --beauty-gold: 43 74% 59%;
   }
 
   .dark {
@@ -71,6 +76,11 @@
     --sidebar-ring: 240 4.9% 83.9%;
     --sidebar-muted: 240 3.7% 15.9%;
     --sidebar-muted-foreground: 240 5% 64.9%;
+    
+    /* Beauty Colors Dark */
+    --beauty-purple: 252 75% 65%;
+    --beauty-purple-light: 252 50% 25%;
+    --beauty-gold: 43 60% 50%;
   }
 }
 
@@ -91,5 +101,13 @@
   
   .sidebar-icon.active {
     @apply text-purple-600;
+  }
+
+  .dropdown-menu-item {
+    @apply flex items-center px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer transition-colors;
+  }
+  
+  .dropdown-menu {
+    @apply py-2 mt-2 bg-white dark:bg-gray-900 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none;
   }
 }
