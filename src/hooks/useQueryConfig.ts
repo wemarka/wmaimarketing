@@ -3,7 +3,7 @@ import { useQueryClient, QueryKey } from "@tanstack/react-query";
 
 interface QueryConfigOptions {
   staleTime?: number;
-  gcTime?: number; // Changed from cacheTime to gcTime
+  gcTime?: number; // Using gcTime instead of cacheTime
   retry?: number | boolean;
   retryDelay?: number;
   refetchOnWindowFocus?: boolean;

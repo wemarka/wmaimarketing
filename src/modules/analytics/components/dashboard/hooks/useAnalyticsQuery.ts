@@ -106,7 +106,7 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
         analyticsData
       };
     },
-    // إضافة خيارات التخزين المؤقت
+    // إضافة خيارات التخزين المؤقت - Using correct properties from queryConfig
     ...queryConfig,
     // إضافة معالج للأخطاء
     meta: {
@@ -134,6 +134,6 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
     isLoading: queryResult.isLoading,
     isError: queryResult.isError,
     error: queryResult.error as Error | null,
-    refetch: queryResult.refetch // Exposing the refetch function from useQuery
+    refetch: queryResult.refetch
   };
 };

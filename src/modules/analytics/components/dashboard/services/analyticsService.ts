@@ -1,33 +1,36 @@
-
 import { supabase } from "@/integrations/supabase/client";
+import { fetchWithRetry } from "@/lib/supabaseClient";
 import { SupabaseSocialAccount, PostWithInsights, TimeRange } from "../types/dashboardTypes";
-import { Json } from "@/integrations/supabase/types";
 import { formatDateForChart, generateDailyDataPoints } from "../utils/analyticsUtils";
 import { OverviewData, EngagementData, PlatformData } from "../types";
 
 export const fetchSocialAccounts = async (userId: string) => {
-  const { data, error } = await supabase
-    .from("social_accounts")
-    .select("platform, insights")
-    .eq("user_id", userId);
+  const { data, error } = await fetchWithRetry<SupabaseSocialAccount[]>(
+    "social_accounts",
+    queryBuilder => queryBuilder
+      .select("platform, insights")
+      .eq("user_id", userId)
+  );
     
   if (error) throw error;
   
-  return data as SupabaseSocialAccount[];
+  return data || [];
 };
 
 export const fetchPosts = async (userId: string, timeRange: TimeRange) => {
-  const { data, error } = await supabase
-    .from("posts")
-    .select("*")
-    .eq("user_id", userId)
-    .gte("created_at", timeRange.start)
-    .lte("created_at", timeRange.end)
-    .order("created_at", { ascending: true });
+  const { data, error } = await fetchWithRetry<PostWithInsights[]>(
+    "posts",
+    queryBuilder => queryBuilder
+      .select("*")
+      .eq("user_id", userId)
+      .gte("created_at", timeRange.start)
+      .lte("created_at", timeRange.end)
+      .order("created_at", { ascending: true })
+  );
     
   if (error) throw error;
   
-  return data as unknown as PostWithInsights[];
+  return data || [];
 };
 
 export const processSocialAccountsData = (
