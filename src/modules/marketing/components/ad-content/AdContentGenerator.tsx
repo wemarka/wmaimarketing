@@ -7,9 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Copy, Wand2, Sparkles, Loader2 } from "lucide-react";
+import { Copy, Wand2, Sparkles, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { generateAdContent, generateAdTitles } from "../../services/adContentService";
+import { motion, AnimatePresence } from "framer-motion";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface AdContentGeneratorProps {
   onContentGenerated?: (content: string, hashtags?: string[]) => void;
@@ -27,6 +29,7 @@ const AdContentGenerator: React.FC<AdContentGeneratorProps> = ({ onContentGenera
   const [tone, setTone] = useState("professional");
   const [target, setTarget] = useState("");
   const [style, setStyle] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     if (!product) {
@@ -39,6 +42,7 @@ const AdContentGenerator: React.FC<AdContentGeneratorProps> = ({ onContentGenera
     }
 
     setIsGenerating(true);
+    setError(null);
     try {
       const result = await generateAdContent({
         platform,
@@ -61,6 +65,7 @@ const AdContentGenerator: React.FC<AdContentGeneratorProps> = ({ onContentGenera
       });
     } catch (error) {
       console.error("خطأ في توليد المحتوى:", error);
+      setError(error instanceof Error ? error.message : "تعذر توليد المحتوى الإعلاني");
       toast({
         title: "حدث خطأ",
         description: "تعذر توليد المحتوى الإعلاني",
@@ -82,6 +87,7 @@ const AdContentGenerator: React.FC<AdContentGeneratorProps> = ({ onContentGenera
     }
 
     setIsTitleGenerating(true);
+    setError(null);
     try {
       const titles = await generateAdTitles(product, 5);
       setSuggestedTitles(titles);
@@ -92,6 +98,7 @@ const AdContentGenerator: React.FC<AdContentGeneratorProps> = ({ onContentGenera
       });
     } catch (error) {
       console.error("خطأ في توليد العناوين:", error);
+      setError(error instanceof Error ? error.message : "تعذر توليد العناوين المقترحة");
       toast({
         title: "حدث خطأ",
         description: "تعذر توليد العناوين المقترحة",
@@ -126,22 +133,81 @@ const AdContentGenerator: React.FC<AdContentGeneratorProps> = ({ onContentGenera
     });
   };
 
+  const handleDismissError = () => {
+    setError(null);
+  };
+
   return (
-    <div className="grid md:grid-cols-2 gap-8">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="grid md:grid-cols-2 gap-8"
+    >
       <div>
-        <h2 className="text-xl font-bold mb-4">إنشاء محتوى إعلاني</h2>
-        <div className="space-y-4">
-          <div className="space-y-2">
+        <motion.h2 
+          initial={{ y: -20 }}
+          animate={{ y: 0 }}
+          className="text-xl font-bold mb-4"
+        >
+          إنشاء محتوى إعلاني
+        </motion.h2>
+        
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mb-4"
+            >
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>خطأ في توليد المحتوى</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        <motion.div 
+          className="space-y-4"
+          variants={{
+            hidden: { opacity: 0 },
+            show: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1
+              }
+            }
+          }}
+          initial="hidden"
+          animate="show"
+        >
+          <motion.div 
+            className="space-y-2"
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              show: { opacity: 1, y: 0 }
+            }}
+          >
             <Label htmlFor="product">معلومات المنتج</Label>
             <Input
               id="product"
               placeholder="أدخل اسم المنتج وخصائصه الرئيسية..."
               value={product}
               onChange={(e) => setProduct(e.target.value)}
+              className="transition-all focus:ring-2 focus:ring-primary/20"
             />
-          </div>
+          </motion.div>
           
-          <div className="space-y-2">
+          <motion.div 
+            className="space-y-2"
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              show: { opacity: 1, y: 0 }
+            }}
+          >
             <Label htmlFor="title">العنوان</Label>
             <div className="flex gap-2">
               <Input
@@ -149,37 +215,74 @@ const AdContentGenerator: React.FC<AdContentGeneratorProps> = ({ onContentGenera
                 placeholder="عنوان الإعلان..."
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="flex-grow"
+                className="flex-grow transition-all focus:ring-2 focus:ring-primary/20"
               />
               <Button 
                 variant="outline" 
                 size="icon" 
                 onClick={handleGenerateTitles} 
                 disabled={isTitleGenerating || !product}
+                className="relative overflow-hidden"
               >
-                {isTitleGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                {isTitleGenerating ? (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    whileHover={{ scale: 1.2, rotate: 15 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <Sparkles className="h-4 w-4" />
+                  </motion.div>
+                )}
               </Button>
             </div>
             
-            {suggestedTitles.length > 0 && (
-              <div className="mt-3 space-y-2 border rounded-md p-3 bg-muted/20">
-                <p className="text-sm font-medium">عناوين مقترحة:</p>
-                <div className="space-y-2">
-                  {suggestedTitles.map((suggestedTitle, index) => (
-                    <div 
-                      key={index} 
-                      className="text-sm p-2 border rounded cursor-pointer hover:bg-primary/10"
-                      onClick={() => handleSelectTitle(suggestedTitle)}
-                    >
-                      {suggestedTitle}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+            <AnimatePresence>
+              {suggestedTitles.length > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-3 space-y-2 border rounded-md p-3 bg-muted/20"
+                >
+                  <p className="text-sm font-medium">عناوين مقترحة:</p>
+                  <div className="space-y-2">
+                    {suggestedTitles.map((suggestedTitle, index) => (
+                      <motion.div 
+                        key={index} 
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ 
+                          opacity: 1, 
+                          x: 0, 
+                          transition: { delay: index * 0.1 } 
+                        }}
+                        className="text-sm p-2 border rounded cursor-pointer hover:bg-primary/10 transition-colors"
+                        onClick={() => handleSelectTitle(suggestedTitle)}
+                        whileHover={{ scale: 1.01, backgroundColor: "rgba(var(--primary), 0.1)" }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        {suggestedTitle}
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <motion.div 
+            className="grid grid-cols-2 gap-4"
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              show: { opacity: 1, y: 0 }
+            }}
+          >
             <div className="space-y-2">
               <Label htmlFor="platform">المنصة</Label>
               <Select value={platform} onValueChange={setPlatform}>
@@ -209,30 +312,56 @@ const AdContentGenerator: React.FC<AdContentGeneratorProps> = ({ onContentGenera
                 </SelectContent>
               </Select>
             </div>
-          </div>
+          </motion.div>
           
-          <div className="space-y-2">
+          <motion.div 
+            className="space-y-2"
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              show: { opacity: 1, y: 0 }
+            }}
+          >
             <Label htmlFor="target">الجمهور المستهدف</Label>
             <Input
               id="target"
               placeholder="الجمهور المستهدف (اختياري)..."
               value={target}
               onChange={(e) => setTarget(e.target.value)}
+              className="transition-all focus:ring-2 focus:ring-primary/20"
             />
-          </div>
+          </motion.div>
           
-          <div className="space-y-2">
+          <motion.div 
+            className="space-y-2"
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              show: { opacity: 1, y: 0 }
+            }}
+          >
             <Label htmlFor="style">أسلوب الإعلان</Label>
             <Input
               id="style"
               placeholder="أسلوب الإعلان (اختياري)..."
               value={style}
               onChange={(e) => setStyle(e.target.value)}
+              className="transition-all focus:ring-2 focus:ring-primary/20"
             />
-          </div>
+          </motion.div>
           
-          <div className="pt-2">
-            <Button onClick={handleGenerate} disabled={isGenerating || !product}>
+          <motion.div 
+            className="pt-2"
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              show: { opacity: 1, y: 0 }
+            }}
+          >
+            <Button 
+              onClick={handleGenerate} 
+              disabled={isGenerating || !product}
+              className="relative overflow-hidden transition-all"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
               {isGenerating ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -244,14 +373,35 @@ const AdContentGenerator: React.FC<AdContentGeneratorProps> = ({ onContentGenera
                   إنشاء المحتوى
                 </>
               )}
+              
+              {isGenerating && (
+                <motion.span 
+                  className="absolute inset-0 bg-primary/10"
+                  animate={{
+                    width: ["0%", "100%"],
+                    left: ["0%", "0%", "100%"]
+                  }}
+                  transition={{ 
+                    duration: 1.5, 
+                    repeat: Infinity,
+                    ease: "linear" 
+                  }}
+                />
+              )}
             </Button>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
       
       <div>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">المحتوى المُنشأ</h2>
+          <motion.h2 
+            initial={{ y: -20 }}
+            animate={{ y: 0 }}
+            className="text-xl font-bold"
+          >
+            المحتوى المُنشأ
+          </motion.h2>
           {platform && generatedContent && (
             <Badge variant="outline">
               {platform === "instagram" ? "انستجرام" : 
@@ -260,48 +410,81 @@ const AdContentGenerator: React.FC<AdContentGeneratorProps> = ({ onContentGenera
           )}
         </div>
         
-        <Card className="mb-4">
-          <CardContent className="p-4 min-h-[200px]">
-            {generatedContent ? (
-              <div className="whitespace-pre-wrap">{generatedContent}</div>
-            ) : (
-              <div className="text-muted-foreground h-full flex items-center justify-center">
-                المحتوى المُنشأ سيظهر هنا
-              </div>
-            )}
-          </CardContent>
-          {generatedContent && (
-            <CardFooter className="border-t p-4 bg-muted/10">
-              <Button variant="outline" size="sm" onClick={handleCopyContent} className="w-full">
-                <Copy className="mr-2 h-4 w-4" />
-                نسخ المحتوى
-              </Button>
-            </CardFooter>
-          )}
-        </Card>
-        
-        {generatedHashtags.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">الهاشتاغات المقترحة</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {generatedHashtags.map((tag, idx) => (
-                  <Badge key={idx} variant="secondary">#{tag}</Badge>
-                ))}
-              </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <Card className="mb-4 overflow-hidden">
+            <CardContent className="p-4 min-h-[200px] relative">
+              {isGenerating ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <p className="mt-2 text-sm text-muted-foreground">جارِ إنشاء المحتوى...</p>
+                </div>
+              ) : generatedContent ? (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="whitespace-pre-wrap"
+                >
+                  {generatedContent}
+                </motion.div>
+              ) : (
+                <div className="text-muted-foreground h-full flex items-center justify-center">
+                  المحتوى المُنشأ سيظهر هنا
+                </div>
+              )}
             </CardContent>
-            <CardFooter className="border-t p-4 bg-muted/10">
-              <Button variant="outline" size="sm" onClick={handleCopyHashtags} className="w-full">
-                <Copy className="mr-2 h-4 w-4" />
-                نسخ الهاشتاغات
-              </Button>
-            </CardFooter>
+            {generatedContent && (
+              <CardFooter className="border-t p-4 bg-muted/10">
+                <Button variant="outline" size="sm" onClick={handleCopyContent} className="w-full group">
+                  <Copy className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
+                  نسخ المحتوى
+                </Button>
+              </CardFooter>
+            )}
           </Card>
-        )}
+        </motion.div>
+        
+        <AnimatePresence>
+          {generatedHashtags.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">الهاشتاغات المقترحة</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {generatedHashtags.map((tag, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.1 + idx * 0.05 }}
+                      >
+                        <Badge variant="secondary">#{tag}</Badge>
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+                <CardFooter className="border-t p-4 bg-muted/10">
+                  <Button variant="outline" size="sm" onClick={handleCopyHashtags} className="w-full group">
+                    <Copy className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
+                    نسخ الهاشتاغات
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

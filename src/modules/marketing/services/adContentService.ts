@@ -25,7 +25,14 @@ export const generateAdContent = async (params: GenerateAdContentParams): Promis
     });
 
     if (error) {
-      throw new Error(error.message);
+      // تحسين رسائل الخطأ المحددة
+      if (error.message.includes('timeout')) {
+        throw new Error("انتهت مهلة الاتصال. يرجى المحاولة مرة أخرى لاحقاً");
+      } else if (error.message.includes('authentication')) {
+        throw new Error("خطأ في المصادقة مع OpenAI. يرجى التحقق من إعدادات API");
+      } else {
+        throw new Error(error.message);
+      }
     }
 
     if (data.error) {
@@ -65,6 +72,7 @@ export const enhanceAdContent = async (
     });
 
     if (error || data.error) {
+      console.error("خطأ في تحسين المحتوى:", error || data.error);
       // إذا حدث خطأ، نعيد المحتوى الحالي دون تغيير
       return currentContent;
     }
@@ -72,6 +80,11 @@ export const enhanceAdContent = async (
     return data.content;
   } catch (error) {
     console.error("خطأ في تحسين المحتوى الإعلاني:", error);
+    toast({
+      title: "تعذر تحسين المحتوى",
+      description: "حدث خطأ أثناء محاولة تحسين المحتوى الحالي",
+      variant: "destructive"
+    });
     // في حالة الخطأ، نعيد المحتوى الحالي دون تغيير
     return currentContent;
   }
