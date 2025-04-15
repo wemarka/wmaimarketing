@@ -182,7 +182,6 @@ const AppSidebar = () => {
               checked={isDarkMode}
               onCheckedChange={toggleDarkMode}
               className="mx-2"
-              size="sm"
             />
             <Moon className="h-4 w-4 text-gray-500" />
           </div>
@@ -191,7 +190,6 @@ const AppSidebar = () => {
             <Switch 
               checked={isDarkMode}
               onCheckedChange={toggleDarkMode}
-              size="sm"
             />
           </div>
         )}
