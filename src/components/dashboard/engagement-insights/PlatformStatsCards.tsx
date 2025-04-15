@@ -2,21 +2,34 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { PlatformTotals } from "./types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface PlatformStatsCardsProps {
   currentTotals: PlatformTotals;
   prevTotals: PlatformTotals;
+  loading?: boolean;
 }
 
 const PlatformStatsCards: React.FC<PlatformStatsCardsProps> = ({
   currentTotals,
   prevTotals,
+  loading = false,
 }) => {
   // Calculate growth between periods
   const calculateGrowth = (current: number, previous: number) => {
     const growth = ((current - previous) / previous) * 100;
     return growth.toFixed(1);
   };
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-3 gap-4 mt-6">
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-24 w-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-3 gap-4 mt-6">
