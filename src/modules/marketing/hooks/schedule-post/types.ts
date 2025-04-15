@@ -50,6 +50,16 @@ export interface UseSchedulePostActions {
   resetForm: () => void;
 }
 
-export type UseSchedulePostReturn = UseSchedulePostState & UseSchedulePostActions;
+// The return type needs to include setters for states that need to be directly accessible
+export type UseSchedulePostReturn = UseSchedulePostState & 
+  UseSchedulePostActions & {
+    setTitle: Dispatch<SetStateAction<string>>;
+    setContent: Dispatch<SetStateAction<string>>;
+    setSuggestedContent: Dispatch<SetStateAction<string>>;
+    setPlatform: Dispatch<SetStateAction<string>>;
+    setSelectedDate: Dispatch<SetStateAction<Date | undefined>>;
+    setSelectedTime: Dispatch<SetStateAction<string>>;
+    setSelectedCampaign: Dispatch<SetStateAction<string>>;
+  };
 
 export type UseSchedulePostStateWithSetters = UseSchedulePostState & UseSchedulePostStateSetters;

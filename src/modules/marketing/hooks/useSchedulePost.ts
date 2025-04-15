@@ -1,3 +1,4 @@
+
 import { useSchedulePostState } from "./schedule-post/useSchedulePostState";
 import { useMediaHandlers } from "./schedule-post/useMediaHandlers";
 import { useCrossPosting } from "./schedule-post/useCrossPosting";
@@ -46,7 +47,7 @@ export const useSchedulePost = (): UseSchedulePostReturn => {
     isGenerating: state.isGenerating,
     isSubmitting: state.isSubmitting,
     
-    // Setter actions
+    // Setter actions that need to be exposed
     setTitle: state.setTitle,
     setContent: state.setContent,
     setSuggestedContent: state.setSuggestedContent,

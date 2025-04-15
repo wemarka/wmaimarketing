@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
@@ -127,7 +126,6 @@ const SchedulePost = () => {
               </CardContent>
             </Card>
 
-            {/* إضافة خيار تفعيل المشاركة المتعددة */}
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
