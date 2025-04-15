@@ -79,7 +79,6 @@ const UpcomingPosts = () => {
         setPosts(data || []);
       } catch (error) {
         console.error("Error fetching upcoming posts:", error);
-        // Use fallback data if we have an error
         setPosts([]);
       } finally {
         setLoading(false);
@@ -95,7 +94,6 @@ const UpcomingPosts = () => {
       description: `جاري فتح المنشور للتحرير`
     });
     
-    // Log activity
     logActivity("content_edit", `تم فتح منشور للتحرير`);
     
     navigate(`/scheduler/edit/${id}`);
@@ -110,11 +108,9 @@ const UpcomingPosts = () => {
 
       if (error) throw error;
 
-      // Remove the post from the state
       setPosts((prevPosts) => prevPosts.filter(post => post.id !== id));
       
-      // Log activity
-      logActivity("content_delete", `تم حذف منشور مجدول`);
+      logActivity("content_delete", `تم حذ�� منشور مجدول`);
 
       toast({
         title: "تم الحذف",
@@ -136,24 +132,20 @@ const UpcomingPosts = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    // Check if the date is today
     if (date.toDateString() === now.toDateString()) {
       return `اليوم، ${date.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}`;
     }
     
-    // Check if the date is tomorrow
     if (date.toDateString() === tomorrow.toDateString()) {
       return `غداً، ${date.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}`;
     }
     
-    // Otherwise, show the date and time
     return date.toLocaleDateString('ar-SA', {
       day: 'numeric',
       month: 'numeric'
     }) + `، ${date.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}`;
   };
 
-  // Estimated audience size (would be better from analytics data)
   const getAudienceSize = (platform: string) => {
     switch (platform.toLowerCase()) {
       case 'instagram': return "15.2K";
@@ -170,7 +162,9 @@ const UpcomingPosts = () => {
           <CardTitle className="text-lg font-medium">المنشورات القادمة</CardTitle>
           <CardDescription>
             {loading ? (
-              <Skeleton className="h-4 w-32" />
+              <span className="inline-block">
+                <Skeleton className="h-4 w-32" />
+              </span>
             ) : (
               `${posts.length} منشور مجدول للأيام القادمة`
             )}
