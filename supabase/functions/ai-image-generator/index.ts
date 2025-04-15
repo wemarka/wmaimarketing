@@ -18,7 +18,7 @@ serve(async (req) => {
       throw new Error('STABILITY_API_KEY is not set');
     }
 
-    const { prompt, size, style } = await req.json();
+    const { prompt, size, style, productType } = await req.json();
 
     if (!prompt) {
       return new Response(
@@ -41,8 +41,35 @@ serve(async (req) => {
       }
     }
 
+    // إضافة دعم لأنواع المنتجات المختلفة
+    let productContext = "";
+    if (productType) {
+      switch(productType) {
+        case "lipstick":
+          productContext = ", lipstick product, beauty product photography";
+          break;
+        case "foundation":
+          productContext = ", foundation makeup product, cosmetics photography";
+          break;
+        case "skincare":
+          productContext = ", skincare product, premium skincare packaging";
+          break;
+        case "eyeshadow":
+          productContext = ", eyeshadow palette, makeup product photography";
+          break;
+        case "mascara":
+          productContext = ", mascara product, eye makeup";
+          break;
+        case "perfume":
+          productContext = ", perfume bottle, luxury fragrance product";
+          break;
+        default:
+          productContext = ", beauty product photography";
+      }
+    }
+
     // Enhance prompt based on style
-    let enhancedPrompt = prompt;
+    let enhancedPrompt = prompt + productContext;
     if (style) {
       switch(style) {
         case "glamour":
@@ -53,6 +80,12 @@ serve(async (req) => {
           break;
         case "vibrant":
           enhancedPrompt += ", vibrant colors, high-energy beauty product photography, dynamic";
+          break;
+        case "luxury":
+          enhancedPrompt += ", high-end luxury product, premium photography, expensive looking";
+          break;
+        case "minimal":
+          enhancedPrompt += ", minimalist design, clean background, simple product presentation";
           break;
       }
     }
@@ -91,7 +124,8 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({ 
-        imageUrl: `data:image/png;base64,${imageBase64}`
+        imageUrl: `data:image/png;base64,${imageBase64}`,
+        prompt: enhancedPrompt
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
