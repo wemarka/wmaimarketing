@@ -4,7 +4,7 @@ export interface SocialAccount {
   platform: string;
   account_name: string;
   profile_name: string;
-  status: "connected" | "pending" | "error";
+  status: "connected" | "pending" | "error" | "disconnected";
   user_id: string;
   insights?: {
     followers: number;
@@ -26,6 +26,7 @@ export interface PlatformStats {
   engagement: number;
   followers: number;
   growth: number;
+  lastUpdated: string;
 }
 
 export interface SchedulePostParams {

@@ -29,7 +29,7 @@ export const getSocialAccounts = async (): Promise<SocialAccount[]> => {
       platform: account.platform,
       account_name: account.account_name,
       profile_name: account.profile_name,
-      status: account.status as "connected" | "pending" | "error",
+      status: account.status as "connected" | "pending" | "error" | "disconnected",
       user_id: account.user_id,
       insights: insights ? {
         followers: Number(insights.followers || 0),
@@ -80,7 +80,7 @@ export const connectAccount = async (params: ConnectAccountParams): Promise<Soci
     platform: data.platform,
     account_name: data.account_name,
     profile_name: data.profile_name,
-    status: data.status as "connected" | "pending" | "error",
+    status: data.status as "connected" | "pending" | "error" | "disconnected",
     user_id: data.user_id,
     insights: insights ? {
       followers: Number(insights.followers || 0),

@@ -41,6 +41,7 @@ export const useSocialIntegration = () => {
 
   const loadPlatformStats = async () => {
     try {
+      // Ensure stats are properly typed as PlatformStats[]
       const stats = await getPlatformStats();
       setPlatformStats(stats);
     } catch (error) {

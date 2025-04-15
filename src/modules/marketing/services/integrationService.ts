@@ -79,8 +79,9 @@ export class SocialIntegrationService extends BaseService {
     try {
       const userId = await this.getCurrentUserId();
       
+      // Use explicit table name as string literal to satisfy TypeScript
       const { data, error } = await supabase
-        .from(this.tableName)
+        .from('social_accounts')
         .select('*')
         .eq('user_id', userId);
       
@@ -112,8 +113,9 @@ export class SocialIntegrationService extends BaseService {
     try {
       const userId = await this.getCurrentUserId();
       
+      // Use explicit table name as string literal to satisfy TypeScript
       const { data, error } = await supabase
-        .from(this.tableName)
+        .from('social_accounts')
         .insert({
           platform: params.platform,
           account_name: params.accountName,
@@ -154,7 +156,7 @@ export class SocialIntegrationService extends BaseService {
   async disconnectAccount(accountId: string): Promise<void> {
     try {
       const { error } = await supabase
-        .from(this.tableName)
+        .from('social_accounts')
         .update({ status: 'disconnected' })
         .eq('id', accountId);
       
