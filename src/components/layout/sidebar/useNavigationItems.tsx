@@ -17,8 +17,12 @@ import {
   BookOpen,
   Code,
   Megaphone,
-  Palette
+  Palette,
+  Package,
+  PackagePlus,
+  ShoppingCart
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export const useNavigationItems = () => {
   const { t } = useTranslation();
@@ -26,8 +30,6 @@ export const useNavigationItems = () => {
   
   // Get user role from the auth context, default to 'user' if not available
   const userRole = profile?.role || 'user';
-  
-  console.log("useNavigationItems - Current user role:", userRole);
   
   // Get role-based navigation items
   const {
@@ -51,15 +53,17 @@ export const useNavigationItems = () => {
   const contentItems = rawContentItems.map(item => ({
     ...item,
     icon: item.id.includes('asset') ? <Image className="h-5 w-5" /> :
-          item.id.includes('ai') ? <Sparkles className="h-5 w-5" /> :
+          item.id.includes('ai') ? <Sparkles className="h-5 w-5 text-beauty-gold" /> :
           <FileText className="h-5 w-5" />,
     tooltip: t(`sidebar.tooltips.${item.id}`, item.label),
+    badgeText: item.id.includes('ai') ? t('sidebar.badges.ai') : undefined,
+    badgeVariant: item.id.includes('ai') ? 'outline' : undefined,
   }));
   
   // Enhance scheduling items
   const schedulingItems = rawSchedulingItems.map(item => ({
     ...item,
-    icon: <Calendar className="h-5 w-5" />,
+    icon: <Calendar className={cn("h-5 w-5", item.id === 'schedule-post' && "text-beauty-pink")} />,
     tooltip: t(`sidebar.tooltips.${item.id}`, item.label),
   }));
   
@@ -74,11 +78,16 @@ export const useNavigationItems = () => {
     badgeVariant: 'default',
   }));
   
-  // Enhance product items
+  // Enhance product items with more specific icons
   const productItems = rawProductItems.map(item => ({
     ...item,
-    icon: <PackageSearch className="h-5 w-5" />,
+    icon: item.id.includes('add') ? <PackagePlus className="h-5 w-5 text-green-500" /> :
+          item.id.includes('list') ? <Package className="h-5 w-5" /> :
+          item.id.includes('orders') ? <ShoppingCart className="h-5 w-5" /> :
+          <PackageSearch className="h-5 w-5" />,
     tooltip: t(`sidebar.tooltips.${item.id}`, item.label),
+    badgeText: item.id === 'product-add' && window.location.pathname.includes('/product/add') ? t('sidebar.badges.current') : undefined,
+    badgeVariant: item.id === 'product-add' && window.location.pathname.includes('/product/add') ? 'outline' : undefined,
   }));
   
   // Enhance management items

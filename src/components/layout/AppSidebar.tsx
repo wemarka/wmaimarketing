@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Sidebar,
   SidebarContent,
@@ -12,9 +12,12 @@ import SidebarFooter from "./sidebar/SidebarFooter";
 import SidebarNavGroup from "./sidebar/SidebarNavGroup";
 import { useNavigationItems } from "./sidebar/useNavigationItems";
 import { motion } from "framer-motion";
+import { useAuth } from "@/context/AuthContext";
+import { cn } from "@/lib/utils";
 
 const AppSidebar = () => {
   const { t } = useTranslation();
+  const { profile } = useAuth();
   const { 
     mainNavItems, 
     mediaNavItems, 
@@ -22,6 +25,17 @@ const AppSidebar = () => {
     documentationItems,
     productItems
   } = useNavigationItems();
+  
+  const [currentTime, setCurrentTime] = useState(new Date());
+  
+  // Update time every minute
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+    
+    return () => clearInterval(timer);
+  }, []);
 
   // Animation variants for staggered children
   const containerVariants = {
@@ -34,17 +48,36 @@ const AppSidebar = () => {
       }
     }
   };
+  
+  // Format time for Arabic locale
+  const formattedTime = currentTime.toLocaleTimeString('ar-SA', { 
+    hour: '2-digit', 
+    minute: '2-digit',
+    hour12: true 
+  });
 
   return (
     <Sidebar variant="inset">
       <SidebarHeader />
       
       <SidebarContent>
-        <ScrollArea className="h-[calc(100vh-10rem)]">
+        {/* Time display */}
+        <div className="px-4 py-2">
+          <div className={cn(
+            "text-center p-2 rounded-md",
+            "bg-gradient-to-r from-beauty-pink/10 to-beauty-purple/10",
+            "text-muted-foreground text-sm"
+          )}>
+            {formattedTime}
+          </div>
+        </div>
+        
+        <ScrollArea className="h-[calc(100vh-13rem)]">
           <motion.div
             initial="hidden"
             animate="visible"
             variants={containerVariants}
+            className="pb-8" // Add bottom padding for better scroll experience
           >
             <SidebarNavGroup 
               title={t("sidebar.groups.main")} 
@@ -68,12 +101,16 @@ const AppSidebar = () => {
               </>
             )}
 
-            <SidebarSeparator />
-            
-            <SidebarNavGroup 
-              title={t("sidebar.groups.management")} 
-              items={managementItems} 
-            />
+            {profile?.role === 'admin' || profile?.role === 'manager' ? (
+              <>
+                <SidebarSeparator />
+                
+                <SidebarNavGroup 
+                  title={t("sidebar.groups.management")} 
+                  items={managementItems} 
+                />
+              </>
+            ) : null}
 
             <SidebarSeparator />
             

@@ -13,7 +13,9 @@ import {
   Sparkles,
   FileQuestion,
   MessageSquare,
-  Database
+  Database,
+  PackagePlus,
+  ShoppingCart
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -33,9 +35,6 @@ export const useRBACSidebar = (userRole: string = 'user') => {
   const { t, i18n } = useTranslation();
   // Normalize the role to lowercase for case-insensitive comparison
   const normalizedUserRole = userRole.toLowerCase();
-  
-  console.log("useRBACSidebar - User role:", userRole);
-  console.log("useRBACSidebar - Normalized user role:", normalizedUserRole);
 
   // Define groups of navigation items with role-based access control
   const dashboardItems = [
@@ -117,14 +116,31 @@ export const useRBACSidebar = (userRole: string = 'user') => {
     }
   ];
 
+  // Enhanced product items with more options
   const productItems = [
     {
       id: 'product-list',
       to: "/product/list",
       icon: <Package2 className="h-5 w-5" />,
-      label: t("sidebar.navigation.products", "Products"),
-      tooltip: t("sidebar.tooltip.products", "Manage and view products"),
+      label: t("sidebar.navigation.products", "المنتجات"),
+      tooltip: t("sidebar.tooltip.products", "عرض وإدارة المنتجات"),
       roles: ['admin', 'manager', 'marketing']
+    },
+    {
+      id: 'product-add',
+      to: "/product/add",
+      icon: <PackagePlus className="h-5 w-5" />,
+      label: t("sidebar.navigation.addProduct", "إضافة منتج"),
+      tooltip: t("sidebar.tooltip.addProduct", "إضافة منتج جديد"),
+      roles: ['admin', 'manager']
+    },
+    {
+      id: 'product-orders',
+      to: "/product/orders",
+      icon: <ShoppingCart className="h-5 w-5" />,
+      label: t("sidebar.navigation.orders", "الطلبات"),
+      tooltip: t("sidebar.tooltip.orders", "إدارة طلبات المنتجات"),
+      roles: ['admin', 'manager']
     }
   ];
 
