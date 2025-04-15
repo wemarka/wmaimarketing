@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Eye, MoreVertical, PenLine, Shield, UserX } from "lucide-react";
+import { Eye, MoreVertical, PenLine, Shield, UserX, UserCheck } from "lucide-react";
 import { AppRole } from "@/types/profile";
 
 interface User {
@@ -35,9 +35,10 @@ interface UserTableProps {
   loading: boolean;
   searchTerm: string;
   onManageRole: (user: User) => void;
+  onActivateUser?: (user: User, makeAdmin: boolean) => void;
 }
 
-const UserTable = ({ users, loading, searchTerm, onManageRole }: UserTableProps) => {
+const UserTable = ({ users, loading, searchTerm, onManageRole, onActivateUser }: UserTableProps) => {
   const filteredUsers = users.filter((user) => {
     const searchLower = searchTerm.toLowerCase();
     return (
@@ -145,6 +146,18 @@ const UserTable = ({ users, loading, searchTerm, onManageRole }: UserTableProps)
                         <Shield className="ml-2 h-4 w-4" />
                         إدارة الدور
                       </DropdownMenuItem>
+                      {onActivateUser && (
+                        <>
+                          <DropdownMenuItem onClick={() => onActivateUser(user, false)}>
+                            <UserCheck className="ml-2 h-4 w-4" />
+                            تفعيل كمستخدم
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => onActivateUser(user, true)}>
+                            <UserCheck className="ml-2 h-4 w-4 text-red-500" />
+                            تفعيل كمدير
+                          </DropdownMenuItem>
+                        </>
+                      )}
                       <DropdownMenuItem className="text-destructive">
                         <UserX className="ml-2 h-4 w-4" />
                         تعطيل الحساب

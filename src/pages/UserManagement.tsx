@@ -1,6 +1,6 @@
 
-import React, { useState } from "react";
-import { UserPlus, Shield } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { UserPlus, Shield, UserCheck } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import {
   Card,
@@ -17,6 +17,7 @@ import SearchBar from "@/components/user-management/SearchBar";
 import AddUserDialog from "@/components/user-management/AddUserDialog";
 import ManageRoleDialog from "@/components/user-management/ManageRoleDialog";
 import RolePermissionsTable from "@/components/user-management/RolePermissionsTable";
+import { useToast } from "@/hooks/use-toast";
 
 const UserManagement = () => {
   const {
@@ -34,9 +35,33 @@ const UserManagement = () => {
     setNewUser,
     handleAddUser,
     handleUpdateRole,
+    activateUserByEmail,
+    activateSpecificUser
   } = useUserManagement();
-
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"users" | "roles">("users");
+
+  // Effect to activate abdalrhmanalhosary@gmail.com as admin when the component loads
+  useEffect(() => {
+    const activateAdmin = async () => {
+      // Check if abdalrhmanalhosary@gmail.com exists in the users list
+      const adminEmail = "abdalrhmanalhosary@gmail.com";
+      const adminUser = users.find(u => u.email === adminEmail);
+      
+      // If user exists, check if they're already an admin
+      if (adminUser && adminUser.role !== "admin") {
+        await activateSpecificUser();
+        toast({
+          title: "تم تفعيل المدير",
+          description: `تم تفعيل ${adminEmail} كمدير بنجاح`,
+        });
+      }
+    };
+    
+    if (users.length > 0 && !loading) {
+      activateAdmin();
+    }
+  }, [users, loading]);
 
   return (
     <Layout>
@@ -48,10 +73,20 @@ const UserManagement = () => {
               إدارة حسابات الموظفين وصلاحياتهم
             </p>
           </div>
-          <Button onClick={() => setIsAddUserOpen(true)}>
-            <UserPlus className="h-4 w-4 ml-2" />
-            إضافة مستخدم
-          </Button>
+          <div className="flex space-x-2 space-x-reverse">
+            <Button 
+              onClick={activateSpecificUser}
+              variant="outline" 
+              className="flex items-center gap-2"
+            >
+              <UserCheck className="h-4 w-4" />
+              تفعيل المدير
+            </Button>
+            <Button onClick={() => setIsAddUserOpen(true)}>
+              <UserPlus className="h-4 w-4 ml-2" />
+              إضافة مستخدم
+            </Button>
+          </div>
         </div>
 
         <Card>
@@ -82,6 +117,7 @@ const UserManagement = () => {
                     setSelectedUser(user);
                     setIsManageRoleOpen(true);
                   }}
+                  onActivateUser={activateUserByEmail}
                 />
               </TabsContent>
 

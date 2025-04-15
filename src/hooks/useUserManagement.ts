@@ -207,6 +207,85 @@ export const useUserManagement = () => {
     }
   };
 
+  // Add this new function to activate a user by email as admin or regular user
+  const activateUserByEmail = async (user: User, makeAdmin: boolean) => {
+    try {
+      // Update the user's role in profiles
+      const { error: roleError } = await supabase
+        .from("profiles")
+        .update({
+          role: makeAdmin ? "admin" as AppRole : "user" as AppRole,
+        })
+        .eq("id", user.id);
+
+      if (roleError) throw roleError;
+
+      // Log this activity
+      await supabase.from("user_activity_log").insert({
+        user_id: user.id,
+        activity_type: "user_activation",
+        description: `تم تفعيل المستخدم ${user.email} بدور ${makeAdmin ? "مدير" : "مستخدم"}`
+      });
+
+      toast({
+        title: "تم تفعيل المستخدم",
+        description: `تم تفعيل ${user.email} بدور ${makeAdmin ? "مدير" : "مستخدم"} بنجاح`,
+      });
+
+      // Refresh the user list
+      fetchUsers();
+    } catch (error) {
+      console.error("Error activating user:", error);
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء تفعيل المستخدم",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Manually activate a specific user (abdalrhmanalhosary@gmail.com) as admin
+  const activateSpecificUser = async () => {
+    setLoading(true);
+    try {
+      const targetEmail = "abdalrhmanalhosary@gmail.com";
+      
+      // Get the user's profile ID by email from the users list
+      const userToActivate = users.find(u => u.email === targetEmail);
+      
+      if (userToActivate) {
+        // User already exists, update their role to admin
+        const { error } = await supabase
+          .from("profiles")
+          .update({ role: "admin" as AppRole })
+          .eq("id", userToActivate.id);
+        
+        if (error) throw error;
+        
+        toast({
+          title: "تم تفعيل المستخدم",
+          description: `تم تفعيل ${targetEmail} كمدير بنجاح`,
+        });
+      } else {
+        toast({
+          title: "خطأ",
+          description: `المستخدم ${targetEmail} غير موجود في النظام`,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error activating specific user:", error);
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء تفعيل المستخدم المحدد",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+      fetchUsers(); // Refresh the list
+    }
+  };
+
   return {
     users,
     permissions,
@@ -223,5 +302,7 @@ export const useUserManagement = () => {
     setNewUser,
     handleAddUser,
     handleUpdateRole,
+    activateUserByEmail,
+    activateSpecificUser
   };
 };
