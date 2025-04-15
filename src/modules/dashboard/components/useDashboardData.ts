@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useAnalyticsQuery } from "@/modules/analytics/components/dashboard/hooks/useAnalyticsQuery";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useToast } from "@/hooks/use-toast";
@@ -21,8 +21,8 @@ export const useDashboardData = () => {
     isUsingFallbackData
   } = useAnalyticsQuery(period);
   
-  // تحسين أداء تغيير الفترة الزمنية
-  const handlePeriodChange = (newPeriod: string) => {
+  // تحسين أداء تغيير الفترة الزمنية باستخدام useCallback لتجنب إعادة الإنشاء
+  const handlePeriodChange = useCallback((newPeriod: string) => {
     if (newPeriod === period) return; // تجنب إعادة التحميل إذا لم تتغير الفترة
     
     setPeriod(newPeriod);
@@ -33,29 +33,30 @@ export const useDashboardData = () => {
       description: `تم تحديث البيانات لعرض ${getTimePeriodLabel(newPeriod)}`,
       variant: "default",
     });
-  };
+  }, [period, toast]);
 
-  // دالة مساعدة لعرض وصف الفترة الزمنية بالعربية
-  const getTimePeriodLabel = (periodKey: string): string => {
-    const labels: Record<string, string> = {
-      "7days": "آخر 7 أيام",
-      "30days": "آخر 30 يوم",
-      "3months": "آخر 3 أشهر",
-      "year": "آخر سنة"
-    };
-    
-    return labels[periodKey] || periodKey;
-  };
+  // استخدام useMemo لتجنب إعادة حساب الترجمات في كل تقديم
+  const timePeriodLabels = useMemo(() => ({
+    "7days": "آخر 7 أيام",
+    "30days": "آخر 30 يوم",
+    "3months": "آخر 3 أشهر",
+    "year": "آخر سنة"
+  }), []);
   
-  // تحسين وظيفة إعادة تحميل البيانات
-  const refreshData = () => {
+  // دالة مساعدة لعرض وصف الفترة الزمنية بالعربية
+  const getTimePeriodLabel = useCallback((periodKey: string): string => {
+    return timePeriodLabels[periodKey as keyof typeof timePeriodLabels] || periodKey;
+  }, [timePeriodLabels]);
+  
+  // تحسين وظيفة إعادة تحميل البيانات باستخدام useCallback
+  const refreshData = useCallback(() => {
     refetch();
     toast({
       title: "جاري تحديث البيانات",
       description: "يتم تحديث البيانات التحليلية الآن",
       variant: "default",
     });
-  };
+  }, [refetch, toast]);
 
   return {
     period,
