@@ -1,218 +1,144 @@
 
 import React from "react";
-import {
-  User,
-  Settings,
-  Lock,
-  HelpCircle,
-  UserCog,
-  LogOut,
-  Shield,
-  Users,
-  BarChart4,
-  Palette,
-  FileText,
-  PenTool,
+import { 
+  User, LogOut, Settings, UserCircle, Shield, 
+  HelpCircle, Bell, Moon, ChevronDown
 } from "lucide-react";
-import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useNavigate } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useToast } from "@/components/ui/use-toast";
+import { useProfile } from "@/hooks/useProfile";
+import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { AppRole } from "@/types/profile";
 
 interface UserMenuProps {
-  userEmail: string | undefined;
+  userEmail?: string;
   onSignOut: () => void;
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ userEmail, onSignOut }) => {
-  const getUserRole = (): AppRole => {
-    // For demonstration, we'll determine role based on email
-    if (userEmail?.includes('admin')) return 'admin';
-    if (userEmail?.includes('marketing')) return 'marketing';
-    if (userEmail?.includes('designer')) return 'designer';
-    if (userEmail?.includes('editor')) return 'editor';
-    if (userEmail?.includes('analyst')) return 'analyst';
-    if (userEmail?.includes('manager')) return 'manager';
-    return 'user';
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { t } = useTranslation();
+  const { profileData } = useProfile();
+  
+  const handleSignOut = () => {
+    toast({
+      title: t("auth.signedOut", "تم تسجيل الخروج"),
+      description: t("auth.signedOutSuccess", "تم تسجيل الخروج بنجاح"),
+    });
+    onSignOut();
   };
-  
-  const userRole = getUserRole();
-  
-  // Determine role-specific properties
-  const roleInfo = {
-    admin: { 
-      title: "مدير", 
-      color: "red", 
-      icon: <Shield className="ml-2 h-4 w-4" />,
-      description: "وصول كامل للنظام"
-    },
-    marketing: { 
-      title: "تسويق", 
-      color: "blue", 
-      icon: <BarChart4 className="ml-2 h-4 w-4" />,
-      description: "إدارة المحتوى التسويقي" 
-    },
-    designer: { 
-      title: "مصمم", 
-      color: "purple", 
-      icon: <Palette className="ml-2 h-4 w-4" />,
-      description: "إنشاء وتعديل التصاميم"
-    },
-    editor: { 
-      title: "محرر", 
-      color: "cyan", 
-      icon: <FileText className="ml-2 h-4 w-4" />,
-      description: "تحرير المحتوى"
-    },
-    analyst: { 
-      title: "محلل", 
-      color: "green", 
-      icon: <BarChart4 className="ml-2 h-4 w-4" />,
-      description: "تحليل البيانات والتقارير"
-    },
-    manager: { 
-      title: "مسؤول", 
-      color: "orange", 
-      icon: <Users className="ml-2 h-4 w-4" />,
-      description: "إدارة الفرق والمشاريع"
-    },
-    user: { 
-      title: "مستخدم", 
-      color: "gray", 
-      icon: <User className="ml-2 h-4 w-4" />,
-      description: "صلاحيات أساسية"
+
+  // Get initials for avatar fallback
+  const getInitials = () => {
+    if (profileData?.first_name && profileData?.last_name) {
+      return `${profileData.first_name[0]}${profileData.last_name[0]}`.toUpperCase();
+    } else if (userEmail) {
+      return userEmail[0].toUpperCase();
     }
+    return "U";
+  };
+
+  // Role mapping
+  const roleMap = {
+    admin: { label: "مدير النظام", icon: <Shield className="h-3.5 w-3.5 mr-2" />, color: "bg-rose-100 text-rose-700" },
+    marketing: { label: "مسوّق", icon: <Bell className="h-3.5 w-3.5 mr-2" />, color: "bg-blue-100 text-blue-700" },
+    editor: { label: "محرر", icon: <User className="h-3.5 w-3.5 mr-2" />, color: "bg-green-100 text-green-700" },
   };
   
-  const currentRoleInfo = roleInfo[userRole];
+  const userRole = profileData?.role || "user";
+  const roleInfo = roleMap[userRole as keyof typeof roleMap] || { 
+    label: "مستخدم", 
+    icon: <User className="h-3.5 w-3.5 mr-2" />, 
+    color: "bg-slate-100 text-slate-700" 
+  };
   
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="gap-2 pl-2">
-          <Avatar className="h-8 w-8">
-            <div className={cn(`bg-${currentRoleInfo.color}-100 text-${currentRoleInfo.color}-800 flex h-full w-full items-center justify-center rounded-full`)}>
-              {userEmail?.charAt(0).toUpperCase() || 'ب'}
-            </div>
+        <Button 
+          variant="ghost" 
+          className="relative h-9 rounded-full pr-2 pl-3 flex items-center gap-2 hover:bg-muted/60"
+        >
+          <Avatar className="h-7 w-7 border">
+            <AvatarImage 
+              src={profileData?.avatar_url || undefined} 
+              alt={profileData?.first_name || userEmail || "User avatar"} 
+            />
+            <AvatarFallback className="text-xs bg-beauty-purple/20 text-beauty-purple">
+              {getInitials()}
+            </AvatarFallback>
           </Avatar>
-          <div className="hidden md:flex flex-col items-start">
-            <span className="text-sm font-medium">
-              {userEmail?.split('@')[0] || 'بيوتي'}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {currentRoleInfo.title}
-            </span>
-          </div>
+          <span className="hidden md:inline-block text-sm font-medium">
+            {profileData?.first_name || userEmail?.split("@")[0] || "المستخدم"}
+          </span>
+          <ChevronDown className="h-4 w-4 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64">
-        <div className="p-4 border-b">
-          <DropdownMenuLabel className="font-normal p-0">
-            <div className="flex flex-col space-y-1">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium leading-none">{userEmail}</p>
-                <Badge 
-                  variant="outline" 
-                  className={cn(`bg-${currentRoleInfo.color}-100 text-${currentRoleInfo.color}-800 hover:bg-${currentRoleInfo.color}-100`)}
-                >
-                  {currentRoleInfo.title}
-                </Badge>
-              </div>
-              <p className="text-xs text-muted-foreground pt-1">{currentRoleInfo.description}</p>
-            </div>
-          </DropdownMenuLabel>
-        </div>
-        
-        <div className="py-2">
-          {/* Role-specific actions */}
-          {userRole === 'admin' && (
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <a href="/user-management" className="cursor-pointer flex items-center">
-                  <UserCog className="ml-2 h-4 w-4 text-red-600" />
-                  <span>إدارة المستخدمين</span>
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-            </DropdownMenuGroup>
-          )}
-          
-          {userRole === 'marketing' && (
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <a href="/content-tools" className="cursor-pointer flex items-center">
-                  <FileText className="ml-2 h-4 w-4 text-blue-600" />
-                  <span>أدوات المحتوى</span>
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <a href="/analytics" className="cursor-pointer flex items-center">
-                  <BarChart4 className="ml-2 h-4 w-4 text-blue-600" />
-                  <span>تحليلات التسويق</span>
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-            </DropdownMenuGroup>
-          )}
-          
-          {userRole === 'designer' && (
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <a href="/ad-designer" className="cursor-pointer flex items-center">
-                  <PenTool className="ml-2 h-4 w-4 text-purple-600" />
-                  <span>تصميم الإعلانات</span>
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-            </DropdownMenuGroup>
-          )}
-        </div>
-        
-        <DropdownMenuGroup className="py-1">
-          <DropdownMenuItem asChild>
-            <a href="/profile" className="cursor-pointer flex items-center">
-              <User className="ml-2 h-4 w-4" />
-              <span>الملف الشخصي</span>
-            </a>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <a href="/profile?tab=settings" className="cursor-pointer flex items-center">
-              <Settings className="ml-2 h-4 w-4" />
-              <span>الإعدادات</span>
-            </a>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <a href="/profile?tab=security" className="cursor-pointer flex items-center">
-              <Lock className="ml-2 h-4 w-4" />
-              <span>الأمان والخصوصية</span>
-            </a>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
+      <DropdownMenuContent className="w-56" align="end" forceMount>
+        <DropdownMenuLabel>
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium">
+              {profileData?.first_name} {profileData?.last_name}
+            </p>
+            <p className="text-xs text-muted-foreground truncate">
+              {userEmail}
+            </p>
+            <Badge variant="outline" className={`mt-1.5 self-start text-xs py-0 ${roleInfo.color}`}>
+              {roleInfo.icon}
+              {roleInfo.label}
+            </Badge>
+          </div>
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild>
-            <a href="/documentation" className="cursor-pointer flex items-center">
-              <HelpCircle className="ml-2 h-4 w-4" />
-              <span>المساعدة</span>
-            </a>
+          <DropdownMenuItem 
+            className="cursor-pointer"
+            onClick={() => navigate("/profile")}
+          >
+            <UserCircle className="mr-2 h-4 w-4" />
+            <span>الملف الشخصي</span>
           </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => navigate("/dashboard")}
+          >
+            <Settings className="mr-2 h-4 w-4" />
+            <span>الإعدادات</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer"
+          >
+            <HelpCircle className="mr-2 h-4 w-4" />
+            <span>مساعدة</span>
+          </DropdownMenuItem>
+          {(userRole === 'admin' || userRole === 'marketing') && (
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate("/user-management")}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              <span>إدارة المستخدمين</span>
+            </DropdownMenuItem>
+          )}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem 
-          className="text-red-500 focus:text-red-500 hover:text-red-500 flex items-center"
-          onClick={onSignOut}
+          className="cursor-pointer focus:bg-destructive/10 focus:text-destructive" 
+          onClick={handleSignOut}
         >
-          <LogOut className="ml-2 h-4 w-4" />
+          <LogOut className="mr-2 h-4 w-4" />
           <span>تسجيل الخروج</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

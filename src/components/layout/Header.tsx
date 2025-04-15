@@ -3,17 +3,18 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
-  Menu, Clock, Calendar, Bell, Star
+  Menu, Clock, Calendar, Bell, Star, Search, User, ChevronDown, Shield, 
+  LayoutDashboard, Settings
 } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 
-// Import the new components
+// Import the components
 import SearchBar from "./header/SearchBar";
 import ThemeToggle from "./header/ThemeToggle";
 import NotificationsPopover from "./header/NotificationsPopover";
@@ -51,6 +52,7 @@ const Header: React.FC = () => {
   const [notificationCount, setNotificationCount] = useState(4);
   const [currentTime, setCurrentTime] = useState(new Date());
   const currentLanguage = i18n.language;
+  const [showFullHeader, setShowFullHeader] = useState(true);
   
   // Update time every minute
   useEffect(() => {
@@ -65,6 +67,7 @@ const Header: React.FC = () => {
     const handleScroll = () => {
       const st = window.pageYOffset || document.documentElement.scrollTop;
       setIsVisible(st <= lastScrollTop || st < 50);
+      setShowFullHeader(st < 100);
       setLastScrollTop(st <= 0 ? 0 : st);
     };
 
@@ -110,87 +113,150 @@ const Header: React.FC = () => {
         y: isVisible ? 0 : -80, 
         opacity: isVisible ? 1 : 0,
       }}
-      transition={{ duration: 0.2 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
       className={cn(
         "sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
       )}
     >
       <div className="container px-4">
-        {/* أضفنا جزء الترحيب هنا */}
-        <div className="bg-gradient-to-r from-beauty-purple/10 to-transparent py-4 px-4 rounded-b-xl">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-2">
-              <SidebarTrigger>
-                <Button variant="ghost" size="icon" className="md:hidden">
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">تبديل القائمة</span>
-                </Button>
-              </SidebarTrigger>
-              
-              <div>
-                <h1 className="text-2xl font-bold flex items-center gap-2">
-                  {greeting}{userName && `, ${userName}`}
-                  <span className="text-xl">👋</span>
-                </h1>
-                <div className="flex flex-wrap items-center gap-3 text-muted-foreground text-sm">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    <span>{getCurrentDate()}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    <span>{getCurrentTime()}</span>
-                  </div>
+        <AnimatePresence>
+          {showFullHeader && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="bg-gradient-to-r from-beauty-purple/10 to-transparent py-4 px-4 rounded-b-xl">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                  <motion.div 
+                    className="flex items-center gap-3"
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ duration: 0.4, delay: 0.1 }}
+                  >
+                    <SidebarTrigger>
+                      <Button variant="ghost" size="icon" className="md:hidden hover:bg-beauty-purple/10 hover:text-beauty-purple">
+                        <Menu className="h-5 w-5" />
+                        <span className="sr-only">تبديل القائمة</span>
+                      </Button>
+                    </SidebarTrigger>
+                    
+                    <div>
+                      <h1 className="text-2xl font-bold flex items-center gap-2">
+                        {greeting}{userName && `, ${userName}`}
+                        <motion.span 
+                          initial={{ rotate: 0 }}
+                          animate={{ rotate: [0, 15, 0, -15, 0] }}
+                          transition={{ 
+                            duration: 1, 
+                            delay: 1, 
+                            repeat: 1, 
+                            repeatType: "reverse" 
+                          }}
+                          className="text-xl"
+                        >
+                          👋
+                        </motion.span>
+                      </h1>
+                      <div className="flex flex-wrap items-center gap-3 text-muted-foreground text-sm mt-1">
+                        <div className="flex items-center gap-2 bg-beauty-cream/30 dark:bg-beauty-purple/10 rounded-full px-3 py-1">
+                          <Calendar className="h-3.5 w-3.5 text-beauty-purple/70" />
+                          <span>{getCurrentDate()}</span>
+                        </div>
+                        <div className="flex items-center gap-2 bg-beauty-cream/30 dark:bg-beauty-purple/10 rounded-full px-3 py-1">
+                          <Clock className="h-3.5 w-3.5 text-beauty-purple/70" />
+                          <span>{getCurrentTime()}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                  
+                  <motion.div 
+                    className="mt-4 md:mt-0 flex flex-wrap items-center justify-between gap-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2, duration: 0.4 }}
+                  >
+                    <div className="hidden md:flex bg-white dark:bg-slate-800/70 py-2 px-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700/40">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 mr-2">
+                          <Shield className="h-4 w-4 text-beauty-purple" />
+                          <p className="text-sm font-medium">{t("dashboard.todayPriorities", "أولويات اليوم")}</p>
+                          <Badge variant="outline" className="text-xs">{priorities.length}</Badge>
+                        </div>
+                      </div>
+                      <ul className="ml-4 text-sm hidden lg:block">
+                        {priorities.slice(0, 1).map((priority, index) => (
+                          <span key={index} className="flex items-center gap-1.5 text-muted-foreground">
+                            <Star className="h-3 w-3 text-beauty-gold" /> {priority}
+                          </span>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      {/* Search Bar Component */}
+                      <SearchBar />
+                      
+                      {/* Theme Toggle Component */}
+                      <ThemeToggle />
+                      
+                      {/* Notifications Component */}
+                      <NotificationsPopover
+                        notificationCount={notificationCount}
+                        onNotificationClick={handleNotificationClick}
+                      />
+                      
+                      {/* User Menu Component */}
+                      <UserMenu
+                        userEmail={user?.email}
+                        onSignOut={() => signOut && signOut()}
+                      />
+                    </div>
+                  </motion.div>
                 </div>
               </div>
-            </div>
-            
-            <div className="mt-4 md:mt-0 flex flex-wrap items-center justify-between gap-4">
-              <div className="hidden md:flex bg-white dark:bg-slate-800 py-2 px-4 rounded-lg shadow-sm">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium mr-2">{t("dashboard.todayPriorities", "أولويات اليوم")}</p>
-                  <Badge variant="outline" className="text-xs">{priorities.length}</Badge>
-                </div>
-                <ul className="ml-4 text-sm hidden lg:block">
-                  {priorities.slice(0, 1).map((priority, index) => (
-                    <span key={index} className="flex items-center gap-1 text-muted-foreground">
-                      <Star className="h-3 w-3 text-beauty-gold" /> {priority}
-                    </span>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="flex items-center gap-4">
-                {/* Search Bar Component */}
-                <SearchBar />
-                
-                {/* Theme Toggle Component */}
-                <ThemeToggle />
-                
-                {/* Notifications Component */}
-                <NotificationsPopover
-                  notificationCount={notificationCount}
-                  onNotificationClick={handleNotificationClick}
-                />
-                
-                {/* User Menu Component */}
-                <UserMenu
-                  userEmail={user?.email}
-                  onSignOut={() => signOut && signOut()}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         
         {/* عنوان الصفحة */}
-        <div className="flex h-12 items-center">
-          <h2 className="text-lg font-semibold">{getPageTitle(location.pathname)}</h2>
-        </div>
+        <motion.div 
+          className="flex h-14 items-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          <div className="flex items-center gap-2">
+            {!showFullHeader && (
+              <SidebarTrigger>
+                <Button variant="ghost" size="icon" className="md:hidden hover:bg-beauty-purple/10">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SidebarTrigger>
+            )}
+            <div className="flex items-center gap-2">
+              {location.pathname === "/dashboard" && <LayoutDashboard className="h-5 w-5 text-beauty-purple" />}
+              <h2 className="text-lg font-semibold">{getPageTitle(location.pathname)}</h2>
+            </div>
+          </div>
+          
+          {!showFullHeader && (
+            <div className="ml-auto flex items-center gap-2">
+              <SearchBar />
+              <ThemeToggle />
+              <NotificationsPopover
+                notificationCount={notificationCount}
+                onNotificationClick={handleNotificationClick}
+              />
+            </div>
+          )}
+        </motion.div>
       </div>
     </motion.header>
   );
 };
 
 export default Header;
-
