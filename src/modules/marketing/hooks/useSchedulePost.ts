@@ -8,7 +8,7 @@ import {
   getSocialAccounts, 
   generateContentSuggestion,
   generateHashtags,
-  SocialAccount
+  type SocialAccount
 } from "../services/integrationService";
 
 export const useSchedulePost = () => {

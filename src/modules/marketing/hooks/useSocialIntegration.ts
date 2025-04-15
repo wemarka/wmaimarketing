@@ -8,9 +8,9 @@ import {
   getPlatformStats,
   getSuggestedPostingTimes,
   crossPostContent,
-  SocialAccount,
-  ConnectAccountParams,
-  PlatformStats
+  type SocialAccount,
+  type ConnectAccountParams,
+  type PlatformStats
 } from "../services/integrationService";
 
 export const useSocialIntegration = () => {
