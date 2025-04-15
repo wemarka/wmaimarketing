@@ -8,7 +8,12 @@ import {
   Moon, 
   Sun, 
   Settings,
-  Menu
+  Menu,
+  User,
+  LogOut,
+  HelpCircle,
+  Lock,
+  UserCog
 } from "lucide-react";
 import {
   Popover,
@@ -19,6 +24,9 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
@@ -217,18 +225,59 @@ const Header: React.FC = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <div className="p-2 border-b text-center">
-                <p className="text-sm font-medium">{user?.email}</p>
-                <p className="text-xs text-muted-foreground">حساب مديرة</p>
+              <div className="p-2 border-b">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user?.email}</p>
+                    <p className="text-xs leading-none text-muted-foreground">حساب مديرة</p>
+                  </div>
+                </DropdownMenuLabel>
               </div>
-              <DropdownMenuItem asChild>
-                <a href="/profile" className="cursor-pointer">
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>الإعدادات</span>
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-red-500" onClick={() => signOut && signOut()}>
-                تسجيل الخروج
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem asChild>
+                  <a href="/profile" className="cursor-pointer flex items-center">
+                    <User className="ml-2 h-4 w-4" />
+                    <span>الملف الشخصي</span>
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href="/profile?tab=settings" className="cursor-pointer flex items-center">
+                    <Settings className="ml-2 h-4 w-4" />
+                    <span>الإعدادات</span>
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href="/profile?tab=security" className="cursor-pointer flex items-center">
+                    <Lock className="ml-2 h-4 w-4" />
+                    <span>الأمان والخصوصية</span>
+                  </a>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem asChild>
+                  <a href="/documentation" className="cursor-pointer flex items-center">
+                    <HelpCircle className="ml-2 h-4 w-4" />
+                    <span>المساعدة</span>
+                  </a>
+                </DropdownMenuItem>
+                {user?.email === "admin@beauti.com" && (
+                  <DropdownMenuItem asChild>
+                    <a href="/users" className="cursor-pointer flex items-center">
+                      <UserCog className="ml-2 h-4 w-4" />
+                      <span>إدارة المستخدمين</span>
+                    </a>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                className="text-red-500 focus:text-red-500 hover:text-red-500 flex items-center"
+                onClick={() => signOut && signOut()}
+              >
+                <LogOut className="ml-2 h-4 w-4" />
+                <span>تسجيل الخروج</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
