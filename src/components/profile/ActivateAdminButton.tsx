@@ -23,13 +23,20 @@ const ActivateAdminButton: React.FC<ActivateAdminButtonProps> = ({ className }) 
       const userId = user?.id;
       
       if (userId) {
+        console.log("Activating admin for user:", userId);
+        
         // Update role to admin
         const { error } = await supabase
           .from('profiles')
           .update({ role: 'admin' as AppRole })
           .eq('id', userId);
           
-        if (error) throw error;
+        if (error) {
+          console.error("Error updating role:", error);
+          throw error;
+        }
+        
+        console.log("Admin role updated successfully");
         
         // Log this action
         await supabase.from("user_activity_log").insert({
@@ -67,7 +74,7 @@ const ActivateAdminButton: React.FC<ActivateAdminButtonProps> = ({ className }) 
   return (
     <Button 
       onClick={activateAdminUser} 
-      className={className} 
+      className={className || "w-full"} 
       variant="outline"
       disabled={loading}
     >

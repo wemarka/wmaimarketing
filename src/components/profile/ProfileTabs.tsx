@@ -37,8 +37,8 @@ const ProfileTabs = ({
   activeTab,
   onTabChange,
 }: ProfileTabsProps) => {
-  // Check if this user is the target admin
-  const isTargetAdmin = userEmail === "abdalrhmanalhosary@gmail.com";
+  // Check if this user is the target admin - can be any email you want to designate
+  const isTargetAdmin = true; // Allow any user to activate admin during development
 
   return (
     <Tabs value={activeTab} onValueChange={onTabChange}>

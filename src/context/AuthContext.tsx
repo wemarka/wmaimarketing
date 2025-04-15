@@ -30,6 +30,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // دمج حالات التحميل
   const isLoading = loading || authLoading;
 
+  // Log current user info
+  console.log("AuthProvider - Current user:", user?.id);
+  console.log("AuthProvider - Current profile:", profile?.role);
+
   return (
     <AuthContext.Provider value={{ 
       user, 

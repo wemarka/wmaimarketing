@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { ProfileData } from "@/types/profile";
 import { Activity } from "@/hooks/useActivityLog";
 import ProfileSidebar from "./ProfileSidebar";
