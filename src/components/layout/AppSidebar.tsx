@@ -102,13 +102,14 @@ const AppSidebar = () => {
     }
   ];
   
-  const isActive = (path: string) => {
+  // Helper function to check if a route is active
+  const checkIsActive = (path: string): boolean => {
     // Exact match for root and dashboard
     if (path === '/' && location.pathname === '/') return true;
     if (path === '/dashboard' && location.pathname === '/dashboard') return true;
     
     // For other routes, check if current path starts with the given path
-    return location.pathname.startsWith(path);
+    return path !== '/' && location.pathname.startsWith(path);
   };
   
   // Profile info
@@ -185,7 +186,7 @@ const AppSidebar = () => {
                           to={item.to}
                           className={({ isActive }) => cn(
                             "flex items-center rounded-md mx-2 px-3 py-2 text-sm font-medium",
-                            isActive || isActive(item.to)
+                            isActive || checkIsActive(item.to)
                               ? "bg-primary/10 text-primary" 
                               : "text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800",
                             !expanded && "justify-center"
