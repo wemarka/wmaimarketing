@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { SidebarHeader as Header } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
@@ -6,13 +5,11 @@ import { Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
-
 const SidebarHeader: React.FC = () => {
   const {
     profile
   } = useAuth();
   const [showWelcome, setShowWelcome] = useState(false);
-
   useEffect(() => {
     // Show welcome message briefly when component mounts
     setShowWelcome(true);
@@ -21,7 +18,6 @@ const SidebarHeader: React.FC = () => {
     }, 3000);
     return () => clearTimeout(timer);
   }, []);
-
   return <Header className="p-4">
       <Link to="/" className="flex items-center gap-2 px-2 relative">
         <div className="relative w-10 h-10 flex items-center justify-center">
@@ -60,13 +56,8 @@ const SidebarHeader: React.FC = () => {
         </div>
         
         {/* Animated welcome tooltip */}
-        {showWelcome && profile && (
-          <div className="absolute top-full left-0 mt-2 p-2 bg-background border rounded-md shadow-md text-xs">
-            مرحبا {profile.first_name || 'مستخدم'}!
-          </div>
-        )}
+        {showWelcome && profile}
       </Link>
     </Header>;
 };
-
 export default SidebarHeader;
