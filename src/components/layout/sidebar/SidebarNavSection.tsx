@@ -2,17 +2,11 @@
 import React from "react";
 import { SidebarNavItem } from "./SidebarNavItem";
 import { motion } from "framer-motion";
-
-interface NavItem {
-  id: string;
-  to: string;
-  icon: React.ReactNode;
-  label: string;
-}
+import { NavItem as NavItemType } from "@/modules/dashboard/utils/types/sidebarTypes";
 
 interface SidebarNavSectionProps {
   title: string;
-  items: NavItem[];
+  items: NavItemType[];
   expanded: boolean;
   checkIsActive: (path: string) => boolean;
   activePath: string;
@@ -45,12 +39,9 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
         {items.map((item) => (
           <div key={item.id}>
             <SidebarNavItem
-              to={item.to}
-              icon={item.icon}
-              label={item.label}
+              item={item}
+              isActive={checkIsActive(item.to)}
               expanded={expanded}
-              checkIsActive={checkIsActive}
-              activePath={activePath}
             />
           </div>
         ))}
