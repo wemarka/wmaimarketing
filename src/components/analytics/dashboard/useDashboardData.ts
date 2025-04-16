@@ -1,12 +1,12 @@
 
 import { useState } from "react";
-import { useAnalyticsData } from "./hooks/useAnalyticsData";
+import { useAnalyticsData } from "./useAnalyticsData";
 import { AnalyticsState } from "./types/dashboardTypes";
 
 export const useDashboardData = () => {
   const [period, setPeriod] = useState<string>("7days");
   
-  // Use the new hook for data fetching
+  // Use the updated hook for data fetching
   const { 
     loading,
     overviewData, 
