@@ -1,13 +1,13 @@
 
 import React, { useState } from "react";
-import { useLocation, Link } from "react-router-dom";
-import { ArrowLeft, Bell, Search, LayoutGrid, BarChart, PieChart } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useLocation } from "react-router-dom";
+import { LayoutGrid, BarChart, PieChart } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { motion } from "framer-motion";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import HeaderTitle from "./header/HeaderTitle";
+import HeaderActions from "./header/HeaderActions";
+import MainNavTabs from "./header/MainNavTabs";
+import DashboardSubTabs from "./header/DashboardSubTabs";
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -68,144 +68,25 @@ const Header: React.FC = () => {
         <div className="flex flex-col space-y-3">
           {/* Top row with logo, title and actions */}
           <div className="flex items-center justify-between">
-            {/* Left side */}
-            <div className="flex items-center space-x-4 space-x-reverse">
-              <Link to="#" className="flex items-center hover:bg-white/10 p-2 rounded-full transition-colors">
-                <ArrowLeft className="h-5 w-5 ml-2" />
-                <span className="text-sm">رجوع</span>
-              </Link>
-              
-              <motion.h2 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.2 }}
-                className="text-xl font-medium mr-4"
-              >
-                {getPageTitle()}
-              </motion.h2>
-            </div>
+            {/* Left side - Title */}
+            <HeaderTitle getPageTitle={getPageTitle} />
             
-            {/* Right actions */}
-            <motion.div 
-              className="flex items-center space-x-4 space-x-reverse"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3, delay: 0.4 }}
-            >
-              {/* Actions */}
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full">
-                <Search className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full">
-                <div className="relative">
-                  <Bell className="h-5 w-5" />
-                  <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full flex items-center justify-center text-[10px]">
-                    3
-                  </span>
-                </div>
-              </Button>
-              
-              {/* Team members */}
-              <div className="flex items-center -space-x-2 space-x-reverse mr-4">
-                {teamMembers.map((member, idx) => (
-                  <Avatar 
-                    key={idx}
-                    className="border-2 border-[#3a7a89] w-8 h-8 hover:transform hover:scale-110 transition-transform cursor-pointer"
-                  >
-                    <AvatarImage src={member.avatar || undefined} />
-                    <AvatarFallback className="bg-white/20 text-white text-xs">
-                      {member.initials}
-                    </AvatarFallback>
-                  </Avatar>
-                ))}
-                <span className="mr-4 text-xs font-medium">12 عضو</span>
-              </div>
-            </motion.div>
+            {/* Right actions - Search, Notifications, Team */}
+            <HeaderActions teamMembers={teamMembers} />
           </div>
           
-          {/* Navigation tabs - Enhanced Design */}
+          {/* Main Navigation tabs */}
           <div className="flex justify-center md:justify-start">
-            <Tabs 
-              defaultValue={location.pathname.includes("/dashboard") ? "dashboard" : 
-                          location.pathname.includes("/insights") ? "insights" : 
-                          location.pathname.includes("/channels") ? "channels" : "dashboard"}
-              dir="rtl"
-              className="w-full"
-            >
-              <TabsList className="relative bg-[#2c6c7a]/20 backdrop-blur-sm rounded-xl p-1 h-12 border border-white/20 w-full justify-start">
-                {mainNavItems.map((item) => {
-                  const isActive = location.pathname.includes(item.path);
-                  return (
-                    <TabsTrigger 
-                      key={item.id}
-                      value={item.id}
-                      className={cn(
-                        "px-6 relative group transition-all duration-300",
-                        "data-[state=active]:text-white data-[state=active]:font-medium text-white/80",
-                        "hover:text-white"
-                      )}
-                      onClick={() => {
-                        if (item.path) {
-                          if (location.pathname !== item.path) {
-                            window.location.href = item.path;
-                          }
-                        }
-                      }}
-                    >
-                      <div className="flex items-center z-10 relative">
-                        {item.icon}
-                        {item.title}
-                      </div>
-                      {isActive && (
-                        <motion.div
-                          layoutId="activeNavTab"
-                          className="absolute inset-0 bg-white/20 rounded-lg shadow-lg"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.3 }}
-                        />
-                      )}
-                    </TabsTrigger>
-                  );
-                })}
-              </TabsList>
-            </Tabs>
+            <MainNavTabs navItems={mainNavItems} />
           </div>
           
-          {/* Dashboard sub-tabs - Enhanced Design */}
+          {/* Dashboard sub-tabs - only shown on dashboard route */}
           {isDashboardRoute && (
-            <div className="flex justify-center md:justify-start mt-2">
-              <Tabs 
-                defaultValue={activeTab}
-                dir="rtl"
-                className="w-full"
-                onValueChange={handleTabClick}
-              >
-                <TabsList className="bg-[#2c6c7a]/10 rounded-xl p-1 h-10 w-full justify-start border-none overflow-x-auto">
-                  {dashboardTabItems.map((item) => {
-                    const isActive = activeTab === item.id;
-                    return (
-                      <TabsTrigger 
-                        key={item.id}
-                        value={item.id}
-                        className={cn(
-                          "px-4 relative group transition-all duration-300 min-w-max",
-                          "data-[state=active]:text-[#3a7a89] data-[state=active]:font-medium",
-                          "text-gray-500 dark:text-gray-400",
-                          "data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800",
-                          "rounded-lg"
-                        )}
-                      >
-                        <div className="flex items-center z-10 relative">
-                          {item.icon}
-                          {item.label}
-                        </div>
-                      </TabsTrigger>
-                    );
-                  })}
-                </TabsList>
-              </Tabs>
-            </div>
+            <DashboardSubTabs 
+              tabItems={dashboardTabItems}
+              activeTab={activeTab}
+              onTabChange={handleTabClick}
+            />
           )}
         </div>
       </header>

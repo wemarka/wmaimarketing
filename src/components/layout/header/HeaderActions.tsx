@@ -1,41 +1,43 @@
 
 import React from "react";
+import { Bell, Search } from "lucide-react";
 import { motion } from "framer-motion";
-import SearchBar from "./SearchBar";
-import ThemeToggle from "./ThemeToggle";
-import NotificationsPopover from "./NotificationsPopover";
-import UserMenu from "./UserMenu";
+import { Button } from "@/components/ui/button";
+import TeamMembers from "./TeamMembers";
 
-interface HeaderActionsProps {
-  notificationCount: number;
-  onNotificationClick: () => void;
-  userEmail?: string;
-  onSignOut: () => void;
+interface TeamMember {
+  name: string;
+  avatar: string | null;
+  initials: string;
 }
 
-const HeaderActions: React.FC<HeaderActionsProps> = ({
-  notificationCount,
-  onNotificationClick,
-  userEmail,
-  onSignOut
-}) => {
+interface HeaderActionsProps {
+  teamMembers: TeamMember[];
+}
+
+const HeaderActions: React.FC<HeaderActionsProps> = ({ teamMembers }) => {
   return (
     <motion.div 
-      className="flex items-center gap-2 sm:gap-3"
+      className="flex items-center space-x-4 space-x-reverse"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ delay: 0.3, duration: 0.4 }}
+      transition={{ duration: 0.3, delay: 0.4 }}
     >
-      <SearchBar />
-      <ThemeToggle />
-      <NotificationsPopover
-        notificationCount={notificationCount}
-        onNotificationClick={onNotificationClick}
-      />
-      <UserMenu
-        userEmail={userEmail}
-        onSignOut={onSignOut}
-      />
+      {/* Actions */}
+      <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full">
+        <Search className="h-5 w-5" />
+      </Button>
+      <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full">
+        <div className="relative">
+          <Bell className="h-5 w-5" />
+          <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full flex items-center justify-center text-[10px]">
+            3
+          </span>
+        </div>
+      </Button>
+      
+      {/* Team members */}
+      <TeamMembers members={teamMembers} />
     </motion.div>
   );
 };
