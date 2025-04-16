@@ -8,80 +8,146 @@ import {
   Video,
   Calendar,
   Settings,
-  HelpCircle,
+  Users,
   Home,
   Star,
-  Users
+  TrendingUp,
+  BookOpen,
+  Target,
+  UserCircle,
+  PieChart,
+  LineChart,
+  Layers,
+  MessageCircle,
+  DollarSign,
+  ShieldCheck
 } from "lucide-react";
 
 export const getNavigationSections = () => {
   return [
     {
-      title: "Main",
+      title: "الرئيسية",
       items: [
         {
           id: "home",
           to: "/",
           icon: <Home className="h-full w-full" />,
-          label: "Home"
-        },
-        {
-          id: "dashboard",
-          to: "/dashboard",
-          icon: <LayoutDashboard className="h-full w-full" />,
-          label: "Dashboard"
-        },
-        {
-          id: "overview",
-          to: "/overview",
-          icon: <Star className="h-full w-full" />,
-          label: "Overview"
-        },
-      ]
-    },
-    {
-      title: "Content",
-      items: [
-        {
-          id: "content",
-          to: "/content",
-          icon: <FileText className="h-full w-full" />,
-          label: "Content"
-        },
-        {
-          id: "images",
-          to: "/images",
-          icon: <Image className="h-full w-full" />,
-          label: "Images"
-        },
-        {
-          id: "videos",
-          to: "/video",
-          icon: <Video className="h-full w-full" />,
-          label: "Videos"
+          label: "الصفحة الرئيسية"
         }
       ]
     },
     {
-      title: "Management",
+      title: "لوحة التحكم",
       items: [
         {
-          id: "analytics",
-          to: "/analytics",
-          icon: <BarChart className="h-full w-full" />,
-          label: "Analytics"
+          id: "dashboard",
+          to: "/dashboard",
+          icon: <LayoutDashboard className="h-full w-full" />,
+          label: "النظرة العامة"
         },
         {
-          id: "team",
-          to: "/team",
+          id: "performance",
+          to: "/dashboard/performance",
+          icon: <TrendingUp className="h-full w-full" />,
+          label: "الأداء"
+        },
+        {
+          id: "interactions",
+          to: "/dashboard/interactions",
+          icon: <MessageCircle className="h-full w-full" />,
+          label: "التفاعلات"
+        }
+      ]
+    },
+    {
+      title: "التسويق",
+      items: [
+        {
+          id: "campaigns",
+          to: "/marketing/campaigns",
+          icon: <Target className="h-full w-full" />,
+          label: "الحملات"
+        },
+        {
+          id: "audience",
+          to: "/marketing/audience",
           icon: <Users className="h-full w-full" />,
-          label: "Team"
+          label: "الجمهور"
+        },
+        {
+          id: "insights",
+          to: "/marketing/insights",
+          icon: <PieChart className="h-full w-full" />,
+          label: "الإحصاءات"
+        }
+      ]
+    },
+    {
+      title: "المحتوى",
+      items: [
+        {
+          id: "posts",
+          to: "/content/posts",
+          icon: <FileText className="h-full w-full" />,
+          label: "المنشورات"
+        },
+        {
+          id: "images",
+          to: "/content/images",
+          icon: <Image className="h-full w-full" />,
+          label: "الصور"
+        },
+        {
+          id: "videos",
+          to: "/content/videos",
+          icon: <Video className="h-full w-full" />,
+          label: "الفيديوهات"
+        }
+      ]
+    },
+    {
+      title: "التحليلات",
+      items: [
+        {
+          id: "weekly-reports",
+          to: "/analytics/weekly",
+          icon: <BarChart className="h-full w-full" />,
+          label: "التقارير الأسبوعية"
+        },
+        {
+          id: "engagement",
+          to: "/analytics/engagement",
+          icon: <LineChart className="h-full w-full" />,
+          label: "التفاعل"
+        },
+        {
+          id: "sales",
+          to: "/analytics/sales",
+          icon: <DollarSign className="h-full w-full" />,
+          label: "المبيعات"
+        }
+      ]
+    },
+    {
+      title: "الإدارة",
+      items: [
+        {
+          id: "users",
+          to: "/admin/users",
+          icon: <Users className="h-full w-full" />,
+          label: "المستخدمين"
         },
         {
           id: "settings",
-          to: "/settings",
+          to: "/admin/settings",
           icon: <Settings className="h-full w-full" />,
-          label: "Settings"
+          label: "الإعدادات"
+        },
+        {
+          id: "roles",
+          to: "/admin/roles",
+          icon: <ShieldCheck className="h-full w-full" />,
+          label: "الصلاحيات"
         }
       ]
     }

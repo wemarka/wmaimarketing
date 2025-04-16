@@ -18,7 +18,6 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const isMobile = useMediaQuery("(max-width: 767px)");
-  const [activeDashboardTab, setActiveDashboardTab] = useState<string>("dashboard");
   const [mounted, setMounted] = useState(false);
   const { i18n } = useTranslation();
   const { sidebarPosition, expanded } = useSidebarNavigation();
@@ -38,26 +37,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     document.documentElement.dir = isRTL ? "rtl" : "ltr";
   }, [isRTL]);
   
-  // Listen for tab change events from the header
-  useEffect(() => {
-    // This function will handle the custom event
-    const handleTabChange = (event: CustomEvent) => {
-      if (event.detail && event.detail.tab) {
-        setActiveDashboardTab(event.detail.tab);
-      }
-    };
-
-    // Add event listener
-    window.addEventListener('header-tab-change' as any, handleTabChange as EventListener);
-    window.addEventListener('dashboard-tab-change' as any, handleTabChange as EventListener);
-    
-    // Clean up
-    return () => {
-      window.removeEventListener('header-tab-change' as any, handleTabChange as EventListener);
-      window.removeEventListener('dashboard-tab-change' as any, handleTabChange as EventListener);
-    };
-  }, []);
-
   // Animation setup
   const contentAnimation = {
     initial: { opacity: 0 },
@@ -99,7 +78,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           )}>
             <AnimatePresence mode="wait">
               <motion.div 
-                key={location.pathname + activeDashboardTab}
+                key={location.pathname}
                 className="bg-white/80 dark:bg-slate-900/90 rounded-2xl shadow-xl overflow-hidden backdrop-blur-sm"
                 {...childAnimation}
               >
