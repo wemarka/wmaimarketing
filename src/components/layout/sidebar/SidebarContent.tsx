@@ -46,6 +46,14 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
     visible: { opacity: 1, y: 0 }
   };
 
+  // This effect helps smooth out the transition when sections expand/collapse
+  const sectionAnimation = {
+    initial: { height: 0, opacity: 0 },
+    animate: { height: "auto", opacity: 1 },
+    exit: { height: 0, opacity: 0 },
+    transition: { duration: 0.3 }
+  };
+
   return (
     <ScrollArea className="h-[calc(100vh-64px-80px)] pr-1">
       <motion.div 
@@ -54,21 +62,25 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
         animate="visible"
         variants={containerAnimation}
       >
-        {navigationSections.map((section, idx) => (
-          <motion.div
-            key={idx}
-            variants={itemAnimation}
-            transition={{ duration: 0.3 }}
-            layout
-          >
-            <SidebarNavSection
-              title={section.title}
-              items={section.items}
-              expanded={expanded}
-              checkIsActive={checkIsActive}
-            />
-          </motion.div>
-        ))}
+        <AnimatePresence mode="wait">
+          {navigationSections.map((section, idx) => (
+            <motion.div
+              key={idx}
+              variants={itemAnimation}
+              transition={{ duration: 0.3 }}
+              layout
+              className="overflow-hidden"
+            >
+              <SidebarNavSection
+                title={section.title}
+                items={section.items}
+                expanded={expanded}
+                checkIsActive={checkIsActive}
+                activePath={activePath}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </motion.div>
     </ScrollArea>
   );

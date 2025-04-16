@@ -25,15 +25,21 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
   statuses,
   totalPosts
 }) => {
-  // Calculate counts for each status - ensure we're accessing the correct properties based on StatusInfo type
+  // Calculate counts for each status
   const statusCounts = statuses.reduce((acc, status) => {
     // Make sure we're accessing properties that exist on the StatusInfo type
-    // We'll use a type assertion or optional chaining to avoid TypeScript errors
     if ('id' in status && 'value' in status) {
       acc[status.id as string] = status.value as number;
     }
     return acc;
   }, { all: totalPosts } as Record<string, number>);
+
+  // Animation variants for content transitions
+  const contentVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+    exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
+  };
 
   return (
     <Tabs defaultValue={statusFilter} className="w-full" onValueChange={onStatusFilterChange} dir="rtl">
@@ -46,23 +52,47 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
       <AnimatePresence mode="wait">
         <TabsContent value="all" className="outline-none">
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
+            variants={contentVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
           >
             {viewType === "cards" ? (
               <>
                 {filteredPosts.length > 0 ? (
-                  <div className="space-y-4">
+                  <motion.div 
+                    className="space-y-4"
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                      visible: {
+                        transition: {
+                          staggerChildren: 0.1
+                        }
+                      }
+                    }}
+                  >
                     {filteredPosts.map((post, index) => (
-                      <PostItem key={post.id} post={post} index={index} />
+                      <motion.div 
+                        key={post.id}
+                        variants={{
+                          hidden: { opacity: 0, y: 10 },
+                          visible: { opacity: 1, y: 0 }
+                        }}
+                      >
+                        <PostItem post={post} index={index} />
+                      </motion.div>
                     ))}
-                  </div>
+                  </motion.div>
                 ) : (
-                  <div className="p-8 text-center">
+                  <motion.div 
+                    className="p-8 text-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
                     <p className="text-muted-foreground">لا توجد منشورات تطابق معايير البحث</p>
-                  </div>
+                  </motion.div>
                 )}
               </>
             ) : (

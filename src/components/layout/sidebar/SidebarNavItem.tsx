@@ -29,7 +29,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
           <NavLink
             to={to}
             className={cn(
-              "flex items-center py-2 rounded-lg transition-colors relative",
+              "flex items-center py-2 rounded-lg transition-colors duration-300 relative",
               expanded ? "px-3 justify-start" : "px-1 justify-center",
               isActive && "bg-[#ffffff15]"
             )}

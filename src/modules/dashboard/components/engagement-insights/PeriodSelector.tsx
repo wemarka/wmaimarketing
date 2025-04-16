@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import CompareIcon from "../../icons/CompareIcon";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface PeriodSelectorProps {
   value?: string;
@@ -65,8 +66,3 @@ export const PeriodSelector = ({
 };
 
 export default PeriodSelector;
-
-// Import missing dependency
-function cn(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
-}

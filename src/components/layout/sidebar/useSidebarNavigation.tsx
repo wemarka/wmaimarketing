@@ -31,6 +31,22 @@ export const useSidebarNavigation = () => {
     
     setIsDarkMode(shouldEnableDark);
     document.documentElement.classList.toggle('dark', shouldEnableDark);
+    
+    // Listen for system preference changes
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+      // Only update if there's no user preference stored
+      if (!localStorage.getItem("theme")) {
+        setIsDarkMode(e.matches);
+        document.documentElement.classList.toggle('dark', e.matches);
+      }
+    };
+    
+    darkModeMediaQuery.addEventListener('change', handleSystemThemeChange);
+    
+    return () => {
+      darkModeMediaQuery.removeEventListener('change', handleSystemThemeChange);
+    };
   }, []);
 
   const toggleExpanded = () => {
