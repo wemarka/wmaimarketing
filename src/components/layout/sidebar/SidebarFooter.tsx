@@ -26,18 +26,23 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({
   avatarUrl
 }) => {
   return (
-    <div className="mt-auto border-t border-white/10 p-3">
+    <div className="mt-auto border-t border-white/15 p-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <Avatar className="h-9 w-9 border-2 border-white/20">
-            {avatarUrl ? (
-              <AvatarImage src={avatarUrl} alt={displayName} />
-            ) : (
-              <AvatarFallback className="bg-[#4a8a99] text-white text-xs">
-                {userInitials}
-              </AvatarFallback>
-            )}
-          </Avatar>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Avatar className="h-9 w-9 border-2 border-white/20 shadow-md">
+              {avatarUrl ? (
+                <AvatarImage src={avatarUrl} alt={displayName} />
+              ) : (
+                <AvatarFallback className="bg-[#4a8a99] text-white text-xs">
+                  {userInitials}
+                </AvatarFallback>
+              )}
+            </Avatar>
+          </motion.div>
           
           <AnimatePresence>
             {expanded && (
@@ -55,18 +60,20 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({
           </AnimatePresence>
         </div>
         
-        <div className="flex items-center space-x-1">
+        <div className="flex items-center space-x-1 rtl:space-x-reverse">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button
+                <motion.button
                   onClick={toggleDarkMode}
+                  whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+                  whileTap={{ scale: 0.9 }}
                   className={cn(
-                    "p-1.5 rounded-full text-white hover:bg-white/20 transition-colors"
+                    "p-1.5 rounded-full text-white/90 hover:text-white transition-colors"
                   )}
                 >
                   {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                </button>
+                </motion.button>
               </TooltipTrigger>
               <TooltipContent
                 side="top"
@@ -82,9 +89,13 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button className="p-1.5 rounded-full text-white hover:bg-white/20 transition-colors">
+                    <motion.button 
+                      className="p-1.5 rounded-full text-white/90 hover:text-white transition-colors"
+                      whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+                      whileTap={{ scale: 0.9 }}
+                    >
                       <Settings className="h-4 w-4" />
-                    </button>
+                    </motion.button>
                   </TooltipTrigger>
                   <TooltipContent
                     side="top"
@@ -98,9 +109,13 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button className="p-1.5 rounded-full text-white hover:bg-white/20 transition-colors">
+                    <motion.button 
+                      className="p-1.5 rounded-full text-white/90 hover:text-white transition-colors"
+                      whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+                      whileTap={{ scale: 0.9 }}
+                    >
                       <LogOut className="h-4 w-4" />
-                    </button>
+                    </motion.button>
                   </TooltipTrigger>
                   <TooltipContent
                     side="top"

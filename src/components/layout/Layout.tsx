@@ -102,12 +102,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <Header />
         <main className={cn(
           "flex-1 p-4 md:p-6 transition-all",
-          location.pathname === "/dashboard" && "bg-gradient-to-br from-[#3a7a89]/5 to-white/20 backdrop-blur-sm dark:bg-slate-900/5"
+          location.pathname === "/dashboard" && "bg-gradient-to-br from-[#3a7a89]/5 to-white/10 dark:bg-slate-900/5"
         )}>
-          <AnimatePresence mode="sync">
+          <AnimatePresence mode="wait">
             <motion.div 
               key={location.pathname + activeDashboardTab}
-              className="bg-white dark:bg-slate-900/90 rounded-2xl shadow-xl overflow-hidden"
+              className="bg-white/80 dark:bg-slate-900/90 rounded-2xl shadow-xl overflow-hidden backdrop-blur-sm"
               {...childAnimation}
             >
               {children}

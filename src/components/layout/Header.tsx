@@ -1,10 +1,14 @@
 
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { LayoutGrid, BarChart, PieChart } from "lucide-react";
+import { LayoutGrid, BarChart, PieChart, Search, Bell, Settings } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 import HeaderTitle from "./header/HeaderTitle";
 import HeaderActions from "./header/HeaderActions";
@@ -95,6 +99,10 @@ const Header: React.FC = () => {
     transition: { duration: 0.3, type: "spring", stiffness: 300, damping: 25 }
   };
 
+  const userInitials = profile?.first_name && profile?.last_name 
+    ? `${profile.first_name.charAt(0)}${profile.last_name.charAt(0)}`
+    : "??";
+
   return (
     <motion.div 
       className="flex flex-col"
@@ -103,10 +111,10 @@ const Header: React.FC = () => {
       transition={{ duration: 0.4, type: "spring", stiffness: 300, damping: 25 }}
     >
       <header 
-        className="bg-gradient-to-r from-[#3a7a89] to-[#4a8a99] px-6 py-4 text-white shadow-lg"
+        className="bg-gradient-to-r from-[#3a7a89] via-[#4a8a99] to-[#5a9aa9] px-6 py-4 text-white shadow-lg"
         dir={isRTL ? "rtl" : "ltr"}
       >
-        <div className="flex flex-col space-y-3">
+        <div className="flex flex-col space-y-4">
           {/* Top row with logo, title and actions */}
           <motion.div 
             className="flex items-center justify-between"
@@ -116,7 +124,52 @@ const Header: React.FC = () => {
             <HeaderTitle getPageTitle={getPageTitle} />
             
             {/* Right actions - Search, Notifications, Team */}
-            <HeaderActions teamMembers={teamMembers} />
+            <div className="flex items-center gap-4">
+              <div className="relative hidden md:block">
+                <Input 
+                  type="search" 
+                  placeholder="بحث..."
+                  className="h-9 w-[200px] rounded-full bg-white/15 border-white/20 text-white placeholder:text-white/60 focus-visible:ring-white/30 pr-9"
+                />
+                <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/60" />
+              </div>
+              
+              <Button size="icon" variant="ghost" className="rounded-full h-9 w-9 bg-white/15 hover:bg-white/25">
+                <Bell className="h-4.5 w-4.5" />
+              </Button>
+              
+              <Button size="icon" variant="ghost" className="rounded-full h-9 w-9 bg-white/15 hover:bg-white/25">
+                <Settings className="h-4.5 w-4.5" />
+              </Button>
+              
+              <div className="flex -space-x-2 rtl:space-x-reverse">
+                {teamMembers.map((member, i) => (
+                  <Avatar 
+                    key={i} 
+                    className={cn(
+                      "h-8 w-8 border-2 border-[#3a7a89]",
+                      i === 0 && "z-30",
+                      i === 1 && "z-20",
+                      i === 2 && "z-10",
+                    )}
+                  >
+                    <AvatarFallback className="bg-[#276070] text-white text-xs">
+                      {member.initials}
+                    </AvatarFallback>
+                  </Avatar>
+                ))}
+              </div>
+              
+              <Avatar className="h-9 w-9 border-2 border-white/20">
+                {profile?.avatar_url ? (
+                  <AvatarImage src={profile.avatar_url} alt="صورة المستخدم" />
+                ) : (
+                  <AvatarFallback className="bg-[#4a8a99] text-white">
+                    {userInitials}
+                  </AvatarFallback>
+                )}
+              </Avatar>
+            </div>
           </motion.div>
           
           {/* Main Navigation tabs with improved styling */}

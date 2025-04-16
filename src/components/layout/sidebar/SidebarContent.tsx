@@ -66,7 +66,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   return (
     <ScrollArea 
       className="h-[calc(100vh-64px-80px)] px-1" 
-      scrollHideDelay={500}
+      scrollHideDelay={750}
       dir={isRTL ? "rtl" : "ltr"}
     >
       <motion.div 
@@ -82,6 +82,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
               variants={sectionAnimation}
               className="overflow-hidden"
               layout
+              exit={{ opacity: 0, y: -10 }}
             >
               <SidebarNavSection
                 title={section.title}

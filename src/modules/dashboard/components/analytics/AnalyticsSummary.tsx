@@ -4,16 +4,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LineChart, ArrowUp, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const AnalyticsSummary = () => {
   return (
-    <Card className="overflow-hidden border-none shadow-md">
+    <Card className="overflow-hidden border-none shadow-md bg-white/90 backdrop-blur-sm">
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
           <div>
             <h3 className="text-sm font-medium text-muted-foreground">الزيارات اليومية</h3>
             <motion.div 
-              className="text-3xl font-bold mt-1"
+              className="text-3xl font-bold mt-1 bg-gradient-to-r from-primary to-primary/70 text-transparent bg-clip-text"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -30,7 +31,7 @@ const AnalyticsSummary = () => {
             </div>
           </div>
           
-          <div className="bg-primary/5 rounded-md p-2">
+          <div className="bg-primary/10 rounded-full p-2.5">
             <LineChart className="h-5 w-5 text-primary" />
           </div>
         </div>
@@ -49,22 +50,34 @@ const AnalyticsSummary = () => {
               d="M0,40 C20,50 40,10 60,30 C80,50 100,20 120,10 C140,0 160,30 180,20 C200,10 220,30 240,15 C260,0 280,20 300,15"
               fill="none"
               stroke="#3a7a89"
-              strokeWidth="2"
+              strokeWidth="2.5"
               className={cn(
                 "drop-shadow-md",
                 "[stroke-dasharray:1000] [stroke-dashoffset:1000]"
               )}
+            />
+            <motion.circle
+              cx="300"
+              cy="15"
+              r="4"
+              fill="#3a7a89"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 1.5, duration: 0.3 }}
             />
           </svg>
           
           <div className="absolute bottom-0 right-0 bg-gradient-to-r from-transparent to-card w-1/5 h-full" />
         </div>
         
-        <div className="bg-primary/5 rounded-lg p-4 mt-4 flex items-center gap-2 hover:bg-primary/10 transition-colors cursor-pointer">
+        <Button
+          variant="ghost" 
+          className="w-full mt-5 bg-primary/5 hover:bg-primary/10 rounded-lg p-2.5 flex items-center gap-2 transition-colors"
+        >
           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
             <TrendingUp className="h-4 w-4 text-primary" />
           </div>
-          <div className="flex-1">
+          <div className="flex-1 text-start">
             <p className="text-xs text-primary font-medium">شاهد تحديثات من المنصات المدعومة</p>
           </div>
           <motion.div 
@@ -74,7 +87,7 @@ const AnalyticsSummary = () => {
           >
             <ArrowUp className="h-4 w-4 text-primary rotate-45" />
           </motion.div>
-        </div>
+        </Button>
       </CardContent>
     </Card>
   );

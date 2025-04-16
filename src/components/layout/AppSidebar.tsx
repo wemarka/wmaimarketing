@@ -57,9 +57,10 @@ const AppSidebar = () => {
   return (
     <motion.div 
       className={cn(
-        "fixed h-screen bg-gradient-to-b transition-colors z-30",
-        "from-[#3a7a89] to-[#2c6c7a] shadow-lg flex flex-col",
+        "fixed h-screen z-30 flex flex-col",
         "border-white/10 overflow-hidden",
+        "bg-gradient-to-b from-[#3a7a89] via-[#317683] to-[#276070]",
+        "bg-opacity-95 backdrop-blur-md shadow-xl",
         sidebarPosition === "left" ? "left-0 border-r" : "right-0 border-l",
         !mounted && "opacity-0"
       )}

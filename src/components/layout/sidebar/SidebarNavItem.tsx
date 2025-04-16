@@ -41,9 +41,9 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
           <NavLink
             to={to}
             className={cn(
-              "flex items-center py-2 rounded-lg transition-colors duration-300 relative",
+              "flex items-center py-2 rounded-lg transition-colors duration-300 relative group",
               expanded ? "px-3 justify-start" : "px-1 justify-center",
-              isActive && "bg-[#ffffff15]"
+              isActive ? "bg-[#ffffff20]" : "hover:bg-[#ffffff10]"
             )}
           >
             {() => (
@@ -84,7 +84,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                 {isActive && (
                   <motion.div 
                     className={cn(
-                      "absolute bg-white h-8",
+                      "absolute bg-gradient-to-b from-white/90 to-white/70 h-8",
                       activeIndicatorPosition,
                       activeIndicatorBorderRadius,
                       expanded ? "w-1.5" : "w-1.5"
