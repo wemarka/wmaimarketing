@@ -20,7 +20,7 @@ import {
 } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Download, CalendarDays } from "lucide-react";
-import { AIFeedbackMessage } from "@/components/dashboard/AIFeedbackMessage";
+import AIFeedbackMessage from "@/components/dashboard/AIFeedbackMessage";
 
 interface OverviewChartProps {
   data: any[];
@@ -53,7 +53,7 @@ const CustomTooltipContent = ({ active, payload, label }: any) => {
   );
 };
 
-// Format Y-axis ticks to be more readable - now returning string only
+// Format Y-axis ticks to be more readable - ensuring it always returns a string
 const formatYAxisTick = (value: number): string => {
   if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
   if (value >= 1000) return `${(value / 1000).toFixed(0)}K`;
@@ -107,7 +107,7 @@ const OverviewChart: React.FC<OverviewChartProps> = ({ data }) => {
       </CardHeader>
       
       <CardContent className="px-2 pt-0">
-        {/* AI-powered feedback message - now more concise */}
+        {/* AI-powered feedback message */}
         <div className="mx-4 mb-4">
           <AIFeedbackMessage 
             performanceData={{

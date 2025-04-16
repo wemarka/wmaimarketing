@@ -17,6 +17,9 @@ interface AIFeedbackMessageProps {
   className?: string;
 }
 
+// Updated type definition to include "error"
+type FeedbackType = "success" | "warning" | "error" | "info";
+
 const AIFeedbackMessage: React.FC<AIFeedbackMessageProps> = ({ performanceData, className }) => {
   const { current, previous, metric, sourceChannel, period = "weekly" } = performanceData;
   
@@ -31,7 +34,7 @@ const AIFeedbackMessage: React.FC<AIFeedbackMessageProps> = ({ performanceData, 
   const isSignificant = Math.abs(percentageChange) > 10;
   
   // Determine the feedback type and message based on performance
-  const getFeedbackType = () => {
+  const getFeedbackType = (): FeedbackType => {
     if (isPositive) {
       return isSignificant ? "success" : "info";
     } else {

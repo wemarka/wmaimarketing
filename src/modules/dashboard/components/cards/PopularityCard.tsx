@@ -5,7 +5,7 @@ import { ChevronRight, Target, TrendingUp, Info, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { AIFeedbackMessage } from "@/components/dashboard/AIFeedbackMessage";
+import AIFeedbackMessage from "@/components/dashboard/AIFeedbackMessage";
 import PerformanceIndicator from "../performance/PerformanceIndicator";
 
 const PopularityCard = () => {
