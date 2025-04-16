@@ -1,11 +1,12 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useRBACSidebar } from "@/modules/dashboard/utils/sidebarItems";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import SidebarNavSection from "./SidebarNavSection";
 import { NavSection } from "@/modules/dashboard/utils/types/sidebarTypes";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface CollapsibleSidebarNavProps {
   expanded: boolean;
@@ -14,11 +15,11 @@ interface CollapsibleSidebarNavProps {
 const CollapsibleSidebarNav: React.FC<CollapsibleSidebarNavProps> = ({ expanded }) => {
   const location = useLocation();
   const { profile } = useAuth();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
   const userRole = profile?.role || "user";
   
-  // Get user role-based navigation items
+  // الحصول على عناصر التنقل حسب دور المستخدم
   const {
     dashboardItems,
     contentItems,
@@ -29,61 +30,87 @@ const CollapsibleSidebarNav: React.FC<CollapsibleSidebarNavProps> = ({ expanded 
     documentationItems
   } = useRBACSidebar(userRole);
   
-  // Helper function to check if a route is active
+  // دالة مساعدة للتحقق من المسار النشط
   const checkIsActive = (path: string): boolean => {
-    // Exact match for root and dashboard
+    // مطابقة دقيقة للجذر ولوحة التحكم
     if (path === '/' && location.pathname === '/') return true;
     if (path === '/dashboard' && location.pathname === '/dashboard') return true;
     
-    // For other routes, check if current path starts with the given path
+    // للمسارات الأخرى، تحقق مما إذا كان المسار الحالي يبدأ بالمسار المعطى
     return path !== '/' && path !== '/dashboard' && location.pathname.startsWith(path);
   };
   
-  // Construct organized navigation sections
+  // إنشاء أقسام التنقل المنظمة
   const navigationSections: NavSection[] = [
     {
-      title: "لوحة التحكم",
+      title: t("sidebar.dashboard", "لوحة التحكم"),
       items: dashboardItems
     },
     {
-      title: "المحتوى",
+      title: t("sidebar.content", "المحتوى"),
       items: contentItems
     },
     {
-      title: "الجدولة",
+      title: t("sidebar.scheduling", "الجدولة"),
       items: schedulingItems
     },
     {
-      title: "التحليلات",
+      title: t("sidebar.analytics", "التحليلات"),
       items: analyticsItems
     },
     {
-      title: "المنتجات",
+      title: t("sidebar.products", "المنتجات"),
       items: productItems
     },
     {
-      title: "الإدارة",
+      title: t("sidebar.management", "الإدارة"),
       items: managementItems
     },
     {
-      title: "المساعدة",
+      title: t("sidebar.help", "المساعدة"),
       items: documentationItems
     }
   ].filter(section => section.items.length > 0);
 
+  // تأثيرات حركية
+  const sectionVariants = {
+    hidden: { opacity: 0 },
+    show: { 
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
   return (
-    <div dir={isRTL ? "rtl" : "ltr"} className="flex flex-col gap-4">
-      {navigationSections.map((section) => (
-        <SidebarNavSection
-          key={section.title}
-          title={section.title}
-          items={section.items}
-          expanded={expanded}
-          checkIsActive={checkIsActive}
-          activePath={location.pathname}
-        />
-      ))}
-    </div>
+    <motion.div 
+      dir={isRTL ? "rtl" : "ltr"} 
+      className="flex flex-col gap-4"
+      initial="hidden"
+      animate="show"
+      variants={sectionVariants}
+    >
+      <AnimatePresence mode="wait">
+        {navigationSections.map((section) => (
+          <motion.div
+            key={section.title}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+          >
+            <SidebarNavSection
+              title={section.title}
+              items={section.items}
+              expanded={expanded}
+              checkIsActive={checkIsActive}
+              activePath={location.pathname}
+            />
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 

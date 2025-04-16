@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useTranslation } from "react-i18next";
 
 interface SidebarTooltipProps {
   content: string;
@@ -8,15 +9,24 @@ interface SidebarTooltipProps {
   side?: "right" | "left" | "top" | "bottom";
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  className?: string;
 }
 
 export const SidebarTooltip: React.FC<SidebarTooltipProps> = ({
   content,
   children,
-  side = "right",
+  side,
   open,
-  onOpenChange
+  onOpenChange,
+  className
 }) => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
+  
+  // تحديد جانب عرض التلميح بناءً على اتجاه اللغة
+  const tooltipSide = side || (isRTL ? "left" : "right");
+  
+  // في حالة عدم وجود محتوى للتلميح، نعيد العنصر الأصلي فقط
   if (!content) {
     return <>{children}</>;
   }
@@ -27,8 +37,12 @@ export const SidebarTooltip: React.FC<SidebarTooltipProps> = ({
         <TooltipTrigger asChild>
           {children}
         </TooltipTrigger>
-        <TooltipContent side={side} className="bg-slate-800 text-white border-slate-700">
-          <p>{content}</p>
+        <TooltipContent 
+          side={tooltipSide} 
+          className={`bg-slate-800 text-white border-slate-700 animate-in fade-in-50 zoom-in-95 ${className || ""}`}
+          sideOffset={5}
+        >
+          <p className="text-sm">{content}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
