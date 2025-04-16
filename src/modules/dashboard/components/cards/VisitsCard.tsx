@@ -14,10 +14,10 @@ const VisitsCard = () => {
           
           <div className="mb-4">
             <div className="inline-flex items-center px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
-              <ArrowUp className="h-3.5 w-3.5 mr-1" />
+              <ArrowUp className="h-3.5 w-3.5 ml-1" />
               <span className="text-xs font-medium">12.8%</span>
             </div>
-            <span className="text-sm text-gray-600 ml-2">من الأسبوع الماضي</span>
+            <span className="text-sm text-gray-600 mr-2">من الأسبوع الماضي</span>
           </div>
           
           <div className="space-y-4">
@@ -29,11 +29,11 @@ const VisitsCard = () => {
               <div className="bg-blue-100 rounded-full p-1 w-6 h-6 flex items-center justify-center">
                 <span className="text-xs">📊</span>
               </div>
-              <p className="text-xs ml-2 text-[#0c4a6e]">
+              <p className="text-xs mr-2 text-[#0c4a6e]">
                 شاهد التحليلات لمزيد من الإحصائيات التفصيلية
               </p>
               
-              <Button size="sm" variant="ghost" className="ml-auto bg-white/50 hover:bg-white/80 rounded-full w-6 h-6 p-0">
+              <Button size="sm" variant="ghost" className="mr-auto bg-white/50 hover:bg-white/80 rounded-full w-6 h-6 p-0">
                 <ChevronRight className="h-3 w-3" />
               </Button>
             </div>

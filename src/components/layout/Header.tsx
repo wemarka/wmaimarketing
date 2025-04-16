@@ -42,13 +42,14 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header className="bg-[#3a7a89] px-6 py-3 text-white shadow-md ml-16 lg:ml-16">
+    <header className="bg-[#3a7a89] px-6 py-4 text-white shadow-md ml-16 lg:ml-16">
       <div className="flex items-center justify-between">
+        {/* Left side */}
         <div className="flex items-center space-x-4 space-x-reverse">
-          <Button variant="ghost" className="p-0 text-white">
-            <ArrowLeft className="h-5 w-5 ml-1" />
+          <div className="flex items-center">
+            <ArrowLeft className="h-5 w-5 ml-2" />
             <span>رجوع</span>
-          </Button>
+          </div>
           
           <h2 className="text-xl font-medium mr-4">{getPageTitle()}</h2>
         </div>

@@ -1,7 +1,6 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowUp } from "lucide-react";
 
 const PerformanceCard = () => {
   // Sample data for chart
@@ -10,14 +9,15 @@ const PerformanceCard = () => {
   const maxValue = Math.max(...values);
 
   return (
-    <Card className="overflow-hidden border-none">
+    <Card className="overflow-hidden border-none shadow-md">
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold">Finance Performance</h3>
         </div>
         
         <div className="flex items-baseline gap-2 mb-6">
-          <div className="font-bold text-2xl">12 841</div>
+          <div className="font-bold text-2xl">841</div>
+          <div className="font-bold text-lg">12</div>
           <div className="text-xs text-gray-500">Regular income</div>
         </div>
         

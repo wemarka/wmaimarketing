@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 const RegionTargetingCard = () => {
   return (
-    <Card className="overflow-hidden border-none">
+    <Card className="overflow-hidden border-none shadow-md">
       <CardContent className="p-6">
         <h3 className="text-lg font-semibold mb-6">Targeting by region</h3>
         

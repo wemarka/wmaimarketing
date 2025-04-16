@@ -1,12 +1,12 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const PopularityCard = () => {
   return (
-    <Card className="overflow-hidden border-none">
+    <Card className="overflow-hidden border-none shadow-md">
       <CardContent className="p-0">
         <div className="h-full bg-[#f8e5d7] p-6">
           <h3 className="text-sm font-medium text-[#654321] mb-1">Popularity rate</h3>
@@ -14,9 +14,9 @@ const PopularityCard = () => {
           
           <div className="mb-6">
             {/* Gauge meter */}
-            <div className="relative h-4 w-3/4">
-              <div className="h-2 bg-gradient-to-r from-[#ff9d6c] to-[#ff5c35] rounded-full"></div>
-              <div className="absolute right-0 top-0 w-3 h-3 bg-white border-2 border-[#ff5c35] rounded-full"></div>
+            <div className="relative h-2 w-full">
+              <div className="h-2 bg-gradient-to-r from-[#ff9d6c] to-[#ff5c35] rounded-full w-3/4"></div>
+              <div className="absolute right-1/4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-white border-2 border-[#ff5c35] rounded-full"></div>
             </div>
           </div>
           
@@ -34,7 +34,7 @@ const PopularityCard = () => {
               </p>
               
               <Button size="sm" variant="ghost" className="ml-auto bg-white/50 hover:bg-white/80 rounded-full w-6 h-6 p-0">
-                <ArrowRight className="h-3 w-3" />
+                <ChevronRight className="h-3 w-3" />
               </Button>
             </div>
           </div>

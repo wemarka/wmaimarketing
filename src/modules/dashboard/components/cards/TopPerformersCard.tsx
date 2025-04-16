@@ -20,7 +20,7 @@ const TopPerformersCard = () => {
           {teamMembers.map((member, idx) => (
             <div key={idx} className="flex items-center justify-between">
               <div className="flex items-center">
-                <Avatar className="h-10 w-10 mr-3">
+                <Avatar className="h-10 w-10 ml-3">
                   <AvatarImage src={member.avatar} alt={member.name} />
                   <AvatarFallback className={`${member.color} text-white`}>
                     {member.initials}
