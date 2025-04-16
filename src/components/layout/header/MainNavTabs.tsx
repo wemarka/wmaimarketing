@@ -32,20 +32,20 @@ const MainNavTabs: React.FC<MainNavTabsProps> = ({
 
   return (
     <Tabs value={activeTab} className="w-full max-w-md mx-auto md:mx-0">
-      <TabsList className="bg-[#2c6c7a]/20 rounded-xl p-1 h-12 w-full md:w-auto overflow-x-auto">
+      <TabsList className="bg-[#2c6c7a]/30 backdrop-blur-sm rounded-xl p-1 h-14 w-full md:w-auto overflow-x-auto border border-white/10">
         {navItems.map((item) => (
           <TabsTrigger
             key={item.id}
             value={item.id}
             asChild
             className={cn(
-              "text-white/80 hover:text-white relative min-w-[100px] whitespace-nowrap",
+              "text-white/90 hover:text-white relative min-w-[120px] whitespace-nowrap",
               "data-[state=active]:text-white font-medium transition-all duration-300"
             )}
           >
             <Link
               to={item.path}
-              className="flex items-center gap-3 justify-center px-6 py-1.5 rounded-lg"
+              className="flex items-center gap-3 justify-center px-6 py-2.5 rounded-lg"
             >
               <motion.span
                 whileHover={{ scale: 1.15 }}
@@ -59,7 +59,7 @@ const MainNavTabs: React.FC<MainNavTabsProps> = ({
               {activeTab === item.id && (
                 <motion.div
                   layoutId="activeMainTab"
-                  className="absolute inset-0 bg-gradient-to-r from-[#2c6c7a]/70 to-[#3a7a89]/70 rounded-lg shadow-lg -z-10"
+                  className="absolute inset-0 bg-gradient-to-r from-[#2c6c7a]/80 to-[#3a7a89]/80 rounded-lg border border-white/20 shadow-lg -z-10"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}

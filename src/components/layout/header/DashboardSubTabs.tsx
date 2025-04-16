@@ -30,7 +30,7 @@ const DashboardSubTabs: React.FC<DashboardSubTabsProps> = ({
         onValueChange={onTabChange}
         value={activeTab}
       >
-        <TabsList className="bg-white/10 dark:bg-[#2c6c7a]/20 rounded-xl p-1 h-11 w-full justify-start border-none overflow-x-auto">
+        <TabsList className="bg-white/10 dark:bg-[#2c6c7a]/20 rounded-xl p-1 h-11 w-full max-w-md justify-start border-none overflow-x-auto">
           {tabItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
@@ -40,9 +40,9 @@ const DashboardSubTabs: React.FC<DashboardSubTabsProps> = ({
                 className={cn(
                   "px-5 relative group transition-all duration-300 min-w-[120px]",
                   "data-[state=active]:text-[#3a7a89] dark:data-[state=active]:text-white",
-                  "data-[state=active]:font-medium",
-                  "text-gray-500 dark:text-gray-400",
-                  "hover:text-[#3a7a89] dark:hover:text-white/90",
+                  "data-[state=active]:font-semibold",
+                  "text-gray-100/90 dark:text-gray-200/80",
+                  "hover:text-white dark:hover:text-white",
                   "mx-0.5"
                 )}
               >
@@ -52,7 +52,7 @@ const DashboardSubTabs: React.FC<DashboardSubTabsProps> = ({
                     whileTap={{ scale: 0.95 }}
                     initial={false}
                     className={cn(
-                      isActive ? "text-[#3a7a89] dark:text-white" : "text-gray-500"
+                      isActive ? "text-[#3a7a89] dark:text-white" : "text-white/80"
                     )}
                   >
                     {item.icon}

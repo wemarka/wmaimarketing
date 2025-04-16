@@ -46,7 +46,7 @@ const Header: React.FC = () => {
   
   // Dashboard tab items that show when on dashboard page
   const dashboardTabItems = [
-    { id: "dashboard", label: "لوحة التحكم", icon: <LayoutGrid className="h-4 w-4" /> },
+    { id: "dashboard", label: "النظرة العامة", icon: <LayoutGrid className="h-4 w-4" /> },
     { id: "performance", label: "الأداء", icon: <BarChart className="h-4 w-4" /> },
     { id: "analytics", label: "التحليلات", icon: <PieChart className="h-4 w-4" /> }
   ];
@@ -61,7 +61,7 @@ const Header: React.FC = () => {
   // Handle tab click
   const handleTabClick = (tabId: string) => {
     setActiveTab(tabId);
-    window.dispatchEvent(new CustomEvent('header-tab-change', { 
+    window.dispatchEvent(new CustomEvent('dashboard-tab-change', { 
       detail: { tab: tabId } 
     }));
   };

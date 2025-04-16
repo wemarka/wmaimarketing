@@ -13,7 +13,7 @@ interface DashboardTabsProps {
   activeTab?: string;
 }
 
-const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "overview" }) => {
+const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }) => {
   const { t } = useTranslation();
   
   const containerAnimation = {
@@ -32,14 +32,20 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "overview" })
   };
   
   return (
-    <div className="p-6">
-      <AnimatePresence mode="wait">
-        {activeTab === "overview" && (
+    <AnimatePresence mode="wait">
+      {(activeTab === "dashboard" || activeTab === "overview") && (
+        <motion.div 
+          key="overview"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.4 }}
+          className="p-6"
+        >
           <motion.div 
             variants={containerAnimation}
             initial="hidden"
             animate="show"
-            exit={{ opacity: 0 }}
           >
             <motion.div 
               variants={itemAnimation}
@@ -64,34 +70,38 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "overview" })
               </motion.div>
             </motion.div>
           </motion.div>
-        )}
-        
-        {activeTab === "performance" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <OverviewTab />
-          </motion.div>
-        )}
-        
-        {activeTab === "analytics" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="rounded-md bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 p-6 text-center">
-              <h3 className="font-medium text-amber-800 dark:text-amber-500 mb-2">قسم التحليلات</h3>
-              <p className="text-amber-700 dark:text-amber-400">هذا القسم قيد التطوير حاليًا، سيتم إطلاقه قريبًا.</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+        </motion.div>
+      )}
+      
+      {activeTab === "performance" && (
+        <motion.div
+          key="performance"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.4 }}
+          className="p-6"
+        >
+          <OverviewTab />
+        </motion.div>
+      )}
+      
+      {activeTab === "analytics" && (
+        <motion.div
+          key="analytics"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.4 }}
+          className="p-6"
+        >
+          <div className="rounded-md bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 p-6 text-center">
+            <h3 className="font-medium text-amber-800 dark:text-amber-500 mb-2">قسم التحليلات</h3>
+            <p className="text-amber-700 dark:text-amber-400">هذا القسم قيد التطوير حاليًا، سيتم إطلاقه قريبًا.</p>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 

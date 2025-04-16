@@ -20,10 +20,12 @@ const Dashboard = () => {
     };
 
     // Add event listener
+    window.addEventListener('header-tab-change' as any, handleTabChange as EventListener);
     window.addEventListener('dashboard-tab-change' as any, handleTabChange as EventListener);
     
     // Clean up
     return () => {
+      window.removeEventListener('header-tab-change' as any, handleTabChange as EventListener);
       window.removeEventListener('dashboard-tab-change' as any, handleTabChange as EventListener);
     };
   }, []);
@@ -74,15 +76,21 @@ const Dashboard = () => {
               </div>
               
               <div className="flex flex-wrap gap-3 justify-end">
-                <div className="bg-white dark:bg-slate-800/70 rounded-full py-1 px-4 text-sm shadow-sm border border-gray-100/50 dark:border-slate-700/50 flex items-center">
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  className="bg-white dark:bg-slate-800/70 rounded-full py-1.5 px-4 text-sm shadow-sm border border-gray-100/50 dark:border-slate-700/50 flex items-center"
+                >
                   <span className="w-2 h-2 bg-green-500 rounded-full ml-2 animate-pulse"></span>
                   <span>جدولة منشورات جديدة</span>
-                </div>
+                </motion.div>
                 
-                <div className="bg-white dark:bg-slate-800/70 rounded-full py-1 px-4 text-sm shadow-sm border border-gray-100/50 dark:border-slate-700/50 flex items-center">
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  className="bg-white dark:bg-slate-800/70 rounded-full py-1.5 px-4 text-sm shadow-sm border border-gray-100/50 dark:border-slate-700/50 flex items-center"
+                >
                   <span className="w-2 h-2 bg-amber-500 rounded-full ml-2"></span>
                   <span>استعراض تفاعلات الأسبوع</span>
-                </div>
+                </motion.div>
               </div>
             </motion.div>
           </CardContent>

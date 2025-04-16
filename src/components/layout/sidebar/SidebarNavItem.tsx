@@ -30,8 +30,8 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
             to={to}
             className={cn(
               "flex items-center py-2 rounded-lg transition-colors relative",
-              expanded ? "px-3 justify-start" : "justify-center",
-              isActive && "bg-[#ffffff0f]"
+              expanded ? "px-3 justify-start" : "px-1 justify-center",
+              isActive && "bg-[#ffffff15]"
             )}
           >
             {() => (
@@ -40,7 +40,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                   className={cn(
                     "flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300",
                     isActive
-                      ? "bg-gradient-to-br from-white to-white/90 text-[#3a7a89] shadow-md" 
+                      ? "bg-gradient-to-br from-white to-white/90 text-[#3a7a89] shadow-lg" 
                       : "text-white/90 hover:bg-white/15"
                   )}
                   whileHover={{ scale: 1.05 }}
@@ -55,7 +55,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                 {expanded && (
                   <motion.span 
                     className={cn(
-                      "ml-3 text-sm font-medium transition-opacity duration-200",
+                      "mr-3 text-sm font-medium transition-opacity duration-200",
                       isActive ? "text-white" : "text-white/80"
                     )}
                     initial={{ opacity: 0, x: -10 }}
@@ -70,8 +70,8 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                 {isActive && (
                   <motion.div 
                     className={cn(
-                      "absolute right-0 bg-white rounded-l-full",
-                      expanded ? "w-1 h-8" : "w-1 h-8"
+                      "absolute left-0 bg-white rounded-r-full h-8",
+                      expanded ? "w-1" : "w-1"
                     )}
                     layoutId="activeIndicator"
                     initial={{ opacity: 0 }}
