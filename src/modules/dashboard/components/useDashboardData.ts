@@ -2,12 +2,14 @@
 import { useState, useCallback, useMemo } from "react";
 import { useAnalyticsQuery } from "../../../modules/analytics/components/dashboard/hooks/useAnalyticsQuery";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
+import { useTranslation } from "react-i18next";
 
 export const useDashboardData = () => {
   const [period, setPeriod] = useState<string>("7days");
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { toast } = useToast();
+  const { t } = useTranslation();
   
   // استخدام الـ Hook المُحسّن الذي يعتمد على React Query
   const { 
@@ -29,11 +31,11 @@ export const useDashboardData = () => {
     
     // إظهار إشعار عند تغيير الفترة الزمنية
     toast({
-      title: "تم تغيير الفترة الزمنية",
-      description: `تم تحديث البيانات لعرض ${getTimePeriodLabel(newPeriod)}`,
+      title: t("analytics.periodChanged", "تم تغيير الفترة الزمنية"),
+      description: t("analytics.dataUpdated", `تم تحديث البيانات لعرض ${getTimePeriodLabel(newPeriod)}`),
       variant: "default",
     });
-  }, [period, toast]);
+  }, [period, toast, t]);
 
   // استخدام useMemo لتجنب إعادة حساب الترجمات في كل تقديم
   const timePeriodLabels = useMemo(() => ({
@@ -52,11 +54,11 @@ export const useDashboardData = () => {
   const refreshData = useCallback(() => {
     refetch();
     toast({
-      title: "جاري تحديث البيانات",
-      description: "يتم تحديث البيانات التحليلية الآن",
+      title: t("analytics.refreshing", "جاري تحديث البيانات"),
+      description: t("analytics.refreshingDescription", "يتم تحديث البيانات التحليلية الآن"),
       variant: "default",
     });
-  }, [refetch, toast]);
+  }, [refetch, toast, t]);
 
   return {
     period,

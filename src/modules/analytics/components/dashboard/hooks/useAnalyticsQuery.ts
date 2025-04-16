@@ -1,6 +1,7 @@
+
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { useCreateActivity } from "@/hooks/useCreateActivity";
 import { useQueryConfig } from "@/hooks/useQueryConfig";
 import { 
@@ -179,32 +180,6 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
     ...queryConfig,
     staleTime: staleTime, // لا يعاد تحميل البيانات إلا بعد 5 دقائق من آخر طلب
     gcTime: gcTime, // الاحتفاظ بالبيانات في الذاكرة لمدة 10 دقائق
-    // استراتيجية إعادة المحاولة المحسنة لأنواع مختلفة من الأخطاء
-    retry: (failureCount, error: any) => {
-      const errorType = getErrorType(error);
-      
-      // عدم إعادة محاولة أخطاء المصادقة لأنها لن تحل دون تدخل المستخدم
-      if (errorType === ErrorType.AUTH_ERROR) return false;
-      
-      // لأخطاء الموارد، حاول أكث�� مع تأخيرات أطول
-      if (errorType === ErrorType.RESOURCE_ERROR) {
-        return failureCount < 2; // تقليل عدد المحاولات من 3 إلى 2
-      }
-      
-      // لأخطاء الشبكة، حاول بضع مرات
-      if (errorType === ErrorType.NETWORK_ERROR) {
-        return failureCount < 2;
-      }
-      
-      // للأخطاء الأخرى، حاول مرة واحدة فقط
-      return failureCount < 1;
-    },
-    retryDelay: attemptIndex => {
-      // تأخير تصاعدي مع تشويش لتوزيع أفضل لإعادة المحاولات
-      const base = Math.min(1000 * 2 ** attemptIndex, 15000); // تحسين: تقليل الحد الأقصى من 30 إلى 15 ثانية
-      const jitter = Math.random() * 1000; // إضافة ما يصل إلى ثانية واحدة من التشويش
-      return base + jitter;
-    },
     enabled: !!user,
     // عدم إعادة التحميل عند التركيز على النافذة لتقليل الطلبات غير الضرورية
     refetchOnWindowFocus: false,
