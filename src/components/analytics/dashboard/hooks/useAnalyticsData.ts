@@ -45,6 +45,8 @@ export const useAnalyticsData = (period: string) => {
   const { logActivity } = useCreateActivity();
   
   useEffect(() => {
+    let mounted = true;
+    
     const fetchAnalytics = async () => {
       if (!user) return;
       
@@ -53,6 +55,8 @@ export const useAnalyticsData = (period: string) => {
         
         // Fetch social accounts data
         const socialAccounts = await fetchSocialAccounts(user.id);
+        
+        if (!mounted) return;
         
         // Process social accounts data
         const { 
@@ -63,9 +67,9 @@ export const useAnalyticsData = (period: string) => {
           platformData: formattedPlatformData
         } = processSocialAccountsData(socialAccounts);
         
-        if (formattedPlatformData.length === 0) {
+        if (formattedPlatformData.length === 0 && mounted) {
           setPlatformData(getFallbackPlatformData());
-        } else {
+        } else if (mounted) {
           setPlatformData(formattedPlatformData);
         }
         
@@ -75,11 +79,15 @@ export const useAnalyticsData = (period: string) => {
         // Fetch posts data
         const posts = await fetchPosts(user.id, timeRange);
         
+        if (!mounted) return;
+        
         // Process posts data
         const { dailyData, dailyEngagementData } = processPostsData(posts, timeRange);
         
-        setOverviewData(dailyData);
-        setEngagementData(dailyEngagementData);
+        if (mounted) {
+          setOverviewData(dailyData);
+          setEngagementData(dailyEngagementData);
+        }
         
         // Calculate change percentages
         const changePercentages = calculateChangePercentages(
@@ -90,40 +98,51 @@ export const useAnalyticsData = (period: string) => {
         );
         
         // Set analytics data
-        setAnalyticsData({
-          period,
-          impressions: totalImpressions || 44300,
-          engagement: totalEngagement > 0 && totalImpressions > 0 ? 
-            parseFloat((totalEngagement / totalImpressions * 100).toFixed(1)) : 5.2,
-          clicks: totalClicks > 0 && totalImpressions > 0 ?
-            parseFloat((totalClicks / totalImpressions * 100).toFixed(1)) : 2.8,
-          conversions: totalConversions || 1560,
-          change: changePercentages
-        });
+        if (mounted) {
+          setAnalyticsData({
+            period,
+            impressions: totalImpressions || 44300,
+            engagement: totalEngagement > 0 && totalImpressions > 0 ? 
+              parseFloat((totalEngagement / totalImpressions * 100).toFixed(1)) : 5.2,
+            clicks: totalClicks > 0 && totalImpressions > 0 ?
+              parseFloat((totalClicks / totalImpressions * 100).toFixed(1)) : 2.8,
+            conversions: totalConversions || 1560,
+            change: changePercentages
+          });
+        }
 
         logActivity("analytics_data_fetched", "تم جلب بيانات التحليلات بنجاح");
         
       } catch (error) {
         console.error("Error fetching analytics data:", error);
-        toast({
-          title: "خطأ في جلب البيانات",
-          description: "حدث خطأ أثناء جلب بيانات التحليلات",
-          variant: "destructive"
-        });
         
-        logActivity("analytics_data_error", "حدث خطأ أثناء جلب بيانات التحليلات");
-        
-        // Set fallback data
-        setAnalyticsData(getFallbackAnalyticsData(period));
-        setOverviewData(getFallbackOverviewData());
-        setPlatformData(getFallbackPlatformData());
-        setEngagementData(getFallbackEngagementData());
+        if (mounted) {
+          toast({
+            title: "خطأ في جلب البيانات",
+            description: "حدث خطأ أثناء جلب بيانات التحليلات",
+            variant: "destructive"
+          });
+          
+          logActivity("analytics_data_error", "حدث خطأ أثناء جلب بيانات التحليلات");
+          
+          // Set fallback data
+          setAnalyticsData(getFallbackAnalyticsData(period));
+          setOverviewData(getFallbackOverviewData());
+          setPlatformData(getFallbackPlatformData());
+          setEngagementData(getFallbackEngagementData());
+        }
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchAnalytics();
+    
+    return () => {
+      mounted = false;
+    };
   }, [period, user, toast, logActivity]);
 
   return {

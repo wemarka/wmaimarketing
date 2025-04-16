@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useTranslation } from "react-i18next";
@@ -48,16 +48,20 @@ export const useSidebarNavigation = () => {
     darkModeMediaQuery.addEventListener('change', handleSystemThemeChange);
     
     // Set sidebar position based on language direction
-    const isRTL = i18n.language === "ar" || document.dir === "rtl";
-    setSidebarPosition(isRTL ? "right" : "left");
+    updateSidebarPosition();
     
     return () => {
       darkModeMediaQuery.removeEventListener('change', handleSystemThemeChange);
     };
-  }, [i18n.language]);
+  }, []);
 
   // Update sidebar position when language changes
   useEffect(() => {
+    updateSidebarPosition();
+  }, [i18n.language]);
+  
+  // Extract the sidebar position update logic to avoid duplication
+  const updateSidebarPosition = useCallback(() => {
     const isRTL = i18n.language === "ar" || document.dir === "rtl";
     setSidebarPosition(isRTL ? "right" : "left");
   }, [i18n.language, document.dir]);

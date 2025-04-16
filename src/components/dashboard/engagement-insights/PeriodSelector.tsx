@@ -4,10 +4,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import CompareIcon from "../icons/CompareIcon";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface PeriodSelectorProps {
   value?: string;
-  timeRange?: string; // Added timeRange as an alternative prop name
+  timeRange?: string;
   onChange: (value: string) => void;
   compareMode?: boolean;
   onCompareModeToggle?: () => void;
@@ -21,13 +23,16 @@ export const PeriodSelector = ({
   onCompareModeToggle
 }: PeriodSelectorProps) => {
   const { t, i18n } = useTranslation();
-  const isRTL = i18n.language === "ar";
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
   
   // Use timeRange if value is not provided
   const selectedValue = value || timeRange || "week";
   
   return (
-    <div className="flex items-center gap-4 justify-end">
+    <div className={cn(
+      "flex items-center gap-4",
+      isRTL ? "flex-row-reverse" : "justify-end"
+    )}>
       <Select value={selectedValue} onValueChange={onChange}>
         <SelectTrigger className="w-[120px]">
           <SelectValue>{t(`dashboard.timeRanges.${selectedValue}`, selectedValue)}</SelectValue>
@@ -42,16 +47,25 @@ export const PeriodSelector = ({
       </Select>
       
       {onCompareModeToggle && (
-        <Button 
-          variant={compareMode ? "default" : "outline"}
-          size="sm"
-          className={isRTL ? "mr-2" : "ml-2"}
-          onClick={onCompareModeToggle}
-          data-state={compareMode ? "active" : "inactive"}
+        <motion.div 
+          whileTap={{ scale: 0.97 }}
+          className={isRTL ? "mr-auto" : "ml-auto"}
         >
-          <CompareIcon className="h-4 w-4 mr-2" />
-          {t("dashboard.compare", "مقارنة")}
-        </Button>
+          <Button 
+            variant={compareMode ? "default" : "outline"}
+            size="sm"
+            className={cn(
+              "transition-all", 
+              isRTL ? "mr-2 flex-row-reverse" : "ml-2",
+              compareMode && "bg-[#3a7a89] hover:bg-[#2c6c7a]"
+            )}
+            onClick={onCompareModeToggle}
+            data-state={compareMode ? "active" : "inactive"}
+          >
+            <CompareIcon className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
+            {t("dashboard.compare", "مقارنة")}
+          </Button>
+        </motion.div>
       )}
     </div>
   );

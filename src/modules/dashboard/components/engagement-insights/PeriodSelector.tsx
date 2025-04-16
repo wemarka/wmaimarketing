@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 interface PeriodSelectorProps {
   value?: string;
-  timeRange?: string; // Added timeRange as an alternative prop name
+  timeRange?: string; 
   onChange: (value: string) => void;
   compareMode?: boolean;
   onCompareModeToggle?: () => void;
@@ -31,7 +31,7 @@ export const PeriodSelector = ({
   return (
     <div className={cn(
       "flex items-center gap-4",
-      isRTL ? "flex-row" : "justify-end"
+      isRTL ? "flex-row-reverse" : "justify-end"
     )}>
       <Select value={selectedValue} onValueChange={onChange}>
         <SelectTrigger className="w-[120px]">
@@ -56,7 +56,7 @@ export const PeriodSelector = ({
             size="sm"
             className={cn(
               "transition-all", 
-              isRTL ? "mr-2" : "ml-2",
+              isRTL ? "mr-2 flex-row-reverse" : "ml-2",
               compareMode && "bg-[#3a7a89] hover:bg-[#2c6c7a]"
             )}
             onClick={onCompareModeToggle}

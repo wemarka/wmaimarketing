@@ -20,7 +20,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [activeDashboardTab, setActiveDashboardTab] = useState<string>("dashboard");
   const [mounted, setMounted] = useState(false);
   const { i18n } = useTranslation();
-  const { sidebarPosition } = useSidebarNavigation();
+  const { sidebarPosition, expanded } = useSidebarNavigation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
   
   // Handle initial mount animation
@@ -59,14 +59,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
   }, []);
 
-  // Dynamic margin styles based on sidebar position
+  // Dynamic margin styles based on sidebar position and expansion state
   const getMarginStyle = () => {
     if (isMobile) return "";
     
+    const baseMargin = expanded ? "16rem" : "4.5rem";
+    
     if (sidebarPosition === "left") {
-      return "ml-16 lg:ml-16";
+      return `ml-[${baseMargin}]`;
     } else {
-      return "mr-16 lg:mr-16";
+      return `mr-[${baseMargin}]`;
     }
   };
 
@@ -81,10 +83,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <AppSidebar />
       
       <motion.div 
-        className={cn(
-          "flex-1 flex flex-col",
-          getMarginStyle()
-        )}
+        className="flex-1 flex flex-col"
+        style={{
+          marginLeft: sidebarPosition === "left" ? (expanded ? "16rem" : "4.5rem") : 0,
+          marginRight: sidebarPosition === "right" ? (expanded ? "16rem" : "4.5rem") : 0,
+        }}
         initial={{ opacity: 0 }}
         animate={{ opacity: mounted ? 1 : 0 }}
         transition={{ duration: 0.5 }}

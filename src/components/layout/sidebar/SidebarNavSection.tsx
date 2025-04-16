@@ -30,6 +30,21 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
 
+  const containerAnimation = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05 
+      }
+    }
+  };
+
+  const itemAnimation = {
+    hidden: { opacity: 0, y: 5 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.2 } }
+  };
+
   return (
     <div className="w-full flex flex-col" dir={isRTL ? "rtl" : "ltr"}>
       <AnimatePresence>
@@ -38,26 +53,35 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
             initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -5 }}
-            className="px-4 mb-2 text-xs font-medium text-white/60 uppercase tracking-wider"
+            className={cn(
+              "px-4 mb-2 text-xs font-medium text-white/60 uppercase tracking-wider",
+              isRTL ? "text-right" : "text-left"
+            )}
           >
             {title}
           </motion.h3>
         )}
       </AnimatePresence>
       
-      <div className="space-y-1 w-full">
+      <motion.div 
+        variants={containerAnimation}
+        initial="hidden"
+        animate="visible"
+        className="space-y-1 w-full"
+      >
         {items.map((item) => (
-          <SidebarNavItem
-            key={item.id}
-            to={item.to}
-            icon={item.icon}
-            label={item.label}
-            expanded={expanded}
-            checkIsActive={checkIsActive}
-            activePath={activePath}
-          />
+          <motion.div key={item.id} variants={itemAnimation}>
+            <SidebarNavItem
+              to={item.to}
+              icon={item.icon}
+              label={item.label}
+              expanded={expanded}
+              checkIsActive={checkIsActive}
+              activePath={activePath}
+            />
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 };

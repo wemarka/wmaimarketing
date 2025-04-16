@@ -50,9 +50,26 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
     hidden: { opacity: 0, x: isRTL ? -10 : 10 },
     visible: { opacity: 1, x: 0, transition: { duration: 0.3 } }
   };
+  
+  // Container animation with staggered children
+  const containerAnimation = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1, 
+      transition: { 
+        staggerChildren: 0.08,
+        delayChildren: 0.1
+      } 
+    }
+  };
 
   return (
-    <Tabs defaultValue={statusFilter} className="w-full" onValueChange={onStatusFilterChange} dir={isRTL ? "rtl" : "ltr"}>
+    <Tabs 
+      defaultValue={statusFilter} 
+      className="w-full" 
+      onValueChange={onStatusFilterChange} 
+      dir={isRTL ? "rtl" : "ltr"}
+    >
       <TabsFilter 
         statusFilter={statusFilter} 
         onStatusChange={onStatusFilterChange}
@@ -60,32 +77,28 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
       />
       
       <AnimatePresence mode="wait">
-        <TabsContent value="all" className="outline-none">
+        <TabsContent value="all" className="outline-none mt-6">
           <motion.div
             variants={contentVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
+            key="all-content"
           >
             {viewType === "cards" ? (
               <>
                 {filteredPosts.length > 0 ? (
                   <motion.div 
                     className="space-y-4"
+                    variants={containerAnimation}
                     initial="hidden"
                     animate="visible"
-                    variants={{
-                      visible: {
-                        transition: {
-                          staggerChildren: 0.1
-                        }
-                      }
-                    }}
                   >
                     {filteredPosts.map((post, index) => (
                       <motion.div 
                         key={post.id}
                         variants={itemAnimationRTL}
+                        custom={index}
                       >
                         <PostItem post={post} index={index} />
                       </motion.div>
@@ -108,21 +121,11 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
           </motion.div>
         </TabsContent>
         
-        <TabsContent value="published">
-          <AnimatedTabContent status="published" posts={filteredPosts} />
-        </TabsContent>
-        
-        <TabsContent value="scheduled">
-          <AnimatedTabContent status="scheduled" posts={filteredPosts} />
-        </TabsContent>
-        
-        <TabsContent value="pending">
-          <AnimatedTabContent status="pending" posts={filteredPosts} />
-        </TabsContent>
-        
-        <TabsContent value="rejected">
-          <AnimatedTabContent status="rejected" posts={filteredPosts} />
-        </TabsContent>
+        {["published", "scheduled", "pending", "rejected"].map((status) => (
+          <TabsContent key={status} value={status} className="mt-6">
+            <AnimatedTabContent status={status} posts={filteredPosts} />
+          </TabsContent>
+        ))}
       </AnimatePresence>
     </Tabs>
   );

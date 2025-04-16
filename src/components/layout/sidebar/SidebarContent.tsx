@@ -46,12 +46,24 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   };
 
   const itemAnimation = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 }
+    hidden: { 
+      opacity: 0, 
+      y: 10, 
+      x: isRTL ? 10 : -10 
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      x: 0,
+      transition: { duration: 0.3 }
+    }
   };
 
   return (
-    <ScrollArea className="h-[calc(100vh-64px-80px)] pr-1" dir={isRTL ? "rtl" : "ltr"}>
+    <ScrollArea 
+      className="h-[calc(100vh-64px-80px)] pr-1" 
+      dir={isRTL ? "rtl" : "ltr"}
+    >
       <motion.div 
         className="py-4 flex flex-col space-y-6 px-2"
         initial="hidden"
@@ -63,9 +75,8 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
             <motion.div
               key={idx}
               variants={itemAnimation}
-              transition={{ duration: 0.3 }}
-              layout
               className="overflow-hidden"
+              layout
             >
               <SidebarNavSection
                 title={section.title}
