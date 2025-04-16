@@ -62,7 +62,7 @@ const Dashboard = () => {
       </Helmet>
       <AnimatePresence mode="sync">
         <motion.div 
-          className="w-full"
+          className="w-full transition-all"
           initial={{ opacity: 0 }}
           animate={{ opacity: mounted ? 1 : 0 }}
           transition={{ duration: 0.5 }}

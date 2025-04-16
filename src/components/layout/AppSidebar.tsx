@@ -49,11 +49,6 @@ const AppSidebar = () => {
   
   const navigationSections = getNavigationSections();
   
-  const sidebarVariants = {
-    expanded: { width: "16rem" },
-    collapsed: { width: "4.5rem" }
-  };
-  
   return (
     <motion.div 
       className={cn(
@@ -64,13 +59,13 @@ const AppSidebar = () => {
         sidebarPosition === "left" ? "left-0 border-r" : "right-0 border-l",
         !mounted && "opacity-0"
       )}
-      variants={sidebarVariants}
-      initial={expanded ? "expanded" : "collapsed"}
-      animate={expanded ? "expanded" : "collapsed"}
-      transition={{ 
-        type: "spring", 
-        stiffness: 300, 
-        damping: 30
+      initial={false}
+      animate={{
+        width: expanded ? "16rem" : "4.5rem",
+        transition: { 
+          duration: 0.3,
+          ease: "easeInOut"
+        }
       }}
     >
       <SidebarHeader 

@@ -18,7 +18,13 @@ export const useSidebarNavigation = () => {
     if (isMobile) {
       setExpanded(false);
     } else {
-      setExpanded(true);
+      // On desktop, retrieve from localStorage if available
+      const savedState = localStorage.getItem("sidebar-expanded");
+      if (savedState !== null) {
+        setExpanded(savedState === "true");
+      } else {
+        setExpanded(true); // Default to expanded on desktop
+      }
     }
   }, [isMobile]);
   
@@ -68,7 +74,11 @@ export const useSidebarNavigation = () => {
   }, [i18n.language]);
 
   const toggleExpanded = () => {
-    setExpanded(!expanded);
+    const newExpanded = !expanded;
+    setExpanded(newExpanded);
+    
+    // Save preference to localStorage
+    localStorage.setItem("sidebar-expanded", String(newExpanded));
   };
 
   const toggleDarkMode = () => {

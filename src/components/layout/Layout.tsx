@@ -57,19 +57,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
   }, []);
 
-  // RTL-aware margin calculation
-  const getContentMargin = (): React.CSSProperties => {
-    if (isMobile) return {};
-    
-    const sidebarWidth = expanded ? "16rem" : "4.5rem";
-    if (sidebarPosition === "left" && !isRTL) return { marginLeft: sidebarWidth };
-    if (sidebarPosition === "right" && !isRTL) return { marginRight: sidebarWidth }; 
-    if (sidebarPosition === "left" && isRTL) return { marginRight: sidebarWidth };
-    if (sidebarPosition === "right" && isRTL) return { marginLeft: sidebarWidth };
-    
-    return {};
-  };
-
   // Animation setup
   const contentAnimation = {
     initial: { opacity: 0 },
@@ -96,7 +83,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       
       <motion.div 
         className="flex-1 flex flex-col"
-        style={getContentMargin()}
+        style={{
+          marginLeft: !isRTL && sidebarPosition === "left" ? (expanded ? "16rem" : "4.5rem") : 0,
+          marginRight: isRTL && sidebarPosition === "right" ? (expanded ? "16rem" : "4.5rem") : 0,
+          transition: "margin 0.3s ease"
+        }}
         {...contentAnimation}
       >
         <Header />
