@@ -1,79 +1,106 @@
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Bell, Bookmark, ChevronRight, Megaphone } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 
-// Sample news data - in a real app, this would come from an API
-const newsItems = [
-  {
-    id: "1",
-    title: "تحديث منصة التسويق",
-    description: "تم إضافة ميزات جديدة لتحليل أداء الحملات بشكل مفصل",
-    date: "اليوم",
-    type: "update",
-  },
-  {
-    id: "2",
-    title: "ترقية نظام الجدولة",
-    description: "أصبح بإمكانك الآن جدولة منشورات متكررة بسهولة",
-    date: "أمس",
-    type: "feature",
-  },
-  {
-    id: "3",
-    title: "تدريب مجاني",
-    description: "انضم إلى ورشة عمل افتراضية حول استراتيجيات التسويق الرقمي",
-    date: "23/04",
-    type: "event",
-  },
-];
-
-const typeMap = {
-  update: { icon: <Bell className="h-4 w-4" />, color: "bg-blue-100 text-blue-600" },
-  feature: { icon: <Megaphone className="h-4 w-4" />, color: "bg-green-100 text-green-600" },
-  event: { icon: <ChevronRight className="h-4 w-4" />, color: "bg-amber-100 text-amber-600" },
-};
+interface NewsItem {
+  id: number;
+  title: string;
+  date: string;
+  category: string;
+  badgeVariant: "default" | "secondary" | "destructive" | "outline";
+}
 
 const NewsUpdates = () => {
+  const { t } = useTranslation();
+  
+  const newsItems: NewsItem[] = [
+    {
+      id: 1,
+      title: "تحديث جديد لسياسات الإعلان على انستجرام",
+      date: "منذ 2 ساعة",
+      category: "تحديثات",
+      badgeVariant: "default"
+    },
+    {
+      id: 2,
+      title: "تيك توك يطلق أدوات جديدة للتسويق",
+      date: "منذ 5 ساعات",
+      category: "أدوات",
+      badgeVariant: "secondary"
+    },
+    {
+      id: 3,
+      title: "تحديثات في خوارزميات فيسبوك",
+      date: "منذ يوم",
+      category: "هام",
+      badgeVariant: "destructive"
+    },
+    {
+      id: 4,
+      title: "نصائح للتعامل مع التحديثات الجديدة",
+      date: "منذ يومين",
+      category: "نصائح",
+      badgeVariant: "outline"
+    }
+  ];
+  
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 24
+      }
+    }
+  };
+  
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-lg font-medium">آخر المستجدات والإعلانات</CardTitle>
-        <Button variant="ghost" size="sm" className="text-beauty-purple">
-          عرض الكل
-        </Button>
+    <Card className="h-full border-none shadow-md">
+      <CardHeader>
+        <CardTitle className="text-lg">{t("dashboard.news.title", "آخر الأخبار")}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {newsItems.map((item, index) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
+        <motion.div 
+          className="space-y-4"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {newsItems.map((item) => (
+            <motion.div 
+              key={item.id} 
+              className="border-b border-border/40 last:border-0 pb-3 last:pb-0"
+              variants={itemVariants}
             >
-              <div className="flex gap-3 group">
-                <div className={`mt-0.5 rounded-full p-1.5 ${typeMap[item.type as keyof typeof typeMap].color}`}>
-                  {typeMap[item.type as keyof typeof typeMap].icon}
-                </div>
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <h4 className="font-medium text-sm">{item.title}</h4>
-                      <Badge variant="outline" className="mr-2 text-xs">{item.date}</Badge>
-                    </div>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Bookmark className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <p className="text-xs text-muted-foreground">{item.description}</p>
-                </div>
+              <div className="flex justify-between items-start mb-1">
+                <h3 className="text-sm font-medium">{item.title}</h3>
+                <Badge variant={item.badgeVariant} className="text-[10px]">{item.category}</Badge>
               </div>
+              <p className="text-xs text-muted-foreground">{item.date}</p>
             </motion.div>
           ))}
+        </motion.div>
+        
+        <div className="mt-4 pt-2 border-t border-border/30">
+          <button className="text-xs text-primary hover:text-primary/80 transition-colors w-full text-center">
+            {t("dashboard.news.viewMore", "عرض المزيد من التحديثات")}
+          </button>
         </div>
       </CardContent>
     </Card>

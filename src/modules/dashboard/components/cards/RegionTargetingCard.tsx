@@ -34,13 +34,13 @@ const RegionTargetingCard = () => {
             <select
               value={period}
               onChange={(e) => setPeriod(e.target.value as "month" | "week" | "day")}
-              className="appearance-none bg-[#f5f5f5] rounded-full py-1 px-3 pl-6 text-xs text-gray-500 cursor-pointer focus:outline-none"
+              className="appearance-none bg-[#f5f5f5] rounded-full py-1 px-3 pr-6 text-xs text-gray-500 cursor-pointer focus:outline-none"
             >
               <option value="month">شهريًا</option>
               <option value="week">أسبوعيًا</option>
               <option value="day">يوميًا</option>
             </select>
-            <ChevronDown className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-500 pointer-events-none" />
+            <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-500 pointer-events-none" />
           </div>
         </div>
         
@@ -181,13 +181,13 @@ const RegionTargetingCard = () => {
             >
               <div className="flex items-center">
                 <div 
-                  className="w-3 h-3 rounded-full mr-2"
+                  className="w-3 h-3 rounded-full ml-2"
                   style={{ backgroundColor: region.color }}
                 ></div>
                 <span className="text-sm text-gray-700 dark:text-gray-300">{region.name}</span>
               </div>
               <div className="flex items-center">
-                <div className="w-16 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mr-2">
+                <div className="w-16 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden ml-2">
                   <motion.div 
                     className="h-full"
                     style={{ backgroundColor: region.color }}

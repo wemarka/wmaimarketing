@@ -57,7 +57,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
   }, []);
 
-  // RTL-aware margin calculation - fixed to properly return React.CSSProperties
+  // RTL-aware margin calculation
   const getContentMargin = (): React.CSSProperties => {
     if (isMobile) return {};
     
@@ -102,7 +102,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <Header />
         <main className={cn(
           "flex-1 p-4 md:p-6 transition-all",
-          location.pathname === "/dashboard" && "bg-white/5 backdrop-blur-sm dark:bg-slate-900/5"
+          location.pathname === "/dashboard" && "bg-gradient-to-br from-[#3a7a89]/5 to-white/20 backdrop-blur-sm dark:bg-slate-900/5"
         )}>
           <AnimatePresence mode="sync">
             <motion.div 

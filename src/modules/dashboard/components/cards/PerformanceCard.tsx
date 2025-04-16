@@ -36,7 +36,7 @@ const PerformanceCard = () => {
         >
           <div className="flex items-center">
             <div className={cn(
-              "w-8 h-8 rounded-full bg-[#3a7a89]/10 flex items-center justify-center mr-3"
+              "w-8 h-8 rounded-full bg-[#3a7a89]/10 flex items-center justify-center ml-3"
             )}>
               <BarChart3 className="h-4 w-4 text-[#3a7a89]" />
             </div>
@@ -50,8 +50,8 @@ const PerformanceCard = () => {
             >
               شهريًا
               {isDropdownOpen ? 
-                <ChevronUp className="ml-1 h-3 w-3" /> : 
-                <ChevronDown className="ml-1 h-3 w-3" />
+                <ChevronUp className="mr-1 h-3 w-3" /> : 
+                <ChevronDown className="mr-1 h-3 w-3" />
               }
             </button>
             
@@ -59,7 +59,7 @@ const PerformanceCard = () => {
               <motion.div 
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="absolute right-0 mt-1 py-2 w-28 bg-white rounded-md shadow-lg z-10 border border-gray-100"
+                className="absolute left-0 mt-1 py-2 w-28 bg-white rounded-md shadow-lg z-10 border border-gray-100"
               >
                 <button className="px-4 py-1 text-sm text-gray-700 hover:bg-[#3a7a89]/10 w-full text-right">
                   يوميًا
