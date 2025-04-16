@@ -8,9 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { Loader2, Download, Image as ImageIcon, Sparkles, Instagram, Facebook, Share2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
+import SectionTitle from "@/components/dashboard/SectionTitle";
 
 const AdGenerator = () => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [selectedPlatform, setSelectedPlatform] = useState("instagram");
   const [generating, setGenerating] = useState(false);
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
@@ -35,8 +39,8 @@ const AdGenerator = () => {
       setGenerating(false);
       
       toast({
-        title: "Images Generated",
-        description: "Your AI ad images are ready!",
+        title: t("common.success"),
+        description: t("adGenerator.successMessage", "Your AI ad images are ready!"),
       });
     }, 3000);
   };
@@ -44,36 +48,82 @@ const AdGenerator = () => {
   const platforms = {
     instagram: {
       icon: <Instagram className="h-4 w-4" />,
-      label: "Instagram",
+      label: t("adGenerator.platforms.instagram", "Instagram"),
     },
     facebook: {
       icon: <Facebook className="h-4 w-4" />,
-      label: "Facebook", 
+      label: t("adGenerator.platforms.facebook", "Facebook"), 
     },
     pinterest: {
       icon: <Share2 className="h-4 w-4" />,
-      label: "Pinterest", 
+      label: t("adGenerator.platforms.pinterest", "Pinterest"), 
     },
+  };
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        type: "spring", 
+        stiffness: 300, 
+        damping: 25 
+      }
+    }
+  };
+
+  const imageVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      transition: { type: "spring", stiffness: 200, damping: 15 }
+    },
+    hover: { 
+      scale: 1.05, 
+      boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1)",
+      transition: { duration: 0.3 }
+    }
   };
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto">
-        <h1 className="mb-2">AI Ad Image Generator</h1>
-        <p className="text-muted-foreground mb-8 max-w-2xl">
-          Create stunning ad images for your beauty products with AI. Choose your platform, 
-          style, and let our AI generate beautiful marketing visuals.
-        </p>
+      <motion.div 
+        className="max-w-6xl mx-auto"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        <SectionTitle
+          title={t("adGenerator.title", "AI Ad Image Generator")}
+          subtitle={t("adGenerator.subtitle", "Create stunning ad images for your beauty products with AI")}
+          icon={<Sparkles className="h-5 w-5" />}
+          variant="gradient"
+          size="lg"
+          animated={true}
+        />
         
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="md:col-span-1">
-            <Card>
+          <motion.div className="md:col-span-1" variants={itemVariants}>
+            <Card className="overflow-hidden border-slate-200 dark:border-slate-700 hover:border-primary/30 transition-colors">
               <CardContent className="p-6">
-                <h2 className="text-xl font-medium mb-6">Settings</h2>
+                <h2 className="text-xl font-medium mb-6">{t("adGenerator.settings", "Settings")}</h2>
                 
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium mb-2">Platform</label>
+                    <label className="block text-sm font-medium mb-2">{t("adGenerator.platform", "Platform")}</label>
                     <Tabs
                       defaultValue="instagram"
                       value={selectedPlatform}
@@ -94,40 +144,40 @@ const AdGenerator = () => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium mb-2">Style</label>
+                    <label className="block text-sm font-medium mb-2">{t("adGenerator.style", "Style")}</label>
                     <Select value={style} onValueChange={setStyle}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select style" />
+                        <SelectValue placeholder={t("adGenerator.selectStyle", "Select style")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="luxury">Luxury</SelectItem>
-                        <SelectItem value="soft">Soft & Delicate</SelectItem>
-                        <SelectItem value="bold">Bold & Vibrant</SelectItem>
-                        <SelectItem value="minimalist">Minimalist</SelectItem>
-                        <SelectItem value="natural">Natural Beauty</SelectItem>
+                        <SelectItem value="luxury">{t("adGenerator.styles.luxury", "Luxury")}</SelectItem>
+                        <SelectItem value="soft">{t("adGenerator.styles.soft", "Soft & Delicate")}</SelectItem>
+                        <SelectItem value="bold">{t("adGenerator.styles.bold", "Bold & Vibrant")}</SelectItem>
+                        <SelectItem value="minimalist">{t("adGenerator.styles.minimalist", "Minimalist")}</SelectItem>
+                        <SelectItem value="natural">{t("adGenerator.styles.natural", "Natural Beauty")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium mb-2">Season</label>
+                    <label className="block text-sm font-medium mb-2">{t("adGenerator.season", "Season")}</label>
                     <Select value={season} onValueChange={setSeason}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select season" />
+                        <SelectValue placeholder={t("adGenerator.selectSeason", "Select season")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="spring">Spring</SelectItem>
-                        <SelectItem value="summer">Summer</SelectItem>
-                        <SelectItem value="fall">Fall</SelectItem>
-                        <SelectItem value="winter">Winter</SelectItem>
-                        <SelectItem value="holiday">Holiday</SelectItem>
+                        <SelectItem value="spring">{t("adGenerator.seasons.spring", "Spring")}</SelectItem>
+                        <SelectItem value="summer">{t("adGenerator.seasons.summer", "Summer")}</SelectItem>
+                        <SelectItem value="fall">{t("adGenerator.seasons.fall", "Fall")}</SelectItem>
+                        <SelectItem value="winter">{t("adGenerator.seasons.winter", "Winter")}</SelectItem>
+                        <SelectItem value="holiday">{t("adGenerator.seasons.holiday", "Holiday")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   
                   <div>
                     <div className="flex justify-between mb-2">
-                      <label className="block text-sm font-medium">Creativity</label>
+                      <label className="block text-sm font-medium">{t("adGenerator.creativity", "Creativity")}</label>
                       <span className="text-sm text-muted-foreground">{creativity[0]}%</span>
                     </div>
                     <Slider
@@ -141,62 +191,99 @@ const AdGenerator = () => {
                   </div>
                   
                   <Button 
-                    className="w-full mt-4" 
+                    className="w-full mt-4 relative overflow-hidden group" 
                     onClick={handleGenerate}
                     disabled={generating}
                   >
-                    {generating ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="h-4 w-4 mr-2" />
-                        Generate Images
-                      </>
-                    )}
+                    <span className="relative z-10 flex items-center justify-center">
+                      {generating ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          {t("common.generating", "Generating...")}
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="h-4 w-4 mr-2 group-hover:animate-ping" />
+                          {t("adGenerator.generateButton", "Generate Images")}
+                        </>
+                      )}
+                    </span>
+                    <motion.span
+                      className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary opacity-0 group-hover:opacity-100"
+                      initial={{ x: "-100%" }}
+                      whileHover={{ x: 0 }}
+                      transition={{ duration: 0.4 }}
+                    />
                   </Button>
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </motion.div>
           
-          <div className="md:col-span-2">
-            <Card>
+          <motion.div className="md:col-span-2" variants={itemVariants}>
+            <Card className="h-full border-slate-200 dark:border-slate-700 hover:border-primary/30 transition-colors">
               <CardContent className="p-6">
-                <h2 className="text-xl font-medium mb-6">Generated Images</h2>
+                <h2 className="text-xl font-medium mb-6">{t("adGenerator.generatedImages", "Generated Images")}</h2>
                 
-                {generating ? (
-                  <div className="h-64 flex flex-col items-center justify-center">
-                    <Loader2 className="h-8 w-8 animate-spin mb-4 text-beauty-purple" />
-                    <p className="text-muted-foreground">Creating your perfect beauty ads...</p>
-                  </div>
-                ) : generatedImages.length > 0 ? (
-                  <div className="grid grid-cols-2 gap-4">
-                    {generatedImages.map((img, index) => (
-                      <div key={index} className="relative group rounded-lg overflow-hidden border">
-                        <img src={img} alt={`Generated ad ${index + 1}`} className="w-full h-48 object-cover" />
-                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button variant="secondary" size="sm">
-                            <Download className="h-4 w-4 mr-1" />
-                            Download
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="h-64 flex flex-col items-center justify-center text-muted-foreground">
-                    <ImageIcon className="h-16 w-16 mb-4 text-muted-foreground/50" />
-                    <p>Adjust your settings and generate beautiful ad images</p>
-                  </div>
-                )}
+                <AnimatePresence mode="wait">
+                  {generating ? (
+                    <motion.div 
+                      key="loading"
+                      className="h-64 flex flex-col items-center justify-center"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <Loader2 className="h-8 w-8 animate-spin mb-4 text-primary" />
+                      <p className="text-muted-foreground">{t("adGenerator.creatingAds", "Creating your perfect beauty ads...")}</p>
+                    </motion.div>
+                  ) : generatedImages.length > 0 ? (
+                    <motion.div 
+                      key="grid"
+                      className="grid grid-cols-2 gap-4"
+                      initial="hidden"
+                      animate="visible"
+                      variants={containerVariants}
+                    >
+                      {generatedImages.map((img, index) => (
+                        <motion.div 
+                          key={index} 
+                          className="relative group rounded-lg overflow-hidden border"
+                          variants={imageVariants}
+                          whileHover="hover"
+                        >
+                          <img src={img} alt={`Generated ad ${index + 1}`} className="w-full h-48 object-cover" />
+                          <motion.div 
+                            className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            initial={{ opacity: 0 }}
+                            whileHover={{ opacity: 1 }}
+                          >
+                            <Button variant="secondary" size="sm">
+                              <Download className="h-4 w-4 mr-1" />
+                              {t("common.download", "Download")}
+                            </Button>
+                          </motion.div>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  ) : (
+                    <motion.div 
+                      key="empty"
+                      className="h-64 flex flex-col items-center justify-center text-muted-foreground"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <ImageIcon className="h-16 w-16 mb-4 text-muted-foreground/50" />
+                      <p>{t("adGenerator.adjustSettings", "Adjust your settings and generate beautiful ad images")}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </CardContent>
             </Card>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </Layout>
   );
 };
