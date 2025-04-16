@@ -1,44 +1,41 @@
 
 import React from "react";
-import { Bell, Search } from "lucide-react";
-import { motion } from "framer-motion";
+import { Bell, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import TeamMembers from "./TeamMembers";
-
-interface TeamMember {
-  name: string;
-  avatar: string | null;
-  initials: string;
-}
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/context/AuthContext";
+import SearchBar from "./SearchBar";
 
 interface HeaderActionsProps {
-  teamMembers: TeamMember[];
+  isRTL: boolean;
 }
 
-const HeaderActions: React.FC<HeaderActionsProps> = ({ teamMembers }) => {
+const HeaderActions: React.FC<HeaderActionsProps> = ({ isRTL }) => {
+  const { profile } = useAuth();
+  
+  // Get user initials for avatar fallback
+  const userInitials = profile?.first_name && profile?.last_name ? 
+    `${profile.first_name.charAt(0)}${profile.last_name.charAt(0)}` : "??";
+
   return (
-    <motion.div 
-      className="flex items-center space-x-4 space-x-reverse"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3, delay: 0.4 }}
-    >
-      {/* Actions */}
-      <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full">
-        <Search className="h-5 w-5" />
+    <div className="flex items-center gap-4">
+      <SearchBar />
+      <Button size="icon" variant="ghost" className="rounded-full h-9 w-9 bg-white/15 hover:bg-white/25">
+        <Bell className="h-4.5 w-4.5" />
       </Button>
-      <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full">
-        <div className="relative">
-          <Bell className="h-5 w-5" />
-          <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full flex items-center justify-center text-[10px]">
-            3
-          </span>
-        </div>
+      <Button size="icon" variant="ghost" className="rounded-full h-9 w-9 bg-white/15 hover:bg-white/25">
+        <Settings className="h-4.5 w-4.5" />
       </Button>
-      
-      {/* Team members */}
-      <TeamMembers members={teamMembers} />
-    </motion.div>
+      <Avatar className="h-9 w-9 border-2 border-white/20">
+        {profile?.avatar_url ? 
+          <AvatarImage src={profile.avatar_url} alt="صورة المستخدم" /> 
+          : 
+          <AvatarFallback className="bg-[#4a8a99] text-white">
+            {userInitials}
+          </AvatarFallback>
+        }
+      </Avatar>
+    </div>
   );
 };
 
