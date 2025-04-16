@@ -13,7 +13,6 @@ import { cn } from "@/lib/utils";
 import HeaderTitle from "./header/HeaderTitle";
 import HeaderActions from "./header/HeaderActions";
 import MainNavTabs from "./header/MainNavTabs";
-import DashboardSubTabs from "./header/DashboardSubTabs";
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -92,13 +91,6 @@ const Header: React.FC = () => {
     transition: { duration: 0.4, delay: 0.3, type: "spring", stiffness: 300, damping: 25 }
   };
   
-  const subtabsAnimation = {
-    initial: { opacity: 0, height: 0 },
-    animate: { opacity: 1, height: 'auto' },
-    exit: { opacity: 0, height: 0 },
-    transition: { duration: 0.3, type: "spring", stiffness: 300, damping: 25 }
-  };
-
   const userInitials = profile?.first_name && profile?.last_name 
     ? `${profile.first_name.charAt(0)}${profile.last_name.charAt(0)}`
     : "??";
@@ -179,21 +171,6 @@ const Header: React.FC = () => {
           >
             <MainNavTabs navItems={mainNavItems} />
           </motion.div>
-          
-          {/* Dashboard sub-tabs with improved styling - only shown on dashboard route */}
-          <AnimatePresence mode="wait">
-            {isDashboardRoute && (
-              <motion.div
-                {...subtabsAnimation}
-              >
-                <DashboardSubTabs 
-                  tabItems={dashboardTabItems}
-                  activeTab={activeTab}
-                  onTabChange={handleTabClick}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
       </header>
     </motion.div>
