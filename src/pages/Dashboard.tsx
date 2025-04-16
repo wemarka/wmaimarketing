@@ -101,7 +101,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
         
-        {/* Tabs content will be here instead of the DashboardTabs component */}
+        {/* Tabs content */}
         <div className="p-6">
           {renderTabContent()}
         </div>
