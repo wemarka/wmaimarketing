@@ -23,7 +23,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   const isActive = checkIsActive(to);
   
   return (
-    <TooltipProvider key={to} delayDuration={300}>
+    <TooltipProvider delayDuration={300}>
       <Tooltip>
         <TooltipTrigger asChild>
           <NavLink
@@ -56,15 +56,19 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                     className="ml-3 text-sm font-medium text-white transition-opacity duration-200"
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: 0.1 }}
+                    exit={{ opacity: 0, x: -10 }}
+                    transition={{ duration: 0.3 }}
                   >
                     {label}
                   </motion.span>
                 )}
                 
-                {expanded && isActive && (
+                {isActive && (
                   <motion.div 
-                    className="absolute right-0 w-1 h-8 bg-white rounded-l-full"
+                    className={cn(
+                      "absolute right-0 bg-white rounded-l-full",
+                      expanded ? "w-1 h-8" : "w-1 h-8"
+                    )}
                     layoutId="activeIndicator"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}

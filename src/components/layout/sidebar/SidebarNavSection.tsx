@@ -2,6 +2,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import SidebarNavItem from "./SidebarNavItem";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface NavItem {
   id: string;
@@ -25,11 +26,19 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
 }) => {
   return (
     <div className="w-full flex flex-col">
-      {expanded && (
-        <h3 className="px-4 mb-2 text-xs font-medium text-white/60 uppercase tracking-wider">
-          {title}
-        </h3>
-      )}
+      <AnimatePresence>
+        {expanded && (
+          <motion.h3
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -5 }}
+            className="px-4 mb-2 text-xs font-medium text-white/60 uppercase tracking-wider"
+          >
+            {title}
+          </motion.h3>
+        )}
+      </AnimatePresence>
+      
       <div className="space-y-1 w-full">
         {items.map((item) => (
           <SidebarNavItem
