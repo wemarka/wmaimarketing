@@ -1,262 +1,144 @@
-import { toast } from "@/components/ui/use-toast";
 
-/**
- * Error types for better categorization and handling
- */
+import { PostgrestError } from "@supabase/supabase-js";
+
+// Queue for handling concurrent Supabase requests
+export const requestQueue = {
+  add: async <T>(requestFn: () => Promise<T>): Promise<T> => {
+    return requestFn(); // Simple implementation - can be expanded with actual queue
+  }
+};
+
+// Error type enum to categorize different error types
 export enum ErrorType {
-  NETWORK_ERROR = "NETWORK_ERROR",
-  RESOURCE_ERROR = "RESOURCE_ERROR",
-  AUTH_ERROR = "AUTH_ERROR",
-  UNKNOWN_ERROR = "UNKNOWN_ERROR"
+  AUTH_ERROR = "auth_error",
+  RESOURCE_ERROR = "resource_error", 
+  NETWORK_ERROR = "network_error",
+  UNKNOWN_ERROR = "unknown_error"
 }
 
-/**
- * Determines the type of error based on the error object
- */
+// Get the type of error for proper handling
 export const getErrorType = (error: any): ErrorType => {
-  // Network connectivity errors
-  if (error.message?.includes("Failed to fetch") || 
-      error.details?.includes("Failed to fetch")) {
-    return ErrorType.NETWORK_ERROR;
+  if (!error) return ErrorType.UNKNOWN_ERROR;
+  
+  const errorMessage = typeof error === 'string' 
+    ? error.toLowerCase()
+    : (error.message || '').toLowerCase();
+  
+  // Authentication errors
+  if (
+    errorMessage.includes('unauthorized') || 
+    errorMessage.includes('auth') || 
+    errorMessage.includes('permission') || 
+    errorMessage.includes('not allowed')
+  ) {
+    return ErrorType.AUTH_ERROR;
   }
   
-  // Resource limitations or rate limiting
-  if (error.code === "PGRST116" || 
-      error.message?.includes("ERR_INSUFFICIENT_RESOURCES") || 
-      error.details?.includes("ERR_INSUFFICIENT_RESOURCES") ||
-      error.message?.includes("429") ||
-      error.details?.includes("429")) {
+  // Resource limitation errors
+  if (
+    errorMessage.includes('limit') || 
+    errorMessage.includes('quota') || 
+    errorMessage.includes('rate') || 
+    errorMessage.includes('too many')
+  ) {
     return ErrorType.RESOURCE_ERROR;
   }
   
-  // Authentication errors
-  if (error.code === "PGRST301" || 
-      error.code === "401" ||
-      error.message?.includes("unauthorized")) {
-    return ErrorType.AUTH_ERROR;
+  // Network errors
+  if (
+    errorMessage.includes('network') || 
+    errorMessage.includes('connection') || 
+    errorMessage.includes('timeout') || 
+    errorMessage.includes('fetch')
+  ) {
+    return ErrorType.NETWORK_ERROR;
   }
   
   return ErrorType.UNKNOWN_ERROR;
 };
 
-/**
- * Handles errors from Supabase fetch operations with consistent messaging
- * @param error The error object from the fetch operation
- * @param context Additional context about where the error occurred
- * @returns void
- */
-export const handleSupabaseError = (error: any, context: string = "fetch operation") => {
-  console.error(`Error during ${context}:`, error);
-  
-  const errorType = getErrorType(error);
-  
-  switch (errorType) {
-    case ErrorType.NETWORK_ERROR:
-      toast({
-        title: "Connection error",
-        description: "Could not connect to the database. Using cached data instead.",
-        variant: "warning"
-      });
-      break;
-    
-    case ErrorType.RESOURCE_ERROR:
-      toast({
-        title: "Server busy",
-        description: "The server is experiencing high load. Using cached data instead.",
-        variant: "warning"
-      });
-      break;
-      
-    case ErrorType.AUTH_ERROR:
-      toast({
-        title: "Authentication error",
-        description: "Please log in again to continue.",
-        variant: "destructive"
-      });
-      break;
-    
-    default:
-      toast({
-        title: "Error",
-        description: "Something went wrong. Using cached data instead.",
-        variant: "destructive"
-      });
+// Handle Supabase errors with consistent logging
+export const handleSupabaseError = (error: PostgrestError | Error | string | unknown, context: string = ''): void => {
+  if (typeof error === 'string') {
+    console.error(`Supabase error in ${context}: ${error}`);
+    return;
   }
+
+  // Handle PostgrestError
+  if (typeof error === 'object' && error && 'code' in error) {
+    const pgError = error as PostgrestError;
+    console.error(`Supabase error in ${context}: Code: ${pgError.code}, Message: ${pgError.message}, Details: ${pgError.details}`);
+    return;
+  }
+
+  // Handle standard Error
+  if (error instanceof Error) {
+    console.error(`Error in ${context}: ${error.message}`, error);
+    return;
+  }
+
+  // Fallback for unknown error types
+  console.error(`Unknown error in ${context}:`, error);
 };
 
-/**
- * Global request queue to limit concurrent Supabase requests
- */
-class RequestQueue {
-  private queue: Array<() => Promise<any>> = [];
-  private processing = false;
-  private concurrentLimit = 3; // Maximum concurrent requests
-  private activeRequests = 0;
-
-  public async add<T>(request: () => Promise<T>): Promise<T> {
-    return new Promise((resolve, reject) => {
-      this.queue.push(async () => {
-        try {
-          this.activeRequests++;
-          const result = await request();
-          resolve(result);
-          return result;
-        } catch (error) {
-          reject(error);
-          throw error;
-        } finally {
-          this.activeRequests--;
-          this.processNext();
-        }
-      });
-      
-      // Start processing if not already in progress
-      if (!this.processing) {
-        this.processNext();
-      }
-    });
-  }
-
-  private async processNext() {
-    if (this.queue.length === 0) {
-      this.processing = false;
-      return;
-    }
-    
-    this.processing = true;
-    
-    // Only process if we're below the concurrent limit
-    if (this.activeRequests < this.concurrentLimit) {
-      const request = this.queue.shift();
-      if (request) {
-        try {
-          await request();
-        } catch (error) {
-          console.error("Error processing queued request:", error);
-        }
-      }
-    }
-    
-    // Keep processing if there are more items in the queue and we're below the limit
-    if (this.queue.length > 0 && this.activeRequests < this.concurrentLimit) {
-      this.processNext();
-    } else if (this.queue.length === 0) {
-      this.processing = false;
-    }
-  }
-}
-
-// Create a singleton instance of the request queue
-export const requestQueue = new RequestQueue();
-
-/**
- * Wraps an async operation with error handling, queuing, caching and returns a default value if it fails
- * @param operation The async operation to perform
- * @param defaultValue The default value to return if the operation fails
- * @param errorContext Additional context about the operation for error logging
- * @param cacheKey Optional key to use for caching the successful result
- * @returns The result of the operation or the default value
- */
+// Generic fallback function to safely execute operations with a fallback
 export async function withFallback<T>(
-  operation: Promise<T>,
-  defaultValue: T,
-  errorContext: string = "operation",
-  cacheKey?: string,
-  cacheTTL: number = 30 * 60 * 1000 // 30 minutes by default
+  promise: Promise<T>, 
+  fallbackValue: T, 
+  context: string = '',
+  cacheKey: string | null = null
 ): Promise<T> {
-  // Try to get from cache first if a cacheKey is provided
-  if (cacheKey) {
-    const cachedData = getCachedData<T>(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
-  }
-
   try {
-    // Queue the request to limit concurrency
-    const result = await requestQueue.add(() => operation);
+    const result = await promise;
     
-    // Cache the successful result if a cacheKey was provided
+    // Optionally cache successful result
     if (cacheKey && result) {
-      setCachedData(cacheKey, result, cacheTTL);
+      setCachedData(cacheKey, result);
     }
     
     return result;
   } catch (error) {
-    handleSupabaseError(error, errorContext);
+    handleSupabaseError(error, context);
     
-    // If cacheKey is provided, try to get stale data from cache even if expired
+    // Try to get from cache if available
     if (cacheKey) {
-      const staleData = getStaleData<T>(cacheKey);
-      if (staleData) {
-        return staleData;
-      }
+      const cachedData = getCachedData<T>(cacheKey);
+      if (cachedData) return cachedData;
     }
     
-    return defaultValue;
+    return fallbackValue;
   }
 }
 
-/**
- * Cache data in localStorage with expiry
- */
-export function setCachedData<T>(key: string, data: T, ttl: number = 30 * 60 * 1000): void {
+// Cache utilities for offline resilience
+export function setCachedData<T>(key: string, data: T, ttl: number = 3600000): void {
   try {
-    const now = new Date();
     const item = {
-      data,
-      expiry: now.getTime() + ttl,
-      timestamp: now.getTime()
+      value: data,
+      expiry: Date.now() + ttl
     };
-    localStorage.setItem(`cache_${key}`, JSON.stringify(item));
-  } catch (e) {
-    console.error("Error setting cached data:", e);
+    localStorage.setItem(key, JSON.stringify(item));
+  } catch (error) {
+    console.error("Error setting cache:", error);
   }
 }
 
-/**
- * Get data from cache if not expired
- */
 export function getCachedData<T>(key: string): T | null {
   try {
-    const itemStr = localStorage.getItem(`cache_${key}`);
-    if (!itemStr) return null;
+    const item = localStorage.getItem(key);
+    if (!item) return null;
     
-    const item = JSON.parse(itemStr);
-    const now = new Date();
+    const parsedItem = JSON.parse(item);
     
-    // Return null if expired
-    if (now.getTime() > item.expiry) {
+    // Check if item is expired
+    if (parsedItem.expiry && parsedItem.expiry < Date.now()) {
+      localStorage.removeItem(key);
       return null;
     }
     
-    return item.data as T;
-  } catch (e) {
-    console.error("Error getting cached data:", e);
-    return null;
-  }
-}
-
-/**
- * Get stale data from cache even if expired (useful for fallbacks)
- * but only if it's not too old (less than 24 hours)
- */
-export function getStaleData<T>(key: string, maxAge: number = 24 * 60 * 60 * 1000): T | null {
-  try {
-    const itemStr = localStorage.getItem(`cache_${key}`);
-    if (!itemStr) return null;
-    
-    const item = JSON.parse(itemStr);
-    const now = new Date();
-    
-    // Only return data if it's not too old
-    if (now.getTime() - item.timestamp > maxAge) {
-      return null;
-    }
-    
-    return item.data as T;
-  } catch (e) {
-    console.error("Error getting stale data:", e);
+    return parsedItem.value as T;
+  } catch (error) {
+    console.error("Error getting cache:", error);
     return null;
   }
 }

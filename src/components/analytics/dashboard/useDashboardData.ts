@@ -1,7 +1,7 @@
 
-import { useState } from "react";
-import { useAnalyticsData } from "./useAnalyticsData";
-import { AnalyticsState } from "./types/dashboardTypes";
+import { useState, useCallback } from "react";
+import { useAnalyticsData } from "./hooks/useAnalyticsData";
+import { useToast } from "@/components/ui/use-toast";
 
 export const useDashboardData = () => {
   const [period, setPeriod] = useState<string>("7days");
@@ -17,9 +17,29 @@ export const useDashboardData = () => {
     refreshData
   } = useAnalyticsData(period);
   
+  const { toast } = useToast();
+  
   // This function now only handles UI state changes
-  const handlePeriodChange = (newPeriod: string) => {
+  const handlePeriodChange = useCallback((newPeriod: string) => {
     setPeriod(newPeriod);
+    
+    toast({
+      title: "تم تغيير الفترة الزمنية",
+      description: `تم تحديث البيانات لعرض ${getTimePeriodLabel(newPeriod)}`,
+      variant: "default",
+    });
+  }, [toast]);
+
+  // Helper function to get period label
+  const getTimePeriodLabel = (periodKey: string): string => {
+    const labels: Record<string, string> = {
+      "7days": "آخر 7 أيام",
+      "30days": "آخر 30 يوم",
+      "3months": "آخر 3 أشهر",
+      "year": "آخر سنة"
+    };
+    
+    return labels[periodKey] || periodKey;
   };
 
   return {
@@ -31,6 +51,7 @@ export const useDashboardData = () => {
     analyticsData,
     isUsingFallbackData,
     handlePeriodChange,
-    refreshData
+    refreshData,
+    getTimePeriodLabel
   };
 };

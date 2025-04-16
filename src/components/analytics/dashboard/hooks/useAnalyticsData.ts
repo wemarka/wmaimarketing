@@ -40,109 +40,99 @@ export const useAnalyticsData = (period: string) => {
     }
   });
   
+  // Add state to track if fallback data is being used
+  const [isUsingFallbackData, setIsUsingFallbackData] = useState<boolean>(false);
+  
   const { user } = useAuth();
   const { toast } = useToast();
   const { logActivity } = useCreateActivity();
   
-  useEffect(() => {
-    let mounted = true;
+  // Add the refresh function
+  const refreshData = async () => {
+    if (!user) return;
     
-    const fetchAnalytics = async () => {
-      if (!user) return;
+    try {
+      setLoading(true);
       
-      try {
-        setLoading(true);
-        
-        // Fetch social accounts data
-        const socialAccounts = await fetchSocialAccounts(user.id);
-        
-        if (!mounted) return;
-        
-        // Process social accounts data
-        const { 
-          totalImpressions, 
-          totalEngagement, 
-          totalClicks, 
-          totalConversions,
-          platformData: formattedPlatformData
-        } = processSocialAccountsData(socialAccounts);
-        
-        if (formattedPlatformData.length === 0 && mounted) {
-          setPlatformData(getFallbackPlatformData());
-        } else if (mounted) {
-          setPlatformData(formattedPlatformData);
-        }
-        
-        // Get time range for the selected period
-        const timeRange = getTimeRangeForPeriod(period);
-        
-        // Fetch posts data
-        const posts = await fetchPosts(user.id, timeRange);
-        
-        if (!mounted) return;
-        
-        // Process posts data
-        const { dailyData, dailyEngagementData } = processPostsData(posts, timeRange);
-        
-        if (mounted) {
-          setOverviewData(dailyData);
-          setEngagementData(dailyEngagementData);
-        }
-        
-        // Calculate change percentages
-        const changePercentages = calculateChangePercentages(
-          totalImpressions, 
-          totalEngagement / totalImpressions * 100, 
-          totalClicks / totalImpressions * 100, 
-          totalConversions
-        );
-        
-        // Set analytics data
-        if (mounted) {
-          setAnalyticsData({
-            period,
-            impressions: totalImpressions || 44300,
-            engagement: totalEngagement > 0 && totalImpressions > 0 ? 
-              parseFloat((totalEngagement / totalImpressions * 100).toFixed(1)) : 5.2,
-            clicks: totalClicks > 0 && totalImpressions > 0 ?
-              parseFloat((totalClicks / totalImpressions * 100).toFixed(1)) : 2.8,
-            conversions: totalConversions || 1560,
-            change: changePercentages
-          });
-        }
-
-        logActivity("analytics_data_fetched", "تم جلب بيانات التحليلات بنجاح");
-        
-      } catch (error) {
-        console.error("Error fetching analytics data:", error);
-        
-        if (mounted) {
-          toast({
-            title: "خطأ في جلب البيانات",
-            description: "حدث خطأ أثناء جلب بيانات التحليلات",
-            variant: "destructive"
-          });
-          
-          logActivity("analytics_data_error", "حدث خطأ أثناء جلب بيانات التحليلات");
-          
-          // Set fallback data
-          setAnalyticsData(getFallbackAnalyticsData(period));
-          setOverviewData(getFallbackOverviewData());
-          setPlatformData(getFallbackPlatformData());
-          setEngagementData(getFallbackEngagementData());
-        }
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
+      // Reset fallback data state
+      setIsUsingFallbackData(false);
+      
+      // Fetch social accounts data
+      const socialAccounts = await fetchSocialAccounts(user.id);
+      
+      // Process social accounts data
+      const { 
+        totalImpressions, 
+        totalEngagement, 
+        totalClicks, 
+        totalConversions,
+        platformData: formattedPlatformData
+      } = processSocialAccountsData(socialAccounts);
+      
+      if (formattedPlatformData.length === 0) {
+        setPlatformData(getFallbackPlatformData());
+      } else {
+        setPlatformData(formattedPlatformData);
       }
-    };
+      
+      // Get time range for the selected period
+      const timeRange = getTimeRangeForPeriod(period);
+      
+      // Fetch posts data
+      const posts = await fetchPosts(user.id, timeRange);
+      
+      // Process posts data
+      const { dailyData, dailyEngagementData } = processPostsData(posts, timeRange);
+      
+      setOverviewData(dailyData);
+      setEngagementData(dailyEngagementData);
+      
+      // Calculate change percentages
+      const changePercentages = calculateChangePercentages(
+        totalImpressions, 
+        totalEngagement / totalImpressions * 100, 
+        totalClicks / totalImpressions * 100, 
+        totalConversions
+      );
+      
+      // Set analytics data
+      setAnalyticsData({
+        period,
+        impressions: totalImpressions || 44300,
+        engagement: totalEngagement > 0 && totalImpressions > 0 ? 
+          parseFloat((totalEngagement / totalImpressions * 100).toFixed(1)) : 5.2,
+        clicks: totalClicks > 0 && totalImpressions > 0 ?
+          parseFloat((totalClicks / totalImpressions * 100).toFixed(1)) : 2.8,
+        conversions: totalConversions || 1560,
+        change: changePercentages
+      });
 
-    fetchAnalytics();
-    
-    return () => {
-      mounted = false;
-    };
+      logActivity("analytics_data_fetched", "تم جلب بيانات التحليلات بنجاح");
+      
+    } catch (error) {
+      console.error("Error fetching analytics data:", error);
+      toast({
+        title: "خطأ في جلب البيانات",
+        description: "حدث خطأ أثناء جلب بيانات التحليلات",
+        variant: "destructive"
+      });
+      
+      logActivity("analytics_data_error", "حدث خطأ أثناء جلب بيانات التحليلات");
+      
+      // Set fallback data and mark as using fallback
+      setAnalyticsData(getFallbackAnalyticsData(period));
+      setOverviewData(getFallbackOverviewData());
+      setPlatformData(getFallbackPlatformData());
+      setEngagementData(getFallbackEngagementData());
+      setIsUsingFallbackData(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // Initial data fetch
+  useEffect(() => {
+    refreshData();
   }, [period, user, toast, logActivity]);
 
   return {
@@ -151,5 +141,7 @@ export const useAnalyticsData = (period: string) => {
     engagementData,
     platformData,
     analyticsData,
+    isUsingFallbackData,
+    refreshData
   };
 };

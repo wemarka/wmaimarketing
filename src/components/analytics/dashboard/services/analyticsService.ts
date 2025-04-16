@@ -1,32 +1,93 @@
-
 import { supabase } from "@/integrations/supabase/client";
+import { fetchWithRetry } from "@/lib/supabaseClient";
 import { SupabaseSocialAccount, PostWithInsights, TimeRange } from "../types/dashboardTypes";
 import { formatDateForChart, generateDailyDataPoints } from "../utils/analyticsUtils";
 import { OverviewData, EngagementData, PlatformData } from "../types";
 
-export const fetchSocialAccounts = async (userId: string) => {
-  const { data, error } = await supabase
-    .from("social_accounts")
-    .select("platform, insights")
-    .eq("user_id", userId);
+const cacheWithExpiry = {
+  set: (key: string, value: any, ttl: number) => {
+    const now = new Date();
+    const item = {
+      value,
+      expiry: now.getTime() + ttl,
+    };
+    localStorage.setItem(key, JSON.stringify(item));
+  },
+  get: (key: string) => {
+    const itemStr = localStorage.getItem(key);
+    if (!itemStr) return null;
     
-  if (error) throw error;
+    const item = JSON.parse(itemStr);
+    const now = new Date();
+    
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    
+    return item.value;
+  }
+};
+
+export const fetchSocialAccounts = async (userId: string) => {
+  const cacheKey = `social_accounts_${userId}`;
+  const cachedData = cacheWithExpiry.get(cacheKey);
   
-  return data as SupabaseSocialAccount[];
+  if (cachedData) {
+    return cachedData;
+  }
+  
+  try {
+    const { data, error } = await fetchWithRetry<SupabaseSocialAccount[]>(
+      "social_accounts",
+      queryBuilder => queryBuilder
+        .select("platform, insights")
+        .eq("user_id", userId)
+    );
+      
+    if (error) throw error;
+    
+    if (data) {
+      cacheWithExpiry.set(cacheKey, data, 30 * 60 * 1000);
+    }
+    
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching social accounts:", error);
+    return [];
+  }
 };
 
 export const fetchPosts = async (userId: string, timeRange: TimeRange) => {
-  const { data, error } = await supabase
-    .from("posts")
-    .select("*")
-    .eq("user_id", userId)
-    .gte("created_at", timeRange.start)
-    .lte("created_at", timeRange.end)
-    .order("created_at", { ascending: true });
-    
-  if (error) throw error;
+  const cacheKey = `posts_${userId}_${timeRange.start}_${timeRange.end}`;
+  const cachedData = cacheWithExpiry.get(cacheKey);
   
-  return data as unknown as PostWithInsights[];
+  if (cachedData) {
+    return cachedData;
+  }
+  
+  try {
+    const { data, error } = await fetchWithRetry<PostWithInsights[]>(
+      "posts",
+      queryBuilder => queryBuilder
+        .select("*")
+        .eq("user_id", userId)
+        .gte("created_at", timeRange.start)
+        .lte("created_at", timeRange.end)
+        .order("created_at", { ascending: true })
+    );
+      
+    if (error) throw error;
+    
+    if (data) {
+      cacheWithExpiry.set(cacheKey, data, 30 * 60 * 1000);
+    }
+    
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    return [];
+  }
 };
 
 export const processSocialAccountsData = (
@@ -106,24 +167,32 @@ export const processPostsData = (
   const dailyData = generateDailyDataPoints(timeRange.start, timeRange.end);
   const dailyEngagementData = generateDailyDataPoints(timeRange.start, timeRange.end);
   
-  if (posts && posts.length > 0) {
-    posts.forEach((post) => {
-      const date = new Date(post.created_at);
-      const dateStr = formatDateForChart(date);
-      
-      const dayIndex = dailyData.findIndex(day => day.name === dateStr);
-      if (dayIndex >= 0 && post.insights) {
-        dailyData[dayIndex].impressions += (post.insights.impressions || 0);
-        dailyData[dayIndex].engagement += (post.insights.engagement || 0);
-        dailyData[dayIndex].clicks += (post.insights.clicks || 0);
-        dailyData[dayIndex].revenue += (post.insights.revenue || 0);
-        
-        dailyEngagementData[dayIndex].likes += (post.insights.likes || 0);
-        dailyEngagementData[dayIndex].comments += (post.insights.comments || 0);
-        dailyEngagementData[dayIndex].shares += (post.insights.shares || 0);
-      }
-    });
+  if (!posts || posts.length === 0) {
+    return { dailyData, dailyEngagementData };
   }
+  
+  const dayMap = new Map();
+  dailyData.forEach((day, index) => {
+    dayMap.set(day.name, index);
+  });
+  
+  posts.forEach((post) => {
+    const date = new Date(post.created_at);
+    const dateStr = formatDateForChart(date);
+    
+    const dayIndex = dayMap.get(dateStr);
+    
+    if (dayIndex !== undefined && post.insights) {
+      dailyData[dayIndex].impressions += (post.insights.impressions || 0);
+      dailyData[dayIndex].engagement += (post.insights.engagement || 0);
+      dailyData[dayIndex].clicks += (post.insights.clicks || 0);
+      dailyData[dayIndex].revenue += (post.insights.revenue || 0);
+      
+      dailyEngagementData[dayIndex].likes += (post.insights.likes || 0);
+      dailyEngagementData[dayIndex].comments += (post.insights.comments || 0);
+      dailyEngagementData[dayIndex].shares += (post.insights.shares || 0);
+    }
+  });
   
   return { 
     dailyData, 
