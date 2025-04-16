@@ -3,6 +3,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import SidebarNavItem from "./SidebarNavItem";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface NavItem {
   id: string;
@@ -16,7 +17,7 @@ interface SidebarNavSectionProps {
   items: NavItem[];
   expanded: boolean;
   checkIsActive: (path: string) => boolean;
-  activePath: string; // Add activePath prop to interface
+  activePath: string;
 }
 
 const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
@@ -26,8 +27,11 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
   checkIsActive,
   activePath
 }) => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
+
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full flex flex-col" dir={isRTL ? "rtl" : "ltr"}>
       <AnimatePresence>
         {expanded && (
           <motion.h3
@@ -50,6 +54,7 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
             label={item.label}
             expanded={expanded}
             checkIsActive={checkIsActive}
+            activePath={activePath}
           />
         ))}
       </div>

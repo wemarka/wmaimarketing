@@ -12,7 +12,7 @@ interface SidebarNavItemProps {
   label: string;
   expanded: boolean;
   checkIsActive: (path: string) => boolean;
-  activePath?: string; 
+  activePath: string; 
 }
 
 const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ 
@@ -30,9 +30,9 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   const isActive = activePath ? to === activePath : checkIsActive(to);
   
   // RTL-aware margin direction
-  const textMargin = isRTL ? "ml-3" : "mr-3";
-  const activeIndicatorPosition = isRTL ? "left-0" : "right-0";
-  const activeIndicatorBorderRadius = isRTL ? "rounded-l-full" : "rounded-r-full";
+  const textMargin = isRTL ? "mr-3" : "ml-3";
+  const activeIndicatorPosition = isRTL ? "right-0" : "left-0";
+  const activeIndicatorBorderRadius = isRTL ? "rounded-r-full" : "rounded-l-full";
   
   return (
     <TooltipProvider delayDuration={300}>
@@ -71,9 +71,9 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                         textMargin, "text-sm font-medium transition-opacity duration-200",
                         isActive ? "text-white" : "text-white/80"
                       )}
-                      initial={{ opacity: 0, x: isRTL ? 10 : -10 }}
+                      initial={{ opacity: 0, x: isRTL ? -10 : 10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: isRTL ? 10 : -10 }}
+                      exit={{ opacity: 0, x: isRTL ? -10 : 10 }}
                       transition={{ duration: 0.3 }}
                     >
                       {label}
@@ -100,7 +100,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
           </NavLink>
         </TooltipTrigger>
         {!expanded && (
-          <TooltipContent side={isRTL ? "right" : "left"} className="bg-[#3a7a89]/90 text-white border-none shadow-lg">
+          <TooltipContent side={isRTL ? "left" : "right"} className="bg-[#3a7a89]/90 text-white border-none shadow-lg">
             <p className="font-medium">{label}</p>
           </TooltipContent>
         )}

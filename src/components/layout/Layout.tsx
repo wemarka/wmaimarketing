@@ -8,6 +8,7 @@ import { useLocation } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { useSidebarNavigation } from "./sidebar/useSidebarNavigation";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,6 +20,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [activeDashboardTab, setActiveDashboardTab] = useState<string>("dashboard");
   const [mounted, setMounted] = useState(false);
   const { i18n } = useTranslation();
+  const { sidebarPosition } = useSidebarNavigation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
   
   // Handle initial mount animation
@@ -26,7 +28,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     setMounted(true);
     
     // Check HTML document direction
-    const htmlDir = document.documentElement.dir || "rtl";
+    const htmlDir = document.documentElement.dir || "ltr";
     document.documentElement.dir = htmlDir;
   }, []);
 
@@ -57,10 +59,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
   }, []);
 
-  // Direction-aware margin styles
-  const marginStyle = isRTL
-    ? isMobile ? "mr-0" : "mr-16 lg:mr-16" 
-    : isMobile ? "ml-0" : "ml-16 lg:ml-16";
+  // Dynamic margin styles based on sidebar position
+  const getMarginStyle = () => {
+    if (isMobile) return "";
+    
+    if (sidebarPosition === "left") {
+      return "ml-16 lg:ml-16";
+    } else {
+      return "mr-16 lg:mr-16";
+    }
+  };
 
   return (
     <div 
@@ -75,7 +83,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <motion.div 
         className={cn(
           "flex-1 flex flex-col",
-          marginStyle
+          getMarginStyle()
         )}
         initial={{ opacity: 0 }}
         animate={{ opacity: mounted ? 1 : 0 }}

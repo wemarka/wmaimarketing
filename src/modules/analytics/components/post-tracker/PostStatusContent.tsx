@@ -47,7 +47,7 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
 
   // RTL-aware animation variants
   const itemAnimationRTL = {
-    hidden: { opacity: 0, x: isRTL ? 10 : -10 },
+    hidden: { opacity: 0, x: isRTL ? -10 : 10 },
     visible: { opacity: 1, x: 0, transition: { duration: 0.3 } }
   };
 

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import VisitsCard from "./cards/VisitsCard";
 import PopularityCard from "./cards/PopularityCard";
@@ -18,6 +18,13 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
   
+  useEffect(() => {
+    // Enforce RTL direction when language is Arabic
+    if (i18n.language === "ar" && document.dir !== "rtl") {
+      document.documentElement.dir = "rtl";
+    }
+  }, [i18n.language]);
+  
   const containerAnimation = {
     hidden: { opacity: 0 },
     show: {
@@ -34,8 +41,8 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
   };
 
   // RTL-aware animation initial and exit values
-  const slideInitial = isRTL ? { opacity: 0, x: -20 } : { opacity: 0, x: 20 };
-  const slideExit = isRTL ? { opacity: 0, x: 20 } : { opacity: 0, x: -20 };
+  const slideInitial = isRTL ? { opacity: 0, x: 20 } : { opacity: 0, x: -20 };
+  const slideExit = isRTL ? { opacity: 0, x: -20 } : { opacity: 0, x: 20 };
   
   return (
     <AnimatePresence mode="wait">
@@ -83,9 +90,9 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
       {activeTab === "performance" && (
         <motion.div
           key="performance"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
+          initial={slideInitial}
+          animate={{ opacity: 1, x: 0 }}
+          exit={slideExit}
           transition={{ duration: 0.4 }}
           className="p-6"
           dir={isRTL ? "rtl" : "ltr"}
@@ -97,8 +104,8 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
       {activeTab === "analytics" && (
         <motion.div
           key="analytics"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={slideInitial}
+          animate={{ opacity: 1, x: 0 }}
           exit={slideExit}
           transition={{ duration: 0.4 }}
           className="p-6"

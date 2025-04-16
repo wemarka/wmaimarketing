@@ -12,7 +12,7 @@ import { useLocation } from "react-router-dom";
 
 const AppSidebar = () => {
   const { profile, user } = useAuth();
-  const { expanded, toggleExpanded, isDarkMode, toggleDarkMode, checkIsActive } = useSidebarNavigation();
+  const { expanded, toggleExpanded, isDarkMode, toggleDarkMode, checkIsActive, sidebarPosition } = useSidebarNavigation();
   const location = useLocation();
   const [activePath, setActivePath] = useState(location.pathname);
   const [mounted, setMounted] = useState(false);
@@ -49,9 +49,10 @@ const AppSidebar = () => {
   return (
     <motion.div 
       className={cn(
-        "fixed right-0 z-30 h-screen bg-gradient-to-b transition-colors",
+        "fixed h-screen bg-gradient-to-b transition-colors z-30",
         "from-[#3a7a89] to-[#2c6c7a] shadow-lg flex flex-col",
-        "border-l border-white/10 overflow-hidden",
+        "border-white/10 overflow-hidden",
+        sidebarPosition === "left" ? "left-0 border-r" : "right-0 border-l",
         !mounted && "opacity-0"
       )}
       variants={sidebarVariants}

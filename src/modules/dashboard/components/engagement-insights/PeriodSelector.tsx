@@ -31,7 +31,7 @@ export const PeriodSelector = ({
   return (
     <div className={cn(
       "flex items-center gap-4",
-      isRTL ? "flex-row-reverse" : "justify-end"
+      isRTL ? "flex-row" : "justify-end"
     )}>
       <Select value={selectedValue} onValueChange={onChange}>
         <SelectTrigger className="w-[120px]">
