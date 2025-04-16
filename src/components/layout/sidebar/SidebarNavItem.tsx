@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface SidebarNavItemProps {
   to: string;
@@ -11,7 +12,7 @@ interface SidebarNavItemProps {
   label: string;
   expanded: boolean;
   checkIsActive: (path: string) => boolean;
-  activePath?: string; // Make activePath optional
+  activePath?: string; 
 }
 
 const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ 
@@ -22,8 +23,16 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   checkIsActive,
   activePath
 }) => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
+  
   // Use activePath if provided, otherwise use checkIsActive function
   const isActive = activePath ? to === activePath : checkIsActive(to);
+  
+  // RTL-aware margin direction
+  const textMargin = isRTL ? "ml-3" : "mr-3";
+  const activeIndicatorPosition = isRTL ? "left-0" : "right-0";
+  const activeIndicatorBorderRadius = isRTL ? "rounded-l-full" : "rounded-r-full";
   
   return (
     <TooltipProvider delayDuration={300}>
@@ -59,12 +68,12 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                   {expanded && (
                     <motion.span 
                       className={cn(
-                        "mr-3 text-sm font-medium transition-opacity duration-200",
+                        textMargin, "text-sm font-medium transition-opacity duration-200",
                         isActive ? "text-white" : "text-white/80"
                       )}
-                      initial={{ opacity: 0, x: -10 }}
+                      initial={{ opacity: 0, x: isRTL ? 10 : -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -10 }}
+                      exit={{ opacity: 0, x: isRTL ? 10 : -10 }}
                       transition={{ duration: 0.3 }}
                     >
                       {label}
@@ -75,7 +84,9 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                 {isActive && (
                   <motion.div 
                     className={cn(
-                      "absolute right-0 bg-white rounded-r-full h-8",
+                      "absolute bg-white h-8",
+                      activeIndicatorPosition,
+                      activeIndicatorBorderRadius,
                       expanded ? "w-1.5" : "w-1.5"
                     )}
                     layoutId="activeIndicator"
@@ -89,7 +100,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
           </NavLink>
         </TooltipTrigger>
         {!expanded && (
-          <TooltipContent side="left" className="bg-[#3a7a89]/90 text-white border-none shadow-lg">
+          <TooltipContent side={isRTL ? "right" : "left"} className="bg-[#3a7a89]/90 text-white border-none shadow-lg">
             <p className="font-medium">{label}</p>
           </TooltipContent>
         )}

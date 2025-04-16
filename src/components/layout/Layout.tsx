@@ -7,6 +7,7 @@ import MobileNavbar from "./MobileNavbar";
 import { useLocation } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -17,7 +18,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const isMobile = useMediaQuery("(max-width: 767px)");
   const [activeDashboardTab, setActiveDashboardTab] = useState<string>("dashboard");
   const [mounted, setMounted] = useState(false);
-  const [direction, setDirection] = useState<"rtl" | "ltr">("rtl"); // Default RTL for Arabic
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
   
   // Handle initial mount animation
   useEffect(() => {
@@ -25,8 +27,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     
     // Check HTML document direction
     const htmlDir = document.documentElement.dir || "rtl";
-    setDirection(htmlDir as "rtl" | "ltr");
+    document.documentElement.dir = htmlDir;
   }, []);
+
+  // Listen for language changes
+  useEffect(() => {
+    document.documentElement.dir = isRTL ? "rtl" : "ltr";
+  }, [isRTL]);
   
   // Listen for tab change events from the header
   useEffect(() => {
@@ -51,9 +58,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, []);
 
   // Direction-aware margin styles
-  const marginStyle = direction === "rtl" 
-    ? isMobile ? "ml-0" : "ml-16 lg:ml-16" 
-    : isMobile ? "mr-0" : "mr-16 lg:mr-16";
+  const marginStyle = isRTL
+    ? isMobile ? "mr-0" : "mr-16 lg:mr-16" 
+    : isMobile ? "ml-0" : "ml-16 lg:ml-16";
 
   return (
     <div 
@@ -61,7 +68,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         "flex min-h-screen w-full overflow-x-hidden transition-colors duration-300",
         "bg-[#f8fafc] dark:bg-[#1e2a36]"
       )}
-      dir={direction}
+      dir={isRTL ? "rtl" : "ltr"}
     >
       <AppSidebar />
       

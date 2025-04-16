@@ -3,6 +3,7 @@ import React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SidebarNavSection from "./SidebarNavSection";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface NavItem {
   id: string;
@@ -29,6 +30,9 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   checkIsActive,
   activePath
 }) => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
+
   const containerAnimation = {
     hidden: { opacity: 0 },
     visible: { 
@@ -47,7 +51,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   };
 
   return (
-    <ScrollArea className="h-[calc(100vh-64px-80px)] pr-1">
+    <ScrollArea className="h-[calc(100vh-64px-80px)] pr-1" dir={isRTL ? "rtl" : "ltr"}>
       <motion.div 
         className="py-4 flex flex-col space-y-6 px-2"
         initial="hidden"
