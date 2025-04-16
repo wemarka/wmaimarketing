@@ -6,6 +6,7 @@ import { useProfile } from "@/hooks/useProfile";
 import HeaderGreetingTitle from "./greeting/HeaderGreetingTitle";
 import HeaderGreetingDate from "./greeting/HeaderGreetingDate";
 import HeaderPriorities from "./greeting/HeaderPriorities";
+import HeaderWeather from "./HeaderWeather";
 
 interface HeaderGreetingProps {
   currentTime: Date;
@@ -36,7 +37,10 @@ const HeaderGreeting: React.FC<HeaderGreetingProps> = ({
       >
         <div>
           <HeaderGreetingTitle greeting={greeting} userName={userName} />
-          <HeaderGreetingDate currentTime={currentTime} currentLanguage={currentLanguage} />
+          <div className="flex flex-wrap items-center gap-3 mt-2">
+            <HeaderGreetingDate currentTime={currentTime} currentLanguage={currentLanguage} />
+            <HeaderWeather />
+          </div>
         </div>
       </motion.div>
       

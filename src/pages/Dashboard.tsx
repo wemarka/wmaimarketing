@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Helmet } from "react-helmet-async";
 import DashboardTabs from "@/modules/dashboard/components/DashboardTabs";
 import { BarChart3, Calendar, LayoutDashboard, Library } from "lucide-react";
+import HeaderGreeting from "@/components/layout/header/HeaderGreeting";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -75,12 +76,7 @@ const Dashboard = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <div className="text-right">
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-[#3a7a89] to-[#4a8a99] bg-clip-text text-transparent mb-1">
-                    {getGreeting()}, {user?.email?.split('@')[0] || 'مرحبًا بك'}
-                  </h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{getFormattedDate()}</p>
-                </div>
+                <HeaderGreeting currentTime={currentTime} greeting={getGreeting()} />
               </motion.div>
             </CardContent>
           </Card>
