@@ -16,10 +16,10 @@ import {
 import { motion } from "framer-motion";
 
 const CompactUserInfo = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const currentDate = new Date();
   
-  // Format date in Arabic format - simple version
+  // Format date - بالعربية
   const formatDate = () => {
     const months = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
     const day = currentDate.getDate();
@@ -49,12 +49,12 @@ const CompactUserInfo = () => {
           variant="ghost" 
           className="h-9 rounded-full flex items-center gap-2 hover:bg-white/20"
         >
-          <div className="hidden md:flex items-center gap-1.5 text-sm text-white/90">
+          <div className="hidden md:flex items-center space-x-1 space-x-reverse rtl:space-x-reverse text-sm text-white/90">
             <span>{userName}</span>
-            <span className="text-white/60">|</span>
-            <span>{formatDate()}</span>
-            <span className="text-white/60">|</span>
+            <span className="text-white/60 mx-1">|</span>
             <span>{weather.condition} {weather.temp}°</span>
+            <span className="text-white/60 mx-1">|</span>
+            <span>{formatDate()}</span>
           </div>
           
           <Avatar className="h-8 w-8 border-2 border-white/20">
@@ -74,12 +74,17 @@ const CompactUserInfo = () => {
         <DropdownMenuLabel>الحساب</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>الملف الشخصي</DropdownMenuItem>
-          <DropdownMenuItem>لوحة التحكم</DropdownMenuItem>
-          <DropdownMenuItem>الإعدادات</DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = '/profile'}>الملف الشخصي</DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = '/dashboard'}>لوحة التحكم</DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer" onClick={() => window.location.href = '/settings'}>الإعدادات</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-red-500 focus:text-red-500 focus:bg-red-50/10">تسجيل الخروج</DropdownMenuItem>
+        <DropdownMenuItem 
+          className="text-red-500 focus:text-red-500 focus:bg-red-50/10 cursor-pointer"
+          onClick={() => signOut()}
+        >
+          تسجيل الخروج
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

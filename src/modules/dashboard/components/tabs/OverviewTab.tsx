@@ -11,10 +11,12 @@ import NewsUpdates from "../news/NewsUpdates";
 import PopularityCard from "../cards/PopularityCard";
 import PerformanceCard from "../cards/PerformanceCard";
 import RegionTargetingCard from "../cards/RegionTargetingCard";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const OverviewTab = () => {
   const { t } = useTranslation();
   const [layout, setLayout] = React.useState<"default" | "compact">("default");
+  const [activeTab, setActiveTab] = React.useState("summary");
   
   return (
     <div className="space-y-8">
@@ -36,38 +38,74 @@ const OverviewTab = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 gap-8">
-        {/* Card showing total visits and performance metrics */}
-        <div className={`grid grid-cols-1 ${layout === "default" ? "lg:grid-cols-3" : "xl:grid-cols-3"} gap-8`}>
-          <div className={layout === "default" ? "lg:col-span-2" : "xl:col-span-2"}>
-            <AnalyticsSummary />
-          </div>
-          <div>
-            <PopularityCard />
-          </div>
-        </div>
+      {/* Main dashboard tabs */}
+      <Tabs 
+        value={activeTab} 
+        onValueChange={setActiveTab}
+        className="w-full"
+      >
+        <TabsList className="mb-6 bg-background/50 border">
+          <TabsTrigger value="summary" className="data-[state=active]:bg-primary/10">
+            ملخص الأداء
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="data-[state=active]:bg-primary/10">
+            التحليلات
+          </TabsTrigger>
+          <TabsTrigger value="campaigns" className="data-[state=active]:bg-primary/10">
+            الحملات
+          </TabsTrigger>
+          <TabsTrigger value="content" className="data-[state=active]:bg-primary/10">
+            المحتوى
+          </TabsTrigger>
+        </TabsList>
         
-        {/* Visualization cards for performance and geographical distribution */}
-        <div className={`grid grid-cols-1 ${layout === "default" ? "lg:grid-cols-2" : "xl:grid-cols-2"} gap-8`}>
-          <PerformanceCard />
-          <RegionTargetingCard />
-        </div>
-        
-        {/* Cards for campaign tracking, engagements and upcoming posts */}
-        <div className={`grid grid-cols-1 ${layout === "default" ? "lg:grid-cols-2" : "xl:grid-cols-2"} gap-8`}>
-          <EngagementInsights />
-          <CampaignTracker />
-        </div>
-        
-        <div className={`grid grid-cols-1 ${layout === "default" ? "lg:grid-cols-3" : "xl:grid-cols-3"} gap-8`}>
-          <div className={layout === "default" ? "lg:col-span-2" : "xl:col-span-2"}>
-            <UpcomingPosts />
+        {/* Summary Tab Content */}
+        <TabsContent value="summary" className="mt-0 space-y-8 animate-fade-in">
+          <div className="grid grid-cols-1 gap-8">
+            {/* Card showing total visits and performance metrics */}
+            <div className={`grid grid-cols-1 ${layout === "default" ? "lg:grid-cols-3" : "xl:grid-cols-3"} gap-8`}>
+              <div className={layout === "default" ? "lg:col-span-2" : "xl:col-span-2"}>
+                <AnalyticsSummary />
+              </div>
+              <div>
+                <PopularityCard />
+              </div>
+            </div>
           </div>
-          <div className={layout === "default" ? "lg:col-span-1" : "xl:col-span-1"}>
-            <NewsUpdates />
+        </TabsContent>
+        
+        {/* Analytics Tab Content */}
+        <TabsContent value="analytics" className="mt-0 space-y-8 animate-fade-in">
+          <div className={`grid grid-cols-1 ${layout === "default" ? "lg:grid-cols-2" : "xl:grid-cols-2"} gap-8`}>
+            <PerformanceCard />
+            <RegionTargetingCard />
           </div>
-        </div>
-      </div>
+        </TabsContent>
+        
+        {/* Campaigns Tab Content */}
+        <TabsContent value="campaigns" className="mt-0 space-y-8 animate-fade-in">
+          <div className={`grid grid-cols-1 ${layout === "default" ? "lg:grid-cols-3" : "xl:grid-cols-3"} gap-8`}>
+            <div className={layout === "default" ? "lg:col-span-2" : "xl:col-span-2"}>
+              <CampaignTracker />
+            </div>
+            <div>
+              <EngagementInsights />
+            </div>
+          </div>
+        </TabsContent>
+        
+        {/* Content Tab Content */}
+        <TabsContent value="content" className="mt-0 space-y-8 animate-fade-in">
+          <div className={`grid grid-cols-1 ${layout === "default" ? "lg:grid-cols-3" : "xl:grid-cols-3"} gap-8`}>
+            <div className={layout === "default" ? "lg:col-span-2" : "xl:col-span-2"}>
+              <UpcomingPosts />
+            </div>
+            <div className={layout === "default" ? "lg:col-span-1" : "xl:col-span-1"}>
+              <NewsUpdates />
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

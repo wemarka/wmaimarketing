@@ -6,8 +6,6 @@ import { useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import CompactHeader from "./header/CompactHeader";
-import NotificationsPopover from "./header/NotificationsPopover";
-import MobileSearchButton from "./header/search/MobileSearchButton";
 import CompactUserInfo from "./header/CompactUserInfo";
 
 const Header: React.FC = () => {
@@ -28,6 +26,11 @@ const Header: React.FC = () => {
     if (location.pathname === "/dashboard") return "لوحة التحكم";
     if (location.pathname === "/dashboard/performance") return "الأداء";
     if (location.pathname === "/dashboard/interactions") return "التفاعلات";
+    if (location.pathname.includes("/marketing")) return "التسويق";
+    if (location.pathname.includes("/content")) return "المحتوى";
+    if (location.pathname.includes("/analytics")) return "التحليلات";
+    if (location.pathname.includes("/scheduler")) return "الجدولة";
+    if (location.pathname.includes("/admin")) return "الإدارة";
     return "سيركل";
   };
   
@@ -46,10 +49,10 @@ const Header: React.FC = () => {
       )}
     >
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
-        {/* Header left side - CompactHeader with sidebar trigger for mobile */}
+        {/* Header left side - CompactHeader with sidebar trigger */}
         <div className="flex items-center gap-4">
           <CompactHeader 
-            showSidebarTrigger={isMobile}
+            showSidebarTrigger={true} // Always show the sidebar trigger
             pathname={location.pathname}
             pageTitle={getPageTitle()}
             notificationCount={notificationCount}
@@ -57,19 +60,8 @@ const Header: React.FC = () => {
           />
         </div>
         
-        {/* Header right side - consolidated components */}
+        {/* Header right side - user info */}
         <div className="flex items-center gap-3">
-          {isMobile ? <MobileSearchButton /> : (
-            <div className="relative md:block hidden">
-              <MobileSearchButton />
-            </div>
-          )}
-          
-          <NotificationsPopover 
-            notificationCount={notificationCount}
-            onNotificationClick={handleNotificationClick}
-          />
-          
           <CompactUserInfo />
         </div>
       </div>
