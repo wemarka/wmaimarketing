@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import MobileNavbar from "./MobileNavbar";
 import { useLocation } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -46,16 +46,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <Header />
         <main className={cn(
           "flex-1 p-4 md:p-6",
-          location.pathname === "/dashboard" && "bg-white/5 backdrop-blur-sm"
+          location.pathname === "/dashboard" && "bg-white/5 backdrop-blur-sm dark:bg-slate-900/5"
         )}>
-          <motion.div 
-            className="bg-white rounded-2xl shadow-xl overflow-hidden"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            {children}
-          </motion.div>
+          <AnimatePresence mode="wait">
+            <motion.div 
+              key={location.pathname}
+              className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -20, opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </motion.div>
       

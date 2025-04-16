@@ -11,10 +11,10 @@ const Card = React.forwardRef<
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.3 }}
-    whileHover={{ y: -2 }}
+    whileHover={{ y: -2, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.06)" }}
     ref={ref}
     className={cn(
-      "rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-md transition-all duration-300",
+      "rounded-xl border bg-card text-card-foreground shadow-sm transition-all duration-300",
       className
     )}
     {...props}
@@ -41,7 +41,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-2xl font-semibold leading-none tracking-tight text-beauty-purple dark:text-beauty-lightpurple",
+      "text-2xl font-semibold leading-none tracking-tight text-[#3a7a89] dark:text-[#4a8a99]",
       className
     )}
     {...props}

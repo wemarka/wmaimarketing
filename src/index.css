@@ -38,20 +38,11 @@
     --sidebar-muted: 240 4.8% 95.9%;
     --sidebar-muted-foreground: 240 3.8% 46.1%;
     
-    /* Beauty Colors */
-    --beauty-purple: 252 75% 60%;
-    --beauty-purple-light: 252 95% 85%;
-    --beauty-gold: 43 74% 59%;
-    
-    /* Softtech Colors */
-    --softtech-blue: 195 100% 47%;
-    --softtech-blue-light: 195 100% 90%;
-    --softtech-gray: 220 14% 96%;
-    
     /* Circle Colors */
     --circle-teal: 187 56% 38%;
     --circle-teal-light: 187 56% 90%;
     --circle-gray: 200 14% 28%;
+    --circle-accent: 187 75% 45%;
   }
 
   .dark {
@@ -87,20 +78,11 @@
     --sidebar-muted: 240 3.7% 15.9%;
     --sidebar-muted-foreground: 240 5% 64.9%;
     
-    /* Beauty Colors Dark */
-    --beauty-purple: 252 75% 65%;
-    --beauty-purple-light: 252 50% 25%;
-    --beauty-gold: 43 60% 50%;
-    
-    /* Softtech Colors Dark */
-    --softtech-blue: 195 100% 40%;
-    --softtech-blue-light: 195 70% 20%;
-    --softtech-gray: 220 10% 20%;
-    
     /* Circle Colors Dark */
     --circle-teal: 187 56% 45%;
     --circle-teal-light: 187 56% 20%;
     --circle-gray: 200 14% 20%;
+    --circle-accent: 187 75% 60%;
   }
 }
 
@@ -128,15 +110,15 @@
   }
 
   .sidebar-item {
-    @apply flex items-center px-3 py-2 text-sm rounded-lg cursor-pointer hover:bg-gray-100;
+    @apply flex items-center px-3 py-2 text-sm rounded-lg cursor-pointer hover:bg-[#3a7a89]/10;
   }
   
   .sidebar-item.active {
-    @apply text-blue-500;
+    @apply text-[#3a7a89] bg-[#3a7a89]/10;
   }
   
   .sidebar-notification {
-    @apply absolute right-3 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-medium;
+    @apply absolute right-3 bg-[#3a7a89] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-medium;
   }
   
   .card-hover-effect {
@@ -146,4 +128,84 @@
   .dashboard-card {
     @apply rounded-xl overflow-hidden border-0 shadow-md;
   }
+
+  /* Button enhancements */
+  .btn-circle {
+    @apply rounded-full p-2 transition-transform hover:scale-110 active:scale-95;
+  }
+  
+  .btn-teal {
+    @apply bg-[#3a7a89] text-white hover:bg-[#2c6c7a];
+  }
+  
+  /* Custom animations */
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s ease-in-out infinite;
+  }
+  
+  .animate-slide-in-right {
+    animation: slide-in-right 0.5s forwards;
+  }
+  
+  .animate-slide-in-left {
+    animation: slide-in-left 0.5s forwards;
+  }
+  
+  .animate-fade-up {
+    animation: fade-up 0.5s forwards;
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes pulse-subtle {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+@keyframes slide-in-right {
+  0% { transform: translateX(20px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-in-left {
+  0% { transform: translateX(-20px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fade-up {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Theme transitions */
+.theme-transition {
+  @apply transition-colors duration-300;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-600;
 }

@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { ArrowLeft, Bell, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -43,14 +43,14 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header className="bg-[#3a7a89] px-6 py-4 text-white shadow-md ml-16 lg:ml-16">
+    <header className="bg-gradient-to-r from-[#3a7a89] to-[#4a8a99] px-6 py-4 text-white shadow-md">
       <div className="flex items-center justify-between">
         {/* Left side */}
         <div className="flex items-center space-x-4 space-x-reverse">
-          <div className="flex items-center">
+          <Link to="#" className="flex items-center hover:bg-white/10 p-2 rounded-full transition-colors">
             <ArrowLeft className="h-5 w-5 ml-2" />
-            <span>رجوع</span>
-          </div>
+            <span className="text-sm">رجوع</span>
+          </Link>
           
           <motion.h2 
             initial={{ opacity: 0, y: -10 }}
@@ -70,19 +70,32 @@ const Header: React.FC = () => {
           transition={{ duration: 0.3, delay: 0.3 }}
         >
           {navItems.map((item, index) => (
-            <motion.a 
-              key={item.title} 
-              href={item.path}
-              className={cn(
-                "text-sm font-medium tracking-wide hover:text-white/80 transition-colors",
-                location.pathname === item.path ? "text-white" : "text-white/60"
-              )}
+            <motion.div
+              key={item.title}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3, delay: 0.4 + index * 0.1 }}
+              className="relative"
             >
-              {item.title}
-            </motion.a>
+              <Link
+                to={item.path}
+                className={cn(
+                  "text-sm font-medium tracking-wide hover:text-white/80 transition-colors",
+                  location.pathname === item.path ? "text-white" : "text-white/70"
+                )}
+              >
+                {item.title}
+              </Link>
+              {location.pathname === item.path && (
+                <motion.div
+                  layoutId="activeNav"
+                  className="absolute -bottom-[14px] left-0 right-0 h-1 bg-white rounded-full"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+              )}
+            </motion.div>
           ))}
         </motion.nav>
         
@@ -98,7 +111,12 @@ const Header: React.FC = () => {
             <Search className="h-5 w-5" />
           </Button>
           <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full">
-            <Bell className="h-5 w-5" />
+            <div className="relative">
+              <Bell className="h-5 w-5" />
+              <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full flex items-center justify-center text-[10px]">
+                3
+              </span>
+            </div>
           </Button>
           
           {/* Team members */}
@@ -106,7 +124,7 @@ const Header: React.FC = () => {
             {teamMembers.map((member, idx) => (
               <Avatar 
                 key={idx}
-                className="border-2 border-[#3a7a89] w-8 h-8"
+                className="border-2 border-[#3a7a89] w-8 h-8 hover:transform hover:scale-110 transition-transform cursor-pointer"
               >
                 <AvatarImage src={member.avatar || undefined} />
                 <AvatarFallback className="bg-white/20 text-white text-xs">

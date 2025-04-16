@@ -7,7 +7,7 @@ import SidebarContent from "./sidebar/SidebarContent";
 import SidebarFooter from "./sidebar/SidebarFooter";
 import { useSidebarNavigation } from "./sidebar/useSidebarNavigation";
 import { getNavigationSections } from "./sidebar/navigationConfig";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const AppSidebar = () => {
   const { profile, user } = useAuth();
@@ -27,15 +27,20 @@ const AppSidebar = () => {
   
   const navigationSections = getNavigationSections();
   
+  const sidebarVariants = {
+    expanded: { width: "16rem" },
+    collapsed: { width: "4rem" }
+  };
+  
   return (
     <motion.div 
       className={cn(
-        "fixed left-0 z-30 h-screen bg-[#3a7a89] transition-all duration-300 shadow-lg flex flex-col",
-        expanded ? "w-64" : "w-16"
+        "fixed left-0 z-30 h-screen bg-gradient-to-b from-[#3a7a89] to-[#2c6c7a] transition-all duration-300 shadow-lg flex flex-col",
       )}
-      initial={{ x: -20, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 0.4 }}
+      variants={sidebarVariants}
+      initial="collapsed"
+      animate={expanded ? "expanded" : "collapsed"}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
       <SidebarHeader 
         expanded={expanded} 
