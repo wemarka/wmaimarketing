@@ -43,21 +43,46 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     const handleTabChange = (event: CustomEvent) => {
       if (event.detail && event.detail.tab) {
         setActiveDashboardTab(event.detail.tab);
-        // Dispatch another event that the Dashboard component can listen to
-        window.dispatchEvent(new CustomEvent('dashboard-tab-change', { 
-          detail: { tab: event.detail.tab }
-        }));
       }
     };
 
     // Add event listener
     window.addEventListener('header-tab-change' as any, handleTabChange as EventListener);
+    window.addEventListener('dashboard-tab-change' as any, handleTabChange as EventListener);
     
     // Clean up
     return () => {
       window.removeEventListener('header-tab-change' as any, handleTabChange as EventListener);
+      window.removeEventListener('dashboard-tab-change' as any, handleTabChange as EventListener);
     };
   }, []);
+
+  // RTL-aware margin calculation
+  const getContentMargin = () => {
+    if (isMobile) return 0;
+    
+    const sidebarWidth = expanded ? "16rem" : "4.5rem";
+    if (sidebarPosition === "left" && !isRTL) return { marginLeft: sidebarWidth };
+    if (sidebarPosition === "right" && !isRTL) return { marginRight: sidebarWidth }; 
+    if (sidebarPosition === "left" && isRTL) return { marginRight: sidebarWidth };
+    if (sidebarPosition === "right" && isRTL) return { marginLeft: sidebarWidth };
+    
+    return {};
+  };
+
+  // Animation setup
+  const contentAnimation = {
+    initial: { opacity: 0 },
+    animate: { opacity: mounted ? 1 : 0 },
+    transition: { duration: 0.5, type: "spring", stiffness: 100, damping: 20 }
+  };
+  
+  const childAnimation = {
+    initial: { y: 20, opacity: 0 },
+    animate: { y: 0, opacity: 1 },
+    exit: { y: -20, opacity: 0 },
+    transition: { duration: 0.5, type: "spring", stiffness: 300, damping: 30 }
+  };
 
   return (
     <div 
@@ -71,13 +96,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       
       <motion.div 
         className="flex-1 flex flex-col"
-        style={{
-          marginLeft: sidebarPosition === "left" && !isMobile ? (expanded ? "16rem" : "4.5rem") : 0,
-          marginRight: sidebarPosition === "right" && !isMobile ? (expanded ? "16rem" : "4.5rem") : 0,
-        }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: mounted ? 1 : 0 }}
-        transition={{ duration: 0.5 }}
+        style={getContentMargin()}
+        {...contentAnimation}
       >
         <Header />
         <main className={cn(
@@ -88,10 +108,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <motion.div 
               key={location.pathname + activeDashboardTab}
               className="bg-white dark:bg-slate-900/90 rounded-2xl shadow-xl overflow-hidden"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -20, opacity: 0 }}
-              transition={{ duration: 0.5 }}
+              {...childAnimation}
             >
               {children}
             </motion.div>

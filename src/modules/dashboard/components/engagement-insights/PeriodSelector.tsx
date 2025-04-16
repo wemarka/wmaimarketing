@@ -42,7 +42,7 @@ export const PeriodSelector = ({
         <SelectTrigger className="w-[120px]">
           <SelectValue>{t(`dashboard.timeRanges.${selectedValue}`, selectedValue)}</SelectValue>
         </SelectTrigger>
-        <SelectContent align={isRTL ? "end" : "start"}>
+        <SelectContent align={isRTL ? "end" : "start"} side={isRTL ? "right" : "bottom"}>
           <SelectItem value="day">{t("dashboard.timeRanges.day", "يوم")}</SelectItem>
           <SelectItem value="week">{t("dashboard.timeRanges.week", "أسبوع")}</SelectItem>
           <SelectItem value="month">{t("dashboard.timeRanges.month", "شهر")}</SelectItem>

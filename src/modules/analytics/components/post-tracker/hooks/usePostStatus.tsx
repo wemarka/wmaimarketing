@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { PostData, StatusInfo } from "../types";
 import { CheckCircle, Clock, LoaderCircle, XCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 export const usePostStatus = () => {
   const [viewType, setViewType] = useState<"cards" | "chart">("cards");
@@ -12,6 +13,8 @@ export const usePostStatus = () => {
   const [platformFilter, setPlatformFilter] = useState<string>("all");
   const [dateFilter, setDateFilter] = useState<string>("all");
   const { toast } = useToast();
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
 
   // تحسين أداء بيانات الحالات باستخدام useMemo
   const statuses: StatusInfo[] = useMemo(() => [
@@ -21,7 +24,9 @@ export const usePostStatus = () => {
       description: "تم النشر خلال آخر 7 أيام",
       bgClass: "bg-green-50 dark:bg-green-900/20",
       borderClass: "border-green-200 dark:border-green-900",
-      count: 12
+      count: 12,
+      id: "published",
+      value: 12
     },
     {
       icon: <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-500" />,
@@ -29,7 +34,9 @@ export const usePostStatus = () => {
       description: "سيتم نشرها خلال الأسبوع القادم",
       bgClass: "bg-yellow-50 dark:bg-yellow-900/20",
       borderClass: "border-yellow-200 dark:border-yellow-900",
-      count: 8
+      count: 8,
+      id: "scheduled",
+      value: 8
     },
     {
       icon: <LoaderCircle className="h-5 w-5 text-blue-600 dark:text-blue-500" />,
@@ -37,7 +44,9 @@ export const usePostStatus = () => {
       description: "بانتظار الاعتماد النهائي",
       bgClass: "bg-blue-50 dark:bg-blue-900/20",
       borderClass: "border-blue-200 dark:border-blue-900",
-      count: 5
+      count: 5,
+      id: "pending",
+      value: 5
     },
     {
       icon: <XCircle className="h-5 w-5 text-red-600 dark:text-red-500" />,
@@ -45,7 +54,9 @@ export const usePostStatus = () => {
       description: "تم رفضها بواسطة المراجع",
       bgClass: "bg-red-50 dark:bg-red-900/20",
       borderClass: "border-red-200 dark:border-red-900",
-      count: 2
+      count: 2,
+      id: "rejected",
+      value: 2
     }
   ], []);
 
@@ -53,8 +64,8 @@ export const usePostStatus = () => {
   const { data: postsData = [], isLoading } = useQuery({
     queryKey: ["post-status", searchQuery, statusFilter, platformFilter, dateFilter],
     queryFn: async (): Promise<PostData[]> => {
-      // محاكاة تأخير الشبكة - تقليل من 500ms إلى 50ms لتحسين الأداء
-      await new Promise(resolve => setTimeout(resolve, 50));
+      // محاكاة تأخير الشبكة للمظهر الواقعي
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       return [
         { id: "1", title: "أهم صيحات مكياج الصيف", status: "published", date: "2025-04-10", platform: "instagram" },
@@ -172,6 +183,7 @@ export const usePostStatus = () => {
     postsData,
     totalPosts,
     filteredPosts,
+    isRTL,
     setSearchQuery: updateSearchQuery,
     setStatusFilter: updateStatusFilter,
     setPlatformFilter: updatePlatformFilter,

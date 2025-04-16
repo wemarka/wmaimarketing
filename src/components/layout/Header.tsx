@@ -65,25 +65,42 @@ const Header: React.FC = () => {
   // Handle tab click
   const handleTabClick = (tabId: string) => {
     setActiveTab(tabId);
-    window.dispatchEvent(new CustomEvent('dashboard-tab-change', { 
-      detail: { tab: tabId } 
-    }));
     
-    // Also dispatch the header-tab-change event
-    window.dispatchEvent(new CustomEvent('header-tab-change', { 
-      detail: { tab: tabId } 
-    }));
+    // Dispatch both events together for better synchronization
+    const eventDetail = { detail: { tab: tabId } };
+    window.dispatchEvent(new CustomEvent('dashboard-tab-change', eventDetail));
+    window.dispatchEvent(new CustomEvent('header-tab-change', eventDetail));
   };
 
   // Check if current route is dashboard
   const isDashboardRoute = location.pathname.includes("dashboard");
+
+  // RTL-aware animations
+  const topRowAnimation = {
+    initial: { opacity: 0, y: isRTL ? 10 : -10 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.4, delay: 0.2, type: "spring", stiffness: 300, damping: 25 }
+  };
+  
+  const tabsAnimation = {
+    initial: { opacity: 0, y: 10 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.4, delay: 0.3, type: "spring", stiffness: 300, damping: 25 }
+  };
+  
+  const subtabsAnimation = {
+    initial: { opacity: 0, height: 0 },
+    animate: { opacity: 1, height: 'auto' },
+    exit: { opacity: 0, height: 0 },
+    transition: { duration: 0.3, type: "spring", stiffness: 300, damping: 25 }
+  };
 
   return (
     <motion.div 
       className="flex flex-col"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.4, type: "spring", stiffness: 300, damping: 25 }}
     >
       <header 
         className="bg-gradient-to-r from-[#3a7a89] to-[#4a8a99] px-6 py-4 text-white shadow-lg"
@@ -93,9 +110,7 @@ const Header: React.FC = () => {
           {/* Top row with logo, title and actions */}
           <motion.div 
             className="flex items-center justify-between"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
+            {...topRowAnimation}
           >
             {/* Left side - Title */}
             <HeaderTitle getPageTitle={getPageTitle} />
@@ -107,9 +122,7 @@ const Header: React.FC = () => {
           {/* Main Navigation tabs with improved styling */}
           <motion.div 
             className="flex justify-center md:justify-start"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.3 }}
+            {...tabsAnimation}
           >
             <MainNavTabs navItems={mainNavItems} />
           </motion.div>
@@ -118,10 +131,7 @@ const Header: React.FC = () => {
           <AnimatePresence mode="wait">
             {isDashboardRoute && (
               <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
+                {...subtabsAnimation}
               >
                 <DashboardSubTabs 
                   tabItems={dashboardTabItems}

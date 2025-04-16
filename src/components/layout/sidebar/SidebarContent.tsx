@@ -39,22 +39,27 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
-        delayChildren: 0.05
+        delayChildren: 0.1
       }
     }
   };
 
-  const itemAnimation = {
+  const sectionAnimation = {
     hidden: { 
       opacity: 0, 
-      y: 10, 
-      x: isRTL ? 10 : -10 
+      y: 15,
+      x: isRTL ? 20 : -20 
     },
     visible: { 
       opacity: 1, 
       y: 0, 
       x: 0,
-      transition: { duration: 0.3 }
+      transition: { 
+        type: "spring",
+        stiffness: 300,
+        damping: 30,
+        duration: 0.4 
+      }
     }
   };
 
@@ -74,7 +79,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
           {navigationSections.map((section, idx) => (
             <motion.div
               key={idx}
-              variants={itemAnimation}
+              variants={sectionAnimation}
               className="overflow-hidden"
               layout
             >

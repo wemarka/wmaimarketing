@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { PostData } from "./types";
 import { getStatusIcon, getStatusStyle, getPriorityVariant, getPriorityText, getFormattedDate } from "./utils";
+import { useTranslation } from "react-i18next";
 
 interface PostItemProps {
   post: PostData;
@@ -13,18 +14,22 @@ interface PostItemProps {
 }
 
 const PostItem: React.FC<PostItemProps> = ({ post, index }) => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
+  
   return (
     <motion.div
       key={post.id}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2, delay: index * 0.1 }}
+      transition={{ duration: 0.3, delay: index * 0.08, type: "spring", stiffness: 300, damping: 30 }}
       whileHover={{ scale: 1.01 }}
       className={cn(
         "flex justify-between items-center p-3 rounded-md border transition-colors",
         getStatusStyle(post.status).bg,
         getStatusStyle(post.status).border
       )}
+      dir={isRTL ? "rtl" : "ltr"}
     >
       <div className="flex items-center gap-3">
         {getStatusIcon(post.status)}

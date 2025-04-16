@@ -12,7 +12,7 @@ interface TabsFilterProps {
 }
 
 const TabsFilter: React.FC<TabsFilterProps> = ({ statusFilter, onStatusChange, counts = {} }) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
 
   const tabs = [
@@ -23,9 +23,22 @@ const TabsFilter: React.FC<TabsFilterProps> = ({ statusFilter, onStatusChange, c
     { id: "rejected", label: "المرفوضة", count: counts.rejected || 0 },
   ];
   
+  const tabListDirection = isRTL ? "flex-row-reverse" : "flex-row";
+
+  // Animation based on RTL
+  const activeIndicatorAnimation = {
+    layoutId: "activeFilter",
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    transition: { duration: 0.3, type: "spring", stiffness: 500, damping: 30 }
+  };
+  
   return (
     <TabsList 
-      className="grid grid-cols-2 md:grid-cols-5 mb-4 overflow-x-auto scrollbar-none"
+      className={cn(
+        "grid grid-cols-2 md:grid-cols-5 mb-4 overflow-x-auto scrollbar-none",
+        tabListDirection
+      )}
       dir={isRTL ? "rtl" : "ltr"}
     >
       {tabs.map(tab => (
@@ -47,10 +60,7 @@ const TabsFilter: React.FC<TabsFilterProps> = ({ statusFilter, onStatusChange, c
           {statusFilter === tab.id && (
             <motion.div
               className="absolute -bottom-1 left-0 right-0 h-0.5 bg-beauty-purple"
-              layoutId="activeFilter"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.2 }}
+              {...activeIndicatorAnimation}
             />
           )}
         </TabsTrigger>

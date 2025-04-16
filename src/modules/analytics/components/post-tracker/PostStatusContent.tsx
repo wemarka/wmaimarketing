@@ -33,6 +33,12 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
   const statusCounts = statuses.reduce((acc, status) => {
     if ('id' in status && 'value' in status) {
       acc[status.id as string] = status.value as number;
+    } else if ('count' in status) {
+      const statusId = status.label?.toLowerCase().includes('نشر') ? 'published' : 
+                      status.label?.toLowerCase().includes('مجدول') ? 'scheduled' :
+                      status.label?.toLowerCase().includes('انتظار') ? 'pending' :
+                      status.label?.toLowerCase().includes('مرفوض') ? 'rejected' : 'all';
+      acc[statusId] = status.count;
     }
     return acc;
   }, { all: totalPosts } as Record<string, number>);
@@ -40,21 +46,36 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
   // Animation variants for content transitions
   const contentVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-    exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { 
+        duration: 0.4, 
+        type: "spring", 
+        stiffness: 300, 
+        damping: 30 
+      } 
+    },
+    exit: { 
+      opacity: 0, 
+      y: -20, 
+      transition: { 
+        duration: 0.3 
+      } 
+    }
   };
 
   // RTL-aware animation variants
   const itemAnimationRTL = {
-    hidden: { opacity: 0, x: isRTL ? -10 : 10 },
+    hidden: { opacity: 0, x: isRTL ? -15 : 15 },
     visible: { 
       opacity: 1, 
       x: 0, 
       transition: { 
         type: "spring",
         stiffness: 300,
-        damping: 25,
-        duration: 0.3 
+        damping: 30,
+        duration: 0.4 
       } 
     }
   };

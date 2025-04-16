@@ -38,12 +38,13 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
   
   const itemAnimation = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+    show: { opacity: 1, y: 0, transition: { duration: 0.4, type: "spring", stiffness: 300, damping: 30 } }
   };
 
   // RTL-aware animation initial and exit values
   const slideInitial = isRTL ? { opacity: 0, x: 20 } : { opacity: 0, x: -20 };
   const slideExit = isRTL ? { opacity: 0, x: -20 } : { opacity: 0, x: 20 };
+  const slideTransition = { duration: 0.4, type: "spring", stiffness: 300, damping: 30 };
   
   return (
     <AnimatePresence mode="wait">
@@ -53,7 +54,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.4 }}
+          transition={slideTransition}
           className="p-6"
           dir={isRTL ? "rtl" : "ltr"}
         >
@@ -94,7 +95,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
           initial={slideInitial}
           animate={{ opacity: 1, x: 0 }}
           exit={slideExit}
-          transition={{ duration: 0.4 }}
+          transition={slideTransition}
           className="p-6"
           dir={isRTL ? "rtl" : "ltr"}
         >
@@ -108,14 +109,19 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
           initial={slideInitial}
           animate={{ opacity: 1, x: 0 }}
           exit={slideExit}
-          transition={{ duration: 0.4 }}
+          transition={slideTransition}
           className="p-6"
           dir={isRTL ? "rtl" : "ltr"}
         >
-          <div className="rounded-md bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 p-6 text-center">
+          <motion.div 
+            className="rounded-md bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 p-6 text-center"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
             <h3 className="font-medium text-amber-800 dark:text-amber-500 mb-2">قسم التحليلات</h3>
             <p className="text-amber-700 dark:text-amber-400">هذا القسم قيد التطوير حاليًا، سيتم إطلاقه قريبًا.</p>
-          </div>
+          </motion.div>
         </motion.div>
       )}
       
@@ -125,7 +131,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
           initial={slideInitial}
           animate={{ opacity: 1, x: 0 }}
           exit={slideExit}
-          transition={{ duration: 0.4 }}
+          transition={slideTransition}
           className="p-6"
           dir={isRTL ? "rtl" : "ltr"}
         >
