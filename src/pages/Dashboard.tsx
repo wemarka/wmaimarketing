@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/context/AuthContext";
 import { Helmet } from "react-helmet-async";
-import { OverviewTab, MarketingTab, AnalyticsTab } from "@/modules/dashboard/components";
 import DashboardTabs from "@/modules/dashboard/components/DashboardTabs";
 
 const Dashboard = () => {

@@ -1,6 +1,6 @@
 
 import React from "react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { PostData, StatusInfo } from "./types";
 import AnimatedTabContent from "./AnimatedTabContent";
@@ -45,23 +45,30 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
       
       <AnimatePresence mode="wait">
         <TabsContent value="all" className="outline-none">
-          {viewType === "cards" ? (
-            <>
-              {filteredPosts.length > 0 ? (
-                <div className="space-y-4">
-                  {filteredPosts.map((post, index) => (
-                    <PostItem key={post.id} post={post} index={index} />
-                  ))}
-                </div>
-              ) : (
-                <div className="p-8 text-center">
-                  <p className="text-muted-foreground">لا توجد منشورات تطابق معايير البحث</p>
-                </div>
-              )}
-            </>
-          ) : (
-            <StatusChart statuses={statuses} totalPosts={totalPosts} />
-          )}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+          >
+            {viewType === "cards" ? (
+              <>
+                {filteredPosts.length > 0 ? (
+                  <div className="space-y-4">
+                    {filteredPosts.map((post, index) => (
+                      <PostItem key={post.id} post={post} index={index} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-8 text-center">
+                    <p className="text-muted-foreground">لا توجد منشورات تطابق معايير البحث</p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <StatusChart statuses={statuses} totalPosts={totalPosts} />
+            )}
+          </motion.div>
         </TabsContent>
         
         <TabsContent value="published">

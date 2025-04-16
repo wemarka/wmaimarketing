@@ -54,13 +54,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, []);
 
   return (
-    <div className="flex min-h-screen w-full bg-[#f8fafc] dark:bg-[#1e2a36]">
+    <div className="flex min-h-screen w-full bg-[#f8fafc] dark:bg-[#1e2a36] overflow-x-hidden">
       <AppSidebar />
       
       <motion.div 
         className={cn(
           "flex-1 flex flex-col",
-          isMobile ? "mr-0" : "ml-16 lg:ml-16"
+          isMobile ? "mr-0" : "mr-16 lg:mr-16"
         )}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

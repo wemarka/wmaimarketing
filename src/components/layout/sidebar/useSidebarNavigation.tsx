@@ -20,8 +20,10 @@ export const useSidebarNavigation = () => {
   
   // Check if dark mode is already active
   useEffect(() => {
-    const isDark = document.documentElement.classList.contains('dark');
+    const isDark = document.documentElement.classList.contains('dark') ||
+                  window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDarkMode(isDark);
+    document.documentElement.classList.toggle('dark', isDark);
   }, []);
 
   const toggleExpanded = () => {

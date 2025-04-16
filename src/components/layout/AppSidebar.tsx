@@ -7,7 +7,7 @@ import SidebarContent from "./sidebar/SidebarContent";
 import SidebarFooter from "./sidebar/SidebarFooter";
 import { useSidebarNavigation } from "./sidebar/useSidebarNavigation";
 import { getNavigationSections } from "./sidebar/navigationConfig";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
 
 const AppSidebar = () => {
@@ -43,8 +43,8 @@ const AppSidebar = () => {
   return (
     <motion.div 
       className={cn(
-        "fixed left-0 z-30 h-screen bg-gradient-to-b from-[#3a7a89] to-[#2c6c7a] transition-all duration-300 shadow-lg flex flex-col",
-        "border-r border-white/10"
+        "fixed right-0 z-30 h-screen bg-gradient-to-b from-[#3a7a89] to-[#2c6c7a] transition-all duration-300 shadow-lg flex flex-col",
+        "border-l border-white/10"
       )}
       variants={sidebarVariants}
       initial={expanded ? "expanded" : "collapsed"}

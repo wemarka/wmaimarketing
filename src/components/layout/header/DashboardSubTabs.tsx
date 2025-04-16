@@ -45,7 +45,7 @@ const DashboardSubTabs: React.FC<DashboardSubTabsProps> = ({
                   "mx-0.5"
                 )}
               >
-                <div className="flex items-center gap-2 z-10 relative">
+                <div className="flex items-center gap-2 z-10 relative justify-center">
                   <motion.span 
                     whileHover={{ rotate: isActive ? 0 : 10, scale: 1.15 }} 
                     whileTap={{ scale: 0.95 }}

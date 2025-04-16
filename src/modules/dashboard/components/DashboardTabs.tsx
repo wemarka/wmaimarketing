@@ -8,6 +8,7 @@ import TopPerformersCard from "./cards/TopPerformersCard";
 import RegionTargetingCard from "./cards/RegionTargetingCard";
 import { motion, AnimatePresence } from "framer-motion";
 import { OverviewTab } from "../components";
+import ContentTab from "./tabs/ContentTab";
 
 interface DashboardTabsProps {
   activeTab?: string;
@@ -99,6 +100,19 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
             <h3 className="font-medium text-amber-800 dark:text-amber-500 mb-2">قسم التحليلات</h3>
             <p className="text-amber-700 dark:text-amber-400">هذا القسم قيد التطوير حاليًا، سيتم إطلاقه قريبًا.</p>
           </div>
+        </motion.div>
+      )}
+      
+      {activeTab === "content" && (
+        <motion.div
+          key="content"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.4 }}
+          className="p-6"
+        >
+          <ContentTab />
         </motion.div>
       )}
     </AnimatePresence>

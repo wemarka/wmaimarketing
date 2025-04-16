@@ -103,7 +103,7 @@ const Header: React.FC = () => {
           </motion.div>
           
           {/* Dashboard sub-tabs with improved styling - only shown on dashboard route */}
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {isDashboardRoute && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}

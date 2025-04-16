@@ -55,7 +55,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                 {expanded && (
                   <motion.span 
                     className={cn(
-                      "mr-3 text-sm font-medium transition-opacity duration-200",
+                      "ml-3 text-sm font-medium transition-opacity duration-200",
                       isActive ? "text-white" : "text-white/80"
                     )}
                     initial={{ opacity: 0, x: -10 }}
@@ -70,7 +70,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                 {isActive && (
                   <motion.div 
                     className={cn(
-                      "absolute left-0 bg-white rounded-r-full h-8",
+                      "absolute right-0 bg-white rounded-l-full h-8",
                       expanded ? "w-1.5" : "w-1.5"
                     )}
                     layoutId="activeIndicator"
