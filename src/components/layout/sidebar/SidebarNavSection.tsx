@@ -16,13 +16,15 @@ interface SidebarNavSectionProps {
   items: NavItem[];
   expanded: boolean;
   checkIsActive: (path: string) => boolean;
+  activePath: string; // Add activePath prop to interface
 }
 
 const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
   title,
   items,
   expanded,
-  checkIsActive
+  checkIsActive,
+  activePath
 }) => {
   return (
     <div className="w-full flex flex-col">
