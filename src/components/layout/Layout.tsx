@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "./Header";
 import AppSidebar from "./AppSidebar";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,29 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const isMobile = useMediaQuery("(max-width: 767px)");
+  const [activeDashboardTab, setActiveDashboardTab] = useState<string>("dashboard");
+  
+  // Listen for tab change events from the header
+  useEffect(() => {
+    // This function will handle the custom event
+    const handleTabChange = (event: CustomEvent) => {
+      if (event.detail && event.detail.tab) {
+        setActiveDashboardTab(event.detail.tab);
+        // Dispatch another event that the Dashboard component can listen to
+        window.dispatchEvent(new CustomEvent('dashboard-tab-change', { 
+          detail: { tab: event.detail.tab }
+        }));
+      }
+    };
+
+    // Add event listener
+    window.addEventListener('header-tab-change' as any, handleTabChange as EventListener);
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('header-tab-change' as any, handleTabChange as EventListener);
+    };
+  }, []);
   
   // Handle theme based on system preference or stored value
   useEffect(() => {

@@ -1,15 +1,31 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "@/components/layout/Layout";
-import { DashboardTabs } from "@/modules/dashboard/components";
-import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/context/AuthContext";
+import { Helmet } from "react-helmet-async";
+import { OverviewTab, MarketingTab, ContentTab, AnalyticsTab } from "@/modules/dashboard/components";
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState<string>("dashboard");
   const currentTime = new Date();
+  
+  // Listen for custom events from header for tab changes
+  useEffect(() => {
+    const handleTabChange = (event: CustomEvent) => {
+      setActiveTab(event.detail.tab);
+    };
+
+    // Add event listener
+    window.addEventListener('dashboard-tab-change' as any, handleTabChange as EventListener);
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('dashboard-tab-change' as any, handleTabChange as EventListener);
+    };
+  }, []);
   
   // Get greeting based on time of day
   const getGreeting = () => {
@@ -28,6 +44,20 @@ const Dashboard = () => {
       day: 'numeric' 
     };
     return new Intl.DateTimeFormat('ar-SA', options).format(currentTime);
+  };
+
+  // Render the active tab content
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "dashboard":
+        return <OverviewTab />;
+      case "performance":
+        return <MarketingTab />;
+      case "analytics":
+        return <AnalyticsTab />;
+      default:
+        return <OverviewTab />;
+    }
   };
   
   return (
@@ -71,7 +101,10 @@ const Dashboard = () => {
           </CardContent>
         </Card>
         
-        <DashboardTabs />
+        {/* Tabs content will be here instead of the DashboardTabs component */}
+        <div className="p-6">
+          {renderTabContent()}
+        </div>
       </motion.div>
     </Layout>
   );
