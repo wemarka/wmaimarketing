@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { ArrowLeft, Bell, Search, LayoutGrid, BarChart, PieChart } from "lucide-react";
@@ -37,11 +36,51 @@ const Header: React.FC = () => {
   ];
 
   // Dashboard tab items
-  const tabItems = [
-    { id: "dashboard", label: "لوحة التحكم", icon: <LayoutGrid className="h-4 w-4 ml-2" /> },
-    { id: "performance", label: "الأداء", icon: <BarChart className="h-4 w-4 ml-2" /> },
-    { id: "analytics", label: "التحليلات", icon: <PieChart className="h-4 w-4 ml-2" /> }
-  ];
+  const renderDashboardTabs = () => {
+    const tabItems = [
+      { id: "dashboard", label: "لوحة التحكم", icon: <LayoutGrid className="h-4 w-4 ml-2" /> },
+      { id: "performance", label: "الأداء", icon: <BarChart className="h-4 w-4 ml-2" /> },
+      { id: "analytics", label: "التحليلات", icon: <PieChart className="h-4 w-4 ml-2" /> }
+    ];
+
+    return location.pathname.includes("dashboard") ? (
+      <div className="bg-[#3a7a89]/95 text-white shadow-sm">
+        <div className="container mx-auto px-6">
+          <div className="flex items-center justify-center md:justify-start">
+            {tabItems.map((tab) => (
+              <button
+                key={tab.id}
+                className={cn(
+                  "flex items-center px-6 py-3 text-sm font-medium transition-colors relative",
+                  activeTab === tab.id ? "text-white" : "text-white/70 hover:text-white"
+                )}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  window.dispatchEvent(new CustomEvent('header-tab-change', { 
+                    detail: { tab: tab.id } 
+                  }));
+                }}
+              >
+                <div className="flex items-center">
+                  {tab.icon}
+                  {tab.label}
+                </div>
+                {activeTab === tab.id && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-white"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    ) : null;
+  };
 
   // Team members for avatar display
   const teamMembers = [
@@ -153,39 +192,7 @@ const Header: React.FC = () => {
         </div>
       </header>
       
-      {/* Dashboard tabs in header */}
-      {location.pathname.includes("dashboard") && (
-        <div className="bg-[#3a7a89]/95 text-white shadow-sm">
-          <div className="container mx-auto px-6">
-            <div className="flex items-center justify-center md:justify-start">
-              {tabItems.map((tab) => (
-                <button
-                  key={tab.id}
-                  className={cn(
-                    "flex items-center px-6 py-3 text-sm font-medium transition-colors relative",
-                    activeTab === tab.id ? "text-white" : "text-white/70 hover:text-white"
-                  )}
-                  onClick={() => handleTabClick(tab.id)}
-                >
-                  <div className="flex items-center">
-                    {tab.icon}
-                    {tab.label}
-                  </div>
-                  {activeTab === tab.id && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-1 bg-white"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      {renderDashboardTabs()}
     </div>
   );
 };
