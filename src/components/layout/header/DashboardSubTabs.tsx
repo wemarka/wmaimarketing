@@ -22,12 +22,11 @@ const DashboardSubTabs: React.FC<DashboardSubTabsProps> = ({
   onTabChange
 }) => {
   return (
-    <div className="flex justify-center md:justify-start mt-4">
+    <div className="flex justify-center md:justify-start">
       <Tabs 
-        defaultValue={activeTab}
+        value={activeTab}
         className="w-full"
         onValueChange={onTabChange}
-        value={activeTab}
         dir="rtl"
       >
         <TabsList className="bg-white/10 dark:bg-[#2c6c7a]/20 rounded-xl p-1 h-11 w-full max-w-md justify-start border-none overflow-x-auto scrollbar-none">

@@ -25,14 +25,20 @@ const Dashboard = () => {
       setActiveTab(event.detail.tab);
     };
 
+    const handleSubTabChange = (event: CustomEvent) => {
+      if (event.detail.subtab) {
+        setActiveTab(event.detail.subtab);
+      }
+    };
+
     // Add event listeners
     window.addEventListener('header-tab-change' as any, handleTabChange as EventListener);
-    window.addEventListener('dashboard-tab-change' as any, handleTabChange as EventListener);
+    window.addEventListener('sub-tab-change' as any, handleSubTabChange as EventListener);
     
     // Clean up
     return () => {
       window.removeEventListener('header-tab-change' as any, handleTabChange as EventListener);
-      window.removeEventListener('dashboard-tab-change' as any, handleTabChange as EventListener);
+      window.removeEventListener('sub-tab-change' as any, handleSubTabChange as EventListener);
     };
   }, []);
   
@@ -55,14 +61,6 @@ const Dashboard = () => {
     return new Intl.DateTimeFormat('ar-SA', options).format(currentTime);
   };
 
-  // Tab configuration
-  const tabs = [
-    { id: "dashboard", label: "النظرة العامة", icon: LayoutDashboard },
-    { id: "analytics", label: "التحليلات", icon: BarChart3 },
-    { id: "content", label: "المحتوى", icon: Library },
-    { id: "performance", label: "الأداء", icon: Calendar }
-  ];
-  
   return (
     <Layout>
       <Helmet>
@@ -88,34 +86,6 @@ const Dashboard = () => {
                     {getGreeting()}, {user?.email?.split('@')[0] || 'مرحبًا بك'}
                   </h1>
                   <p className="text-sm text-gray-500 dark:text-gray-400">{getFormattedDate()}</p>
-                </div>
-                
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
-                  {tabs.map((tab, index) => (
-                    <motion.button
-                      key={tab.id}
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ 
-                        duration: 0.4, 
-                        delay: 0.3 + index * 0.1,
-                        type: "spring",
-                        stiffness: 400, 
-                        damping: 30 
-                      }}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full transition-all ${
-                        activeTab === tab.id
-                          ? "bg-primary text-white shadow-md"
-                          : "bg-white/90 dark:bg-slate-800/70 text-gray-700 dark:text-gray-300 hover:bg-white"
-                      }`}
-                    >
-                      <tab.icon className="h-4 w-4" />
-                      <span className="text-sm whitespace-nowrap">{tab.label}</span>
-                    </motion.button>
-                  ))}
                 </div>
               </motion.div>
             </CardContent>

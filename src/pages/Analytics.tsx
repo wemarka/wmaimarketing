@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -15,6 +15,32 @@ import {
 } from "@/modules/analytics/components";
 
 const Analytics = () => {
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  // Listen for sub-tab changes from the header
+  useEffect(() => {
+    const handleSubTabChange = (event: CustomEvent) => {
+      if (event.detail.subtab) {
+        // Map the header tabs to our local tabs
+        const tabMapping: Record<string, string> = {
+          "overview": "dashboard",
+          "performance": "posts",
+          "campaigns": "campaigns"
+        };
+        
+        setActiveTab(tabMapping[event.detail.subtab] || event.detail.subtab);
+      }
+    };
+
+    // Add event listener
+    window.addEventListener('sub-tab-change' as any, handleSubTabChange as EventListener);
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('sub-tab-change' as any, handleSubTabChange as EventListener);
+    };
+  }, []);
+
   return (
     <Layout>
       <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between">
@@ -26,17 +52,7 @@ const Analytics = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="dashboard" className="space-y-4">
-        <TabsList className="flex flex-wrap gap-2 justify-start">
-          <TabsTrigger value="dashboard">لوحة التحكم</TabsTrigger>
-          <TabsTrigger value="campaigns">الحملات</TabsTrigger>
-          <TabsTrigger value="posts">المنشورات</TabsTrigger>
-          <TabsTrigger value="products">المنتجات</TabsTrigger>
-          <TabsTrigger value="costs">تكاليف الإنتاج</TabsTrigger>
-          <TabsTrigger value="recommendations">التوصيات</TabsTrigger>
-          <TabsTrigger value="status">حالة النشر</TabsTrigger>
-        </TabsList>
-
+      <Tabs value={activeTab} className="space-y-4" onValueChange={setActiveTab}>
         <TabsContent value="dashboard">
           <AnalyticsDashboard />
         </TabsContent>
