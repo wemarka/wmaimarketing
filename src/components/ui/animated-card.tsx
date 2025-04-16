@@ -14,7 +14,7 @@ interface AnimatedCardProps {
   size?: "sm" | "md" | "lg";
   hoverable?: boolean;
   initialAnimation?: boolean;
-  motionProps?: MotionProps;
+  motionProps?: Omit<HTMLMotionProps<"div">, "children" | "className" | "variants" | "initial" | "animate" | "whileHover" | "viewport">;
   noFade?: boolean;
   children: React.ReactNode;
   headerClassName?: string;
@@ -39,7 +39,6 @@ const AnimatedCard = ({
   contentClassName,
   footerClassName,
   children,
-  ...props
 }: AnimatedCardProps) => {
   // Card variants for different styling options
   const variantClasses = {
@@ -99,7 +98,6 @@ const AnimatedCard = ({
     }
   };
 
-  // Use proper typing for motion.div
   return (
     <motion.div
       variants={cardVariants}
@@ -107,8 +105,8 @@ const AnimatedCard = ({
       animate="visible"
       whileHover={hoverable ? "hover" : undefined}
       viewport={{ once: true }}
-      {...motionProps}
       className={cn("overflow-hidden rounded-xl", className)}
+      {...motionProps}
     >
       <Card
         className={cn("border h-full transition-colors", 
