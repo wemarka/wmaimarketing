@@ -63,6 +63,9 @@ const formatYAxisTick = (value: number): string => {
 const OverviewChart: React.FC<OverviewChartProps> = ({ data }) => {
   const [timeRange, setTimeRange] = useState<"week" | "month" | "quarter" | "year">("week");
   
+  // Safe check for data to prevent rendering issues
+  const chartData = Array.isArray(data) && data.length > 0 ? data : [];
+  
   return (
     <Card className="md:col-span-3">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -119,73 +122,79 @@ const OverviewChart: React.FC<OverviewChartProps> = ({ data }) => {
           />
         </div>
         
-        <ChartContainer 
-          config={{
-            impressions: { label: "المشاهدات", color: "#9b87f5" },
-            engagement: { label: "التفاعل", color: "#D946EF" },
-            revenue: { label: "الإيرادات", color: "#0EA5E9" }
-          }}
-          className="h-[300px]"
-        >
-          <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
-              <defs>
-                <linearGradient id="colorImpressions" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#9b87f5" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#9b87f5" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-              <XAxis 
-                dataKey="name" 
-                tickMargin={10} 
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis 
-                yAxisId="left" 
-                tickFormatter={formatYAxisTick}
-                axisLine={false}
-                tickLine={false}
-                tickMargin={10}
-              />
-              <YAxis 
-                yAxisId="right" 
-                orientation="right" 
-                tickFormatter={(value) => `${formatYAxisTick(value)} ر.س`}
-                axisLine={false}
-                tickLine={false}
-                tickMargin={10}
-              />
-              <ChartTooltip content={<CustomTooltipContent />} />
-              <ChartLegend content={<ChartLegendContent />} />
-              <Area 
-                yAxisId="left"
-                type="monotone" 
-                dataKey="impressions" 
-                fill="url(#colorImpressions)" 
-                stroke="#9b87f5" 
-                strokeWidth={2}
-                fillOpacity={0.3}
-              />
-              <Bar 
-                yAxisId="left"
-                dataKey="engagement" 
-                fill="#D946EF" 
-                radius={[4, 4, 0, 0]} 
-              />
-              <Line 
-                yAxisId="right"
-                type="monotone" 
-                dataKey="revenue" 
-                stroke="#0EA5E9" 
-                strokeWidth={2}
-                dot={{ r: 4, fill: "#0EA5E9", stroke: "white", strokeWidth: 2 }}
-                activeDot={{ r: 6, fill: "#0EA5E9", stroke: "white", strokeWidth: 2 }}
-              />
-            </ComposedChart>
-          </ResponsiveContainer>
-        </ChartContainer>
+        {chartData.length > 0 ? (
+          <ChartContainer 
+            config={{
+              impressions: { label: "المشاهدات", color: "#9b87f5" },
+              engagement: { label: "التفاعل", color: "#D946EF" },
+              revenue: { label: "الإيرادات", color: "#0EA5E9" }
+            }}
+            className="h-[300px]"
+          >
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
+                <defs>
+                  <linearGradient id="colorImpressions" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#9b87f5" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#9b87f5" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                <XAxis 
+                  dataKey="name" 
+                  tickMargin={10} 
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis 
+                  yAxisId="left" 
+                  tickFormatter={formatYAxisTick}
+                  axisLine={false}
+                  tickLine={false}
+                  tickMargin={10}
+                />
+                <YAxis 
+                  yAxisId="right" 
+                  orientation="right" 
+                  tickFormatter={(value) => `${formatYAxisTick(value)} ر.س`}
+                  axisLine={false}
+                  tickLine={false}
+                  tickMargin={10}
+                />
+                <ChartTooltip content={<CustomTooltipContent />} />
+                <ChartLegend content={<ChartLegendContent />} />
+                <Area 
+                  yAxisId="left"
+                  type="monotone" 
+                  dataKey="impressions" 
+                  fill="url(#colorImpressions)" 
+                  stroke="#9b87f5" 
+                  strokeWidth={2}
+                  fillOpacity={0.3}
+                />
+                <Bar 
+                  yAxisId="left"
+                  dataKey="engagement" 
+                  fill="#D946EF" 
+                  radius={[4, 4, 0, 0]} 
+                />
+                <Line 
+                  yAxisId="right"
+                  type="monotone" 
+                  dataKey="revenue" 
+                  stroke="#0EA5E9" 
+                  strokeWidth={2}
+                  dot={{ r: 4, fill: "#0EA5E9", stroke: "white", strokeWidth: 2 }}
+                  activeDot={{ r: 6, fill: "#0EA5E9", stroke: "white", strokeWidth: 2 }}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        ) : (
+          <div className="h-[300px] flex items-center justify-center bg-muted/10 rounded-lg border border-dashed">
+            <p className="text-muted-foreground">لا توجد بيانات لعرضها</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
