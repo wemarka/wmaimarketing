@@ -9,6 +9,7 @@ import { NavItem, NavSection } from "@/modules/dashboard/utils/types/sidebarType
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import { SidebarNavItem } from "./SidebarNavItem";
+import SidebarNavSection from "./SidebarNavSection";
 
 interface SidebarContentProps {
   expanded: boolean;
@@ -128,7 +129,18 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
             ))}
           </Accordion>
         ) : (
-          <CollapsibleSidebarNav expanded={expanded} />
+          <div className="space-y-6">
+            {navigationSections.map((section) => (
+              <SidebarNavSection
+                key={section.title}
+                title={section.title}
+                items={section.items}
+                expanded={expanded}
+                checkIsActive={checkIsActive}
+                activePath={activePath}
+              />
+            ))}
+          </div>
         )}
       </div>
     </ScrollArea>

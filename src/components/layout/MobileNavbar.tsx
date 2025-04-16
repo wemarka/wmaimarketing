@@ -1,121 +1,84 @@
 
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { 
-  LayoutDashboard, 
-  Upload, 
-  Image as ImageIcon, 
-  FileText, 
-  Video, 
-  CalendarDays, 
-  BarChart,
-  User,
-  Sparkles
-} from "lucide-react";
+import { Home, LayoutDashboard, MessageSquare, Settings, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 
-const MobileNavbar = () => {
-  const isMobile = useIsMobile();
-  const { i18n } = useTranslation();
-  const currentLanguage = i18n.language;
-
-  if (!isMobile) {
-    return null;
-  }
-
+const MobileNavbar: React.FC = () => {
+  const location = useLocation();
+  const { t } = useTranslation();
+  
   const navItems = [
-    { 
-      to: "/dashboard", 
-      icon: <LayoutDashboard className="h-5 w-5" />, 
-      label: currentLanguage === 'ar' ? "الرئيسية" : "Home" 
+    {
+      path: "/",
+      label: t("nav.home", "الرئيسية"),
+      icon: <Home className="w-5 h-5" />
     },
-    { 
-      to: "/image-upload", 
-      icon: <Upload className="h-5 w-5" />, 
-      label: currentLanguage === 'ar' ? "الصور" : "Images" 
+    {
+      path: "/dashboard",
+      label: t("nav.dashboard", "لوحة التحكم"),
+      icon: <LayoutDashboard className="w-5 h-5" />
     },
-    { 
-      to: "/ad-generator", 
-      icon: <ImageIcon className="h-5 w-5" />, 
-      label: currentLanguage === 'ar' ? "الإعلانات" : "Ads" 
+    {
+      path: "/messages",
+      label: t("nav.messages", "الرسائل"),
+      icon: <MessageSquare className="w-5 h-5" />
     },
-    { 
-      to: "/content-creator", 
-      icon: <FileText className="h-5 w-5" />, 
-      label: currentLanguage === 'ar' ? "المحتوى" : "Content" 
+    {
+      path: "/profile",
+      label: t("nav.profile", "الملف الشخصي"),
+      icon: <User className="w-5 h-5" />
     },
-    { 
-      to: "/video-generator", 
-      icon: <Video className="h-5 w-5" />, 
-      label: currentLanguage === 'ar' ? "الفيديو" : "Video" 
-    },
-    { 
-      to: "/scheduler", 
-      icon: <CalendarDays className="h-5 w-5" />, 
-      label: currentLanguage === 'ar' ? "الجدولة" : "Schedule" 
-    },
-    { 
-      to: "/analytics", 
-      icon: <BarChart className="h-5 w-5" />, 
-      label: currentLanguage === 'ar' ? "التحليلات" : "Analytics" 
-    },
-    { 
-      to: "/ai-studio", 
-      icon: <Sparkles className="h-5 w-5 text-beauty-gold" />, 
-      label: currentLanguage === 'ar' ? "الذكاء" : "AI" 
-    },
-    { 
-      to: "/profile", 
-      icon: <User className="h-5 w-5" />, 
-      label: currentLanguage === 'ar' ? "الملف" : "Profile" 
-    },
+    {
+      path: "/settings",
+      label: t("nav.settings", "الإعدادات"),
+      icon: <Settings className="w-5 h-5" />
+    }
   ];
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t bg-background/90 backdrop-blur-sm lg:hidden">
-      <ScrollArea className="w-full" scrollHideDelay={0}>
-        <nav className="flex h-16 items-center justify-between px-2">
-          {navItems.map((item, index) => (
-            <NavItem 
-              key={index}
-              to={item.to} 
-              icon={item.icon} 
-              label={item.label}
-            />
-          ))}
-        </nav>
-      </ScrollArea>
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#3a7a89] pb-safe">
+      <motion.nav 
+        className="flex justify-around p-2 border-t border-white/10"
+        initial={{ y: 50 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      >
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.path || 
+                          (item.path !== "/" && location.pathname.startsWith(item.path));
+          
+          return (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) => cn(
+                "flex flex-col items-center justify-center px-2 py-1 rounded-md relative",
+                isActive ? "text-white" : "text-white/60"
+              )}
+            >
+              {({ isActive }) => (
+                <>
+                  {item.icon}
+                  <span className="text-xs mt-1">{item.label}</span>
+                  
+                  {isActive && (
+                    <motion.div 
+                      className="absolute -top-1 w-1 h-1 bg-white rounded-full"
+                      layoutId="navIndicator"
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                </>
+              )}
+            </NavLink>
+          );
+        })}
+      </motion.nav>
     </div>
-  );
-};
-
-interface NavItemProps {
-  to: string;
-  icon: React.ReactNode;
-  label: string;
-}
-
-const NavItem = ({ to, icon, label }: NavItemProps) => {
-  return (
-    <NavLink
-      to={to}
-      className={({ isActive }) =>
-        cn(
-          "flex flex-col items-center justify-center px-3 py-1 rounded-md transition-colors",
-          isActive 
-            ? "bg-secondary text-primary" 
-            : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground",
-        )
-      }
-    >
-      <div className="flex h-8 w-8 items-center justify-center">
-        {icon}
-      </div>
-      <span className="text-xs">{label}</span>
-    </NavLink>
   );
 };
 

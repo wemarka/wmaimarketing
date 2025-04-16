@@ -4,6 +4,8 @@ import { NavItem } from "@/modules/dashboard/utils/types/sidebarTypes";
 import { Link } from "react-router-dom";
 import { useTooltip } from "@/hooks/use-tooltip";
 import { cn } from "@/lib/utils";
+import { SidebarTooltip } from "./SidebarTooltip";
+import { Badge } from "@/components/ui/badge";
 
 interface SidebarNavItemProps {
   item: NavItem;
@@ -20,37 +22,49 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   const { showTooltip, hideTooltip, tooltipOpen } = useTooltip();
   
   return (
-    <Link
-      to={item.to}
-      className={cn(
-        "flex items-center text-sm px-3 py-2 rounded-md transition-colors",
-        "hover:text-white relative group",
-        isActive
-          ? "bg-white/20 text-white"
-          : "text-white/60 hover:bg-white/10",
-          !expanded && "justify-center"
-      )}
-      onMouseEnter={!expanded ? showTooltip : undefined}
-      onMouseLeave={!expanded ? hideTooltip : undefined}
-      data-tooltip-content={item.tooltip}
-      data-tooltip-id="sidebar-tooltip"
+    <SidebarTooltip
+      content={!expanded ? item.tooltip : ""}
+      open={!expanded ? tooltipOpen : false}
+      onOpenChange={open => open ? showTooltip() : hideTooltip()}
     >
-      <div className={cn(
-        "flex items-center",
-        expanded ? "mr-2" : "mx-0"
-      )}>
-        {item.icon}
-      </div>
-      {expanded && (
-        <span className="truncate">
-          {item.label}
-        </span>
-      )}
-      
-      {/* Active indicator */}
-      {isActive && (
-        <div className="absolute inset-y-0 right-0 w-1 bg-white rounded-l-md" />
-      )}
-    </Link>
+      <Link
+        to={item.to}
+        className={cn(
+          "flex items-center text-sm px-3 py-2 rounded-md transition-colors",
+          "hover:text-white relative group",
+          isActive
+            ? "bg-white/20 text-white"
+            : "text-white/60 hover:bg-white/10",
+            !expanded && "justify-center"
+        )}
+      >
+        <div className={cn(
+          "flex items-center",
+          expanded ? "mr-2" : "mx-0"
+        )}>
+          {item.icon}
+        </div>
+        {expanded && (
+          <div className="flex flex-1 items-center justify-between">
+            <span className="truncate">
+              {item.label}
+            </span>
+            {item.badgeText && (
+              <Badge 
+                variant={item.variant || "default"}
+                className="ml-2 bg-white/20 text-white text-xs"
+              >
+                {item.badgeText}
+              </Badge>
+            )}
+          </div>
+        )}
+        
+        {/* Active indicator */}
+        {isActive && (
+          <div className="absolute inset-y-0 right-0 w-1 bg-white rounded-l-md" />
+        )}
+      </Link>
+    </SidebarTooltip>
   );
 };
