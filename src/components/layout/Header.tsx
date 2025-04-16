@@ -1,20 +1,20 @@
+
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { BarChart, Bell, LayoutGrid, PieChart, Settings } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import HeaderTitle from "./header/HeaderTitle";
-import MainNavTabs from "./header/MainNavTabs";
-import DashboardSubTabs from "./header/DashboardSubTabs";
 import SearchBar from "./header/SearchBar";
+import DynamicNavigationMenu from "./header/DynamicNavigationMenu";
 
 const Header: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { profile } = useAuth();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [activeSubTab, setActiveSubTab] = useState("dashboard");
@@ -24,7 +24,13 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    
+    // Set initial active tab based on current route
+    if (location.pathname.includes("dashboard")) setActiveTab("dashboard");
+    else if (location.pathname.includes("insights")) setActiveTab("insights");
+    else if (location.pathname.includes("channels")) setActiveTab("channels");
+    
+  }, [location.pathname]);
 
   const getPageTitle = () => {
     const path = location.pathname;
@@ -108,6 +114,19 @@ const Header: React.FC = () => {
     icon: <PieChart className="h-4 w-4" />
   }];
 
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    
+    // Map tab IDs to their respective routes if needed
+    if (tabId === "dashboard" && !location.pathname.includes("dashboard")) {
+      navigate("/dashboard");
+    } else if (tabId === "insights" && !location.pathname.includes("insights")) {
+      navigate("/insights");
+    } else if (tabId === "channels" && !location.pathname.includes("channels")) {
+      navigate("/channels");
+    }
+  };
+
   const handleSubTabClick = (tabId: string) => {
     setActiveSubTab(tabId);
     
@@ -144,7 +163,7 @@ const Header: React.FC = () => {
     }
   };
 
-  const tabsAnimation = {
+  const navigationAnimation = {
     initial: {
       opacity: 0,
       y: 10
@@ -162,32 +181,11 @@ const Header: React.FC = () => {
     }
   };
 
-  const subtabsAnimation = {
-    initial: {
-      opacity: 0,
-      height: 0
-    },
-    animate: {
-      opacity: 1,
-      height: 'auto'
-    },
-    exit: {
-      opacity: 0,
-      height: 0
-    },
-    transition: {
-      duration: 0.3,
-      type: "spring",
-      stiffness: 300,
-      damping: 25
-    }
-  };
-
   const userInitials = profile?.first_name && profile?.last_name ? `${profile.first_name.charAt(0)}${profile.last_name.charAt(0)}` : "??";
 
   return (
     <motion.div 
-      className="flex flex-col" 
+      className="flex flex-col sticky top-0 z-40" 
       initial={{ opacity: 0, y: -20 }} 
       animate={{ opacity: 1, y: 0 }} 
       transition={{ duration: 0.4, type: "spring", stiffness: 300, damping: 25 }}
@@ -215,24 +213,18 @@ const Header: React.FC = () => {
               </Avatar>
             </div>
           </motion.div>
-          <motion.div className="flex justify-center md:justify-start" {...tabsAnimation}>
-            <MainNavTabs navItems={mainNavItems} />
+
+          <motion.div {...navigationAnimation}>
+            <DynamicNavigationMenu 
+              mainNavItems={mainNavItems}
+              currentSubTabs={getCurrentSubTabs()}
+              activeTab={activeTab}
+              activeSubTab={activeSubTab}
+              onTabChange={handleTabChange}
+              onSubTabChange={handleSubTabClick}
+              isRTL={isRTL}
+            />
           </motion.div>
-          <AnimatePresence mode="wait">
-            {(isDashboardRoute || isInsightsRoute || isChannelsRoute) && (
-              <motion.div 
-                key={location.pathname}
-                className="pt-1"
-                {...subtabsAnimation}
-              >
-                <DashboardSubTabs 
-                  tabItems={getCurrentSubTabs()}
-                  activeTab={activeSubTab}
-                  onTabChange={handleSubTabClick}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
       </header>
     </motion.div>

@@ -21,10 +21,6 @@ const Dashboard = () => {
   
   // Listen for custom events from header for tab changes
   useEffect(() => {
-    const handleTabChange = (event: CustomEvent) => {
-      setActiveTab(event.detail.tab);
-    };
-
     const handleSubTabChange = (event: CustomEvent) => {
       if (event.detail.subtab) {
         setActiveTab(event.detail.subtab);
@@ -32,12 +28,10 @@ const Dashboard = () => {
     };
 
     // Add event listeners
-    window.addEventListener('header-tab-change' as any, handleTabChange as EventListener);
     window.addEventListener('sub-tab-change' as any, handleSubTabChange as EventListener);
     
     // Clean up
     return () => {
-      window.removeEventListener('header-tab-change' as any, handleTabChange as EventListener);
       window.removeEventListener('sub-tab-change' as any, handleSubTabChange as EventListener);
     };
   }, []);

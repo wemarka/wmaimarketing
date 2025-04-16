@@ -5,6 +5,7 @@ import OverviewTab from "./tabs/OverviewTab";
 import PerformanceTab from "./tabs/PerformanceTab";
 import AnalyticsTab from "./tabs/AnalyticsTab";
 import ContentTab from "./tabs/ContentTab";
+import MarketingTab from "./tabs/MarketingTab";
 
 interface DashboardTabsProps {
   activeTab: string;
@@ -53,6 +54,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab }) => {
           {activeTab === "performance" && <PerformanceTab />}
           {activeTab === "analytics" && <AnalyticsTab />}
           {activeTab === "content" && <ContentTab />}
+          {activeTab === "marketing" && <MarketingTab />}
         </motion.div>
       </AnimatePresence>
     </div>

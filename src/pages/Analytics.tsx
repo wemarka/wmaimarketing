@@ -53,31 +53,31 @@ const Analytics = () => {
       </div>
 
       <Tabs value={activeTab} className="space-y-4" onValueChange={setActiveTab}>
-        <TabsContent value="dashboard">
+        <TabsContent value="dashboard" className="animate-fade-in">
           <AnalyticsDashboard />
         </TabsContent>
 
-        <TabsContent value="campaigns">
+        <TabsContent value="campaigns" className="animate-fade-in">
           <CampaignPerformance />
         </TabsContent>
 
-        <TabsContent value="posts">
+        <TabsContent value="posts" className="animate-fade-in">
           <PostPerformance />
         </TabsContent>
 
-        <TabsContent value="products">
+        <TabsContent value="products" className="animate-fade-in">
           <ProductPerformance />
         </TabsContent>
 
-        <TabsContent value="costs">
+        <TabsContent value="costs" className="animate-fade-in">
           <ProductionCostAnalysis />
         </TabsContent>
 
-        <TabsContent value="recommendations">
+        <TabsContent value="recommendations" className="animate-fade-in">
           <ContentRecommendations />
         </TabsContent>
 
-        <TabsContent value="status">
+        <TabsContent value="status" className="animate-fade-in">
           <PostStatusTracker />
         </TabsContent>
       </Tabs>

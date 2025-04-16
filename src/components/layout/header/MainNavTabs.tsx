@@ -1,7 +1,9 @@
 
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { Tabs } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import NavTabItem from "./nav/NavTabItem";
 import TabsContainer from "./nav/TabsContainer";
 
