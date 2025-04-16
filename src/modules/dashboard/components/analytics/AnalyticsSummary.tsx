@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Line, ArrowUp } from "lucide-react";
+import { LineChart, ArrowUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -31,7 +31,7 @@ const AnalyticsSummary = () => {
           </div>
           
           <div className="bg-primary/5 rounded-md p-2">
-            <Line className="h-5 w-5 text-primary" />
+            <LineChart className="h-5 w-5 text-primary" />
           </div>
         </div>
         
@@ -62,7 +62,7 @@ const AnalyticsSummary = () => {
         
         <div className="bg-primary/5 rounded-lg p-4 mt-4 flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-            <Line className="h-4 w-4 text-primary" />
+            <LineChart className="h-4 w-4 text-primary" />
           </div>
           <div className="flex-1">
             <p className="text-xs text-primary font-medium">شاهد تحديثات من المنصات المدعومة</p>
