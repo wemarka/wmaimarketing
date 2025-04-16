@@ -1,67 +1,22 @@
 
 import React from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import SidebarNavSection from "./SidebarNavSection";
-import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-
-interface NavItem {
-  id: string;
-  to: string;
-  icon: React.ReactNode;
-  label: string;
-}
-
-interface NavigationSection {
-  title: string;
-  items: NavItem[];
-}
+import CollapsibleSidebarNav from "./CollapsibleSidebarNav";
 
 interface SidebarContentProps {
-  navigationSections: NavigationSection[];
   expanded: boolean;
-  checkIsActive: (path: string) => boolean;
   activePath: string;
+  checkIsActive: (path: string) => boolean;
 }
 
 const SidebarContent: React.FC<SidebarContentProps> = ({
-  navigationSections,
   expanded,
-  checkIsActive,
-  activePath
+  activePath,
+  checkIsActive
 }) => {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
-
-  const containerAnimation = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.15
-      }
-    }
-  };
-
-  const sectionAnimation = {
-    hidden: { 
-      opacity: 0, 
-      y: 15,
-      x: isRTL ? 20 : -20 
-    },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      x: 0,
-      transition: { 
-        type: "spring",
-        stiffness: 350,
-        damping: 30,
-        duration: 0.45 
-      }
-    }
-  };
 
   return (
     <ScrollArea 
@@ -69,32 +24,9 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
       scrollHideDelay={750}
       dir={isRTL ? "rtl" : "ltr"}
     >
-      <motion.div 
-        className="py-5 flex flex-col space-y-7 px-2"
-        initial="hidden"
-        animate="visible"
-        variants={containerAnimation}
-      >
-        <AnimatePresence mode="wait">
-          {navigationSections.map((section, idx) => (
-            <motion.div
-              key={idx}
-              variants={sectionAnimation}
-              className="overflow-hidden"
-              layout
-              exit={{ opacity: 0, y: -10 }}
-            >
-              <SidebarNavSection
-                title={section.title}
-                items={section.items}
-                expanded={expanded}
-                checkIsActive={checkIsActive}
-                activePath={activePath}
-              />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </motion.div>
+      <div className="py-4 px-2">
+        <CollapsibleSidebarNav expanded={expanded} />
+      </div>
     </ScrollArea>
   );
 };
