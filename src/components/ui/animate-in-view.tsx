@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { motion, useAnimation, Variants } from "framer-motion";
-import { useInView } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 
 interface AnimateInViewProps {
   children: React.ReactNode;
