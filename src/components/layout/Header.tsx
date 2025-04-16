@@ -3,13 +3,12 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { useLocation } from "react-router-dom";
-import UserMenu from "./header/UserMenu";
-import NotificationsPopover from "./header/NotificationsPopover";
-import SearchBar from "./header/SearchBar";
 import { useAuth } from "@/context/AuthContext";
-import CompactHeader from "./header/CompactHeader";
-import TeamMembers from "./header/TeamMembers";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import CompactHeader from "./header/CompactHeader";
+import NotificationsPopover from "./header/NotificationsPopover";
+import MobileSearchButton from "./header/search/MobileSearchButton";
+import CompactUserInfo from "./header/CompactUserInfo";
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -18,13 +17,6 @@ const Header: React.FC = () => {
   const isMobile = useMediaQuery("(max-width: 767px)");
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
   const [notificationCount, setNotificationCount] = useState(3);
-  
-  // Sample team members data
-  const teamMembers = [
-    { name: "أحمد محمد", avatar: null, initials: "أم" },
-    { name: "سارة علي", avatar: null, initials: "سع" },
-    { name: "محمد خالد", avatar: null, initials: "مخ" }
-  ];
   
   // Handle notification interactions
   const handleNotificationClick = () => {
@@ -54,7 +46,7 @@ const Header: React.FC = () => {
       )}
     >
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
-        {/* Header left side */}
+        {/* Header left side - CompactHeader with sidebar trigger for mobile */}
         <div className="flex items-center gap-4">
           <CompactHeader 
             showSidebarTrigger={isMobile}
@@ -65,19 +57,20 @@ const Header: React.FC = () => {
           />
         </div>
         
-        {/* Header right side */}
+        {/* Header right side - consolidated components */}
         <div className="flex items-center gap-3">
-          <SearchBar />
-          
-          {!isMobile && profile?.role === "admin" && (
-            <TeamMembers members={teamMembers} />
+          {isMobile ? <MobileSearchButton /> : (
+            <div className="relative md:block hidden">
+              <MobileSearchButton />
+            </div>
           )}
           
           <NotificationsPopover 
             notificationCount={notificationCount}
             onNotificationClick={handleNotificationClick}
           />
-          <UserMenu />
+          
+          <CompactUserInfo />
         </div>
       </div>
     </header>

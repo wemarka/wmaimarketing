@@ -183,14 +183,14 @@ const CollapsibleSidebarNav: React.FC<{ expanded: boolean }> = ({ expanded }) =>
             className="border-none"
           >
             <AccordionTrigger className={cn(
-              "py-2 px-3 rounded-md hover:bg-white/15 text-white",
+              "py-2 px-3 rounded-md hover:bg-white/15 text-white font-semibold",
               "flex items-center justify-between",
               expanded ? "px-4" : "px-2",
               "data-[state=open]:bg-white/10"
             )}>
               <div className="flex items-center gap-3">
                 <span className="flex-shrink-0">{section.icon}</span>
-                {expanded && <span className="text-sm font-medium">{section.title}</span>}
+                {expanded && <span className="text-sm">{section.title}</span>}
               </div>
             </AccordionTrigger>
             <AccordionContent className={cn(

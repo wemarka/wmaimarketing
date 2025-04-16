@@ -17,7 +17,7 @@ const OverviewTab = () => {
   const [layout, setLayout] = React.useState<"default" | "compact">("default");
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{t("dashboard.overview.title", "النظرة العامة")}</h2>
         <div className="flex items-center space-x-2 space-x-reverse">
@@ -36,9 +36,9 @@ const OverviewTab = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 gap-8">
         {/* Card showing total visits and performance metrics */}
-        <div className={`grid grid-cols-1 ${layout === "default" ? "lg:grid-cols-3" : "xl:grid-cols-3"} gap-6`}>
+        <div className={`grid grid-cols-1 ${layout === "default" ? "lg:grid-cols-3" : "xl:grid-cols-3"} gap-8`}>
           <div className={layout === "default" ? "lg:col-span-2" : "xl:col-span-2"}>
             <AnalyticsSummary />
           </div>
@@ -48,18 +48,18 @@ const OverviewTab = () => {
         </div>
         
         {/* Visualization cards for performance and geographical distribution */}
-        <div className={`grid grid-cols-1 ${layout === "default" ? "lg:grid-cols-2" : "xl:grid-cols-2"} gap-6`}>
+        <div className={`grid grid-cols-1 ${layout === "default" ? "lg:grid-cols-2" : "xl:grid-cols-2"} gap-8`}>
           <PerformanceCard />
           <RegionTargetingCard />
         </div>
         
         {/* Cards for campaign tracking, engagements and upcoming posts */}
-        <div className={`grid grid-cols-1 ${layout === "default" ? "lg:grid-cols-2" : "xl:grid-cols-2"} gap-6`}>
+        <div className={`grid grid-cols-1 ${layout === "default" ? "lg:grid-cols-2" : "xl:grid-cols-2"} gap-8`}>
           <EngagementInsights />
           <CampaignTracker />
         </div>
         
-        <div className={`grid grid-cols-1 ${layout === "default" ? "lg:grid-cols-3" : "xl:grid-cols-3"} gap-6`}>
+        <div className={`grid grid-cols-1 ${layout === "default" ? "lg:grid-cols-3" : "xl:grid-cols-3"} gap-8`}>
           <div className={layout === "default" ? "lg:col-span-2" : "xl:col-span-2"}>
             <UpcomingPosts />
           </div>
