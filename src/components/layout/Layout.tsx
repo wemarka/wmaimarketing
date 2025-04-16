@@ -57,9 +57,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
   }, []);
 
-  // RTL-aware margin calculation
-  const getContentMargin = () => {
-    if (isMobile) return 0;
+  // RTL-aware margin calculation - fixed to return proper MotionStyle object
+  const getContentMargin = (): React.CSSProperties => {
+    if (isMobile) return {};
     
     const sidebarWidth = expanded ? "16rem" : "4.5rem";
     if (sidebarPosition === "left" && !isRTL) return { marginLeft: sidebarWidth };
