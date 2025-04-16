@@ -2,69 +2,88 @@
 import React from "react";
 import {
   LayoutDashboard,
-  Image,
-  FileText,
-  Video,
-  CalendarDays,
   BarChart,
-  FileQuestion,
-  Users,
+  FileText,
+  Image,
+  Video,
+  Calendar,
   Settings,
-  Database,
-  Package2,
-  PackagePlus,
-  ShoppingCart,
+  HelpCircle,
+  Home,
+  Star,
+  Users
 } from "lucide-react";
 
-export interface NavItem {
-  id: string;
-  to: string;
-  icon: React.ReactNode;
-  label: string;
-}
-
-export interface NavigationSection {
-  title: string;
-  items: NavItem[];
-}
-
-export const getNavigationSections = (): NavigationSection[] => [
-  {
-    title: "الرئيسية",
-    items: [
-      { id: 'dashboard', icon: <LayoutDashboard className="h-5 w-5" />, to: "/dashboard", label: "لوحة التحكم" }
-    ]
-  },
-  {
-    title: "المحتوى",
-    items: [
-      { id: 'image-upload', icon: <Image className="h-5 w-5" />, to: "/image-upload", label: "تحليل الصور" },
-      { id: 'content-creator', icon: <FileText className="h-5 w-5" />, to: "/content-creator", label: "منشئ المحتوى" },
-      { id: 'video-generator', icon: <Video className="h-5 w-5" />, to: "/video-generator", label: "منشئ الفيديو" },
-      { id: 'scheduler', icon: <CalendarDays className="h-5 w-5" />, to: "/scheduler", label: "الجدولة والنشر" },
-      { id: 'analytics', icon: <BarChart className="h-5 w-5" />, to: "/analytics", label: "التحليلات" }
-    ]
-  },
-  {
-    title: "المنتجات",
-    items: [
-      { id: 'product-list', icon: <Package2 className="h-5 w-5" />, to: "/product/list", label: "المنتجات" },
-      { id: 'product-add', icon: <PackagePlus className="h-5 w-5" />, to: "/product/add", label: "إضافة منتج" },
-      { id: 'product-orders', icon: <ShoppingCart className="h-5 w-5" />, to: "/product/orders", label: "الطلبات" }
-    ]
-  },
-  {
-    title: "الإدارة",
-    items: [
-      { id: 'users', icon: <Users className="h-5 w-5" />, to: "/users", label: "إدارة المستخدمين" },
-      { id: 'profile', icon: <Settings className="h-5 w-5" />, to: "/profile", label: "الإعدادات الشخصية" },
-      { id: 'integration', icon: <Database className="h-5 w-5" />, to: "/integration", label: "التكاملات" }
-    ]
-  },
-  {
-    title: "المستندات",
-    items: [
-      { id: 'documentation', icon: <FileQuestion className="h-5 w-5" />, to: "/documentation", label: "خطة المشروع" }
-    ]
-  }
-];
+export const getNavigationSections = () => {
+  return [
+    {
+      title: "Main",
+      items: [
+        {
+          id: "home",
+          to: "/",
+          icon: <Home className="h-full w-full" />,
+          label: "Home"
+        },
+        {
+          id: "dashboard",
+          to: "/dashboard",
+          icon: <LayoutDashboard className="h-full w-full" />,
+          label: "Dashboard"
+        },
+        {
+          id: "overview",
+          to: "/overview",
+          icon: <Star className="h-full w-full" />,
+          label: "Overview"
+        },
+      ]
+    },
+    {
+      title: "Content",
+      items: [
+        {
+          id: "content",
+          to: "/content",
+          icon: <FileText className="h-full w-full" />,
+          label: "Content"
+        },
+        {
+          id: "images",
+          to: "/images",
+          icon: <Image className="h-full w-full" />,
+          label: "Images"
+        },
+        {
+          id: "videos",
+          to: "/video",
+          icon: <Video className="h-full w-full" />,
+          label: "Videos"
+        }
+      ]
+    },
+    {
+      title: "Management",
+      items: [
+        {
+          id: "analytics",
+          to: "/analytics",
+          icon: <BarChart className="h-full w-full" />,
+          label: "Analytics"
+        },
+        {
+          id: "team",
+          to: "/team",
+          icon: <Users className="h-full w-full" />,
+          label: "Team"
+        },
+        {
+          id: "settings",
+          to: "/settings",
+          icon: <Settings className="h-full w-full" />,
+          label: "Settings"
+        }
+      ]
+    }
+  ];
+};

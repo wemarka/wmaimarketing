@@ -30,18 +30,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, []);
 
   return (
-    <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-900">
+    <div className="flex min-h-screen w-full bg-[#3a4c54] dark:bg-[#2d3a42]">
       <AppSidebar />
       <div className={cn(
         "flex-1 flex flex-col",
-        isMobile ? "mr-0" : "mr-0 md:mr-[70px] lg:mr-64"
+        isMobile ? "mr-0" : "ml-16 lg:ml-16"
       )}>
         <Header />
         <main className={cn(
-          "flex-1 p-4 md:p-6",
-          location.pathname === "/dashboard" && "bg-gray-50 dark:bg-gray-900"
+          "flex-1 p-4 md:p-6 rounded-2xl m-4",
+          location.pathname === "/dashboard" && "bg-white/5 backdrop-blur-sm"
         )}>
-          {children}
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            {children}
+          </div>
         </main>
       </div>
       {isMobile && <MobileNavbar />}

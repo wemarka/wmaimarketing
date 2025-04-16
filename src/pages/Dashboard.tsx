@@ -12,7 +12,7 @@ const Dashboard = () => {
         <title>لوحة التحكم - بيوتي</title>
       </Helmet>
       <motion.div 
-        className="max-w-7xl mx-auto"
+        className="w-full"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -24,4 +24,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
