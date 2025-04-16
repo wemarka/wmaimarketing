@@ -48,8 +48,6 @@ const AppSidebar = () => {
     
   const displayRole = profile?.role || "مستخدم";
   
-  const navigationSections = getNavigationSections();
-  
   return (
     <motion.div 
       className={cn(
@@ -75,7 +73,6 @@ const AppSidebar = () => {
       />
       
       <SidebarContent 
-        navigationSections={navigationSections} 
         expanded={expanded} 
         checkIsActive={checkIsActive} 
         activePath={activePath}

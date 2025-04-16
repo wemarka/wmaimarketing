@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { useLocation } from "react-router-dom";
@@ -17,6 +17,27 @@ const Header: React.FC = () => {
   const { profile } = useAuth();
   const isMobile = useMediaQuery("(max-width: 767px)");
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
+  const [notificationCount, setNotificationCount] = useState(3);
+  
+  // Sample team members data
+  const teamMembers = [
+    { name: "أحمد محمد", avatar: null, initials: "أم" },
+    { name: "سارة علي", avatar: null, initials: "سع" },
+    { name: "محمد خالد", avatar: null, initials: "مخ" }
+  ];
+  
+  // Handle notification interactions
+  const handleNotificationClick = () => {
+    setNotificationCount(0);
+  };
+  
+  // Get page title based on pathname
+  const getPageTitle = () => {
+    if (location.pathname === "/dashboard") return "لوحة التحكم";
+    if (location.pathname === "/dashboard/performance") return "الأداء";
+    if (location.pathname === "/dashboard/interactions") return "التفاعلات";
+    return "سيركل";
+  };
   
   // Background color
   const isDashboard = location.pathname === "/dashboard" || 
@@ -33,9 +54,15 @@ const Header: React.FC = () => {
       )}
     >
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
-        {/* Header left side - We've removed navigation tabs */}
+        {/* Header left side */}
         <div className="flex items-center gap-4">
-          <CompactHeader />
+          <CompactHeader 
+            showSidebarTrigger={isMobile}
+            pathname={location.pathname}
+            pageTitle={getPageTitle()}
+            notificationCount={notificationCount}
+            onNotificationClick={handleNotificationClick}
+          />
         </div>
         
         {/* Header right side */}
@@ -43,10 +70,13 @@ const Header: React.FC = () => {
           <SearchBar />
           
           {!isMobile && profile?.role === "admin" && (
-            <TeamMembers />
+            <TeamMembers members={teamMembers} />
           )}
           
-          <NotificationsPopover />
+          <NotificationsPopover 
+            notificationCount={notificationCount}
+            onNotificationClick={handleNotificationClick}
+          />
           <UserMenu />
         </div>
       </div>

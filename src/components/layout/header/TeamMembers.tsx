@@ -12,7 +12,13 @@ interface TeamMembersProps {
   members: TeamMember[];
 }
 
-const TeamMembers: React.FC<TeamMembersProps> = ({ members }) => {
+const TeamMembers: React.FC<TeamMembersProps> = ({ 
+  members = [
+    { name: "أحمد محمد", avatar: null, initials: "أم" },
+    { name: "سارة علي", avatar: null, initials: "سع" },
+    { name: "محمد خالد", avatar: null, initials: "مخ" }
+  ] 
+}) => {
   return (
     <div className="flex items-center -space-x-2 space-x-reverse mr-4">
       {members.map((member, idx) => (

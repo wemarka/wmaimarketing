@@ -14,8 +14,8 @@ import NotificationTabs from "./notification/NotificationTabs";
 import NotificationsList from "./notification/NotificationsList";
 
 interface NotificationsPopoverProps {
-  notificationCount: number;
-  onNotificationClick: () => void;
+  notificationCount?: number;
+  onNotificationClick?: () => void;
 }
 
 // Sample notifications data
@@ -51,8 +51,8 @@ const notifications = [
 ];
 
 const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({
-  notificationCount,
-  onNotificationClick,
+  notificationCount = 0,
+  onNotificationClick = () => {}
 }) => {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);

@@ -4,16 +4,30 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTranslation } from "react-i18next";
 import CollapsibleSidebarNav from "./CollapsibleSidebarNav";
 
+interface SectionItem {
+  id: string;
+  to: string;
+  icon: React.ReactNode;
+  label: string;
+}
+
+interface NavSection {
+  title: string;
+  items: SectionItem[];
+}
+
 interface SidebarContentProps {
   expanded: boolean;
   activePath: string;
   checkIsActive: (path: string) => boolean;
+  navigationSections?: NavSection[];
 }
 
 const SidebarContent: React.FC<SidebarContentProps> = ({
   expanded,
   activePath,
-  checkIsActive
+  checkIsActive,
+  navigationSections
 }) => {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
