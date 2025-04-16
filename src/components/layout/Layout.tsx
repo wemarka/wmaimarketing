@@ -74,7 +74,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const contentAnimation = {
     initial: { opacity: 0 },
     animate: { opacity: mounted ? 1 : 0 },
-    transition: { duration: 0.5, type: "spring", stiffness: 100, damping: 20 }
+    transition: { duration: 0.6, type: "spring", stiffness: 100, damping: 20 }
   };
   
   const childAnimation = {

@@ -11,7 +11,7 @@ interface DashboardTabsProps {
 }
 
 const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab }) => {
-  // Custom animation variants
+  // Enhanced animation variants
   const pageVariants = {
     initial: { 
       opacity: 0, 
@@ -23,8 +23,9 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab }) => {
       y: 0,
       scale: 1,
       transition: { 
-        duration: 0.4,
-        ease: [0.22, 1, 0.36, 1]
+        duration: 0.5,
+        ease: [0.22, 1, 0.36, 1],
+        staggerChildren: 0.15
       }
     },
     exit: { 
@@ -32,7 +33,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab }) => {
       y: -10,
       scale: 0.98,
       transition: {
-        duration: 0.25
+        duration: 0.3
       }
     }
   };

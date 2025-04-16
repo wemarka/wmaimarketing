@@ -38,8 +38,8 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
     visible: { 
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1
+        staggerChildren: 0.12,
+        delayChildren: 0.15
       }
     }
   };
@@ -56,9 +56,9 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
       x: 0,
       transition: { 
         type: "spring",
-        stiffness: 300,
+        stiffness: 350,
         damping: 30,
-        duration: 0.4 
+        duration: 0.45 
       }
     }
   };
@@ -70,7 +70,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
       dir={isRTL ? "rtl" : "ltr"}
     >
       <motion.div 
-        className="py-4 flex flex-col space-y-6 px-2"
+        className="py-5 flex flex-col space-y-7 px-2"
         initial="hidden"
         animate="visible"
         variants={containerAnimation}

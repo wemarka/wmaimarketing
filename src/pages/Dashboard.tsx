@@ -84,18 +84,27 @@ const Dashboard = () => {
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
                 <div className="text-right">
-                  <h1 className="text-2xl font-bold text-[#3a7a89] dark:text-[#4a8a99] mb-1">
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-[#3a7a89] to-[#4a8a99] bg-clip-text text-transparent mb-1">
                     {getGreeting()}, {user?.email?.split('@')[0] || 'مرحبًا بك'}
                   </h1>
                   <p className="text-sm text-gray-500 dark:text-gray-400">{getFormattedDate()}</p>
                 </div>
                 
                 <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
-                  {tabs.map((tab) => (
+                  {tabs.map((tab, index) => (
                     <motion.button
                       key={tab.id}
                       whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.97 }}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ 
+                        duration: 0.4, 
+                        delay: 0.3 + index * 0.1,
+                        type: "spring",
+                        stiffness: 400, 
+                        damping: 30 
+                      }}
                       onClick={() => setActiveTab(tab.id)}
                       className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full transition-all ${
                         activeTab === tab.id
