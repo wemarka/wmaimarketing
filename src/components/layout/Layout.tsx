@@ -38,10 +38,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       )}>
         <Header />
         <main className={cn(
-          "flex-1 p-4 md:p-6 rounded-2xl m-4",
+          "flex-1 p-4 md:p-6",
           location.pathname === "/dashboard" && "bg-white/5 backdrop-blur-sm"
         )}>
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div className="bg-gradient-to-b from-white to-white/95 rounded-2xl shadow-xl overflow-hidden">
             {children}
           </div>
         </main>

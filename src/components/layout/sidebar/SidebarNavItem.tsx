@@ -26,18 +26,18 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
           <NavLink
             to={to}
             className={({ isActive }) => cn(
-              "flex items-center justify-center w-full",
-              !expanded && "mx-auto"
+              "flex items-center py-3",
+              expanded ? "px-3 justify-start" : "justify-center"
             )}
           >
             {({ isActive }) => (
               <>
                 <div 
                   className={cn(
-                    "flex items-center justify-center w-12 h-12 rounded-full transition-all",
+                    "flex items-center justify-center w-12 h-12 rounded-full transition-colors duration-300 shadow-sm",
                     (isActive || checkIsActive(to))
                       ? "bg-white text-[#3a7a89]" 
-                      : "text-white hover:bg-white/10"
+                      : "text-white hover:bg-white/15"
                   )}
                 >
                   <div className="w-5 h-5">
@@ -45,15 +45,15 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                   </div>
                 </div>
                 {expanded && (
-                  <span className="ml-3 text-sm font-medium text-white">{label}</span>
+                  <span className="ml-3 text-sm font-medium text-white transition-opacity duration-200">{label}</span>
                 )}
               </>
             )}
           </NavLink>
         </TooltipTrigger>
         {!expanded && (
-          <TooltipContent side="right" className="bg-[#3a7a89]/90 text-white border-none">
-            <p>{label}</p>
+          <TooltipContent side="right" className="bg-[#3a7a89]/90 text-white border-none shadow-lg">
+            <p className="font-medium">{label}</p>
           </TooltipContent>
         )}
       </Tooltip>

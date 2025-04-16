@@ -11,7 +11,7 @@
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
+    --primary: 186 100% 38%;
     --primary-foreground: 0 0% 98%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
@@ -47,6 +47,11 @@
     --softtech-blue: 195 100% 47%;
     --softtech-blue-light: 195 100% 90%;
     --softtech-gray: 220 14% 96%;
+    
+    /* Circle Colors */
+    --circle-teal: 187 56% 38%;
+    --circle-teal-light: 187 56% 90%;
+    --circle-gray: 200 14% 28%;
   }
 
   .dark {
@@ -91,6 +96,11 @@
     --softtech-blue: 195 100% 40%;
     --softtech-blue-light: 195 70% 20%;
     --softtech-gray: 220 10% 20%;
+    
+    /* Circle Colors Dark */
+    --circle-teal: 187 56% 45%;
+    --circle-teal-light: 187 56% 20%;
+    --circle-gray: 200 14% 20%;
   }
 }
 
@@ -100,6 +110,10 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  
+  html {
+    direction: rtl;
   }
 }
 
@@ -125,19 +139,11 @@
     @apply absolute right-3 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-medium;
   }
   
-  .sidebar-switch {
-    @apply h-5 w-9 rounded-full relative inline-flex items-center bg-gray-200;
+  .card-hover-effect {
+    @apply transition-all duration-300 hover:translate-y-[-5px] hover:shadow-lg;
   }
   
-  .sidebar-switch.active {
-    @apply bg-blue-500;
-  }
-  
-  .sidebar-switch-thumb {
-    @apply w-4 h-4 rounded-full bg-white;
-  }
-  
-  .sidebar-switch.active .sidebar-switch-thumb {
-    @apply translate-x-4;
+  .dashboard-card {
+    @apply rounded-xl overflow-hidden border-0 shadow-md;
   }
 }

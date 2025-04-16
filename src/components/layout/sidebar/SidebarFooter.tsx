@@ -24,20 +24,30 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({
   avatarUrl
 }) => {
   return (
-    <div className="absolute bottom-6 left-0 right-0 flex justify-center">
+    <div className={cn(
+      "absolute bottom-0 left-0 right-0 p-4 border-t border-white/10",
+      expanded ? "flex items-center justify-between" : "flex justify-center py-5"
+    )}>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <div className={cn(
-              "cursor-pointer",
-              expanded ? "w-full px-4" : "w-auto"
+              "flex items-center cursor-pointer",
+              expanded ? "space-x-3" : ""
             )}>
-              <Avatar className="h-12 w-12 border-2 border-white/30">
+              <Avatar className="h-10 w-10 border-2 border-white/20 shadow-md">
                 <AvatarImage src={avatarUrl || ""} alt={displayName} />
                 <AvatarFallback className="bg-white/10 text-white">
                   {userInitials}
                 </AvatarFallback>
               </Avatar>
+              
+              {expanded && (
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium text-white">{displayName}</span>
+                  <span className="text-xs text-white/60">{displayRole}</span>
+                </div>
+              )}
             </div>
           </TooltipTrigger>
           

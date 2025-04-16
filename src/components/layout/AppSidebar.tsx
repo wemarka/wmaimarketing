@@ -28,7 +28,7 @@ const AppSidebar = () => {
   
   return (
     <div className={cn(
-      "fixed left-0 z-20 h-screen bg-[#3a7a89] transition-all duration-300",
+      "fixed left-0 z-30 h-screen bg-[#3a7a89] transition-all duration-300 shadow-lg flex flex-col",
       expanded ? "w-64" : "w-16"
     )}>
       <SidebarHeader 

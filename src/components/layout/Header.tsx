@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
+import { ArrowLeft, Bell, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -14,51 +14,53 @@ const Header: React.FC = () => {
   // Function to get page title based on current route
   const getPageTitle = () => {
     const path = location.pathname;
-    if (path.includes("dashboard")) return "DASHBOARD";
-    if (path.includes("notification")) return "NOTIFICATIONS";
-    if (path.includes("search")) return "SEARCH";
-    if (path.includes("content")) return "CONTENT";
-    if (path.includes("documentation")) return "DOCUMENTATION";
-    if (path.includes("video")) return "MEDIA";
-    if (path.includes("scheduler")) return "APPS";
-    if (path.includes("profile")) return "PROFILE";
-    if (path.includes("insights")) return "INSIGHTS";
-    if (path.includes("channels")) return "CHANNELS";
+    if (path.includes("dashboard")) return "لوحة التحكم";
+    if (path.includes("notification")) return "الإشعارات";
+    if (path.includes("search")) return "البحث";
+    if (path.includes("content")) return "المحتوى";
+    if (path.includes("documentation")) return "التوثيق";
+    if (path.includes("video")) return "الوسائط";
+    if (path.includes("scheduler")) return "التطبيقات";
+    if (path.includes("profile")) return "الملف الشخصي";
+    if (path.includes("insights")) return "الإحصائيات";
+    if (path.includes("channels")) return "القنوات";
     return "Circle";
   };
 
   // Main navigation items
   const navItems = [
-    { title: "DASHBOARD", path: "/dashboard" },
-    { title: "INSIGHTS", path: "/insights" },
-    { title: "CHANNELS", path: "/channels" }
+    { title: "لوحة التحكم", path: "/dashboard" },
+    { title: "الإحصائيات", path: "/insights" },
+    { title: "القنوات", path: "/channels" }
   ];
 
-  // Mock team members for avatar display
+  // Team members for avatar display
   const teamMembers = [
-    { name: "Alex Smith", avatar: null, initials: "AS" },
-    { name: "Maria Jose", avatar: null, initials: "MJ" },
-    { name: "John Doe", avatar: null, initials: "JD" }
+    { name: "أحمد خالد", avatar: null, initials: "أخ" },
+    { name: "سارة محمد", avatar: null, initials: "سم" },
+    { name: "فيصل علي", avatar: null, initials: "فع" }
   ];
 
   return (
-    <header className="bg-[#3a7a89] px-8 py-4 text-white">
+    <header className="bg-[#3a7a89] px-6 py-3 text-white shadow-md ml-16 lg:ml-16">
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 space-x-reverse">
           <Button variant="ghost" className="p-0 text-white">
-            <ChevronLeft className="h-5 w-5 mr-1" />
-            <span>Back</span>
+            <ArrowLeft className="h-5 w-5 ml-1" />
+            <span>رجوع</span>
           </Button>
+          
+          <h2 className="text-xl font-medium mr-4">{getPageTitle()}</h2>
         </div>
         
         {/* Center navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden md:flex items-center space-x-8 space-x-reverse">
           {navItems.map((item) => (
             <a 
               key={item.title} 
               href={item.path}
               className={cn(
-                "text-sm font-medium tracking-wide hover:text-white/80",
+                "text-sm font-medium tracking-wide hover:text-white/80 transition-colors",
                 location.pathname === item.path ? "text-white" : "text-white/60"
               )}
             >
@@ -67,20 +69,31 @@ const Header: React.FC = () => {
           ))}
         </nav>
         
-        {/* Team members */}
-        <div className="flex items-center -space-x-2">
-          {teamMembers.map((member, idx) => (
-            <Avatar 
-              key={idx}
-              className="border-2 border-[#3a7a89] w-8 h-8"
-            >
-              <AvatarImage src={member.avatar || undefined} />
-              <AvatarFallback className="bg-white/20 text-white text-xs">
-                {member.initials}
-              </AvatarFallback>
-            </Avatar>
-          ))}
-          <span className="ml-4 text-xs font-medium">12 members</span>
+        {/* Right actions */}
+        <div className="flex items-center space-x-4 space-x-reverse">
+          {/* Actions */}
+          <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full">
+            <Search className="h-5 w-5" />
+          </Button>
+          <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full">
+            <Bell className="h-5 w-5" />
+          </Button>
+          
+          {/* Team members */}
+          <div className="flex items-center -space-x-2 space-x-reverse mr-4">
+            {teamMembers.map((member, idx) => (
+              <Avatar 
+                key={idx}
+                className="border-2 border-[#3a7a89] w-8 h-8"
+              >
+                <AvatarImage src={member.avatar || undefined} />
+                <AvatarFallback className="bg-white/20 text-white text-xs">
+                  {member.initials}
+                </AvatarFallback>
+              </Avatar>
+            ))}
+            <span className="mr-4 text-xs font-medium">12 عضو</span>
+          </div>
         </div>
       </div>
     </header>

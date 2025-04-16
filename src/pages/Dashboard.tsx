@@ -9,7 +9,7 @@ const Dashboard = () => {
   return (
     <Layout>
       <Helmet>
-        <title>لوحة التحكم - بيوتي</title>
+        <title>لوحة التحكم - سيركل</title>
       </Helmet>
       <motion.div 
         className="w-full"

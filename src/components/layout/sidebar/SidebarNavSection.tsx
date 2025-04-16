@@ -24,13 +24,13 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
   checkIsActive
 }) => {
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col">
       {expanded && (
-        <h3 className="px-3 mb-2 text-xs font-medium text-white/70 uppercase tracking-wide">
+        <h3 className="px-4 mb-2 text-xs font-medium text-white/60 uppercase tracking-wider">
           {title}
         </h3>
       )}
-      <div className="space-y-4 w-full">
+      <div className="space-y-1 w-full">
         {items.map((item) => (
           <SidebarNavItem
             key={item.id}

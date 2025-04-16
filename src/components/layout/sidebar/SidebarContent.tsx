@@ -27,8 +27,8 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   checkIsActive
 }) => {
   return (
-    <ScrollArea className="h-[calc(100vh-64px-64px)] px-2">
-      <div className="py-8 flex flex-col items-center space-y-8">
+    <ScrollArea className="h-[calc(100vh-64px-80px)]">
+      <div className="py-4 flex flex-col space-y-6 px-2">
         {navigationSections.map((section, idx) => (
           <SidebarNavSection
             key={idx}
