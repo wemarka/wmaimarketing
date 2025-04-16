@@ -57,7 +57,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
   }, []);
 
-  // RTL-aware margin calculation - fixed to return proper MotionStyle object
+  // RTL-aware margin calculation - fixed to properly return React.CSSProperties
   const getContentMargin = (): React.CSSProperties => {
     if (isMobile) return {};
     
@@ -104,7 +104,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           "flex-1 p-4 md:p-6 transition-all",
           location.pathname === "/dashboard" && "bg-white/5 backdrop-blur-sm dark:bg-slate-900/5"
         )}>
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="sync">
             <motion.div 
               key={location.pathname + activeDashboardTab}
               className="bg-white dark:bg-slate-900/90 rounded-2xl shadow-xl overflow-hidden"

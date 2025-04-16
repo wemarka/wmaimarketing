@@ -23,8 +23,6 @@ const TabsFilter: React.FC<TabsFilterProps> = ({ statusFilter, onStatusChange, c
     { id: "rejected", label: "المرفوضة", count: counts.rejected || 0 },
   ];
   
-  const tabListDirection = isRTL ? "flex-row-reverse" : "flex-row";
-
   // Animation based on RTL
   const activeIndicatorAnimation = {
     layoutId: "activeFilter",
@@ -37,7 +35,7 @@ const TabsFilter: React.FC<TabsFilterProps> = ({ statusFilter, onStatusChange, c
     <TabsList 
       className={cn(
         "grid grid-cols-2 md:grid-cols-5 mb-4 overflow-x-auto scrollbar-none",
-        tabListDirection
+        isRTL ? "flex-row-reverse" : "flex-row"
       )}
       dir={isRTL ? "rtl" : "ltr"}
     >
@@ -48,7 +46,7 @@ const TabsFilter: React.FC<TabsFilterProps> = ({ statusFilter, onStatusChange, c
           onClick={() => onStatusChange(tab.id)}
           className="relative"
         >
-          {tab.label}
+          <span>{tab.label}</span>
           {tab.count > 0 && (
             <span className={cn(
               "text-xs bg-muted rounded-full px-1.5 py-0.5 text-muted-foreground",

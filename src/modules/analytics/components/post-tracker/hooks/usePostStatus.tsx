@@ -117,12 +117,12 @@ export const usePostStatus = () => {
 
   // تحسين الأداء: استخدام useMemo لحساب القيم المشتقة مع مراعاة التبعيات
   const totalPosts = useMemo(() => {
-    return statuses.reduce((sum, status) => sum + status.count, 0);
+    return statuses.reduce((sum, status) => sum + (status.count || 0), 0);
   }, [statuses]);
 
   // تحسين الأداء: استخدام useMemo لتصفية البيانات مع التحسين
   const filteredPosts = useMemo(() => {
-    if (!postsData.length) return [];
+    if (!postsData || !postsData.length) return [];
     
     // تجنب استخدام filter عدة مرات - استخدام filter واحدة مع تحقق الشروط داخلها
     return postsData.filter((post) => {

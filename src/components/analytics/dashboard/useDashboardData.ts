@@ -12,7 +12,9 @@ export const useDashboardData = () => {
     overviewData, 
     engagementData,
     platformData,
-    analyticsData
+    analyticsData,
+    isUsingFallbackData,
+    refreshData
   } = useAnalyticsData(period);
   
   // This function now only handles UI state changes
@@ -27,6 +29,8 @@ export const useDashboardData = () => {
     engagementData,
     platformData,
     analyticsData,
-    handlePeriodChange
+    isUsingFallbackData,
+    handlePeriodChange,
+    refreshData
   };
 };

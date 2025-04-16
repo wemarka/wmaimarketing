@@ -47,7 +47,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
   const slideTransition = { duration: 0.4, type: "spring", stiffness: 300, damping: 30 };
   
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="sync">
       {(activeTab === "dashboard" || activeTab === "overview") && (
         <motion.div 
           key="overview"

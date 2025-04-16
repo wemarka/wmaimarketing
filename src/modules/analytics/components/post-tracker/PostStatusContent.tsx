@@ -105,56 +105,76 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
         counts={statusCounts}
       />
       
-      <AnimatePresence mode="wait">
-        <TabsContent value="all" className="outline-none mt-6">
-          <motion.div
-            variants={contentVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            key="all-content"
-          >
-            {viewType === "cards" ? (
-              <>
-                {filteredPosts.length > 0 ? (
-                  <motion.div 
-                    className="space-y-4"
-                    variants={containerAnimation}
-                    initial="hidden"
-                    animate="visible"
-                  >
-                    {filteredPosts.map((post, index) => (
-                      <motion.div 
-                        key={post.id}
-                        variants={itemAnimationRTL}
-                        custom={index}
-                      >
-                        <PostItem post={post} index={index} />
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                ) : (
-                  <motion.div 
-                    className="p-8 text-center"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    <p className="text-muted-foreground">لا توجد منشورات تطابق معايير البحث</p>
-                  </motion.div>
-                )}
-              </>
-            ) : (
-              <StatusChart statuses={statuses} totalPosts={totalPosts} />
-            )}
-          </motion.div>
-        </TabsContent>
-        
-        {["published", "scheduled", "pending", "rejected"].map((status) => (
-          <TabsContent key={status} value={status} className="mt-6">
-            <AnimatedTabContent status={status} posts={filteredPosts} />
+      <AnimatePresence mode="sync">
+        {statusFilter === "all" && (
+          <TabsContent value="all" className="outline-none mt-6">
+            <motion.div
+              variants={contentVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              key="all-content"
+            >
+              {viewType === "cards" ? (
+                <>
+                  {filteredPosts.length > 0 ? (
+                    <motion.div 
+                      className="space-y-4"
+                      variants={containerAnimation}
+                      initial="hidden"
+                      animate="visible"
+                    >
+                      {filteredPosts.map((post, index) => (
+                        <motion.div 
+                          key={post.id}
+                          variants={itemAnimationRTL}
+                          custom={index}
+                        >
+                          <PostItem post={post} index={index} />
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  ) : (
+                    <motion.div 
+                      className="p-8 text-center"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                    >
+                      <p className="text-muted-foreground">لا توجد منشورات تطابق معايير البحث</p>
+                    </motion.div>
+                  )}
+                </>
+              ) : (
+                <StatusChart statuses={statuses} totalPosts={totalPosts} />
+              )}
+            </motion.div>
           </TabsContent>
-        ))}
+        )}
+        
+        {statusFilter === "published" && (
+          <TabsContent key="published" value="published" className="mt-6">
+            <AnimatedTabContent status="published" posts={filteredPosts} />
+          </TabsContent>
+        )}
+        
+        {statusFilter === "scheduled" && (
+          <TabsContent key="scheduled" value="scheduled" className="mt-6">
+            <AnimatedTabContent status="scheduled" posts={filteredPosts} />
+          </TabsContent>
+        )}
+        
+        {statusFilter === "pending" && (
+          <TabsContent key="pending" value="pending" className="mt-6">
+            <AnimatedTabContent status="pending" posts={filteredPosts} />
+          </TabsContent>
+        )}
+        
+        {statusFilter === "rejected" && (
+          <TabsContent key="rejected" value="rejected" className="mt-6">
+            <AnimatedTabContent status="rejected" posts={filteredPosts} />
+          </TabsContent>
+        )}
       </AnimatePresence>
     </Tabs>
   );

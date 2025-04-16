@@ -59,7 +59,7 @@ const Dashboard = () => {
       <Helmet>
         <title>لوحة التحكم - سيركل</title>
       </Helmet>
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="sync">
         <motion.div 
           className="w-full"
           initial={{ opacity: 0 }}

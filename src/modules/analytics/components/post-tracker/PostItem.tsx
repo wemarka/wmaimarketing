@@ -14,7 +14,7 @@ interface PostItemProps {
 }
 
 const PostItem: React.FC<PostItemProps> = ({ post, index }) => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
   
   return (
@@ -52,7 +52,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, index }) => {
           </div>
         </div>
       </div>
-      <Button variant="ghost" size="sm">التفاصيل</Button>
+      <Button variant="ghost" size="sm">{t('common.details', 'التفاصيل')}</Button>
     </motion.div>
   );
 };
