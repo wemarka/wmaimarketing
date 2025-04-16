@@ -53,17 +53,21 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
             {SidebarItemWrapper ? (
               <SidebarItemWrapper title={item.label} isExpanded={expanded}>
                 <SidebarNavItem
-                  item={item}
+                  to={item.to}
+                  icon={item.icon}
+                  label={item.label}
                   expanded={expanded}
-                  isActive={checkIsActive(item.to)}
+                  checkIsActive={checkIsActive}
                   activePath={activePath}
                 />
               </SidebarItemWrapper>
             ) : (
               <SidebarNavItem
-                item={item}
+                to={item.to}
+                icon={item.icon}
+                label={item.label}
                 expanded={expanded}
-                isActive={checkIsActive(item.to)}
+                checkIsActive={checkIsActive}
                 activePath={activePath}
               />
             )}
