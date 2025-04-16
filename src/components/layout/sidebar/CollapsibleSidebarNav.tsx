@@ -19,7 +19,7 @@ const CollapsibleSidebarNav: React.FC<CollapsibleSidebarNavProps> = ({ expanded 
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
   const userRole = profile?.role || "user";
   
-  // الحصول على عناصر التنقل حسب دور المستخدم
+  // Get navigation items based on user role
   const {
     dashboardItems,
     contentItems,
@@ -30,17 +30,17 @@ const CollapsibleSidebarNav: React.FC<CollapsibleSidebarNavProps> = ({ expanded 
     documentationItems
   } = useRBACSidebar(userRole);
   
-  // دالة مساعدة للتحقق من المسار النشط
+  // Helper function to check active path
   const checkIsActive = (path: string): boolean => {
-    // مطابقة دقيقة للجذر ولوحة التحكم
+    // Exact match for root and dashboard
     if (path === '/' && location.pathname === '/') return true;
     if (path === '/dashboard' && location.pathname === '/dashboard') return true;
     
-    // للمسارات الأخرى، تحقق مما إذا كان المسار الحالي يبدأ بالمسار المعطى
+    // For other paths, check if current path starts with given path
     return path !== '/' && path !== '/dashboard' && location.pathname.startsWith(path);
   };
   
-  // إنشاء أقسام التنقل المنظمة
+  // Create organized navigation sections
   const navigationSections: NavSection[] = [
     {
       title: t("sidebar.dashboard", "لوحة التحكم"),
@@ -72,10 +72,10 @@ const CollapsibleSidebarNav: React.FC<CollapsibleSidebarNavProps> = ({ expanded 
     }
   ].filter(section => section.items.length > 0);
 
-  // تأثيرات حركية للأقسام
+  // Motion effects for sections
   const containerVariants = {
     hidden: { opacity: 0 },
-    show: { 
+    visible: { 
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
@@ -86,7 +86,7 @@ const CollapsibleSidebarNav: React.FC<CollapsibleSidebarNavProps> = ({ expanded 
   
   const sectionVariants = {
     hidden: { opacity: 0, y: 15 },
-    show: { 
+    visible: { 
       opacity: 1, 
       y: 0,
       transition: { 
@@ -103,33 +103,63 @@ const CollapsibleSidebarNav: React.FC<CollapsibleSidebarNavProps> = ({ expanded 
     }
   };
   
+  // RTL-aware animation variants
+  const slideVariants = {
+    expanded: { 
+      width: "100%",
+      transition: { 
+        type: "spring", 
+        stiffness: 300, 
+        damping: 30 
+      }
+    },
+    collapsed: { 
+      width: "auto",
+      transition: { 
+        type: "spring", 
+        stiffness: 300, 
+        damping: 30 
+      }
+    }
+  };
+  
   return (
     <motion.div 
       dir={isRTL ? "rtl" : "ltr"} 
       className="flex flex-col gap-4"
       initial="hidden"
-      animate="show"
+      animate="visible"
       variants={containerVariants}
+      layout
     >
       <AnimatePresence mode="wait">
-        {navigationSections.map((section) => (
-          <motion.div
-            key={section.title}
-            variants={sectionVariants}
-            initial="hidden"
-            animate="show"
-            exit="exit"
-            layout
-          >
-            <SidebarNavSection
-              title={section.title}
-              items={section.items}
-              expanded={expanded}
-              checkIsActive={checkIsActive}
-              activePath={location.pathname}
-            />
-          </motion.div>
-        ))}
+        <motion.div
+          key={expanded ? "expanded" : "collapsed"}
+          variants={slideVariants}
+          initial={expanded ? "expanded" : "collapsed"}
+          animate={expanded ? "expanded" : "collapsed"}
+          className="w-full"
+        >
+          {navigationSections.map((section) => (
+            <motion.div
+              key={section.title}
+              variants={sectionVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              layout
+              className="mb-4"
+            >
+              <SidebarNavSection
+                title={section.title}
+                items={section.items}
+                expanded={expanded}
+                checkIsActive={checkIsActive}
+                activePath={location.pathname}
+              />
+            </motion.div>
+          ))}
+        </motion.div>
       </AnimatePresence>
     </motion.div>
   );

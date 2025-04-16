@@ -19,27 +19,47 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   isActive,
   expanded
 }) => {
-  // استخدام التلميح للعناصر عندما يكون الشريط مطوياً
+  // Use tooltip for items when sidebar is collapsed
   const { showTooltip, hideTooltip, tooltipOpen } = useTooltip();
   
-  // تأثيرات حركية للعناصر
+  // Motion effects for icons
   const iconVariants = {
     expanded: { rotate: 0 },
-    collapsed: { rotate: expanded ? 0 : 360 }
+    collapsed: { rotate: expanded ? 0 : 360 },
+    hover: { scale: 1.1, rotate: 0 }
   };
   
+  // Badge animation
   const badgeVariants = {
     expanded: { opacity: 1, scale: 1 },
-    collapsed: { opacity: 0, scale: 0 }
+    collapsed: { opacity: 0, scale: 0 },
+    hover: { scale: 1.2 }
   };
   
+  // Active indicator animation
   const activeIndicatorVariants = {
-    active: { opacity: 1, height: "70%", transition: { duration: 0.3 } },
-    inactive: { opacity: 0, height: "0%", transition: { duration: 0.3 } }
+    active: { 
+      opacity: 1, 
+      height: "70%", 
+      transition: { duration: 0.3, type: "spring", stiffness: 300, damping: 25 } 
+    },
+    inactive: { 
+      opacity: 0, 
+      height: "0%", 
+      transition: { duration: 0.3 } 
+    },
+    hover: { 
+      opacity: 0.7, 
+      height: "50%", 
+      transition: { duration: 0.2 } 
+    }
   };
   
-  // تأثير حركي للتفاعل مع المستخدم
+  // Interactive button effect
   const buttonVariants = {
+    initial: { 
+      backgroundColor: "rgba(255, 255, 255, 0)" 
+    },
     hover: { 
       backgroundColor: "rgba(255, 255, 255, 0.1)",
       transition: { duration: 0.2 }
@@ -51,6 +71,13 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
     }
   };
   
+  // Label animation
+  const labelVariants = {
+    initial: { opacity: 0, x: -5 },
+    animate: { opacity: 1, x: 0, transition: { duration: 0.2, delay: 0.1 } },
+    exit: { opacity: 0, x: -5, transition: { duration: 0.2 } }
+  };
+  
   return (
     <SidebarTooltip
       content={!expanded ? item.tooltip || item.label : ""}
@@ -60,9 +87,11 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
       delay={500}
     >
       <motion.div
+        initial="initial"
         whileHover="hover"
         whileTap="tap"
         variants={buttonVariants}
+        className="rounded-md overflow-hidden"
       >
         <Link
           to={item.to}
@@ -88,39 +117,46 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
             {item.icon}
           </motion.div>
           
-          {expanded && (
-            <div className="flex flex-1 items-center justify-between overflow-hidden">
-              <motion.span 
-                className="truncate"
-                initial={{ opacity: 0, x: -5 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.2, delay: 0.1 }}
+          <AnimatePresence mode="wait">
+            {expanded && (
+              <motion.div 
+                className="flex flex-1 items-center justify-between overflow-hidden"
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                key="expanded-content"
               >
-                {item.label}
-              </motion.span>
-              {item.badgeText && (
-                <motion.div
-                  variants={badgeVariants}
-                  initial="expanded"
-                  animate="expanded"
-                  exit="collapsed"
+                <motion.span 
+                  className="truncate"
+                  variants={labelVariants}
                 >
-                  <Badge 
-                    variant={item.variant || "default"}
-                    className="ml-2 bg-white/20 text-white text-xs"
+                  {item.label}
+                </motion.span>
+                {item.badgeText && (
+                  <motion.div
+                    variants={badgeVariants}
+                    initial="expanded"
+                    animate="expanded"
+                    whileHover="hover"
                   >
-                    {item.badgeText}
-                  </Badge>
-                </motion.div>
-              )}
-            </div>
-          )}
+                    <Badge 
+                      variant={item.variant || "default"}
+                      className="ml-2 bg-white/20 text-white text-xs"
+                    >
+                      {item.badgeText}
+                    </Badge>
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
           
-          {/* مؤشر النشط المحسن */}
+          {/* Enhanced active indicator */}
           <motion.div 
             className="absolute inset-y-0 right-0 w-1 bg-white rounded-l-md"
             initial="inactive"
             animate={isActive ? "active" : "inactive"}
+            whileHover={!isActive ? "hover" : undefined}
             variants={activeIndicatorVariants}
           />
         </Link>

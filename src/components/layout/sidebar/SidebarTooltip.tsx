@@ -26,13 +26,21 @@ export const SidebarTooltip: React.FC<SidebarTooltipProps> = ({
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
   
-  // تحديد جانب عرض التلميح بناءً على اتجاه اللغة
+  // Determine tooltip side based on language direction
   const tooltipSide = side || (isRTL ? "left" : "right");
   
-  // في حالة عدم وجود محتوى للتلميح، نعيد العنصر الأصلي فقط
+  // If no content for tooltip, return original element only
   if (!content) {
     return <>{children}</>;
   }
+
+  // Animation for the tooltip content
+  const tooltipAnimation = {
+    initial: { opacity: 0, scale: 0.85, x: isRTL ? 10 : -10 },
+    animate: { opacity: 1, scale: 1, x: 0 },
+    exit: { opacity: 0, scale: 0.85, x: isRTL ? 10 : -10 },
+    transition: { type: "spring", stiffness: 350, damping: 25 }
+  };
 
   return (
     <TooltipProvider delayDuration={delay}>
@@ -40,6 +48,7 @@ export const SidebarTooltip: React.FC<SidebarTooltipProps> = ({
         <TooltipTrigger asChild>
           <motion.div
             whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.95 }}
             transition={{ duration: 0.2 }}
           >
             {children}
@@ -47,17 +56,16 @@ export const SidebarTooltip: React.FC<SidebarTooltipProps> = ({
         </TooltipTrigger>
         <TooltipContent 
           side={tooltipSide} 
-          className={`bg-slate-800 text-white border-slate-700 animate-in fade-in-50 zoom-in-95 ${className || ""}`}
+          className={`bg-slate-800 text-white border-slate-700 ${className || ""}`}
           sideOffset={5}
+          align="center"
         >
-          <motion.p 
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-            className="text-sm"
+          <motion.div 
+            className="relative z-50"
+            {...tooltipAnimation}
           >
-            {content}
-          </motion.p>
+            <p className="text-sm whitespace-nowrap">{content}</p>
+          </motion.div>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

@@ -30,7 +30,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
 
-  // تأثيرات الحركة
+  // Motion animation effects
   const containerAnimation = {
     hidden: { opacity: 0, y: -15 },
     visible: { 
@@ -48,7 +48,22 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
     visible: { opacity: 1, y: 0 }
   };
   
-  // تحديد أحجام العناوين
+  const iconAnimation = {
+    hidden: { opacity: 0, rotate: -10, scale: 0.8 },
+    visible: { 
+      opacity: 1, 
+      rotate: 0, 
+      scale: 1,
+      transition: { type: "spring", stiffness: 500, damping: 25 }
+    },
+    hover: { 
+      rotate: 15, 
+      scale: 1.1,
+      transition: { type: "spring", stiffness: 400, damping: 10 }
+    }
+  };
+  
+  // Title sizes
   const titleSizes = {
     sm: "text-lg",
     md: "text-2xl",
@@ -56,7 +71,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
     xl: "text-4xl"
   };
   
-  // تحديد أنماط العناوين
+  // Title variants
   const titleVariants = {
     default: "font-bold",
     primary: "font-bold text-primary",
@@ -65,12 +80,33 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
     gradient: "font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent"
   };
   
-  // تحديد نوع المحاذاة
+  // Alignment classes
   const alignmentClasses = {
     between: "justify-between",
     start: "justify-start gap-4",
     center: "justify-center text-center"
   };
+  
+  // RTL-aware icon container
+  const IconContainer = () => (
+    icon && (
+      <motion.div 
+        variants={iconAnimation}
+        initial="hidden"
+        animate="visible"
+        whileHover="hover"
+        className={cn(
+          "p-2 rounded-md flex items-center justify-center",
+          variant === "primary" ? "bg-primary/10 text-primary" : 
+          variant === "secondary" ? "bg-secondary/10 text-secondary" : 
+          variant === "gradient" ? "bg-gradient-to-r from-primary/20 to-blue-500/20 text-primary" :
+          "bg-muted/30 text-muted-foreground"
+        )}
+      >
+        {icon}
+      </motion.div>
+    )
+  );
   
   const content = (
     <div dir={isRTL ? "rtl" : "ltr"} className={cn(
@@ -82,34 +118,41 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
         "flex items-start gap-3",
         alignment === "center" && "flex-col items-center"
       )}>
-        {icon && (
-          <div className={cn(
-            "p-2 rounded-md flex items-center justify-center",
-            variant === "primary" ? "bg-primary/10 text-primary" : 
-            variant === "secondary" ? "bg-secondary/10 text-secondary" : 
-            variant === "gradient" ? "bg-gradient-to-r from-primary/20 to-blue-500/20 text-primary" :
-            "bg-muted/30 text-muted-foreground"
-          )}>
-            {icon}
-          </div>
-        )}
+        <IconContainer />
         <div className={cn(alignment === "center" && "text-center")}>
-          <h2 className={cn(
-            titleSizes[size],
-            titleVariants[variant]
-          )}>{title}</h2>
+          <motion.h2 
+            className={cn(
+              titleSizes[size],
+              titleVariants[variant]
+            )}
+            variants={animated ? childAnimation : undefined}
+          >
+            {title}
+          </motion.h2>
           {subtitle && (
-            <p className="text-muted-foreground mt-1 text-sm">{subtitle}</p>
+            <motion.p 
+              className="text-muted-foreground mt-1 text-sm" 
+              variants={animated ? childAnimation : undefined}
+            >
+              {subtitle}
+            </motion.p>
           )}
         </div>
       </div>
       
       {action && alignment !== "center" && (
-        <div>{action}</div>
+        <motion.div variants={animated ? childAnimation : undefined}>
+          {action}
+        </motion.div>
       )}
       
       {action && alignment === "center" && (
-        <div className="mt-3">{action}</div>
+        <motion.div 
+          className="mt-3" 
+          variants={animated ? childAnimation : undefined}
+        >
+          {action}
+        </motion.div>
       )}
     </div>
   );
@@ -121,9 +164,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
         animate="visible"
         variants={containerAnimation}
       >
-        <motion.div variants={childAnimation}>
-          {content}
-        </motion.div>
+        {content}
       </motion.div>
     );
   }
