@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 
 const UserMenu = () => {
-  const { profile, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -73,7 +73,7 @@ const UserMenu = () => {
               {profile?.first_name} {profile?.last_name}
             </p>
             <p className="text-xs text-muted-foreground truncate">
-              {profile?.email || "لا يوجد بريد إلكتروني"}
+              {user?.email || "لا يوجد بريد إلكتروني"}
             </p>
             <Badge variant="outline" className={`mt-1.5 self-start text-xs py-0 ${roleInfo.color}`}>
               {roleInfo.icon}
