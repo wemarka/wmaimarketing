@@ -7,7 +7,7 @@ import PerformanceCard from "./cards/PerformanceCard";
 import TopPerformersCard from "./cards/TopPerformersCard";
 import RegionTargetingCard from "./cards/RegionTargetingCard";
 import { motion, AnimatePresence } from "framer-motion";
-import { OverviewTab } from "./tabs";
+import { OverviewTab } from "../components";
 
 interface DashboardTabsProps {
   activeTab?: string;
