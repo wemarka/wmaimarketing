@@ -27,7 +27,7 @@ const MainNavTabs: React.FC<MainNavTabsProps> = ({ navItems }) => {
       dir="rtl"
       className="w-full"
     >
-      <TabsList className="relative bg-[#2c6c7a]/20 backdrop-blur-sm rounded-xl p-1 h-12 border border-white/20 w-full justify-start">
+      <TabsList className="relative bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm rounded-xl p-1 h-12 border border-white/20 shadow-inner w-full justify-start overflow-x-auto">
         {navItems.map((item) => {
           const isActive = location.pathname.includes(item.path);
           return (
@@ -36,8 +36,8 @@ const MainNavTabs: React.FC<MainNavTabsProps> = ({ navItems }) => {
               value={item.id}
               className={cn(
                 "px-6 relative group transition-all duration-300",
-                "data-[state=active]:text-white data-[state=active]:font-medium text-white/80",
-                "hover:text-white"
+                "data-[state=active]:text-white data-[state=active]:font-medium",
+                "text-white/80 hover:text-white"
               )}
               onClick={() => {
                 if (item.path) {
@@ -48,13 +48,17 @@ const MainNavTabs: React.FC<MainNavTabsProps> = ({ navItems }) => {
               }}
             >
               <div className="flex items-center z-10 relative">
-                {item.icon}
-                {item.title}
+                <span className="transform transition-transform group-hover:scale-110 duration-300 ml-2">
+                  {item.icon}
+                </span>
+                <span className="transform transition-transform group-hover:scale-105 duration-300 font-medium">
+                  {item.title}
+                </span>
               </div>
               {isActive && (
                 <motion.div
                   layoutId="activeNavTab"
-                  className="absolute inset-0 bg-white/20 rounded-lg shadow-lg"
+                  className="absolute inset-0 bg-gradient-to-r from-[#4a8a99]/50 to-[#5a9aa9]/70 rounded-lg shadow-lg"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}

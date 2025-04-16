@@ -64,7 +64,7 @@ const Header: React.FC = () => {
 
   return (
     <div className="flex flex-col">
-      <header className="bg-gradient-to-r from-[#3a7a89] to-[#4a8a99] px-6 py-4 text-white shadow-md">
+      <header className="bg-gradient-to-r from-[#3a7a89] to-[#4a8a99] px-6 py-4 text-white shadow-lg">
         <div className="flex flex-col space-y-3">
           {/* Top row with logo, title and actions */}
           <div className="flex items-center justify-between">
@@ -75,12 +75,12 @@ const Header: React.FC = () => {
             <HeaderActions teamMembers={teamMembers} />
           </div>
           
-          {/* Main Navigation tabs */}
+          {/* Main Navigation tabs with improved styling */}
           <div className="flex justify-center md:justify-start">
             <MainNavTabs navItems={mainNavItems} />
           </div>
           
-          {/* Dashboard sub-tabs - only shown on dashboard route */}
+          {/* Dashboard sub-tabs with improved styling - only shown on dashboard route */}
           {isDashboardRoute && (
             <DashboardSubTabs 
               tabItems={dashboardTabItems}
