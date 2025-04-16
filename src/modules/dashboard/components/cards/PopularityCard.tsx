@@ -6,17 +6,23 @@ import { Button } from "@/components/ui/button";
 
 const PopularityCard = () => {
   return (
-    <Card className="overflow-hidden border-none shadow-md">
+    <Card className="overflow-hidden border-none shadow-md h-full">
       <CardContent className="p-0">
         <div className="h-full bg-[#f8e5d7] p-6">
-          <h3 className="text-sm font-medium text-[#654321] mb-1">Popularity rate</h3>
+          <div className="flex justify-between items-center">
+            <h3 className="text-sm font-medium text-[#654321] mb-1">Popularity rate</h3>
+            <div className="bg-white/50 rounded-full py-1 px-3">
+              <span className="text-xs text-[#654321]">Daily</span>
+            </div>
+          </div>
+          
           <div className="text-6xl font-bold text-[#333333] mb-6">87°</div>
           
           <div className="mb-6">
             {/* Gauge meter */}
             <div className="relative h-2 w-full">
               <div className="h-2 bg-gradient-to-r from-[#ff9d6c] to-[#ff5c35] rounded-full w-3/4"></div>
-              <div className="absolute right-1/4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-white border-2 border-[#ff5c35] rounded-full"></div>
+              <div className="absolute right-1/4 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-white border-2 border-[#ff5c35] rounded-full"></div>
             </div>
           </div>
           

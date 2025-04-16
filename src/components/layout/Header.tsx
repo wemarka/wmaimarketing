@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/context/AuthContext";
+import { motion } from "framer-motion";
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -51,27 +52,47 @@ const Header: React.FC = () => {
             <span>رجوع</span>
           </div>
           
-          <h2 className="text-xl font-medium mr-4">{getPageTitle()}</h2>
+          <motion.h2 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="text-xl font-medium mr-4"
+          >
+            {getPageTitle()}
+          </motion.h2>
         </div>
         
         {/* Center navigation */}
-        <nav className="hidden md:flex items-center space-x-8 space-x-reverse">
-          {navItems.map((item) => (
-            <a 
+        <motion.nav 
+          className="hidden md:flex items-center space-x-8 space-x-reverse"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.3 }}
+        >
+          {navItems.map((item, index) => (
+            <motion.a 
               key={item.title} 
               href={item.path}
               className={cn(
                 "text-sm font-medium tracking-wide hover:text-white/80 transition-colors",
                 location.pathname === item.path ? "text-white" : "text-white/60"
               )}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3, delay: 0.4 + index * 0.1 }}
             >
               {item.title}
-            </a>
+            </motion.a>
           ))}
-        </nav>
+        </motion.nav>
         
         {/* Right actions */}
-        <div className="flex items-center space-x-4 space-x-reverse">
+        <motion.div 
+          className="flex items-center space-x-4 space-x-reverse"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.4 }}
+        >
           {/* Actions */}
           <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full">
             <Search className="h-5 w-5" />
@@ -95,7 +116,7 @@ const Header: React.FC = () => {
             ))}
             <span className="mr-4 text-xs font-medium">12 عضو</span>
           </div>
-        </div>
+        </motion.div>
       </div>
     </header>
   );

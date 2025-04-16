@@ -7,6 +7,7 @@ import SidebarContent from "./sidebar/SidebarContent";
 import SidebarFooter from "./sidebar/SidebarFooter";
 import { useSidebarNavigation } from "./sidebar/useSidebarNavigation";
 import { getNavigationSections } from "./sidebar/navigationConfig";
+import { motion } from "framer-motion";
 
 const AppSidebar = () => {
   const { profile, user } = useAuth();
@@ -27,10 +28,15 @@ const AppSidebar = () => {
   const navigationSections = getNavigationSections();
   
   return (
-    <div className={cn(
-      "fixed left-0 z-30 h-screen bg-[#3a7a89] transition-all duration-300 shadow-lg flex flex-col",
-      expanded ? "w-64" : "w-16"
-    )}>
+    <motion.div 
+      className={cn(
+        "fixed left-0 z-30 h-screen bg-[#3a7a89] transition-all duration-300 shadow-lg flex flex-col",
+        expanded ? "w-64" : "w-16"
+      )}
+      initial={{ x: -20, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
       <SidebarHeader 
         expanded={expanded} 
         toggleExpanded={toggleExpanded} 
@@ -51,7 +57,7 @@ const AppSidebar = () => {
         userInitials={userInitials}
         avatarUrl={profile?.avatar_url}
       />
-    </div>
+    </motion.div>
   );
 };
 

@@ -6,10 +6,16 @@ import { Button } from "@/components/ui/button";
 
 const VisitsCard = () => {
   return (
-    <Card className="overflow-hidden border-none shadow-md">
+    <Card className="overflow-hidden border-none shadow-md h-full">
       <CardContent className="p-0">
         <div className="h-full bg-[#e6f7ff] p-6">
-          <h3 className="text-sm font-medium text-[#0c4a6e] mb-1">الزيارات الأخيرة</h3>
+          <div className="flex justify-between items-center">
+            <h3 className="text-sm font-medium text-[#0c4a6e] mb-1">الزيارات الأخيرة</h3>
+            <div className="bg-white/50 rounded-full py-1 px-3">
+              <span className="text-xs text-[#0c4a6e]">أسبوعيًا</span>
+            </div>
+          </div>
+          
           <div className="text-6xl font-bold text-[#333333] mb-6">1,927</div>
           
           <div className="mb-4">

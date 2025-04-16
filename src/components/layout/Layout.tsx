@@ -30,7 +30,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, []);
 
   return (
-    <div className="flex min-h-screen w-full bg-[#3a4c54] dark:bg-[#2d3a42]">
+    <div className="flex min-h-screen w-full bg-[#3a4c54]/10 dark:bg-[#2d3a42]">
       <AppSidebar />
       <div className={cn(
         "flex-1 flex flex-col",
@@ -41,7 +41,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           "flex-1 p-4 md:p-6",
           location.pathname === "/dashboard" && "bg-white/5 backdrop-blur-sm"
         )}>
-          <div className="bg-gradient-to-b from-white to-white/95 rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
             {children}
           </div>
         </main>

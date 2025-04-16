@@ -3,6 +3,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { motion } from "framer-motion";
 
 interface SidebarNavItemProps {
   to: string;
@@ -32,18 +33,20 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
           >
             {({ isActive }) => (
               <>
-                <div 
+                <motion.div 
                   className={cn(
                     "flex items-center justify-center w-12 h-12 rounded-full transition-colors duration-300 shadow-sm",
                     (isActive || checkIsActive(to))
                       ? "bg-white text-[#3a7a89]" 
                       : "text-white hover:bg-white/15"
                   )}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
                 >
                   <div className="w-5 h-5">
                     {icon}
                   </div>
-                </div>
+                </motion.div>
                 {expanded && (
                   <span className="ml-3 text-sm font-medium text-white transition-opacity duration-200">{label}</span>
                 )}
