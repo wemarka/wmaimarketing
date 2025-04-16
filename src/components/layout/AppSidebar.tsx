@@ -10,6 +10,7 @@ import { getNavigationSections } from "./sidebar/navigationConfig";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const AppSidebar = () => {
   const { profile, user } = useAuth();
@@ -48,6 +49,30 @@ const AppSidebar = () => {
   const displayRole = profile?.role || "مستخدم";
   
   const navigationSections = getNavigationSections();
+
+  // Custom wrapper for sidebar items with tooltips
+  const SidebarItemWrapper = ({ children, title, isExpanded }: { 
+    children: React.ReactNode; 
+    title: string;
+    isExpanded: boolean;
+  }) => {
+    if (isExpanded) {
+      return <>{children}</>;
+    }
+    
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {children}
+          </TooltipTrigger>
+          <TooltipContent side={isRTL ? "left" : "right"} className="text-xs py-1 px-2">
+            {title}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  };
   
   return (
     <motion.div 
@@ -78,6 +103,7 @@ const AppSidebar = () => {
         expanded={expanded} 
         checkIsActive={checkIsActive} 
         activePath={activePath}
+        SidebarItemWrapper={SidebarItemWrapper}
       />
       
       <SidebarFooter 

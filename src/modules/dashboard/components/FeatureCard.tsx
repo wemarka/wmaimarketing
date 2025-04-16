@@ -1,83 +1,61 @@
 
 import React from "react";
-import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { ChevronRight } from "lucide-react";
 
 interface FeatureCardProps {
-  icon: React.ReactNode;
   title: string;
   description: string;
+  icon: React.ReactNode;
   href: string;
   iconColor?: string;
-  className?: string;
-  isNew?: boolean;
-  isPopular?: boolean;
 }
 
-const FeatureCard = ({
+const FeatureCard: React.FC<FeatureCardProps> = ({ 
+  title, 
+  description, 
   icon,
-  title,
-  description,
   href,
-  iconColor = "bg-muted text-foreground",
-  className,
-  isNew = false,
-  isPopular = false,
-}: FeatureCardProps) => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-
+  iconColor = "bg-primary/10 text-primary" 
+}) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      whileHover={{ y: -5 }}
+      whileHover={{ scale: 1.01, y: -2 }}
+      transition={{ duration: 0.2 }}
     >
-      <Card 
-        className={cn("overflow-hidden h-full hover:shadow-md transition-all border", 
-          className)}
-      >
-        <CardContent className="p-6">
-          <div className="flex flex-col h-full">
-            <div className="flex items-start justify-between">
-              <div className={cn("p-3 rounded-lg", iconColor)}>
-                {icon}
-              </div>
-              <div className="flex gap-2">
-                {isNew && (
-                  <Badge className="bg-beauty-purple text-white">
-                    {t("dashboard.features.new")}
-                  </Badge>
-                )}
-                {isPopular && (
-                  <Badge className="bg-beauty-gold text-white">
-                    {t("dashboard.features.popular")}
-                  </Badge>
-                )}
-              </div>
+      <Card className="h-full border-none shadow-md overflow-hidden">
+        <CardContent className="p-6 h-full flex flex-col">
+          <div className="flex items-start justify-between mb-3">
+            <div className={cn(
+              "w-10 h-10 rounded-full flex items-center justify-center",
+              iconColor
+            )}>
+              {icon}
             </div>
             
-            <div className="mt-4 flex-grow">
-              <h3 className="text-lg font-medium">{title}</h3>
-              <p className="text-sm text-muted-foreground mt-2">{description}</p>
-            </div>
-            
-            <Button 
-              variant="ghost" 
-              className="justify-start p-0 mt-4 hover:bg-transparent" 
-              onClick={() => navigate(href)}
+            <motion.div 
+              className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center"
+              whileHover={{ scale: 1.1, backgroundColor: "#f5f5f5" }}
+              whileTap={{ scale: 0.95 }}
             >
-              <span>{t("dashboard.features.openTool")}</span>
-              <ChevronRight className="h-4 w-4 ml-2" />
-            </Button>
+              <ChevronRight className="h-4 w-4 text-gray-500" />
+            </motion.div>
           </div>
+          
+          <div className="mt-2">
+            <h3 className="text-lg font-semibold mb-1">{title}</h3>
+            <p className="text-sm text-gray-500">{description}</p>
+          </div>
+          
+          <a 
+            href={href} 
+            className="mt-auto pt-3 text-sm text-primary hover:underline flex items-center"
+            aria-label={`تصفح ${title}`}
+          >
+            تصفح
+          </a>
         </CardContent>
       </Card>
     </motion.div>

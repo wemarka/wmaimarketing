@@ -1,17 +1,17 @@
 
-import React, { useMemo } from "react";
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowUpRight, ArrowDownRight, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useMediaQuery } from "@/hooks/use-media-query";
+import { motion } from "framer-motion";
+import { TrendingUp, TrendingDown, Sparkles } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-export interface StatisticCardProps {
+interface StatisticCardProps {
   title: string;
   value: string | number;
   change: string;
   icon: React.ReactNode;
-  iconBgClass: string;
+  iconBgClass?: string;
   positive?: boolean;
   showSpark?: boolean;
 }
@@ -21,78 +21,91 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
   value,
   change,
   icon,
-  iconBgClass,
+  iconBgClass = "bg-blue-100",
   positive = true,
   showSpark = false,
 }) => {
-  const isMobile = useMediaQuery("(max-width: 640px)");
+  const numericChange = parseFloat(change);
   
-  // استخدام useMemo لتجنب إعادة حساب القيم في كل تصيير
-  const parsedChangeValue = useMemo(() => parseFloat(change), [change]);
-  const isPositive = useMemo(() => positive || parsedChangeValue >= 0, [positive, parsedChangeValue]);
-  const showExceptionalPerformance = useMemo(
-    () => isPositive && parsedChangeValue > 15,
-    [isPositive, parsedChangeValue]
-  );
-
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(155, 135, 245, 0.1), 0 8px 10px -6px rgba(155, 135, 245, 0.1)" }}
+      whileHover={{ y: -2, transition: { duration: 0.2 } }}
     >
-      <Card className="overflow-hidden hover:shadow-md transition-all duration-300 border-beauty-purple/10 dark:border-beauty-purple/20">
-        <CardContent className={cn(
-          "p-6",
-          isMobile && "p-4"
-        )}>
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">{title}</p>
-              <p className={cn(
-                "text-2xl font-semibold bg-gradient-to-r from-beauty-purple to-beauty-lightpurple bg-clip-text text-transparent",
-                isMobile && "text-xl"
-              )}>{value}</p>
-              <div className={cn(
-                "flex items-center mt-1", 
-                isPositive ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-400',
-                "text-sm"
-              )}>
-                {isPositive ? 
-                  <ArrowUpRight className="h-3 w-3 mr-1" /> : 
-                  <ArrowDownRight className="h-3 w-3 mr-1" />
-                }
-                <span>{Math.abs(parsedChangeValue)}% من الأسبوع الماضي</span>
-              </div>
+      <Card className="border-none shadow-sm overflow-hidden">
+        <CardContent className="p-6">
+          <div className="flex justify-between items-center">
+            <div className="flex flex-col">
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="text-sm font-medium text-muted-foreground"
+              >
+                {title}
+              </motion.p>
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                className="flex items-center gap-2"
+              >
+                <span className="text-2xl font-bold">{value}</span>
+                {numericChange !== 0 && (
+                  <div className={cn(
+                    "flex items-center text-xs gap-0.5 py-0.5 px-1.5 rounded",
+                    positive ? "text-green-600 bg-green-50" : "text-red-600 bg-red-50"
+                  )}>
+                    {positive ? (
+                      <TrendingUp className="h-3 w-3" />
+                    ) : (
+                      <TrendingDown className="h-3 w-3" />
+                    )}
+                    {Math.abs(numericChange)}%
+                  </div>
+                )}
+                {showSpark && (
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.5, type: "spring" }}
+                  >
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Sparkles className="h-4 w-4 text-yellow-500" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-xs">أداء ممتاز! استمر في العمل الجيد</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </motion.div>
+                )}
+              </motion.div>
             </div>
-            <div className={cn(
-              "p-2 rounded-md relative",
-              iconBgClass,
-              "dark:bg-opacity-30"
-            )}>
+            
+            <div className={cn("p-2 rounded-lg", iconBgClass)}>
               {icon}
-              {showSpark && (
-                <div className="absolute -top-1 -right-1">
-                  <Sparkles className="h-3 w-3 text-beauty-gold" />
-                </div>
-              )}
             </div>
           </div>
           
-          {showExceptionalPerformance && (
-            <div className="mt-3 pt-3 border-t dark:border-slate-700 border-beauty-purple/10">
-              <div className="text-xs text-green-600 dark:text-green-500 flex items-center">
-                <Sparkles className="h-3 w-3 mr-1" />
-                <span>أداء استثنائي مقارنة بالفترات السابقة</span>
-              </div>
+          <motion.div 
+            className="mt-4 pt-3 border-t border-dashed border-gray-100"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
+            <div className="text-xs text-muted-foreground flex justify-between">
+              <span>مقارنة بالفترة السابقة</span>
+              <span className={positive ? "text-green-600" : "text-red-600"}>
+                {positive ? "▲" : "▼"} {change}%
+              </span>
             </div>
-          )}
+          </motion.div>
         </CardContent>
       </Card>
     </motion.div>
   );
 };
 
-// تصدير تركيب يستخدم React.memo لمنع إعادة التصيير غير الضرورية
-export default React.memo(StatisticCard);
+export default StatisticCard;

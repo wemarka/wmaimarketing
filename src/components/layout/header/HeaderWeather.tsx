@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Cloud, CloudSun, Sun, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface WeatherData {
   temp: number;
@@ -24,7 +25,7 @@ const HeaderWeather: React.FC = () => {
             animate={{ y: [0, -2, 0] }} 
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           >
-            <CloudSun className="h-3 w-3 text-white/70" />
+            <CloudSun className="h-3.5 w-3.5 text-white/80" />
           </motion.div>
         );
       }
@@ -33,7 +34,7 @@ const HeaderWeather: React.FC = () => {
           animate={{ x: [0, 2, 0] }} 
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         >
-          <Cloud className="h-3 w-3 text-white/70" />
+          <Cloud className="h-3.5 w-3.5 text-white/80" />
         </motion.div>
       );
     }
@@ -42,7 +43,7 @@ const HeaderWeather: React.FC = () => {
         animate={{ rotate: [0, 5, 0, -5, 0] }} 
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
       >
-        <Sun className="h-3 w-3 text-white/70" />
+        <Sun className="h-3.5 w-3.5 text-white/80" />
       </motion.div>
     );
   };
@@ -71,20 +72,40 @@ const HeaderWeather: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center gap-1 text-xs text-white/80">
-        <Loader2 className="h-3 w-3 text-white/70 animate-spin" />
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="flex items-center gap-1 text-xs text-white/80"
+      >
+        <Loader2 className="h-3.5 w-3.5 text-white/80 animate-spin" />
         <span>{t("common.loading", "جاري التحميل...")}</span>
-      </div>
+      </motion.div>
     );
   }
 
   if (!weather) return null;
 
   return (
-    <div className="flex items-center gap-1 text-xs text-white/80">
-      {getWeatherIcon(weather.condition)}
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4, delay: 0.4 }}
+      className="flex items-center gap-1.5 text-xs text-white/80"
+    >
+      <TooltipProvider delayDuration={300}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="cursor-help">
+              {getWeatherIcon(weather.condition)}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            <p className="text-xs">{weather.city}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <span>{`${weather.temp}° ${weather.condition}`}</span>
-    </div>
+    </motion.div>
   );
 };
 

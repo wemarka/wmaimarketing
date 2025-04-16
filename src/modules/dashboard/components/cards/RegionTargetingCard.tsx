@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Globe, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const RegionTargetingCard = () => {
   // Sample data
@@ -38,7 +39,16 @@ const RegionTargetingCard = () => {
             <div className={cn(
               "w-8 h-8 rounded-full bg-[#3a7a89]/10 flex items-center justify-center"
             )}>
-              <Globe className="h-4 w-4 text-[#3a7a89]" />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Globe className="h-4 w-4 text-[#3a7a89]" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">استهداف المناطق</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <h3 className="text-lg font-semibold text-[#3a7a89]">استهداف المناطق</h3>
           </div>
@@ -59,7 +69,7 @@ const RegionTargetingCard = () => {
               variants={item}
               className="flex-1 text-center"
             >
-              <div className="relative mx-auto w-12 h-12 mb-2">
+              <div className="relative mx-auto w-12 h-12 mb-2 cursor-pointer" title={`${region.name}: ${region.percentage}%`}>
                 <motion.div 
                   className={`${region.color} opacity-20 absolute inset-0 rounded-full`}
                   initial={{ scale: 0 }}
@@ -77,6 +87,7 @@ const RegionTargetingCard = () => {
                   initial={{ scale: 0 }}
                   animate={{ scale: 0.5 }}
                   transition={{ duration: 0.5, delay: 0.2 + 0.2 * region.id }}
+                  whileHover={{ scale: 0.55 }}
                 >
                   <MapPin className="h-4 w-4" />
                 </motion.div>
@@ -100,6 +111,7 @@ const RegionTargetingCard = () => {
                 key={region.id}
                 variants={item}
                 className="flex items-center gap-2"
+                whileHover={{ x: 2 }}
               >
                 <div className={`w-3 h-3 rounded-full ${region.color}`}></div>
                 <div className="text-sm flex-1">{region.name}</div>
@@ -115,7 +127,7 @@ const RegionTargetingCard = () => {
           initial="hidden"
           animate="show"
         >
-          <button className="text-sm text-[#3a7a89] hover:underline flex items-center justify-center w-full">
+          <button className="text-sm text-[#3a7a89] hover:underline flex items-center justify-center w-full hover:text-[#2c5d68] transition-colors">
             عرض تقرير التوزيع الجغرافي الكامل
           </button>
         </motion.div>

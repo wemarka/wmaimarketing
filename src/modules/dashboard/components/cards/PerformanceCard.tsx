@@ -2,8 +2,9 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { BarChart3, ChevronDown, ChevronUp } from "lucide-react";
+import { BarChart3, ChevronDown, ChevronUp, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const PerformanceCard = () => {
   // Sample data for chart
@@ -38,7 +39,16 @@ const PerformanceCard = () => {
             <div className={cn(
               "w-8 h-8 rounded-full bg-[#3a7a89]/10 flex items-center justify-center ml-3"
             )}>
-              <BarChart3 className="h-4 w-4 text-[#3a7a89]" />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <BarChart3 className="h-4 w-4 text-[#3a7a89]" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">الأداء المالي</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <h3 className="text-lg font-semibold text-[#3a7a89]">الأداء المالي</h3>
           </div>
@@ -46,7 +56,7 @@ const PerformanceCard = () => {
           <div className="relative">
             <button 
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="bg-[#f5f5f5] rounded-full py-1 px-3 flex items-center text-xs text-gray-500"
+              className="bg-[#f5f5f5] hover:bg-[#e5e5e5] transition-colors rounded-full py-1 px-3 flex items-center text-xs text-gray-500"
             >
               شهريًا
               {isDropdownOpen ? 
@@ -76,27 +86,58 @@ const PerformanceCard = () => {
         </motion.div>
         
         <div className="flex items-baseline gap-2 mb-6">
-          <div className="font-bold text-2xl">841</div>
-          <div className="font-bold text-lg text-[#3a7a89]">+12</div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="font-bold text-2xl"
+          >
+            841
+          </motion.div>
+          <div className="flex items-center">
+            <TrendingUp className="h-3 w-3 text-green-500 mr-0.5" />
+            <div className="font-medium text-sm text-green-500">+12</div>
+          </div>
           <div className="text-xs text-gray-500">الدخل المنتظم</div>
         </div>
         
-        <div className="flex items-end justify-between h-36 mt-6">
-          {months.map((month, index) => (
-            <div key={month} className="flex flex-col items-center">
-              <motion.div 
-                className={cn(
-                  "w-6 rounded-md", 
-                  month === "MAY" ? "bg-[#3a7a89]" : "bg-[#3a7a89]/70"
-                )}
-                custom={index}
-                initial="hidden"
-                animate="visible"
-                variants={barVariants}
-              ></motion.div>
-              <div className="mt-2 text-xs text-gray-500">{month}</div>
+        <div className="flex flex-col">
+          <div className="flex items-end justify-between h-36 mt-6 relative">
+            <div className="absolute inset-0 grid grid-cols-1 grid-rows-4">
+              {[...Array(5)].map((_, index) => (
+                <div key={index} className="border-t border-gray-100 h-0"></div>
+              ))}
             </div>
-          ))}
+            {months.map((month, index) => (
+              <div key={month} className="flex flex-col items-center z-10 relative">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.div 
+                        className={cn(
+                          "w-6 rounded-md cursor-pointer", 
+                          month === "MAY" ? "bg-[#3a7a89]" : "bg-[#3a7a89]/70"
+                        )}
+                        custom={index}
+                        initial="hidden"
+                        animate="visible"
+                        variants={barVariants}
+                        whileHover={{ opacity: 0.8 }}
+                      ></motion.div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">{values[index]} وحدة في {month}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <div className="mt-2 text-xs text-gray-500">{month}</div>
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-3 mt-3">
+            <div className="text-xs text-gray-400 text-center">0</div>
+            <div className="text-xs text-gray-400 text-center">50</div>
+            <div className="text-xs text-gray-400 text-center">100</div>
+          </div>
         </div>
       </CardContent>
     </Card>

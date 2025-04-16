@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import HeaderGreetingTitle from "./greeting/HeaderGreetingTitle";
 import HeaderGreetingDate from "./greeting/HeaderGreetingDate";
 import HeaderWeather from "./HeaderWeather";
+import { motion } from "framer-motion";
 
 interface HeaderGreetingProps {
   currentTime: Date;
@@ -22,7 +23,12 @@ const HeaderGreeting: React.FC<HeaderGreetingProps> = ({
   const userName = profileData?.first_name || "";
   
   return (
-    <div className="hidden md:flex items-center gap-3 bg-white/10 px-3 py-1.5 rounded-lg">
+    <motion.div 
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="hidden md:flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-sm"
+    >
       <HeaderGreetingTitle greeting={greeting} userName={userName} />
       
       <div className="hidden lg:flex items-center gap-3">
@@ -31,7 +37,7 @@ const HeaderGreeting: React.FC<HeaderGreetingProps> = ({
         <Separator orientation="vertical" className="h-4 bg-white/20" />
         <HeaderWeather />
       </div>
-    </div>
+    </motion.div>
   );
 };
 

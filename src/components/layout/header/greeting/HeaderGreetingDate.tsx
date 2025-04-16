@@ -2,6 +2,7 @@
 import React from "react";
 import { Calendar } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 
 interface HeaderGreetingDateProps {
   currentTime: Date;
@@ -25,10 +26,15 @@ const HeaderGreetingDate: React.FC<HeaderGreetingDateProps> = ({
   };
 
   return (
-    <div className="flex items-center gap-1 text-xs text-white/80">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4, delay: 0.2 }}
+      className="flex items-center gap-1.5 text-xs text-white/80"
+    >
       <Calendar className="h-3 w-3 text-white/70" />
       <span>{formatDateInArabic()}</span>
-    </div>
+    </motion.div>
   );
 };
 

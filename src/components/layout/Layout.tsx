@@ -9,6 +9,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useSidebarNavigation } from "./sidebar/useSidebarNavigation";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -72,43 +73,45 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <div 
-      className={cn(
-        "flex min-h-screen w-full overflow-x-hidden transition-colors duration-300",
-        "bg-[#f8fafc] dark:bg-[#1e2a36]"
-      )}
-      dir={isRTL ? "rtl" : "ltr"}
-    >
-      <AppSidebar />
-      
-      <motion.div 
-        className="flex-1 flex flex-col"
-        style={{
-          marginLeft: !isRTL && sidebarPosition === "left" ? (expanded ? "16rem" : "4.5rem") : 0,
-          marginRight: isRTL && sidebarPosition === "right" ? (expanded ? "16rem" : "4.5rem") : 0,
-          transition: "margin 0.3s ease"
-        }}
-        {...contentAnimation}
+    <TooltipProvider>
+      <div 
+        className={cn(
+          "flex min-h-screen w-full overflow-x-hidden transition-colors duration-300",
+          "bg-[#f8fafc] dark:bg-[#1e2a36]"
+        )}
+        dir={isRTL ? "rtl" : "ltr"}
       >
-        <Header />
-        <main className={cn(
-          "flex-1 p-4 md:p-6 transition-all",
-          location.pathname === "/dashboard" && "bg-gradient-to-br from-[#3a7a89]/5 to-white/10 dark:bg-slate-900/5"
-        )}>
-          <AnimatePresence mode="wait">
-            <motion.div 
-              key={location.pathname + activeDashboardTab}
-              className="bg-white/80 dark:bg-slate-900/90 rounded-2xl shadow-xl overflow-hidden backdrop-blur-sm"
-              {...childAnimation}
-            >
-              {children}
-            </motion.div>
-          </AnimatePresence>
-        </main>
-      </motion.div>
-      
-      {isMobile && <MobileNavbar />}
-    </div>
+        <AppSidebar />
+        
+        <motion.div 
+          className="flex-1 flex flex-col"
+          style={{
+            marginLeft: !isRTL && sidebarPosition === "left" ? (expanded ? "16rem" : "4.5rem") : 0,
+            marginRight: isRTL && sidebarPosition === "right" ? (expanded ? "16rem" : "4.5rem") : 0,
+            transition: "margin 0.3s ease"
+          }}
+          {...contentAnimation}
+        >
+          <Header />
+          <main className={cn(
+            "flex-1 p-4 md:p-6 transition-all",
+            location.pathname === "/dashboard" && "bg-gradient-to-br from-[#3a7a89]/5 to-white/10 dark:bg-slate-900/5"
+          )}>
+            <AnimatePresence mode="wait">
+              <motion.div 
+                key={location.pathname + activeDashboardTab}
+                className="bg-white/80 dark:bg-slate-900/90 rounded-2xl shadow-xl overflow-hidden backdrop-blur-sm"
+                {...childAnimation}
+              >
+                {children}
+              </motion.div>
+            </AnimatePresence>
+          </main>
+        </motion.div>
+        
+        {isMobile && <MobileNavbar />}
+      </div>
+    </TooltipProvider>
   );
 };
 
