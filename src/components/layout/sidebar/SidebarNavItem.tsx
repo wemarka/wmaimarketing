@@ -6,7 +6,7 @@ import { useTooltip } from "@/hooks/use-tooltip";
 import { cn } from "@/lib/utils";
 import { SidebarTooltip } from "./SidebarTooltip";
 import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface SidebarNavItemProps {
   item: NavItem;
