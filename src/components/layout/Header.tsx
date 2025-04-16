@@ -8,7 +8,11 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import CompactHeader from "./header/CompactHeader";
 import CompactUserInfo from "./header/CompactUserInfo";
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  bgColor?: string;
+}
+
+const Header: React.FC<HeaderProps> = ({ bgColor }) => {
   const location = useLocation();
   const { i18n } = useTranslation();
   const { profile } = useAuth();
@@ -39,13 +43,18 @@ const Header: React.FC = () => {
                        location.pathname === "/dashboard/performance" || 
                        location.pathname === "/dashboard/interactions";
   
+  // Use the provided bgColor or the default gradient
+  const headerBgClass = bgColor ? bgColor : cn(
+    "bg-[#3a7a89] text-white",
+    isDashboard && "bg-gradient-to-r from-[#3a7a89] to-[#2d6270]"
+  );
+
   return (
     <header
       className={cn(
         "sticky top-0 z-20 w-full border-b border-white/10",
-        "bg-[#3a7a89] text-white",
-        "transition-colors duration-300 ease-in-out",
-        isDashboard && "bg-gradient-to-r from-[#3a7a89] to-[#2d6270]"
+        headerBgClass,
+        "transition-colors duration-300 ease-in-out"
       )}
     >
       <div className="flex h-16 items-center justify-between px-4 md:px-6">

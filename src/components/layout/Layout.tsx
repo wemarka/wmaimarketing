@@ -1,3 +1,4 @@
+
 import React from "react";
 import AppSidebar from "./AppSidebar";
 import Header from "./Header";
@@ -36,7 +37,7 @@ const Layout: React.FC<LayoutProps> = ({
     <div className="min-h-screen w-full flex">
       <AppSidebar />
       <div className={mainContentClass}>
-        <Header bgColor={navbarBgColor} />
+        <Header />
         <PageTransition type={transition}>
           <main className={`${contentClasses[pageType]} ${contentClassName}`}>
             {children}

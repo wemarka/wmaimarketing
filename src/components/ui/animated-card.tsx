@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils";
 import { motion, MotionProps } from "framer-motion";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./card";
 
-// Types for the component
-interface AnimatedCardProps extends React.HTMLAttributes<HTMLDivElement> {
+// Types for the component, fixing the type conflict issue
+interface AnimatedCardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title' | 'content'> {
   title?: React.ReactNode;
   description?: React.ReactNode;
   icon?: React.ReactNode;
@@ -98,6 +98,7 @@ const AnimatedCard = ({
     }
   };
 
+  // Use correct typing for motion.div
   return (
     <motion.div
       variants={cardVariants}
