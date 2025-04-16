@@ -37,7 +37,7 @@ const Layout: React.FC<LayoutProps> = ({
     <div className="min-h-screen w-full flex">
       <AppSidebar />
       <div className={mainContentClass}>
-        <Header />
+        <Header bgColor={navbarBgColor} />
         <PageTransition type={transition}>
           <main className={`${contentClasses[pageType]} ${contentClassName}`}>
             {children}

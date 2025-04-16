@@ -1,11 +1,11 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { motion, MotionProps } from "framer-motion";
+import { motion, MotionProps, HTMLMotionProps } from "framer-motion";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./card";
 
 // Types for the component, fixing the type conflict issue
-interface AnimatedCardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title' | 'content'> {
+interface AnimatedCardProps {
   title?: React.ReactNode;
   description?: React.ReactNode;
   icon?: React.ReactNode;
@@ -20,6 +20,7 @@ interface AnimatedCardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   headerClassName?: string;
   contentClassName?: string;
   footerClassName?: string;
+  className?: string;
 }
 
 const AnimatedCard = ({
@@ -98,7 +99,7 @@ const AnimatedCard = ({
     }
   };
 
-  // Use correct typing for motion.div
+  // Use proper typing for motion.div
   return (
     <motion.div
       variants={cardVariants}
@@ -114,7 +115,6 @@ const AnimatedCard = ({
           variantClasses[variant],
           hoverable && "transition-all duration-300"
         )}
-        {...props}
       >
         {(title || description || icon) && (
           <CardHeader className={cn("flex items-start gap-4", headerClassName)}>
