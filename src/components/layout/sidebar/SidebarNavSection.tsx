@@ -1,9 +1,7 @@
 
 import React from "react";
-import { cn } from "@/lib/utils";
 import SidebarNavItem from "./SidebarNavItem";
-import { motion, AnimatePresence } from "framer-motion";
-import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 
 interface NavItem {
   id: string;
@@ -18,6 +16,11 @@ interface SidebarNavSectionProps {
   expanded: boolean;
   checkIsActive: (path: string) => boolean;
   activePath: string;
+  SidebarItemWrapper?: ({ children, title, isExpanded }: { 
+    children: React.ReactNode; 
+    title: string; 
+    isExpanded: boolean 
+  }) => JSX.Element;
 }
 
 const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
@@ -25,74 +28,48 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
   items,
   expanded,
   checkIsActive,
-  activePath
+  activePath,
+  SidebarItemWrapper
 }) => {
-  const { i18n } = useTranslation();
-  const isRTL = i18n.language === "ar" || document.dir === "rtl";
-
-  const containerAnimation = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05,
-        delayChildren: 0.05
-      }
-    }
-  };
-
-  const itemAnimation = {
-    hidden: { 
-      opacity: 0, 
-      y: 5, 
-      x: isRTL ? 10 : -10 
-    },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      x: 0, 
-      transition: { duration: 0.2 } 
-    }
-  };
-
   return (
-    <div className="w-full flex flex-col" dir={isRTL ? "rtl" : "ltr"}>
-      <AnimatePresence mode="wait">
-        {expanded && (
-          <motion.h3
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -5 }}
-            transition={{ duration: 0.2 }}
-            className={cn(
-              "px-4 mb-2 text-xs font-medium text-white/60 uppercase tracking-wider",
-              isRTL ? "text-right" : "text-left"
-            )}
-          >
-            {title}
-          </motion.h3>
-        )}
-      </AnimatePresence>
+    <div className="mb-2">
+      {/* Section title - only shown when expanded */}
+      {expanded && (
+        <motion.h3 
+          className="text-xs font-medium text-white/60 uppercase tracking-wider px-3 mb-3"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          {title}
+        </motion.h3>
+      )}
       
-      <motion.div 
-        variants={containerAnimation}
-        initial="hidden"
-        animate="visible"
-        className="space-y-1 w-full"
-      >
+      {/* Navigation items */}
+      <div className="space-y-1">
         {items.map((item) => (
-          <motion.div key={item.id} variants={itemAnimation}>
-            <SidebarNavItem
-              to={item.to}
-              icon={item.icon}
-              label={item.label}
-              expanded={expanded}
-              checkIsActive={checkIsActive}
-              activePath={activePath}
-            />
-          </motion.div>
+          <div key={item.id}>
+            {SidebarItemWrapper ? (
+              <SidebarItemWrapper title={item.label} isExpanded={expanded}>
+                <SidebarNavItem
+                  item={item}
+                  expanded={expanded}
+                  isActive={checkIsActive(item.to)}
+                  activePath={activePath}
+                />
+              </SidebarItemWrapper>
+            ) : (
+              <SidebarNavItem
+                item={item}
+                expanded={expanded}
+                isActive={checkIsActive(item.to)}
+                activePath={activePath}
+              />
+            )}
+          </div>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 };
