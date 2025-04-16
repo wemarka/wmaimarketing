@@ -59,19 +59,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
   }, []);
 
-  // Dynamic margin styles based on sidebar position and expansion state
-  const getMarginStyle = () => {
-    if (isMobile) return "";
-    
-    const baseMargin = expanded ? "16rem" : "4.5rem";
-    
-    if (sidebarPosition === "left") {
-      return `ml-[${baseMargin}]`;
-    } else {
-      return `mr-[${baseMargin}]`;
-    }
-  };
-
   return (
     <div 
       className={cn(
@@ -85,8 +72,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <motion.div 
         className="flex-1 flex flex-col"
         style={{
-          marginLeft: sidebarPosition === "left" ? (expanded ? "16rem" : "4.5rem") : 0,
-          marginRight: sidebarPosition === "right" ? (expanded ? "16rem" : "4.5rem") : 0,
+          marginLeft: sidebarPosition === "left" && !isMobile ? (expanded ? "16rem" : "4.5rem") : 0,
+          marginRight: sidebarPosition === "right" && !isMobile ? (expanded ? "16rem" : "4.5rem") : 0,
         }}
         initial={{ opacity: 0 }}
         animate={{ opacity: mounted ? 1 : 0 }}

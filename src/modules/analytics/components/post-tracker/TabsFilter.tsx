@@ -2,6 +2,8 @@
 import React from "react";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
 
 interface TabsFilterProps {
   statusFilter: string;
@@ -10,6 +12,9 @@ interface TabsFilterProps {
 }
 
 const TabsFilter: React.FC<TabsFilterProps> = ({ statusFilter, onStatusChange, counts = {} }) => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
+
   const tabs = [
     { id: "all", label: "الكل", count: counts.all || 0 },
     { id: "published", label: "المنشورة", count: counts.published || 0 },
@@ -19,7 +24,10 @@ const TabsFilter: React.FC<TabsFilterProps> = ({ statusFilter, onStatusChange, c
   ];
   
   return (
-    <TabsList className="grid grid-cols-2 md:grid-cols-5 mb-4 overflow-x-auto scrollbar-none">
+    <TabsList 
+      className="grid grid-cols-2 md:grid-cols-5 mb-4 overflow-x-auto scrollbar-none"
+      dir={isRTL ? "rtl" : "ltr"}
+    >
       {tabs.map(tab => (
         <TabsTrigger 
           key={tab.id} 
@@ -29,7 +37,10 @@ const TabsFilter: React.FC<TabsFilterProps> = ({ statusFilter, onStatusChange, c
         >
           {tab.label}
           {tab.count > 0 && (
-            <span className="ml-1.5 text-xs bg-muted rounded-full px-1.5 py-0.5 text-muted-foreground">
+            <span className={cn(
+              "text-xs bg-muted rounded-full px-1.5 py-0.5 text-muted-foreground",
+              isRTL ? "mr-1.5" : "ml-1.5"
+            )}>
               {tab.count}
             </span>
           )}

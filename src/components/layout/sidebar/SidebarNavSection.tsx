@@ -35,24 +35,35 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
     visible: { 
       opacity: 1,
       transition: {
-        staggerChildren: 0.05 
+        staggerChildren: 0.05,
+        delayChildren: 0.05
       }
     }
   };
 
   const itemAnimation = {
-    hidden: { opacity: 0, y: 5 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.2 } }
+    hidden: { 
+      opacity: 0, 
+      y: 5, 
+      x: isRTL ? 10 : -10 
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      x: 0, 
+      transition: { duration: 0.2 } 
+    }
   };
 
   return (
     <div className="w-full flex flex-col" dir={isRTL ? "rtl" : "ltr"}>
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {expanded && (
           <motion.h3
             initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -5 }}
+            transition={{ duration: 0.2 }}
             className={cn(
               "px-4 mb-2 text-xs font-medium text-white/60 uppercase tracking-wider",
               isRTL ? "text-right" : "text-left"

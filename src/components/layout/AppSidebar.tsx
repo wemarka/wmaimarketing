@@ -9,6 +9,7 @@ import { useSidebarNavigation } from "./sidebar/useSidebarNavigation";
 import { getNavigationSections } from "./sidebar/navigationConfig";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const AppSidebar = () => {
   const { profile, user } = useAuth();
@@ -16,11 +17,11 @@ const AppSidebar = () => {
   const location = useLocation();
   const [activePath, setActivePath] = useState(location.pathname);
   const [mounted, setMounted] = useState(false);
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
   
   // Handle initial mount animation
   useEffect(() => {
-    setMounted(true);
-    
     // Add a delay to ensure CSS transitions work properly
     const timer = setTimeout(() => {
       setMounted(true);
@@ -54,43 +55,45 @@ const AppSidebar = () => {
   };
   
   return (
-    <AnimatePresence>
-      <motion.div 
-        className={cn(
-          "fixed h-screen bg-gradient-to-b transition-colors z-30",
-          "from-[#3a7a89] to-[#2c6c7a] shadow-lg flex flex-col",
-          "border-white/10 overflow-hidden",
-          sidebarPosition === "left" ? "left-0 border-r" : "right-0 border-l",
-          !mounted && "opacity-0"
-        )}
-        variants={sidebarVariants}
-        initial={false}
-        animate={expanded ? "expanded" : "collapsed"}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      >
-        <SidebarHeader 
-          expanded={expanded} 
-          toggleExpanded={toggleExpanded} 
-        />
-        
-        <SidebarContent 
-          navigationSections={navigationSections} 
-          expanded={expanded} 
-          checkIsActive={checkIsActive} 
-          activePath={activePath}
-        />
-        
-        <SidebarFooter 
-          expanded={expanded}
-          isDarkMode={isDarkMode}
-          toggleDarkMode={toggleDarkMode}
-          displayName={displayName}
-          displayRole={displayRole}
-          userInitials={userInitials}
-          avatarUrl={profile?.avatar_url}
-        />
-      </motion.div>
-    </AnimatePresence>
+    <motion.div 
+      className={cn(
+        "fixed h-screen bg-gradient-to-b transition-colors z-30",
+        "from-[#3a7a89] to-[#2c6c7a] shadow-lg flex flex-col",
+        "border-white/10 overflow-hidden",
+        sidebarPosition === "left" ? "left-0 border-r" : "right-0 border-l",
+        !mounted && "opacity-0"
+      )}
+      variants={sidebarVariants}
+      initial={expanded ? "expanded" : "collapsed"}
+      animate={expanded ? "expanded" : "collapsed"}
+      transition={{ 
+        type: "spring", 
+        stiffness: 300, 
+        damping: 30
+      }}
+    >
+      <SidebarHeader 
+        expanded={expanded} 
+        toggleExpanded={toggleExpanded} 
+      />
+      
+      <SidebarContent 
+        navigationSections={navigationSections} 
+        expanded={expanded} 
+        checkIsActive={checkIsActive} 
+        activePath={activePath}
+      />
+      
+      <SidebarFooter 
+        expanded={expanded}
+        isDarkMode={isDarkMode}
+        toggleDarkMode={toggleDarkMode}
+        displayName={displayName}
+        displayRole={displayRole}
+        userInitials={userInitials}
+        avatarUrl={profile?.avatar_url}
+      />
+    </motion.div>
   );
 };
 

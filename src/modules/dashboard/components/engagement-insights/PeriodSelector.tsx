@@ -28,6 +28,11 @@ export const PeriodSelector = ({
   // Use timeRange if value is not provided
   const selectedValue = value || timeRange || "week";
   
+  const buttonAnimation = {
+    tap: { scale: 0.97 },
+    hover: { scale: 1.03 }
+  };
+  
   return (
     <div className={cn(
       "flex items-center gap-4",
@@ -37,7 +42,7 @@ export const PeriodSelector = ({
         <SelectTrigger className="w-[120px]">
           <SelectValue>{t(`dashboard.timeRanges.${selectedValue}`, selectedValue)}</SelectValue>
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent align={isRTL ? "end" : "start"}>
           <SelectItem value="day">{t("dashboard.timeRanges.day", "يوم")}</SelectItem>
           <SelectItem value="week">{t("dashboard.timeRanges.week", "أسبوع")}</SelectItem>
           <SelectItem value="month">{t("dashboard.timeRanges.month", "شهر")}</SelectItem>
@@ -48,7 +53,9 @@ export const PeriodSelector = ({
       
       {onCompareModeToggle && (
         <motion.div 
-          whileTap={{ scale: 0.97 }}
+          variants={buttonAnimation}
+          whileTap="tap"
+          whileHover="hover"
           className={isRTL ? "mr-auto" : "ml-auto"}
         >
           <Button 
@@ -62,7 +69,12 @@ export const PeriodSelector = ({
             onClick={onCompareModeToggle}
             data-state={compareMode ? "active" : "inactive"}
           >
-            <CompareIcon className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
+            <CompareIcon className={cn(
+              "h-4 w-4", 
+              isRTL ? "ml-2" : "mr-2",
+              "transition-transform",
+              compareMode && "rotate-180"
+            )} />
             {t("dashboard.compare", "مقارنة")}
           </Button>
         </motion.div>

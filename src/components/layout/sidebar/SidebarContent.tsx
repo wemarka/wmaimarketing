@@ -38,9 +38,8 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
     visible: { 
       opacity: 1,
       transition: {
-        when: "beforeChildren",
         staggerChildren: 0.1,
-        delayChildren: 0.1
+        delayChildren: 0.05
       }
     }
   };
@@ -61,7 +60,8 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
 
   return (
     <ScrollArea 
-      className="h-[calc(100vh-64px-80px)] pr-1" 
+      className="h-[calc(100vh-64px-80px)] px-1" 
+      scrollHideDelay={500}
       dir={isRTL ? "rtl" : "ltr"}
     >
       <motion.div 

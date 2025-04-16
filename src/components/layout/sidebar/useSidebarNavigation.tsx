@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 export const useSidebarNavigation = () => {
   const { i18n } = useTranslation();
@@ -64,7 +65,7 @@ export const useSidebarNavigation = () => {
   const updateSidebarPosition = useCallback(() => {
     const isRTL = i18n.language === "ar" || document.dir === "rtl";
     setSidebarPosition(isRTL ? "right" : "left");
-  }, [i18n.language, document.dir]);
+  }, [i18n.language]);
 
   const toggleExpanded = () => {
     setExpanded(!expanded);
@@ -75,6 +76,11 @@ export const useSidebarNavigation = () => {
     setIsDarkMode(newDarkMode);
     document.documentElement.classList.toggle('dark', newDarkMode);
     localStorage.setItem('theme', newDarkMode ? 'dark' : 'light');
+    
+    toast.success(
+      newDarkMode ? 'تم تفعيل الوضع الداكن' : 'تم تفعيل الوضع الفاتح', 
+      { duration: 2000 }
+    );
   };
   
   // Helper function to check if a route is active

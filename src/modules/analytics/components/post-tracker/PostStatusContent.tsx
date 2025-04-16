@@ -31,7 +31,6 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
   
   // Calculate counts for each status
   const statusCounts = statuses.reduce((acc, status) => {
-    // Make sure we're accessing properties that exist on the StatusInfo type
     if ('id' in status && 'value' in status) {
       acc[status.id as string] = status.value as number;
     }
@@ -48,7 +47,16 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
   // RTL-aware animation variants
   const itemAnimationRTL = {
     hidden: { opacity: 0, x: isRTL ? -10 : 10 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.3 } }
+    visible: { 
+      opacity: 1, 
+      x: 0, 
+      transition: { 
+        type: "spring",
+        stiffness: 300,
+        damping: 25,
+        duration: 0.3 
+      } 
+    }
   };
   
   // Container animation with staggered children

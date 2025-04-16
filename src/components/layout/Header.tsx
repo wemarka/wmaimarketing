@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import { LayoutGrid, BarChart, PieChart } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 import HeaderTitle from "./header/HeaderTitle";
 import HeaderActions from "./header/HeaderActions";
@@ -15,6 +16,8 @@ const Header: React.FC = () => {
   const { profile } = useAuth();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [mounted, setMounted] = useState(false);
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
   
   // Animation on mount
   useEffect(() => {
@@ -48,7 +51,8 @@ const Header: React.FC = () => {
   const dashboardTabItems = [
     { id: "dashboard", label: "النظرة العامة", icon: <LayoutGrid className="h-4 w-4" /> },
     { id: "performance", label: "الأداء", icon: <BarChart className="h-4 w-4" /> },
-    { id: "analytics", label: "التحليلات", icon: <PieChart className="h-4 w-4" /> }
+    { id: "analytics", label: "التحليلات", icon: <PieChart className="h-4 w-4" /> },
+    { id: "content", label: "المحتوى", icon: <PieChart className="h-4 w-4" /> }
   ];
 
   // Team members for avatar display
@@ -64,6 +68,11 @@ const Header: React.FC = () => {
     window.dispatchEvent(new CustomEvent('dashboard-tab-change', { 
       detail: { tab: tabId } 
     }));
+    
+    // Also dispatch the header-tab-change event
+    window.dispatchEvent(new CustomEvent('header-tab-change', { 
+      detail: { tab: tabId } 
+    }));
   };
 
   // Check if current route is dashboard
@@ -76,7 +85,10 @@ const Header: React.FC = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <header className="bg-gradient-to-r from-[#3a7a89] to-[#4a8a99] px-6 py-4 text-white shadow-lg">
+      <header 
+        className="bg-gradient-to-r from-[#3a7a89] to-[#4a8a99] px-6 py-4 text-white shadow-lg"
+        dir={isRTL ? "rtl" : "ltr"}
+      >
         <div className="flex flex-col space-y-3">
           {/* Top row with logo, title and actions */}
           <motion.div 

@@ -30,14 +30,15 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.1,
+        delayChildren: 0.05
       }
     }
   };
   
   const itemAnimation = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
+    show: { opacity: 1, y: 0, transition: { duration: 0.3 } }
   };
 
   // RTL-aware animation initial and exit values
