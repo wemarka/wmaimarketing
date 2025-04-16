@@ -28,8 +28,8 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
         <TooltipTrigger asChild>
           <NavLink
             to={to}
-            className={({ isActive }) => cn(
-              "flex items-center py-2",
+            className={cn(
+              "flex items-center py-2 rounded-lg transition-colors",
               expanded ? "px-3 justify-start" : "justify-center"
             )}
           >
@@ -44,7 +44,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                   )}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <div className="w-5 h-5">
                     {icon}
@@ -53,7 +53,10 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                 
                 {expanded && (
                   <motion.span 
-                    className="ml-3 text-sm font-medium text-white transition-opacity duration-200"
+                    className={cn(
+                      "ml-3 text-sm font-medium transition-opacity duration-200",
+                      isActive ? "text-white" : "text-white/80"
+                    )}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -10 }}

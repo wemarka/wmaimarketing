@@ -79,21 +79,21 @@ const Dashboard = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <div>
+              <div className="text-right">
                 <h1 className="text-2xl font-bold text-[#3a7a89] mb-1">
                   {getGreeting()}, {user?.email?.split('@')[0] || 'مرحبًا بك'}
                 </h1>
                 <p className="text-sm text-gray-500">{getFormattedDate()}</p>
               </div>
               
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-3 justify-end">
                 <div className="bg-white dark:bg-slate-800 rounded-full py-1 px-4 text-sm shadow-sm border border-gray-100 dark:border-slate-700 flex items-center">
-                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                  <span className="w-2 h-2 bg-green-500 rounded-full ml-2"></span>
                   <span>جدولة منشورات جديدة</span>
                 </div>
                 
                 <div className="bg-white dark:bg-slate-800 rounded-full py-1 px-4 text-sm shadow-sm border border-gray-100 dark:border-slate-700 flex items-center">
-                  <span className="w-2 h-2 bg-amber-500 rounded-full mr-2"></span>
+                  <span className="w-2 h-2 bg-amber-500 rounded-full ml-2"></span>
                   <span>استعراض تفاعلات الأسبوع</span>
                 </div>
               </div>
