@@ -1,6 +1,6 @@
 
 import React from "react";
-import SidebarNavItem from "./SidebarNavItem";
+import { SidebarNavItem } from "./SidebarNavItem";
 import { motion } from "framer-motion";
 
 interface NavItem {

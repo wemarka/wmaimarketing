@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useRBACSidebar } from "@/modules/dashboard/utils/sidebarItems";
 import { useAuth } from "@/context/AuthContext";
 import CollapsibleSidebarNav from "./CollapsibleSidebarNav";
-import { NavSection } from "@/modules/dashboard/utils/types/sidebarTypes";
+import { NavItem, NavSection } from "@/modules/dashboard/utils/types/sidebarTypes";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import { SidebarNavItem } from "./SidebarNavItem";
