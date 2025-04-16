@@ -1,8 +1,9 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { LayoutGrid, BarChart, PieChart } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { motion } from "framer-motion";
 
 import HeaderTitle from "./header/HeaderTitle";
 import HeaderActions from "./header/HeaderActions";
@@ -13,6 +14,12 @@ const Header: React.FC = () => {
   const location = useLocation();
   const { profile } = useAuth();
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [mounted, setMounted] = useState(false);
+  
+  // Animation on mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   // Function to get page title based on current route
   const getPageTitle = () => {
@@ -32,16 +39,16 @@ const Header: React.FC = () => {
 
   // Main navigation items with icons
   const mainNavItems = [
-    { id: "dashboard", title: "لوحة التحكم", path: "/dashboard", icon: <LayoutGrid className="h-4 w-4 ml-2" /> },
-    { id: "insights", title: "الإحصائيات", path: "/insights", icon: <BarChart className="h-4 w-4 ml-2" /> },
-    { id: "channels", title: "القنوات", path: "/channels", icon: <PieChart className="h-4 w-4 ml-2" /> }
+    { id: "dashboard", title: "لوحة التحكم", path: "/dashboard", icon: <LayoutGrid className="h-4 w-4" /> },
+    { id: "insights", title: "الإحصائيات", path: "/insights", icon: <BarChart className="h-4 w-4" /> },
+    { id: "channels", title: "القنوات", path: "/channels", icon: <PieChart className="h-4 w-4" /> }
   ];
   
   // Dashboard tab items that show when on dashboard page
   const dashboardTabItems = [
-    { id: "dashboard", label: "لوحة التحكم", icon: <LayoutGrid className="h-4 w-4 ml-2" /> },
-    { id: "performance", label: "الأداء", icon: <BarChart className="h-4 w-4 ml-2" /> },
-    { id: "analytics", label: "التحليلات", icon: <PieChart className="h-4 w-4 ml-2" /> }
+    { id: "dashboard", label: "لوحة التحكم", icon: <LayoutGrid className="h-4 w-4" /> },
+    { id: "performance", label: "الأداء", icon: <BarChart className="h-4 w-4" /> },
+    { id: "analytics", label: "التحليلات", icon: <PieChart className="h-4 w-4" /> }
   ];
 
   // Team members for avatar display
@@ -63,34 +70,58 @@ const Header: React.FC = () => {
   const isDashboardRoute = location.pathname.includes("dashboard");
 
   return (
-    <div className="flex flex-col">
+    <motion.div 
+      className="flex flex-col"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
       <header className="bg-gradient-to-r from-[#3a7a89] to-[#4a8a99] px-6 py-4 text-white shadow-lg">
         <div className="flex flex-col space-y-3">
           {/* Top row with logo, title and actions */}
-          <div className="flex items-center justify-between">
+          <motion.div 
+            className="flex items-center justify-between"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+          >
             {/* Left side - Title */}
             <HeaderTitle getPageTitle={getPageTitle} />
             
             {/* Right actions - Search, Notifications, Team */}
             <HeaderActions teamMembers={teamMembers} />
-          </div>
+          </motion.div>
           
           {/* Main Navigation tabs with improved styling */}
-          <div className="flex justify-center md:justify-start">
+          <motion.div 
+            className="flex justify-center md:justify-start"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+          >
             <MainNavTabs navItems={mainNavItems} />
-          </div>
+          </motion.div>
           
           {/* Dashboard sub-tabs with improved styling - only shown on dashboard route */}
-          {isDashboardRoute && (
-            <DashboardSubTabs 
-              tabItems={dashboardTabItems}
-              activeTab={activeTab}
-              onTabChange={handleTabClick}
-            />
-          )}
+          <AnimatePresence>
+            {isDashboardRoute && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <DashboardSubTabs 
+                  tabItems={dashboardTabItems}
+                  activeTab={activeTab}
+                  onTabChange={handleTabClick}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </header>
-    </div>
+    </motion.div>
   );
 };
 

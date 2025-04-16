@@ -29,17 +29,18 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
           <NavLink
             to={to}
             className={cn(
-              "flex items-center py-2 rounded-lg transition-colors",
-              expanded ? "px-3 justify-start" : "justify-center"
+              "flex items-center py-2 rounded-lg transition-colors relative",
+              expanded ? "px-3 justify-start" : "justify-center",
+              isActive && "bg-[#ffffff0f]"
             )}
           >
             {() => (
               <>
                 <motion.div 
                   className={cn(
-                    "flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-300 shadow-sm",
+                    "flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300",
                     isActive
-                      ? "bg-white text-[#3a7a89]" 
+                      ? "bg-gradient-to-br from-white to-white/90 text-[#3a7a89] shadow-md" 
                       : "text-white/90 hover:bg-white/15"
                   )}
                   whileHover={{ scale: 1.05 }}

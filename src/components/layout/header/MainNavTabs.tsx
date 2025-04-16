@@ -32,30 +32,36 @@ const MainNavTabs: React.FC<MainNavTabsProps> = ({
 
   return (
     <Tabs value={activeTab} className="w-full max-w-md mx-auto md:mx-0">
-      <TabsList className="bg-[#2c6c7a]/20 rounded-xl p-1 h-10 w-full md:w-auto overflow-x-auto">
+      <TabsList className="bg-[#2c6c7a]/20 rounded-xl p-1 h-12 w-full md:w-auto overflow-x-auto">
         {navItems.map((item) => (
           <TabsTrigger
             key={item.id}
             value={item.id}
             asChild
-            className="text-white/70 data-[state=active]:text-white relative min-w-[100px] whitespace-nowrap"
+            className={cn(
+              "text-white/80 hover:text-white relative min-w-[100px] whitespace-nowrap",
+              "data-[state=active]:text-white font-medium transition-all duration-300"
+            )}
           >
             <Link
               to={item.path}
-              className="flex items-center gap-2 justify-center px-4 py-1.5"
+              className="flex items-center gap-3 justify-center px-6 py-1.5 rounded-lg"
             >
               <motion.span
-                whileHover={{ scale: 1.1 }}
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
                 {item.icon}
               </motion.span>
-              <span>{item.title}</span>
+              <span className="font-medium">{item.title}</span>
               
               {activeTab === item.id && (
                 <motion.div
                   layoutId="activeMainTab"
-                  className="absolute inset-0 bg-[#2c6c7a]/50 rounded-lg -z-10"
+                  className="absolute inset-0 bg-gradient-to-r from-[#2c6c7a]/70 to-[#3a7a89]/70 rounded-lg shadow-lg -z-10"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
               )}

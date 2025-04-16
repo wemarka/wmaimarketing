@@ -5,7 +5,8 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/context/AuthContext";
 import { Helmet } from "react-helmet-async";
-import { OverviewTab, MarketingTab, ContentTab, AnalyticsTab } from "@/modules/dashboard/components";
+import { OverviewTab, MarketingTab, AnalyticsTab } from "@/modules/dashboard/components";
+import DashboardTabs from "@/modules/dashboard/components/DashboardTabs";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -45,20 +46,6 @@ const Dashboard = () => {
     };
     return new Intl.DateTimeFormat('ar-SA', options).format(currentTime);
   };
-
-  // Render the active tab content
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case "dashboard":
-        return <OverviewTab />;
-      case "performance":
-        return <MarketingTab />;
-      case "analytics":
-        return <AnalyticsTab />;
-      default:
-        return <OverviewTab />;
-    }
-  };
   
   return (
     <Layout>
@@ -87,12 +74,12 @@ const Dashboard = () => {
               </div>
               
               <div className="flex flex-wrap gap-3 justify-end">
-                <div className="bg-white dark:bg-slate-800 rounded-full py-1 px-4 text-sm shadow-sm border border-gray-100 dark:border-slate-700 flex items-center">
-                  <span className="w-2 h-2 bg-green-500 rounded-full ml-2"></span>
+                <div className="bg-white dark:bg-slate-800/70 rounded-full py-1 px-4 text-sm shadow-sm border border-gray-100/50 dark:border-slate-700/50 flex items-center">
+                  <span className="w-2 h-2 bg-green-500 rounded-full ml-2 animate-pulse"></span>
                   <span>جدولة منشورات جديدة</span>
                 </div>
                 
-                <div className="bg-white dark:bg-slate-800 rounded-full py-1 px-4 text-sm shadow-sm border border-gray-100 dark:border-slate-700 flex items-center">
+                <div className="bg-white dark:bg-slate-800/70 rounded-full py-1 px-4 text-sm shadow-sm border border-gray-100/50 dark:border-slate-700/50 flex items-center">
                   <span className="w-2 h-2 bg-amber-500 rounded-full ml-2"></span>
                   <span>استعراض تفاعلات الأسبوع</span>
                 </div>
@@ -101,10 +88,8 @@ const Dashboard = () => {
           </CardContent>
         </Card>
         
-        {/* Tabs content */}
-        <div className="p-6">
-          {renderTabContent()}
-        </div>
+        {/* Tabs content with improved component */}
+        <DashboardTabs activeTab={activeTab} />
       </motion.div>
     </Layout>
   );

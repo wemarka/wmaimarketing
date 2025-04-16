@@ -38,13 +38,19 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
         transition={{ duration: 0.3, delay: 0.2 }}
       >
         {navigationSections.map((section, idx) => (
-          <SidebarNavSection
+          <motion.div
             key={idx}
-            title={section.title}
-            items={section.items}
-            expanded={expanded}
-            checkIsActive={checkIsActive}
-          />
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.1 }}
+          >
+            <SidebarNavSection
+              title={section.title}
+              items={section.items}
+              expanded={expanded}
+              checkIsActive={checkIsActive}
+            />
+          </motion.div>
         ))}
       </motion.div>
     </ScrollArea>

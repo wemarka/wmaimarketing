@@ -54,7 +54,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, []);
 
   return (
-    <div className="flex min-h-screen w-full bg-[#f5f7fa] dark:bg-[#2d3a42]">
+    <div className="flex min-h-screen w-full bg-[#f8fafc] dark:bg-[#1e2a36]">
       <AppSidebar />
       
       <motion.div 
@@ -74,7 +74,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <AnimatePresence mode="wait">
             <motion.div 
               key={location.pathname}
-              className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden"
+              className="bg-white dark:bg-slate-900/90 rounded-2xl shadow-xl overflow-hidden"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -20, opacity: 0 }}
