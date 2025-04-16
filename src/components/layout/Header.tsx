@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { LayoutGrid, BarChart, PieChart } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 import HeaderTitle from "./header/HeaderTitle";
 import HeaderActions from "./header/HeaderActions";
