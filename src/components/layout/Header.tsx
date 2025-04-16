@@ -123,7 +123,7 @@ const Header: React.FC = () => {
             </motion.div>
           </div>
           
-          {/* Navigation tabs */}
+          {/* Navigation tabs - Enhanced Design */}
           <div className="flex justify-center md:justify-start">
             <Tabs 
               defaultValue={location.pathname.includes("/dashboard") ? "dashboard" : 
@@ -132,70 +132,77 @@ const Header: React.FC = () => {
               dir="rtl"
               className="w-full"
             >
-              <TabsList className="bg-transparent h-10 border-b border-white/20 w-full justify-start">
-                {mainNavItems.map((item) => (
-                  <TabsTrigger 
-                    key={item.id}
-                    value={item.id}
-                    className="data-[state=active]:border-b-2 data-[state=active]:border-white rounded-none px-6 relative text-white/70 data-[state=active]:text-white"
-                    onClick={() => {
-                      if (item.path) {
-                        if (location.pathname !== item.path) {
-                          window.location.href = item.path;
-                        }
-                      }
-                    }}
-                  >
-                    <div className="flex items-center">
-                      {item.icon}
-                      {item.title}
-                    </div>
-                    {location.pathname.includes(item.path) && (
-                      <motion.div
-                        layoutId="activeNavTab"
-                        className="absolute bottom-0 left-0 right-0 h-1 bg-white"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
-                      />
-                    )}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
-          </div>
-          
-          {/* Dashboard sub-tabs */}
-          {isDashboardRoute && (
-            <div className="flex justify-center md:justify-start pt-1">
-              <Tabs 
-                defaultValue={activeTab}
-                dir="rtl"
-                className="w-full"
-                onValueChange={handleTabClick}
-              >
-                <TabsList className="bg-[#3a7a89]/70 h-10 w-full justify-start">
-                  {dashboardTabItems.map((item) => (
+              <TabsList className="relative bg-[#2c6c7a]/20 backdrop-blur-sm rounded-xl p-1 h-12 border border-white/20 w-full justify-start">
+                {mainNavItems.map((item) => {
+                  const isActive = location.pathname.includes(item.path);
+                  return (
                     <TabsTrigger 
                       key={item.id}
                       value={item.id}
-                      className="data-[state=active]:bg-white/10 rounded-md px-6 relative text-white/70 data-[state=active]:text-white"
+                      className={cn(
+                        "px-6 relative group transition-all duration-300",
+                        "data-[state=active]:text-white data-[state=active]:font-medium text-white/80",
+                        "hover:text-white"
+                      )}
+                      onClick={() => {
+                        if (item.path) {
+                          if (location.pathname !== item.path) {
+                            window.location.href = item.path;
+                          }
+                        }
+                      }}
                     >
-                      <div className="flex items-center">
+                      <div className="flex items-center z-10 relative">
                         {item.icon}
-                        {item.label}
+                        {item.title}
                       </div>
-                      {activeTab === item.id && (
+                      {isActive && (
                         <motion.div
-                          layoutId="activeDashboardTab"
-                          className="absolute bottom-0 left-0 right-0 h-1 bg-white"
+                          layoutId="activeNavTab"
+                          className="absolute inset-0 bg-white/20 rounded-lg shadow-lg"
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ duration: 0.3 }}
                         />
                       )}
                     </TabsTrigger>
-                  ))}
+                  );
+                })}
+              </TabsList>
+            </Tabs>
+          </div>
+          
+          {/* Dashboard sub-tabs - Enhanced Design */}
+          {isDashboardRoute && (
+            <div className="flex justify-center md:justify-start mt-2">
+              <Tabs 
+                defaultValue={activeTab}
+                dir="rtl"
+                className="w-full"
+                onValueChange={handleTabClick}
+              >
+                <TabsList className="bg-[#2c6c7a]/10 rounded-xl p-1 h-10 w-full justify-start border-none overflow-x-auto">
+                  {dashboardTabItems.map((item) => {
+                    const isActive = activeTab === item.id;
+                    return (
+                      <TabsTrigger 
+                        key={item.id}
+                        value={item.id}
+                        className={cn(
+                          "px-4 relative group transition-all duration-300 min-w-max",
+                          "data-[state=active]:text-[#3a7a89] data-[state=active]:font-medium",
+                          "text-gray-500 dark:text-gray-400",
+                          "data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800",
+                          "rounded-lg"
+                        )}
+                      >
+                        <div className="flex items-center z-10 relative">
+                          {item.icon}
+                          {item.label}
+                        </div>
+                      </TabsTrigger>
+                    );
+                  })}
                 </TabsList>
               </Tabs>
             </div>
