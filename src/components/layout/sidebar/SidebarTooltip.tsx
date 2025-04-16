@@ -2,6 +2,7 @@
 import React from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 
 interface SidebarTooltipProps {
   content: string;
@@ -10,6 +11,7 @@ interface SidebarTooltipProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   className?: string;
+  delay?: number;
 }
 
 export const SidebarTooltip: React.FC<SidebarTooltipProps> = ({
@@ -18,7 +20,8 @@ export const SidebarTooltip: React.FC<SidebarTooltipProps> = ({
   side,
   open,
   onOpenChange,
-  className
+  className,
+  delay = 700
 }) => {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
@@ -32,17 +35,29 @@ export const SidebarTooltip: React.FC<SidebarTooltipProps> = ({
   }
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={delay}>
       <Tooltip open={open} onOpenChange={onOpenChange}>
         <TooltipTrigger asChild>
-          {children}
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.2 }}
+          >
+            {children}
+          </motion.div>
         </TooltipTrigger>
         <TooltipContent 
           side={tooltipSide} 
           className={`bg-slate-800 text-white border-slate-700 animate-in fade-in-50 zoom-in-95 ${className || ""}`}
           sideOffset={5}
         >
-          <p className="text-sm">{content}</p>
+          <motion.p 
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className="text-sm"
+          >
+            {content}
+          </motion.p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

@@ -72,13 +72,33 @@ const CollapsibleSidebarNav: React.FC<CollapsibleSidebarNavProps> = ({ expanded 
     }
   ].filter(section => section.items.length > 0);
 
-  // تأثيرات حركية
-  const sectionVariants = {
+  // تأثيرات حركية للأقسام
+  const containerVariants = {
     hidden: { opacity: 0 },
     show: { 
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+  
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 15 },
+    show: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      y: -15,
+      transition: {
+        duration: 0.3
       }
     }
   };
@@ -89,16 +109,17 @@ const CollapsibleSidebarNav: React.FC<CollapsibleSidebarNavProps> = ({ expanded 
       className="flex flex-col gap-4"
       initial="hidden"
       animate="show"
-      variants={sectionVariants}
+      variants={containerVariants}
     >
       <AnimatePresence mode="wait">
         {navigationSections.map((section) => (
           <motion.div
             key={section.title}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
+            variants={sectionVariants}
+            initial="hidden"
+            animate="show"
+            exit="exit"
+            layout
           >
             <SidebarNavSection
               title={section.title}
