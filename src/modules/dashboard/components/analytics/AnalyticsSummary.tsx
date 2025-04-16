@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { LineChart, ArrowUp } from "lucide-react";
+import { LineChart, ArrowUp, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +23,7 @@ const AnalyticsSummary = () => {
             
             <div className="flex items-center mt-1">
               <div className="flex items-center text-emerald-600 text-sm">
-                <ArrowUp className="h-3 w-3 mr-1" />
+                <ArrowUp className="h-3 w-3 ml-1" />
                 <span>+ 11.8%</span>
               </div>
               <span className="text-xs text-muted-foreground mr-2">من الأسبوع الماضي</span>
@@ -60,9 +60,9 @@ const AnalyticsSummary = () => {
           <div className="absolute bottom-0 right-0 bg-gradient-to-r from-transparent to-card w-1/5 h-full" />
         </div>
         
-        <div className="bg-primary/5 rounded-lg p-4 mt-4 flex items-center gap-2">
+        <div className="bg-primary/5 rounded-lg p-4 mt-4 flex items-center gap-2 hover:bg-primary/10 transition-colors cursor-pointer">
           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-            <LineChart className="h-4 w-4 text-primary" />
+            <TrendingUp className="h-4 w-4 text-primary" />
           </div>
           <div className="flex-1">
             <p className="text-xs text-primary font-medium">شاهد تحديثات من المنصات المدعومة</p>

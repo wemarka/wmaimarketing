@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/context/AuthContext";
 import { Helmet } from "react-helmet-async";
 import DashboardTabs from "@/modules/dashboard/components/DashboardTabs";
+import { BarChart3, Calendar, LayoutDashboard, Library } from "lucide-react";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -53,6 +54,14 @@ const Dashboard = () => {
     };
     return new Intl.DateTimeFormat('ar-SA', options).format(currentTime);
   };
+
+  // Tab configuration
+  const tabs = [
+    { id: "dashboard", label: "النظرة العامة", icon: LayoutDashboard },
+    { id: "analytics", label: "التحليلات", icon: BarChart3 },
+    { id: "content", label: "المحتوى", icon: Library },
+    { id: "performance", label: "الأداء", icon: Calendar }
+  ];
   
   return (
     <Layout>
@@ -81,22 +90,23 @@ const Dashboard = () => {
                   <p className="text-sm text-gray-500 dark:text-gray-400">{getFormattedDate()}</p>
                 </div>
                 
-                <div className="flex flex-wrap gap-3 justify-end">
-                  <motion.div 
-                    whileHover={{ scale: 1.05 }}
-                    className="bg-white dark:bg-slate-800/70 rounded-full py-1.5 px-4 text-sm shadow-sm border border-gray-100/50 dark:border-slate-700/50 flex items-center"
-                  >
-                    <span className="w-2 h-2 bg-green-500 rounded-full ml-2 animate-pulse"></span>
-                    <span>جدولة منشورات جديدة</span>
-                  </motion.div>
-                  
-                  <motion.div 
-                    whileHover={{ scale: 1.05 }}
-                    className="bg-white dark:bg-slate-800/70 rounded-full py-1.5 px-4 text-sm shadow-sm border border-gray-100/50 dark:border-slate-700/50 flex items-center"
-                  >
-                    <span className="w-2 h-2 bg-amber-500 rounded-full ml-2"></span>
-                    <span>استعراض تفاعلات الأسبوع</span>
-                  </motion.div>
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
+                  {tabs.map((tab) => (
+                    <motion.button
+                      key={tab.id}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full transition-all ${
+                        activeTab === tab.id
+                          ? "bg-primary text-white shadow-md"
+                          : "bg-white/90 dark:bg-slate-800/70 text-gray-700 dark:text-gray-300 hover:bg-white"
+                      }`}
+                    >
+                      <tab.icon className="h-4 w-4" />
+                      <span className="text-sm whitespace-nowrap">{tab.label}</span>
+                    </motion.button>
+                  ))}
                 </div>
               </motion.div>
             </CardContent>
