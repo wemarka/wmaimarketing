@@ -3,7 +3,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface SidebarNavItemProps {
   to: string;
@@ -52,25 +52,27 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                   </div>
                 </motion.div>
                 
-                {expanded && (
-                  <motion.span 
-                    className={cn(
-                      "ml-3 text-sm font-medium transition-opacity duration-200",
-                      isActive ? "text-white" : "text-white/80"
-                    )}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {label}
-                  </motion.span>
-                )}
+                <AnimatePresence mode="wait">
+                  {expanded && (
+                    <motion.span 
+                      className={cn(
+                        "mr-3 text-sm font-medium transition-opacity duration-200",
+                        isActive ? "text-white" : "text-white/80"
+                      )}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
                 
                 {isActive && (
                   <motion.div 
                     className={cn(
-                      "absolute right-0 bg-white rounded-l-full h-8",
+                      "absolute right-0 bg-white rounded-r-full h-8",
                       expanded ? "w-1.5" : "w-1.5"
                     )}
                     layoutId="activeIndicator"
@@ -84,7 +86,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
           </NavLink>
         </TooltipTrigger>
         {!expanded && (
-          <TooltipContent side="right" className="bg-[#3a7a89]/90 text-white border-none shadow-lg">
+          <TooltipContent side="left" className="bg-[#3a7a89]/90 text-white border-none shadow-lg">
             <p className="font-medium">{label}</p>
           </TooltipContent>
         )}

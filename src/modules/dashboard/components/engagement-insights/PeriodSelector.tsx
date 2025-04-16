@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import CompareIcon from "../../icons/CompareIcon";
+import { motion } from "framer-motion";
 
 interface PeriodSelectorProps {
   value?: string;
@@ -21,7 +22,7 @@ export const PeriodSelector = ({
   onCompareModeToggle
 }: PeriodSelectorProps) => {
   const { t, i18n } = useTranslation();
-  const isRTL = i18n.language === "ar";
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
   
   // Use timeRange if value is not provided
   const selectedValue = value || timeRange || "week";
@@ -42,19 +43,30 @@ export const PeriodSelector = ({
       </Select>
       
       {onCompareModeToggle && (
-        <Button 
-          variant={compareMode ? "default" : "outline"}
-          size="sm"
-          className={isRTL ? "mr-2" : "ml-2"}
-          onClick={onCompareModeToggle}
-          data-state={compareMode ? "active" : "inactive"}
-        >
-          <CompareIcon className="h-4 w-4 mr-2" />
-          {t("dashboard.compare", "مقارنة")}
-        </Button>
+        <motion.div whileTap={{ scale: 0.97 }}>
+          <Button 
+            variant={compareMode ? "default" : "outline"}
+            size="sm"
+            className={cn(
+              "transition-all", 
+              isRTL ? "mr-2" : "ml-2",
+              compareMode && "bg-[#3a7a89] hover:bg-[#2c6c7a]"
+            )}
+            onClick={onCompareModeToggle}
+            data-state={compareMode ? "active" : "inactive"}
+          >
+            <CompareIcon className="h-4 w-4 mr-2" />
+            {t("dashboard.compare", "مقارنة")}
+          </Button>
+        </motion.div>
       )}
     </div>
   );
 };
 
 export default PeriodSelector;
+
+// Import missing dependency
+function cn(...classes: string[]) {
+  return classes.filter(Boolean).join(' ');
+}

@@ -28,8 +28,9 @@ const DashboardSubTabs: React.FC<DashboardSubTabsProps> = ({
         className="w-full"
         onValueChange={onTabChange}
         value={activeTab}
+        dir="rtl"
       >
-        <TabsList className="bg-white/10 dark:bg-[#2c6c7a]/20 rounded-xl p-1 h-11 w-full max-w-md justify-start border-none overflow-x-auto">
+        <TabsList className="bg-white/10 dark:bg-[#2c6c7a]/20 rounded-xl p-1 h-11 w-full max-w-md justify-start border-none overflow-x-auto scrollbar-none">
           {tabItems.map((item) => {
             const isActive = activeTab === item.id;
             return (

@@ -29,27 +29,36 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   checkIsActive,
   activePath
 }) => {
-  const fadeInUp = {
-    initial: { opacity: 0, y: 10 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: 10 },
-    transition: { duration: 0.2 }
+  const containerAnimation = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: {
+        when: "beforeChildren",
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const itemAnimation = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 }
   };
 
   return (
     <ScrollArea className="h-[calc(100vh-64px-80px)] pr-1">
       <motion.div 
         className="py-4 flex flex-col space-y-6 px-2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3, delay: 0.2 }}
+        initial="hidden"
+        animate="visible"
+        variants={containerAnimation}
       >
         {navigationSections.map((section, idx) => (
           <motion.div
             key={idx}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.1 }}
+            variants={itemAnimation}
+            transition={{ duration: 0.3 }}
             layout
           >
             <SidebarNavSection

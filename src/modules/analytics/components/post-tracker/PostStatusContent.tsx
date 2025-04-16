@@ -36,7 +36,7 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
   }, { all: totalPosts } as Record<string, number>);
 
   return (
-    <Tabs defaultValue={statusFilter} className="w-full" onValueChange={onStatusFilterChange}>
+    <Tabs defaultValue={statusFilter} className="w-full" onValueChange={onStatusFilterChange} dir="rtl">
       <TabsFilter 
         statusFilter={statusFilter} 
         onStatusChange={onStatusFilterChange}

@@ -31,7 +31,7 @@ const MainNavTabs: React.FC<MainNavTabsProps> = ({
     : "dashboard";
 
   return (
-    <Tabs value={activeTab} className="w-full max-w-md mx-auto md:mx-0">
+    <Tabs value={activeTab} className="w-full max-w-md mx-auto md:mx-0" dir="rtl">
       <TabsList className="bg-[#2c6c7a]/30 backdrop-blur-sm rounded-xl p-1 h-14 w-full md:w-auto overflow-x-auto border border-white/10">
         {navItems.map((item) => (
           <TabsTrigger

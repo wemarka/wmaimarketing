@@ -18,12 +18,19 @@ export const useSidebarNavigation = () => {
     }
   }, [isMobile]);
   
-  // Check if dark mode is already active
+  // Check if dark mode is already active and sync with system preference
   useEffect(() => {
-    const isDark = document.documentElement.classList.contains('dark') ||
-                  window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setIsDarkMode(isDark);
-    document.documentElement.classList.toggle('dark', isDark);
+    // Check localStorage first
+    const storedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    // Set initial dark mode state based on localStorage or system preference
+    const shouldEnableDark = 
+      storedTheme === "dark" || 
+      (!storedTheme && prefersDark);
+    
+    setIsDarkMode(shouldEnableDark);
+    document.documentElement.classList.toggle('dark', shouldEnableDark);
   }, []);
 
   const toggleExpanded = () => {
@@ -31,9 +38,10 @@ export const useSidebarNavigation = () => {
   };
 
   const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark', !isDarkMode);
-    localStorage.setItem('theme', !isDarkMode ? 'dark' : 'light');
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    document.documentElement.classList.toggle('dark', newDarkMode);
+    localStorage.setItem('theme', newDarkMode ? 'dark' : 'light');
   };
   
   // Helper function to check if a route is active
@@ -43,7 +51,7 @@ export const useSidebarNavigation = () => {
     if (path === '/dashboard' && location.pathname === '/dashboard') return true;
     
     // For other routes, check if current path starts with the given path
-    return path !== '/' && location.pathname.startsWith(path);
+    return path !== '/' && path !== '/dashboard' && location.pathname.startsWith(path);
   };
 
   return {

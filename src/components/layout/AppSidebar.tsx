@@ -15,6 +15,12 @@ const AppSidebar = () => {
   const { expanded, toggleExpanded, isDarkMode, toggleDarkMode, checkIsActive } = useSidebarNavigation();
   const location = useLocation();
   const [activePath, setActivePath] = useState(location.pathname);
+  const [mounted, setMounted] = useState(false);
+  
+  // Handle initial mount animation
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   // Update active path when location changes
   useEffect(() => {
@@ -43,11 +49,13 @@ const AppSidebar = () => {
   return (
     <motion.div 
       className={cn(
-        "fixed right-0 z-30 h-screen bg-gradient-to-b from-[#3a7a89] to-[#2c6c7a] transition-all duration-300 shadow-lg flex flex-col",
-        "border-l border-white/10"
+        "fixed right-0 z-30 h-screen bg-gradient-to-b transition-colors",
+        "from-[#3a7a89] to-[#2c6c7a] shadow-lg flex flex-col",
+        "border-l border-white/10 overflow-hidden",
+        !mounted && "opacity-0"
       )}
       variants={sidebarVariants}
-      initial={expanded ? "expanded" : "collapsed"}
+      initial={false}
       animate={expanded ? "expanded" : "collapsed"}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
