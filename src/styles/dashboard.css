@@ -1,0 +1,39 @@
+
+/* Dashboard specific styles */
+
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Responsive adjustments for dashboard */
+
+/* Alternating row styles for better visual separation */
+.row-alternate > *:nth-child(odd) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+@media (max-width: 768px) {
+  .dashboard-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.5rem;
+  }
+  
+  .dashboard-tabs::-webkit-scrollbar {
+    height: 3px;
+  }
+  
+  .dashboard-tabs::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+  }
+  
+  .dashboard-tabs::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+  }
+}

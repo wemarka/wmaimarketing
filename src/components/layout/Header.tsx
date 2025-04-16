@@ -3,9 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import HeaderActions from "./header/HeaderActions";
 import HeaderTitle from "./header/HeaderTitle";
-import SearchBar from "./header/SearchBar";
 import DynamicNavigationMenu from "./header/DynamicNavigationMenu";
 import { useHeaderNavigation } from "./header/useHeaderNavigation";
 import HeaderGreeting from "./header/HeaderGreeting";
@@ -56,18 +54,17 @@ const Header: React.FC = () => {
     >
       <header className="bg-gradient-to-r from-[#3a7a89] via-[#4a8a99] to-[#5a9aa9] px-6 py-4 text-white shadow-lg" dir={isRTL ? "rtl" : "ltr"}>
         <div className="flex flex-col space-y-4">
-          {/* Top header row with centered and balanced spacing */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 flex-1">
+          {/* Top header row with centered design */}
+          <div className="flex items-center">
+            <div className="w-1/3">
               <HeaderTitle getPageTitle={getPageTitle} />
             </div>
             
-            <div className="flex-1 flex justify-center">
+            <div className="w-1/3 flex justify-center">
               <HeaderGreeting currentTime={currentTime} greeting={getGreeting()} />
             </div>
             
-            <div className="flex items-center justify-end gap-2 flex-1">
-              <HeaderActions isRTL={isRTL} />
+            <div className="w-1/3 flex justify-end">
               <UserMenu />
             </div>
           </div>
@@ -76,6 +73,7 @@ const Header: React.FC = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.3 }}
+            className="overflow-x-auto hide-scrollbar"
           >
             <DynamicNavigationMenu 
               mainNavItems={mainNavItems}

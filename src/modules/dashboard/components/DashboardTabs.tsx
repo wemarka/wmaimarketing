@@ -1,12 +1,15 @@
 
-import React, { useEffect, useRef } from "react";
-import { useTranslation } from "react-i18next";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React, { useRef, useEffect } from "react";
+import { motion } from "framer-motion";
+import { 
+  Tabs, 
+  TabsContent, 
+  TabsList, 
+  TabsTrigger 
+} from "@/components/ui/tabs";
 import OverviewTab from "./tabs/OverviewTab";
-import MarketingTab from "./tabs/MarketingTab";
-import ContentTab from "./tabs/ContentTab";
-import AnalyticsTab from "./tabs/AnalyticsTab";
-import { useMediaQuery } from "@/hooks/use-media-query";
+import PerformanceTab from "./tabs/PerformanceTab";
+import { BarChart3, Calendar, Layers, LineChart, Settings, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DashboardTabsProps {
@@ -14,143 +17,119 @@ interface DashboardTabsProps {
 }
 
 const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab }) => {
-  const { t } = useTranslation();
-  const isMobile = useMediaQuery("(max-width: 768px)");
   const tabsListRef = useRef<HTMLDivElement>(null);
   
-  // Function to scroll tabs into view when tab changes
+  // Ensure active tab is visible by scrolling to it on mobile
   useEffect(() => {
-    if (tabsListRef.current) {
-      const activeTabElement = tabsListRef.current.querySelector('[data-state="active"]');
-      if (activeTabElement) {
-        const tabsListRect = tabsListRef.current.getBoundingClientRect();
-        const activeTabRect = activeTabElement.getBoundingClientRect();
-        
-        // Calculate the center position
-        const targetScrollLeft = activeTabRect.left - tabsListRect.left - 
-          (tabsListRect.width / 2) + (activeTabRect.width / 2);
-        
-        tabsListRef.current.scrollTo({
-          left: targetScrollLeft,
-          behavior: 'smooth'
-        });
-      }
+    if (!tabsListRef.current) return;
+    
+    const activeElement = tabsListRef.current.querySelector('[data-state="active"]');
+    if (activeElement) {
+      const tabList = tabsListRef.current;
+      const activeTabRect = activeElement.getBoundingClientRect();
+      const tabListRect = tabList.getBoundingClientRect();
+      
+      const scrollPosition = activeTabRect.left + tabList.scrollLeft - tabListRect.left - (tabListRect.width / 2) + (activeTabRect.width / 2);
+      
+      tabList.scrollTo({
+        left: scrollPosition,
+        behavior: "smooth"
+      });
     }
   }, [activeTab]);
   
-  const dispatchTabChangeEvent = (value: string) => {
-    // Create and dispatch a custom event when tab changes
-    const event = new CustomEvent("dashboard-tab-change", { 
-      detail: { tab: value } 
-    });
-    window.dispatchEvent(event);
-    
-    // Also dispatch to header for sync
-    const headerEvent = new CustomEvent("header-tab-change", { 
-      detail: { tab: value } 
-    });
-    window.dispatchEvent(headerEvent);
-  };
-
   return (
     <Tabs 
-      defaultValue={activeTab} 
-      value={activeTab}
-      onValueChange={dispatchTabChangeEvent}
-      className="w-full animate-in transition-all"
+      defaultValue={activeTab || "dashboard"}
+      value={activeTab || "dashboard"}
+      className="space-y-4"
     >
-      <div className="overflow-x-auto pb-1 scrollbar-none">
-        <TabsList 
-          ref={tabsListRef}
-          className={cn(
-            "bg-white/20 dark:bg-white/5 p-1 mb-6 rounded-xl w-max min-w-full",
-            "border border-white/10 backdrop-blur-sm shadow-sm",
-            "flex items-center justify-start gap-1",
-            "no-scrollbar overflow-x-auto"
-          )}
-        >
+      <div className="relative overflow-x-auto hide-scrollbar dashboard-tabs" ref={tabsListRef}>
+        <TabsList className="w-full justify-start px-2 h-12 dashboard-tabs">
           <TabsTrigger 
             value="dashboard" 
             className={cn(
-              "data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm",
-              "rounded-lg py-2 px-4 text-sm font-medium transition-all",
-              "hover:bg-white/90 hover:text-primary/90",
-              "focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-1",
-              isMobile ? "flex-shrink-0" : "min-w-[100px]",
-              "whitespace-nowrap"
+              "gap-2 px-4 data-[state=active]:bg-primary/10 relative"
             )}
           >
-            {t("dashboard.tabs.overview", "نظرة عامة")}
+            <BarChart3 className="h-4 w-4" />
+            <span className="text-sm">النظرة العامة</span>
           </TabsTrigger>
           <TabsTrigger 
-            value="marketing" 
-            className={cn(
-              "data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm",
-              "rounded-lg py-2 px-4 text-sm font-medium transition-all",
-              "hover:bg-white/90 hover:text-primary/90",
-              "focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-1",
-              isMobile ? "flex-shrink-0" : "min-w-[100px]",
-              "whitespace-nowrap"
-            )}
+            value="performance" 
+            className="gap-2 px-4 data-[state=active]:bg-primary/10"
           >
-            {t("dashboard.tabs.marketing", "التسويق")}
+            <TrendingUp className="h-4 w-4" />
+            <span className="text-sm">الأداء</span>
           </TabsTrigger>
           <TabsTrigger 
             value="content" 
-            className={cn(
-              "data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm",
-              "rounded-lg py-2 px-4 text-sm font-medium transition-all",
-              "hover:bg-white/90 hover:text-primary/90",
-              "focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-1",
-              isMobile ? "flex-shrink-0" : "min-w-[100px]",
-              "whitespace-nowrap"
-            )}
+            className="gap-2 px-4 data-[state=active]:bg-primary/10"
           >
-            {t("dashboard.tabs.content", "المحتوى")}
+            <Layers className="h-4 w-4" />
+            <span className="text-sm">المحتوى</span>
+          </TabsTrigger>
+          <TabsTrigger 
+            value="schedule" 
+            className="gap-2 px-4 data-[state=active]:bg-primary/10"
+          >
+            <Calendar className="h-4 w-4" />
+            <span className="text-sm">المواعيد</span>
           </TabsTrigger>
           <TabsTrigger 
             value="analytics" 
-            className={cn(
-              "data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm",
-              "rounded-lg py-2 px-4 text-sm font-medium transition-all",
-              "hover:bg-white/90 hover:text-primary/90",
-              "focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-1",
-              isMobile ? "flex-shrink-0" : "min-w-[100px]",
-              "whitespace-nowrap"
-            )}
+            className="gap-2 px-4 data-[state=active]:bg-primary/10"
           >
-            {t("dashboard.tabs.analytics", "التحليلات")}
+            <LineChart className="h-4 w-4" />
+            <span className="text-sm">التحليلات</span>
+          </TabsTrigger>
+          <TabsTrigger 
+            value="settings" 
+            className="gap-2 px-4 data-[state=active]:bg-primary/10"
+          >
+            <Settings className="h-4 w-4" />
+            <span className="text-sm">الإعدادات</span>
           </TabsTrigger>
         </TabsList>
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
       </div>
       
-      <TabsContent 
-        value="dashboard" 
-        className="mt-0 outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
       >
-        <OverviewTab />
-      </TabsContent>
-      
-      <TabsContent 
-        value="marketing" 
-        className="mt-0 outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
-      >
-        <MarketingTab />
-      </TabsContent>
-      
-      <TabsContent 
-        value="content" 
-        className="mt-0 outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
-      >
-        <ContentTab />
-      </TabsContent>
-      
-      <TabsContent 
-        value="analytics" 
-        className="mt-0 outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
-      >
-        <AnalyticsTab />
-      </TabsContent>
+        <TabsContent value="dashboard" className="m-0">
+          <OverviewTab />
+        </TabsContent>
+        <TabsContent value="performance" className="m-0">
+          <PerformanceTab />
+        </TabsContent>
+        <TabsContent value="content" className="m-0">
+          <div className="p-4 border rounded-lg bg-muted/10">
+            <h3 className="font-medium text-lg">قسم المحتوى</h3>
+            <p className="text-muted-foreground">هذا القسم قيد التطوير</p>
+          </div>
+        </TabsContent>
+        <TabsContent value="schedule" className="m-0">
+          <div className="p-4 border rounded-lg bg-muted/10">
+            <h3 className="font-medium text-lg">قسم المواعيد</h3>
+            <p className="text-muted-foreground">هذا القسم قيد التطوير</p>
+          </div>
+        </TabsContent>
+        <TabsContent value="analytics" className="m-0">
+          <div className="p-4 border rounded-lg bg-muted/10">
+            <h3 className="font-medium text-lg">قسم التحليلات</h3>
+            <p className="text-muted-foreground">هذا القسم قيد التطوير</p>
+          </div>
+        </TabsContent>
+        <TabsContent value="settings" className="m-0">
+          <div className="p-4 border rounded-lg bg-muted/10">
+            <h3 className="font-medium text-lg">قسم الإعدادات</h3>
+            <p className="text-muted-foreground">هذا القسم قيد التطوير</p>
+          </div>
+        </TabsContent>
+      </motion.div>
     </Tabs>
   );
 };

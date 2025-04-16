@@ -1,96 +1,150 @@
 
-import React, { useState, useEffect } from "react";
-import { Sparkles } from "lucide-react";
-import { NotificationBox } from "@/components/ui/notification-box";
+import React from "react";
+import { motion } from "framer-motion";
+import { AlertCircle, AlertTriangle, CheckCircle2, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+export interface PerformanceData {
+  current: number;
+  previous: number;
+  metric: string;
+  sourceChannel?: string;
+  period?: "daily" | "weekly" | "monthly";
+}
 
 interface AIFeedbackMessageProps {
-  performanceData?: {
-    current: number;
-    previous: number;
-    metric: string;
-    sourceChannel?: string;
-  };
+  performanceData: PerformanceData;
   className?: string;
 }
 
-// Predefined message templates
-const messageTemplates = [
-  "لقد تجاوزت أداء الأسبوع الماضي بنسبة {percentage}٪ بفضل {channel}!",
-  "تحسن الأداء بنسبة {percentage}٪ في {metric} مقارنة بالفترة السابقة.",
-  "أحسنت! {metric} تحسن بنسبة {percentage}٪ هذا الأسبوع.",
-  "هناك نمو بنسبة {percentage}٪ في {metric} من خلال {channel}.",
-  "تهانينا! لقد حققت نموًا بنسبة {percentage}٪ في {metric} مقارنة بالأسبوع الماضي."
-];
-
-// Default metrics and channels for fallback
-const defaultMetrics = ["المشاركة", "التفاعل", "الوصول", "المبيعات", "الزيارات"];
-const defaultChannels = ["انستجرام", "فيسبوك", "تيك توك", "البريد الإلكتروني", "الموقع"];
-
-export const AIFeedbackMessage: React.FC<AIFeedbackMessageProps> = ({ 
-  performanceData,
-  className
-}) => {
-  const [feedbackMessage, setFeedbackMessage] = useState("");
-  const [dismissNotification, setDismissNotification] = useState(false);
-  const [messageType, setMessageType] = useState<"success" | "warning" | "info">("info");
+const AIFeedbackMessage: React.FC<AIFeedbackMessageProps> = ({ performanceData, className }) => {
+  const { current, previous, metric, sourceChannel, period = "weekly" } = performanceData;
   
-  useEffect(() => {
-    let percentage = 0;
-    let metric = "";
-    let channel = "";
-    
-    if (performanceData) {
-      // Calculate percentage change
-      const difference = performanceData.current - performanceData.previous;
-      percentage = performanceData.previous > 0 
-        ? Math.round((difference / performanceData.previous) * 100) 
-        : 0;
-      
-      metric = performanceData.metric;
-      channel = performanceData.sourceChannel || getRandomItem(defaultChannels);
-    } else {
-      // Generate mock data when no real data is provided
-      percentage = Math.floor(Math.random() * 25) + 5; // 5-30% range
-      metric = getRandomItem(defaultMetrics);
-      channel = getRandomItem(defaultChannels);
-    }
-    
-    // Select message type based on performance
-    if (percentage > 10) {
-      setMessageType("success");
-    } else if (percentage < 0) {
-      setMessageType("warning");
-      percentage = Math.abs(percentage);
-    } else {
-      setMessageType("info");
-    }
-    
-    // Select a random template and fill it with data
-    const template = getRandomItem(messageTemplates);
-    const message = template
-      .replace("{percentage}", percentage.toString())
-      .replace("{metric}", metric)
-      .replace("{channel}", channel);
-      
-    setFeedbackMessage(message);
-  }, [performanceData]);
-  
-  // Helper to get a random item from an array
-  const getRandomItem = (items: string[]) => {
-    return items[Math.floor(Math.random() * items.length)];
+  // Calculate percentage change
+  const calculateChange = () => {
+    if (previous === 0) return 100;
+    return ((current - previous) / previous) * 100;
   };
   
-  if (dismissNotification) return null;
+  const percentageChange = calculateChange();
+  const isPositive = percentageChange > 0;
+  const isSignificant = Math.abs(percentageChange) > 10;
+  
+  // Determine the feedback type and message based on performance
+  const getFeedbackType = () => {
+    if (isPositive) {
+      return isSignificant ? "success" : "info";
+    } else {
+      return isSignificant ? "warning" : "info";
+    }
+  };
+  
+  // Generate a dynamic AI-like message based on data
+  const generateMessage = () => {
+    const changeText = isPositive ? "ارتفاع" : "انخفاض";
+    const absChange = Math.abs(percentageChange).toFixed(1);
+    
+    let message = "";
+    const periodText = 
+      period === "daily" ? "اليوم مقارنة بالأمس" : 
+      period === "weekly" ? "هذا الأسبوع مقارنة بالأسبوع الماضي" : 
+      "هذا الشهر مقارنة بالشهر الماضي";
+    
+    if (isPositive) {
+      if (isSignificant) {
+        message = `أداء ممتاز! ${changeText} ${metric} بنسبة ${absChange}% ${periodText}`;
+        if (sourceChannel) {
+          message += ` على ${sourceChannel}`;
+        }
+      } else {
+        message = `${changeText} ${metric} بنسبة ${absChange}% ${periodText}`;
+        if (sourceChannel) {
+          message += ` على ${sourceChannel}`;
+        }
+      }
+    } else {
+      if (isSignificant) {
+        message = `تنبيه! ${changeText} ${metric} بنسبة ${absChange}% ${periodText}`;
+        if (sourceChannel) {
+          message += ` على ${sourceChannel}`;
+        }
+        message += `. نوصي بمراجعة استراتيجيتك.`;
+      } else {
+        message = `${changeText} طفيف في ${metric} بنسبة ${absChange}% ${periodText}`;
+        if (sourceChannel) {
+          message += ` على ${sourceChannel}`;
+        }
+      }
+    }
+    
+    return message;
+  };
+  
+  const feedbackType = getFeedbackType();
+  const message = generateMessage();
+  
+  // Styling based on feedback type
+  const getTypeStyles = () => {
+    switch (feedbackType) {
+      case "success":
+        return {
+          bg: "bg-green-50",
+          border: "border-green-200",
+          text: "text-green-800",
+          icon: <CheckCircle2 className="h-4 w-4 text-green-600" />,
+          bright: <Sparkles className="h-3.5 w-3.5 text-green-500" />
+        };
+      case "warning":
+        return {
+          bg: "bg-amber-50",
+          border: "border-amber-200",
+          text: "text-amber-800",
+          icon: <AlertTriangle className="h-4 w-4 text-amber-500" />,
+          bright: null
+        };
+      case "error":
+        return {
+          bg: "bg-red-50",
+          border: "border-red-200",
+          text: "text-red-800",
+          icon: <AlertCircle className="h-4 w-4 text-red-500" />,
+          bright: null
+        };
+      default:
+        return {
+          bg: "bg-blue-50",
+          border: "border-blue-200",
+          text: "text-blue-800",
+          icon: <Sparkles className="h-4 w-4 text-blue-500" />,
+          bright: null
+        };
+    }
+  };
+  
+  const typeStyles = getTypeStyles();
   
   return (
-    <NotificationBox
-      type={messageType}
-      title="تحليل ذكي 🧠"
-      message={feedbackMessage}
-      className={className}
-      showCloseButton={true}
-      onClose={() => setDismissNotification(true)}
-      showIcon={true}
-    />
+    <motion.div
+      initial={{ opacity: 0, y: 5 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className={cn(
+        "rounded-lg border px-3.5 py-2.5 text-sm flex items-start gap-2",
+        typeStyles.bg,
+        typeStyles.border,
+        typeStyles.text,
+        className
+      )}
+    >
+      {typeStyles.icon}
+      <div className="flex flex-wrap items-center gap-x-1">
+        {message}
+        {typeStyles.bright && (
+          <span className="inline-flex">{typeStyles.bright}</span>
+        )}
+      </div>
+    </motion.div>
   );
 };
+
+export default AIFeedbackMessage;

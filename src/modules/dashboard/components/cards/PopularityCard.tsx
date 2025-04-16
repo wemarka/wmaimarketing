@@ -1,11 +1,12 @@
 
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { ChevronRight, Target, Zap, TrendingUp, Info, Sparkles } from "lucide-react";
+import { ChevronRight, Target, TrendingUp, Info, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { AIFeedbackMessage } from "@/components/dashboard/AIFeedbackMessage";
+import PerformanceIndicator from "../performance/PerformanceIndicator";
 
 const PopularityCard = () => {
   const [showDetails, setShowDetails] = useState(false);
@@ -40,32 +41,19 @@ const PopularityCard = () => {
                 </Tooltip>
               </TooltipProvider>
             </div>
-            <motion.div 
-              className="bg-white/50 rounded-full py-1 px-3 cursor-pointer hover:bg-white/60 transition-colors flex items-center gap-1.5"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span className="text-xs text-[#654321]">يومي</span>
-              <ChevronRight className="h-3 w-3 text-[#654321]/60" />
-            </motion.div>
           </div>
           
-          <motion.div 
-            className="text-6xl font-bold text-[#333333] mb-6 mt-3"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="flex items-baseline">
-              87°
-              <div className="flex items-center text-lg text-green-600 mr-2">
-                <TrendingUp className="h-4 w-4 mr-0.5" />
-                <div>3.2</div>
-              </div>
-            </div>
-          </motion.div>
+          {/* Consolidated Performance Display */}
+          <PerformanceIndicator 
+            title="معدل الشعبية"
+            value="87°"
+            previousValue="74°"
+            changePercentage={17.6}
+            icon={<Target className="h-4 w-4 text-[#ff5c35]" />}
+            indicatorColor="bg-[#ff5c35]"
+          />
           
-          <div className="mb-6">
+          <div className="mb-6 mt-6">
             {/* Gauge meter */}
             <div className="relative h-2 w-full">
               <div className="h-2 bg-gray-200 rounded-full w-full"></div>
@@ -92,16 +80,6 @@ const PopularityCard = () => {
           </div>
           
           <div className="space-y-4">
-            <AIFeedbackMessage 
-              performanceData={{
-                current: 87,
-                previous: 74,
-                metric: "معدل الشعبية",
-                sourceChannel: "انستجرام"
-              }}
-              className="mb-4"
-            />
-            
             <motion.div 
               className="flex items-center bg-white/70 rounded-xl p-3 hover:bg-white/90 transition-colors cursor-pointer"
               initial={{ y: 10, opacity: 0 }}

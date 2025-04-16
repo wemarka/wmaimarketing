@@ -1,6 +1,6 @@
 
-import React from "react";
-import { Bell, Settings, UserCircle, Shield, ChevronDown } from "lucide-react";
+import React, { useState } from "react";
+import { Bell, Settings, UserCircle, Shield, ChevronDown, LayoutDashboard, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/context/AuthContext";
@@ -21,6 +21,7 @@ const UserMenu = () => {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [openDropdown, setOpenDropdown] = useState(false);
   
   // Get user initials for avatar fallback
   const userInitials = profile?.first_name && profile?.last_name ? 
@@ -45,11 +46,11 @@ const UserMenu = () => {
   const roleInfo = roleMap[userRole as keyof typeof roleMap] || roleMap.user;
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={openDropdown} onOpenChange={setOpenDropdown}>
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
-          className="relative h-9 rounded-full pr-2 pl-3 flex items-center gap-2 hover:bg-white/25"
+          className="relative h-9 rounded-full px-2.5 flex items-center gap-2.5 hover:bg-white/25"
         >
           <Avatar className="h-7 w-7 border-2 border-white/20">
             {profile?.avatar_url ? 
@@ -63,19 +64,36 @@ const UserMenu = () => {
           <span className="hidden md:inline-block text-sm font-medium text-white">
             {profile?.first_name || "المستخدم"}
           </span>
-          <ChevronDown className="h-4 w-4 text-white/70" />
+          <ChevronDown className="h-3.5 w-3.5 text-white/70" />
+          
+          {/* Notification dot indicator */}
+          <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel>
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium">
-              {profile?.first_name} {profile?.last_name}
-            </p>
-            <p className="text-xs text-muted-foreground truncate">
-              {user?.email || "لا يوجد بريد إلكتروني"}
-            </p>
-            <Badge variant="outline" className={`mt-1.5 self-start text-xs py-0 ${roleInfo.color}`}>
+      <DropdownMenuContent className="w-64" align="end" forceMount>
+        <DropdownMenuLabel className="p-4 pb-3">
+          <div className="flex flex-col space-y-1.5">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10 border-2 border-gray-100">
+                {profile?.avatar_url ? 
+                  <AvatarImage src={profile.avatar_url} alt="صورة المستخدم" /> 
+                  : 
+                  <AvatarFallback className="bg-[#4a8a99] text-white">
+                    {userInitials}
+                  </AvatarFallback>
+                }
+              </Avatar>
+              <div>
+                <p className="text-sm font-medium">
+                  {profile?.first_name} {profile?.last_name}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {user?.email || "لا يوجد بريد إلكتروني"}
+                </p>
+              </div>
+            </div>
+            
+            <Badge variant="outline" className={`mt-2 self-start text-xs py-0 ${roleInfo.color}`}>
               {roleInfo.icon}
               {roleInfo.label}
             </Badge>
@@ -84,15 +102,22 @@ const UserMenu = () => {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem 
-            className="cursor-pointer"
+            className="cursor-pointer py-2.5"
+            onClick={() => navigate("/dashboard")}
+          >
+            <LayoutDashboard className="mr-2 h-4 w-4" />
+            <span>لوحة التحكم</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem 
+            className="cursor-pointer py-2.5"
             onClick={() => navigate("/profile")}
           >
             <UserCircle className="mr-2 h-4 w-4" />
             <span>الملف الشخصي</span>
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="cursor-pointer"
-            onClick={() => navigate("/dashboard")}
+            className="cursor-pointer py-2.5"
+            onClick={() => navigate("/settings")}
           >
             <Settings className="mr-2 h-4 w-4" />
             <span>الإعدادات</span>
@@ -100,9 +125,10 @@ const UserMenu = () => {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem 
-          className="cursor-pointer text-red-500 focus:text-red-500 focus:bg-red-50"
+          className="cursor-pointer py-2.5 text-red-500 focus:text-red-500 focus:bg-red-50"
           onClick={handleSignOut}
         >
+          <LogOut className="mr-2 h-4 w-4" />
           <span>تسجيل الخروج</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

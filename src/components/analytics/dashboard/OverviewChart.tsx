@@ -16,11 +16,10 @@ import {
   Area,
   Bar,
   Line,
-  ResponsiveContainer,
-  Tooltip
+  ResponsiveContainer
 } from "recharts";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Download, CalendarDays, BarChart3 } from "lucide-react";
+import { Download, CalendarDays } from "lucide-react";
 import { AIFeedbackMessage } from "@/components/dashboard/AIFeedbackMessage";
 
 interface OverviewChartProps {
@@ -69,7 +68,7 @@ const OverviewChart: React.FC<OverviewChartProps> = ({ data }) => {
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="space-y-1">
           <CardTitle>نمو الجمهور</CardTitle>
-          <CardDescription>المشاهدات اليومية خلال الأيام السبعة الماضية</CardDescription>
+          <CardDescription>المشاهدات والتفاعلات خلال الفترة المحددة</CardDescription>
         </div>
         
         {/* Chart controls */}
@@ -108,7 +107,7 @@ const OverviewChart: React.FC<OverviewChartProps> = ({ data }) => {
       </CardHeader>
       
       <CardContent className="px-2 pt-0">
-        {/* AI-powered feedback message */}
+        {/* AI-powered feedback message - now more concise */}
         <div className="mx-4 mb-4">
           <AIFeedbackMessage 
             performanceData={{
@@ -124,7 +123,6 @@ const OverviewChart: React.FC<OverviewChartProps> = ({ data }) => {
           config={{
             impressions: { label: "المشاهدات", color: "#9b87f5" },
             engagement: { label: "التفاعل", color: "#D946EF" },
-            clicks: { label: "النقرات", color: "#D4AF37" },
             revenue: { label: "الإيرادات", color: "#0EA5E9" }
           }}
           className="h-[300px]"
@@ -159,7 +157,7 @@ const OverviewChart: React.FC<OverviewChartProps> = ({ data }) => {
                 tickLine={false}
                 tickMargin={10}
               />
-              <Tooltip content={<CustomTooltipContent />} />
+              <ChartTooltip content={<CustomTooltipContent />} />
               <ChartLegend content={<ChartLegendContent />} />
               <Area 
                 yAxisId="left"
