@@ -2,26 +2,15 @@
 import React from "react";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 
 const MobileSearchButton: React.FC = () => {
-  const { toast } = useToast();
-  
-  const handleMobileSearch = () => {
-    toast({
-      title: "بحث",
-      description: "للبحث يرجى استخدام نسخة سطح المكتب",
-    });
-  };
-  
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      className="md:hidden rounded-full h-9 w-9"
-      onClick={handleMobileSearch}
+    <Button 
+      variant="ghost" 
+      size="icon" 
+      className="md:hidden rounded-full h-9 w-9 bg-white/15 hover:bg-white/25"
     >
-      <Search className="h-5 w-5" />
+      <Search className="h-4.5 w-4.5" />
     </Button>
   );
 };
