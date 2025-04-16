@@ -7,6 +7,7 @@ import AnimatedTabContent from "./AnimatedTabContent";
 import StatusChart from "./StatusChart";
 import PostItem from "./PostItem";
 import TabsFilter from "./TabsFilter";
+import { useTranslation } from "react-i18next";
 
 interface PostStatusContentProps {
   viewType: "cards" | "chart";
@@ -25,6 +26,9 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
   statuses,
   totalPosts
 }) => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
+  
   // Calculate counts for each status
   const statusCounts = statuses.reduce((acc, status) => {
     // Make sure we're accessing properties that exist on the StatusInfo type
@@ -41,8 +45,14 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
     exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
   };
 
+  // RTL-aware animation variants
+  const itemAnimationRTL = {
+    hidden: { opacity: 0, x: isRTL ? 10 : -10 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.3 } }
+  };
+
   return (
-    <Tabs defaultValue={statusFilter} className="w-full" onValueChange={onStatusFilterChange} dir="rtl">
+    <Tabs defaultValue={statusFilter} className="w-full" onValueChange={onStatusFilterChange} dir={isRTL ? "rtl" : "ltr"}>
       <TabsFilter 
         statusFilter={statusFilter} 
         onStatusChange={onStatusFilterChange}
@@ -75,10 +85,7 @@ const PostStatusContent: React.FC<PostStatusContentProps> = ({
                     {filteredPosts.map((post, index) => (
                       <motion.div 
                         key={post.id}
-                        variants={{
-                          hidden: { opacity: 0, y: 10 },
-                          visible: { opacity: 1, y: 0 }
-                        }}
+                        variants={itemAnimationRTL}
                       >
                         <PostItem post={post} index={index} />
                       </motion.div>

@@ -17,10 +17,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const isMobile = useMediaQuery("(max-width: 767px)");
   const [activeDashboardTab, setActiveDashboardTab] = useState<string>("dashboard");
   const [mounted, setMounted] = useState(false);
+  const [direction, setDirection] = useState<"rtl" | "ltr">("rtl"); // Default RTL for Arabic
   
   // Handle initial mount animation
   useEffect(() => {
     setMounted(true);
+    
+    // Check HTML document direction
+    const htmlDir = document.documentElement.dir || "rtl";
+    setDirection(htmlDir as "rtl" | "ltr");
   }, []);
   
   // Listen for tab change events from the header
@@ -45,19 +50,25 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
   }, []);
 
+  // Direction-aware margin styles
+  const marginStyle = direction === "rtl" 
+    ? isMobile ? "ml-0" : "ml-16 lg:ml-16" 
+    : isMobile ? "mr-0" : "mr-16 lg:mr-16";
+
   return (
     <div 
       className={cn(
         "flex min-h-screen w-full overflow-x-hidden transition-colors duration-300",
         "bg-[#f8fafc] dark:bg-[#1e2a36]"
       )}
+      dir={direction}
     >
       <AppSidebar />
       
       <motion.div 
         className={cn(
           "flex-1 flex flex-col",
-          isMobile ? "mr-0" : "mr-16 lg:mr-16"
+          marginStyle
         )}
         initial={{ opacity: 0 }}
         animate={{ opacity: mounted ? 1 : 0 }}

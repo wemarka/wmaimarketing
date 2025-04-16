@@ -29,7 +29,10 @@ export const PeriodSelector = ({
   const selectedValue = value || timeRange || "week";
   
   return (
-    <div className="flex items-center gap-4 justify-end">
+    <div className={cn(
+      "flex items-center gap-4",
+      isRTL ? "flex-row-reverse" : "justify-end"
+    )}>
       <Select value={selectedValue} onValueChange={onChange}>
         <SelectTrigger className="w-[120px]">
           <SelectValue>{t(`dashboard.timeRanges.${selectedValue}`, selectedValue)}</SelectValue>
@@ -44,7 +47,10 @@ export const PeriodSelector = ({
       </Select>
       
       {onCompareModeToggle && (
-        <motion.div whileTap={{ scale: 0.97 }}>
+        <motion.div 
+          whileTap={{ scale: 0.97 }}
+          className={isRTL ? "mr-auto" : "ml-auto"}
+        >
           <Button 
             variant={compareMode ? "default" : "outline"}
             size="sm"
@@ -56,7 +62,7 @@ export const PeriodSelector = ({
             onClick={onCompareModeToggle}
             data-state={compareMode ? "active" : "inactive"}
           >
-            <CompareIcon className="h-4 w-4 mr-2" />
+            <CompareIcon className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
             {t("dashboard.compare", "مقارنة")}
           </Button>
         </motion.div>

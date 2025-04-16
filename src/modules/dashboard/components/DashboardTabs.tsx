@@ -15,7 +15,8 @@ interface DashboardTabsProps {
 }
 
 const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
   
   const containerAnimation = {
     hidden: { opacity: 0 },
@@ -31,6 +32,10 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0 }
   };
+
+  // RTL-aware animation initial and exit values
+  const slideInitial = isRTL ? { opacity: 0, x: -20 } : { opacity: 0, x: 20 };
+  const slideExit = isRTL ? { opacity: 0, x: 20 } : { opacity: 0, x: -20 };
   
   return (
     <AnimatePresence mode="wait">
@@ -42,6 +47,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.4 }}
           className="p-6"
+          dir={isRTL ? "rtl" : "ltr"}
         >
           <motion.div 
             variants={containerAnimation}
@@ -82,6 +88,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.4 }}
           className="p-6"
+          dir={isRTL ? "rtl" : "ltr"}
         >
           <OverviewTab />
         </motion.div>
@@ -92,9 +99,10 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
           key="analytics"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
+          exit={slideExit}
           transition={{ duration: 0.4 }}
           className="p-6"
+          dir={isRTL ? "rtl" : "ltr"}
         >
           <div className="rounded-md bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 p-6 text-center">
             <h3 className="font-medium text-amber-800 dark:text-amber-500 mb-2">قسم التحليلات</h3>
@@ -106,11 +114,12 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({ activeTab = "dashboard" }
       {activeTab === "content" && (
         <motion.div
           key="content"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
+          initial={slideInitial}
+          animate={{ opacity: 1, x: 0 }}
+          exit={slideExit}
           transition={{ duration: 0.4 }}
           className="p-6"
+          dir={isRTL ? "rtl" : "ltr"}
         >
           <ContentTab />
         </motion.div>

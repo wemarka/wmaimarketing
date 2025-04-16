@@ -11,6 +11,7 @@ interface SidebarNavItemProps {
   label: string;
   expanded: boolean;
   checkIsActive: (path: string) => boolean;
+  activePath?: string; // Make activePath optional
 }
 
 const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ 
@@ -18,9 +19,11 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   icon, 
   label, 
   expanded, 
-  checkIsActive 
+  checkIsActive,
+  activePath
 }) => {
-  const isActive = checkIsActive(to);
+  // Use activePath if provided, otherwise use checkIsActive function
+  const isActive = activePath ? to === activePath : checkIsActive(to);
   
   return (
     <TooltipProvider delayDuration={300}>

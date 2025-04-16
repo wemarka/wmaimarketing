@@ -2,12 +2,15 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { useTranslation } from "react-i18next";
 
 export const useSidebarNavigation = () => {
+  const { i18n } = useTranslation();
   const isMobile = useMediaQuery("(max-width: 767px)");
   const location = useLocation();
   const [expanded, setExpanded] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [sidebarPosition, setSidebarPosition] = useState<"right" | "left">("right");
   
   // Auto collapse sidebar on mobile
   useEffect(() => {
@@ -44,10 +47,20 @@ export const useSidebarNavigation = () => {
     
     darkModeMediaQuery.addEventListener('change', handleSystemThemeChange);
     
+    // Set sidebar position based on language direction
+    const isRTL = i18n.language === "ar" || document.dir === "rtl";
+    setSidebarPosition(isRTL ? "right" : "left");
+    
     return () => {
       darkModeMediaQuery.removeEventListener('change', handleSystemThemeChange);
     };
-  }, []);
+  }, [i18n.language]);
+
+  // Update sidebar position when language changes
+  useEffect(() => {
+    const isRTL = i18n.language === "ar" || document.dir === "rtl";
+    setSidebarPosition(isRTL ? "right" : "left");
+  }, [i18n.language, document.dir]);
 
   const toggleExpanded = () => {
     setExpanded(!expanded);
@@ -76,6 +89,7 @@ export const useSidebarNavigation = () => {
     isDarkMode,
     toggleDarkMode,
     checkIsActive,
-    location
+    location,
+    sidebarPosition
   };
 };
