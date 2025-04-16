@@ -73,7 +73,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         )}>
           <AnimatePresence mode="wait">
             <motion.div 
-              key={location.pathname}
+              key={location.pathname + activeDashboardTab}
               className="bg-white dark:bg-slate-900/90 rounded-2xl shadow-xl overflow-hidden"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}

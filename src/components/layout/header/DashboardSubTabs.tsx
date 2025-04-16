@@ -25,7 +25,6 @@ const DashboardSubTabs: React.FC<DashboardSubTabsProps> = ({
     <div className="flex justify-center md:justify-start mt-4">
       <Tabs 
         defaultValue={activeTab}
-        dir="rtl"
         className="w-full"
         onValueChange={onTabChange}
         value={activeTab}

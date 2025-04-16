@@ -71,7 +71,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                   <motion.div 
                     className={cn(
                       "absolute left-0 bg-white rounded-r-full h-8",
-                      expanded ? "w-1" : "w-1"
+                      expanded ? "w-1.5" : "w-1.5"
                     )}
                     layoutId="activeIndicator"
                     initial={{ opacity: 0 }}

@@ -29,6 +29,13 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   checkIsActive,
   activePath
 }) => {
+  const fadeInUp = {
+    initial: { opacity: 0, y: 10 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: 10 },
+    transition: { duration: 0.2 }
+  };
+
   return (
     <ScrollArea className="h-[calc(100vh-64px-80px)] pr-1">
       <motion.div 
@@ -43,6 +50,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
+            layout
           >
             <SidebarNavSection
               title={section.title}

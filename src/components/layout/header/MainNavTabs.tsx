@@ -51,6 +51,7 @@ const MainNavTabs: React.FC<MainNavTabsProps> = ({
                 whileHover={{ scale: 1.15 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                className="text-inherit"
               >
                 {item.icon}
               </motion.span>
