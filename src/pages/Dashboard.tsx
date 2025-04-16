@@ -85,7 +85,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
           
-          {/* Tabs content with improved component */}
+          {/* Integrated dashboard tabs in a single dynamic content area */}
           <DashboardTabs activeTab={activeTab} />
         </motion.div>
       </AnimatePresence>

@@ -1,13 +1,11 @@
-
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { BarChart, Bell, LayoutGrid, PieChart, Settings } from "lucide-react";
+import { Bell, BarChart, LayoutGrid, PieChart, Settings } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import HeaderTitle from "./header/HeaderTitle";
 import SearchBar from "./header/SearchBar";
 import DynamicNavigationMenu from "./header/DynamicNavigationMenu";

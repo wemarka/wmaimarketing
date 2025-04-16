@@ -1,9 +1,9 @@
 
 import React, { useEffect, useState } from "react";
 import Layout from "@/components/layout/Layout";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 
-// تحديث الاستيرادات من الهيكل النمطي الجديد
+// Import the analytics components
 import {
   AnalyticsDashboard,
   CampaignPerformance,
@@ -52,7 +52,7 @@ const Analytics = () => {
         </div>
       </div>
 
-      <Tabs value={activeTab} className="space-y-4" onValueChange={setActiveTab}>
+      <Tabs value={activeTab} className="space-y-4">
         <TabsContent value="dashboard" className="animate-fade-in">
           <AnalyticsDashboard />
         </TabsContent>
