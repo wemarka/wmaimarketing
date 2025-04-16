@@ -1,8 +1,8 @@
 
 import { useState, useCallback, useMemo } from "react";
-import { useAnalyticsQuery } from "../../../modules/analytics/components/dashboard/hooks/useAnalyticsQuery";
+import { useAnalyticsQuery } from "../../analytics/components/dashboard/hooks/useAnalyticsQuery";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 
 export const useDashboardData = () => {
@@ -23,7 +23,7 @@ export const useDashboardData = () => {
     isUsingFallbackData
   } = useAnalyticsQuery(period);
   
-  // تحسين أداء تغيير الفترة الزمنية باستخدام useCallback لتجنب إعادة الإنشاء
+  // تحسين أداء تغيير الفترة الزمنية باستخدام useCallback
   const handlePeriodChange = useCallback((newPeriod: string) => {
     if (newPeriod === period) return; // تجنب إعادة التحميل إذا لم تتغير الفترة
     

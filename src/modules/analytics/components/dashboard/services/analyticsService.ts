@@ -1,13 +1,14 @@
 
-import { supabase } from "@/integrations/supabase/client";
 import { fetchWithRetry } from "@/lib/supabaseClient";
 import { SupabaseSocialAccount, PostWithInsights, TimeRange } from "../types/dashboardTypes";
 import { formatDateForChart, generateDailyDataPoints } from "../utils/analyticsUtils";
 import { OverviewData, EngagementData, PlatformData } from "../types";
 
-// تحسين التخزين المؤقت مع وقت انتهاء الصلاحية للأداء الأفضل
+/**
+ * Enhanced cache with expiry for better performance
+ */
 const cacheWithExpiry = {
-  set: (key: string, value: any, ttl: number) => {
+  set: (key: string, value: any, ttl: number = 30 * 60 * 1000) => {
     const now = new Date();
     const item = {
       value,
@@ -31,7 +32,9 @@ const cacheWithExpiry = {
   }
 };
 
-// تحسين أداء جلب الحسابات الاجتماعية
+/**
+ * Fetches social accounts with caching and optimized network requests
+ */
 export const fetchSocialAccounts = async (userId: string) => {
   const cacheKey = `social_accounts_${userId}`;
   const cachedData = cacheWithExpiry.get(cacheKey);
@@ -41,7 +44,6 @@ export const fetchSocialAccounts = async (userId: string) => {
   }
   
   try {
-    // استخدام fetchWithRetry للتعامل مع أخطاء الشبكة بشكل أفضل
     const { data, error } = await fetchWithRetry<SupabaseSocialAccount[]>(
       "social_accounts",
       queryBuilder => queryBuilder
@@ -52,8 +54,7 @@ export const fetchSocialAccounts = async (userId: string) => {
     if (error) throw error;
     
     if (data) {
-      // تخزين البيانات مؤقتًا لمدة 30 دقيقة
-      cacheWithExpiry.set(cacheKey, data, 30 * 60 * 1000);
+      cacheWithExpiry.set(cacheKey, data);
     }
     
     return data || [];
@@ -63,7 +64,9 @@ export const fetchSocialAccounts = async (userId: string) => {
   }
 };
 
-// تحسين أداء جلب المنشورات
+/**
+ * Fetches posts with optimized caching and error handling
+ */
 export const fetchPosts = async (userId: string, timeRange: TimeRange) => {
   const cacheKey = `posts_${userId}_${timeRange.start}_${timeRange.end}`;
   const cachedData = cacheWithExpiry.get(cacheKey);
@@ -73,7 +76,6 @@ export const fetchPosts = async (userId: string, timeRange: TimeRange) => {
   }
   
   try {
-    // استخدام fetchWithRetry للتعامل مع أخطاء الشبكة بشكل أفضل
     const { data, error } = await fetchWithRetry<PostWithInsights[]>(
       "posts",
       queryBuilder => queryBuilder
@@ -87,8 +89,7 @@ export const fetchPosts = async (userId: string, timeRange: TimeRange) => {
     if (error) throw error;
     
     if (data) {
-      // تخزين البيانات مؤقتًا لمدة 30 دقيقة
-      cacheWithExpiry.set(cacheKey, data, 30 * 60 * 1000);
+      cacheWithExpiry.set(cacheKey, data);
     }
     
     return data || [];
@@ -98,7 +99,9 @@ export const fetchPosts = async (userId: string, timeRange: TimeRange) => {
   }
 };
 
-// تحسين معالجة بيانات الحسابات الاجتماعية
+/**
+ * Processes social account data with optimizations
+ */
 export const processSocialAccountsData = (
   socialAccounts: SupabaseSocialAccount[]
 ): { 
@@ -109,14 +112,13 @@ export const processSocialAccountsData = (
   totalConversions: number,
   platformData: PlatformData[]
 } => {
-  // تهيئة البيانات الأولية
   const platforms: Record<string, number> = {};
   let totalImpressions = 0;
   let totalEngagement = 0;
   let totalClicks = 0;
   let totalConversions = 0;
   
-  // تجنب المعالجة المكثفة إذا لم تكن هناك حسابات
+  // Early return for empty data
   if (!socialAccounts || socialAccounts.length === 0) {
     return {
       platforms,
@@ -128,7 +130,7 @@ export const processSocialAccountsData = (
     };
   }
   
-  // معالجة البيانات
+  // Process account data
   socialAccounts.forEach((account) => {
     const platform = account.platform;
     
@@ -149,11 +151,11 @@ export const processSocialAccountsData = (
     }
   });
   
-  // تحسين تنسيق بيانات المنصات
+  // Create formatted platform data
   const formattedPlatformData: PlatformData[] = Object.keys(platforms).map(platform => {
     const percentage = totalImpressions > 0 ? Math.round(platforms[platform] / totalImpressions * 100) : 0;
     
-    // تخصيص ألوان المنصات
+    // Platform-specific styling
     let iconColor = 'bg-gray-100 text-gray-700';
     if (platform.toLowerCase() === 'instagram') {
       iconColor = 'bg-pink-100 text-pink-600';
@@ -180,7 +182,9 @@ export const processSocialAccountsData = (
   };
 };
 
-// تحسين معالجة بيانات المنشورات
+/**
+ * Processes post data with optimized algorithms
+ */
 export const processPostsData = (
   posts: PostWithInsights[], 
   timeRange: TimeRange
@@ -188,22 +192,22 @@ export const processPostsData = (
   dailyData: OverviewData[],
   dailyEngagementData: EngagementData[]
 } => {
-  // إنشاء نقاط البيانات اليومية
+  // Create daily data points
   const dailyData = generateDailyDataPoints(timeRange.start, timeRange.end);
   const dailyEngagementData = generateDailyDataPoints(timeRange.start, timeRange.end);
   
-  // تجنب المعالجة المكثفة إذا لم تكن هناك منشورات
+  // Early return for empty data
   if (!posts || posts.length === 0) {
     return { dailyData, dailyEngagementData };
   }
   
-  // إنشاء خريطة لتسريع البحث
+  // Optimize lookup with Map
   const dayMap = new Map();
   dailyData.forEach((day, index) => {
     dayMap.set(day.name, index);
   });
   
-  // معالجة بيانات المنشورات
+  // Process post data efficiently
   posts.forEach((post) => {
     const date = new Date(post.created_at);
     const dateStr = formatDateForChart(date);

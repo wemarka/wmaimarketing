@@ -1,7 +1,7 @@
 
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useCreateActivity } from "@/hooks/useCreateActivity";
 import { useQueryConfig } from "@/hooks/useQueryConfig";
 import { 
@@ -47,10 +47,6 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
   const { toast } = useToast();
   const { logActivity } = useCreateActivity();
   const queryConfig = useQueryConfig("analyticsData");
-
-  // تحسين أداء التخزين المؤقت
-  const gcTime = 10 * 60 * 1000; // 10 دقائق
-  const staleTime = 5 * 60 * 1000; // 5 دقائق
 
   // توليد مفاتيح التخزين المؤقت بناءً على المستخدم والفترة
   const getCacheKey = (dataType: string) => {
@@ -135,8 +131,8 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
         };
         
         // تخزين النتائج في ذاكرة التخزين المؤقت لتجربة أفضل دون اتصال
-        setCachedData(`analytics_overview_${user.id}_${period}`, dailyData, gcTime);
-        setCachedData(`analytics_engagement_${user.id}_${period}`, dailyEngagementData, gcTime);
+        setCachedData(`analytics_overview_${user.id}_${period}`, dailyData);
+        setCachedData(`analytics_engagement_${user.id}_${period}`, dailyEngagementData);
         
         logActivity("analytics_data_fetched", "تم جلب بيانات التحليلات بنجاح").catch(console.error);
         
@@ -176,14 +172,10 @@ export const useAnalyticsQuery = (period: string): AnalyticsQueryResult => {
         };
       }
     },
-    // تحسين إعدادات التخزين المؤقت
+    // استخدام إعدادات التكوين المحسنة
     ...queryConfig,
-    staleTime: staleTime, // لا يعاد تحميل البيانات إلا بعد 5 دقائق من آخر طلب
-    gcTime: gcTime, // الاحتفاظ بالبيانات في الذاكرة لمدة 10 دقائق
     enabled: !!user,
-    // عدم إعادة التحميل عند التركيز على النافذة لتقليل الطلبات غير الضرورية
-    refetchOnWindowFocus: false,
-    placeholderData: previousData => previousData, // Using function instead of string
+    placeholderData: previousData => previousData
   });
   
   return {
