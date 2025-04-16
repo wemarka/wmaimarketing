@@ -9,6 +9,7 @@ import SearchBar from "./header/SearchBar";
 import DynamicNavigationMenu from "./header/DynamicNavigationMenu";
 import { useHeaderNavigation } from "./header/useHeaderNavigation";
 import HeaderGreeting from "./header/HeaderGreeting";
+import UserMenu from "./header/UserMenu";
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -55,12 +56,20 @@ const Header: React.FC = () => {
     >
       <header className="bg-gradient-to-r from-[#3a7a89] via-[#4a8a99] to-[#5a9aa9] px-6 py-4 text-white shadow-lg" dir={isRTL ? "rtl" : "ltr"}>
         <div className="flex flex-col space-y-4">
+          {/* Top header row with centered and balanced spacing */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-1">
               <HeaderTitle getPageTitle={getPageTitle} />
+            </div>
+            
+            <div className="flex-1 flex justify-center">
               <HeaderGreeting currentTime={currentTime} greeting={getGreeting()} />
             </div>
-            <HeaderActions isRTL={isRTL} />
+            
+            <div className="flex items-center justify-end gap-2 flex-1">
+              <HeaderActions isRTL={isRTL} />
+              <UserMenu />
+            </div>
           </div>
 
           <motion.div

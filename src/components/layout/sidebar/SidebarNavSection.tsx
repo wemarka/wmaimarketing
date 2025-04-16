@@ -16,11 +16,6 @@ interface SidebarNavSectionProps {
   expanded: boolean;
   checkIsActive: (path: string) => boolean;
   activePath: string;
-  SidebarItemWrapper?: ({ children, title, isExpanded }: { 
-    children: React.ReactNode; 
-    title: string; 
-    isExpanded: boolean 
-  }) => JSX.Element;
 }
 
 const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
@@ -28,8 +23,7 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
   items,
   expanded,
   checkIsActive,
-  activePath,
-  SidebarItemWrapper
+  activePath
 }) => {
   return (
     <div className="mb-2">
@@ -50,27 +44,14 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
       <div className="space-y-1">
         {items.map((item) => (
           <div key={item.id}>
-            {SidebarItemWrapper ? (
-              <SidebarItemWrapper title={item.label} isExpanded={expanded}>
-                <SidebarNavItem
-                  to={item.to}
-                  icon={item.icon}
-                  label={item.label}
-                  expanded={expanded}
-                  checkIsActive={checkIsActive}
-                  activePath={activePath}
-                />
-              </SidebarItemWrapper>
-            ) : (
-              <SidebarNavItem
-                to={item.to}
-                icon={item.icon}
-                label={item.label}
-                expanded={expanded}
-                checkIsActive={checkIsActive}
-                activePath={activePath}
-              />
-            )}
+            <SidebarNavItem
+              to={item.to}
+              icon={item.icon}
+              label={item.label}
+              expanded={expanded}
+              checkIsActive={checkIsActive}
+              activePath={activePath}
+            />
           </div>
         ))}
       </div>
