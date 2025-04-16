@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Cloud, CloudSun, Sun, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 
 interface WeatherData {
   temp: number;
@@ -14,15 +15,36 @@ const HeaderWeather: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
   
-  // Get weather icon based on condition
+  // Get weather icon based on condition with animation
   const getWeatherIcon = (condition: string) => {
     if (condition.includes("cloud") || condition.includes("غائم")) {
       if (condition.includes("sun") || condition.includes("شمس")) {
-        return <CloudSun className="h-4 w-4 text-beauty-purple" />;
+        return (
+          <motion.div 
+            animate={{ y: [0, -2, 0] }} 
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <CloudSun className="h-3 w-3 text-white/70" />
+          </motion.div>
+        );
       }
-      return <Cloud className="h-4 w-4 text-beauty-purple" />;
+      return (
+        <motion.div 
+          animate={{ x: [0, 2, 0] }} 
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <Cloud className="h-3 w-3 text-white/70" />
+        </motion.div>
+      );
     }
-    return <Sun className="h-4 w-4 text-beauty-purple" />;
+    return (
+      <motion.div 
+        animate={{ rotate: [0, 5, 0, -5, 0] }} 
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <Sun className="h-3 w-3 text-white/70" />
+      </motion.div>
+    );
   };
   
   // Mock weather data - in a real app, this would fetch from an API
@@ -49,9 +71,9 @@ const HeaderWeather: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 bg-beauty-cream/30 dark:bg-beauty-purple/10 rounded-full px-3 py-1 shadow-sm backdrop-blur-sm">
-        <Loader2 className="h-3.5 w-3.5 text-beauty-purple animate-spin" />
-        <span className="font-medium">{t("common.loading", "جاري التحميل...")}</span>
+      <div className="flex items-center gap-1 text-xs text-white/80">
+        <Loader2 className="h-3 w-3 text-white/70 animate-spin" />
+        <span>{t("common.loading", "جاري التحميل...")}</span>
       </div>
     );
   }
@@ -59,9 +81,9 @@ const HeaderWeather: React.FC = () => {
   if (!weather) return null;
 
   return (
-    <div className="flex items-center gap-2 bg-beauty-cream/30 dark:bg-beauty-purple/10 rounded-full px-3 py-1 shadow-sm backdrop-blur-sm">
+    <div className="flex items-center gap-1 text-xs text-white/80">
       {getWeatherIcon(weather.condition)}
-      <span className="font-medium">{`${weather.temp}° ${weather.condition}`}</span>
+      <span>{`${weather.temp}° ${weather.condition}`}</span>
     </div>
   );
 };

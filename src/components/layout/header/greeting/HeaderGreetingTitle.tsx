@@ -11,7 +11,7 @@ const HeaderGreetingTitle: React.FC<HeaderGreetingTitleProps> = ({
   userName
 }) => {
   return (
-    <h1 className="text-2xl font-bold flex items-center gap-2 bg-gradient-to-r from-[#3a7a89] to-[#4a8a99] inline-block text-transparent bg-clip-text">
+    <h1 className="text-base font-semibold text-white/90 flex items-center gap-1">
       {greeting}{userName && `, ${userName}`}
     </h1>
   );
