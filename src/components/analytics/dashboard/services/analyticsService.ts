@@ -1,7 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { SupabaseSocialAccount, PostWithInsights, TimeRange } from "../types/dashboardTypes";
-import { Json } from "@/integrations/supabase/types";
 import { formatDateForChart, generateDailyDataPoints } from "../utils/analyticsUtils";
 import { OverviewData, EngagementData, PlatformData } from "../types";
 

@@ -8,18 +8,18 @@ import {
   fetchPosts, 
   processSocialAccountsData, 
   processPostsData 
-} from "../services/analyticsService";
+} from "./services/analyticsService";
 import { 
   getTimeRangeForPeriod, 
   calculateChangePercentages 
-} from "../utils/analyticsUtils";
+} from "./utils/analyticsUtils";
 import {
   getFallbackAnalyticsData,
   getFallbackOverviewData,
   getFallbackPlatformData,
   getFallbackEngagementData
-} from "../utils/fallbackData";
-import { AnalyticsData, OverviewData, EngagementData, PlatformData } from "../types";
+} from "./utils/fallbackData";
+import { AnalyticsData, OverviewData, EngagementData, PlatformData } from "./types";
 
 export const useAnalyticsData = (period: string) => {
   const [loading, setLoading] = useState<boolean>(true);
