@@ -29,10 +29,10 @@ const MobileSearchButton: React.FC = () => {
         <Button 
           variant="ghost" 
           size="icon" 
-          className="rounded-full h-9 w-9 bg-white/15 hover:bg-white/25"
+          className="rounded-full h-8 w-8 bg-white/15 hover:bg-white/25"
           onClick={() => setExpanded(true)}
         >
-          <Search className="h-4.5 w-4.5" />
+          <Search className="h-4 w-4" />
         </Button>
       ) : (
         <motion.div
@@ -65,10 +65,10 @@ const MobileSearchButton: React.FC = () => {
           <Button 
             variant="ghost" 
             size="icon" 
-            className="h-8 w-8 ml-1"
+            className="h-7 w-7 ml-1"
             onClick={() => setExpanded(false)}
           >
-            <X className="h-4 w-4" />
+            <X className="h-3.5 w-3.5" />
           </Button>
         </motion.div>
       )}

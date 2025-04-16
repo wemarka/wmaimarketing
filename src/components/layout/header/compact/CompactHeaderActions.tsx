@@ -1,8 +1,7 @@
 
 import React from "react";
-import SearchBar from "../SearchBar";
-import ThemeToggle from "../ThemeToggle";
 import NotificationsPopover from "../NotificationsPopover";
+import MobileSearchButton from "../search/MobileSearchButton";
 
 interface CompactHeaderActionsProps {
   notificationCount: number;
@@ -14,9 +13,8 @@ const CompactHeaderActions: React.FC<CompactHeaderActionsProps> = ({
   onNotificationClick
 }) => {
   return (
-    <div className="flex items-center gap-2">
-      <SearchBar />
-      <ThemeToggle />
+    <div className="flex items-center gap-3">
+      <MobileSearchButton />
       <NotificationsPopover
         notificationCount={notificationCount}
         onNotificationClick={onNotificationClick}

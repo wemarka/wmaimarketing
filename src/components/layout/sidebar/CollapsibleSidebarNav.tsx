@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
@@ -18,7 +18,8 @@ import {
   TrendingUp,
   MessageCircle,
   PieChart,
-  Target
+  Target,
+  ChevronDown
 } from "lucide-react";
 import {
   Accordion,
@@ -60,7 +61,7 @@ const NavItem: React.FC<NavItemProps> = ({
     <motion.a
       href={to}
       className={cn(
-        "flex items-center py-2 px-4 rounded-md text-sm transition-colors",
+        "flex items-center py-2 px-3 rounded-md text-sm transition-colors",
         "hover:bg-white/15",
         isActive 
           ? "bg-white/20 text-white font-medium" 
@@ -85,7 +86,7 @@ const CollapsibleSidebarNav: React.FC<{ expanded: boolean }> = ({ expanded }) =>
     {
       id: "home",
       title: "الصفحة الرئيسية",
-      icon: <Home className="h-5 w-5" />,
+      icon: <Home className="h-4.5 w-4.5" />,
       items: [
         { id: "main", to: "/", icon: <Home className="h-4 w-4" />, label: "الرئيسية" }
       ]
@@ -93,7 +94,7 @@ const CollapsibleSidebarNav: React.FC<{ expanded: boolean }> = ({ expanded }) =>
     {
       id: "dashboard",
       title: "لوحة التحكم",
-      icon: <LayoutDashboard className="h-5 w-5" />,
+      icon: <LayoutDashboard className="h-4.5 w-4.5" />,
       items: [
         { id: "overview", to: "/dashboard", icon: <LayoutDashboard className="h-4 w-4" />, label: "النظرة العامة" },
         { id: "performance", to: "/dashboard/performance", icon: <TrendingUp className="h-4 w-4" />, label: "الأداء" },
@@ -103,7 +104,7 @@ const CollapsibleSidebarNav: React.FC<{ expanded: boolean }> = ({ expanded }) =>
     {
       id: "marketing",
       title: "التسويق",
-      icon: <Target className="h-5 w-5" />,
+      icon: <Target className="h-4.5 w-4.5" />,
       items: [
         { id: "campaigns", to: "/marketing/campaigns", icon: <Megaphone className="h-4 w-4" />, label: "الحملات" },
         { id: "audience", to: "/marketing/audience", icon: <Users className="h-4 w-4" />, label: "الجمهور" },
@@ -113,7 +114,7 @@ const CollapsibleSidebarNav: React.FC<{ expanded: boolean }> = ({ expanded }) =>
     {
       id: "content",
       title: "المحتوى",
-      icon: <FileText className="h-5 w-5" />,
+      icon: <FileText className="h-4.5 w-4.5" />,
       items: [
         { id: "posts", to: "/content/posts", icon: <FileText className="h-4 w-4" />, label: "المنشورات" },
         { id: "images", to: "/content/images", icon: <Image className="h-4 w-4" />, label: "الصور" },
@@ -123,7 +124,7 @@ const CollapsibleSidebarNav: React.FC<{ expanded: boolean }> = ({ expanded }) =>
     {
       id: "analytics",
       title: "التحليلات",
-      icon: <BarChart className="h-5 w-5" />,
+      icon: <BarChart className="h-4.5 w-4.5" />,
       items: [
         { id: "weekly", to: "/analytics/weekly", icon: <BarChart className="h-4 w-4" />, label: "التقارير الأسبوعية" },
         { id: "engagement", to: "/analytics/engagement", icon: <TrendingUp className="h-4 w-4" />, label: "التفاعل" },
@@ -133,7 +134,7 @@ const CollapsibleSidebarNav: React.FC<{ expanded: boolean }> = ({ expanded }) =>
     {
       id: "admin",
       title: "الإدارة",
-      icon: <Settings className="h-5 w-5" />,
+      icon: <Settings className="h-4.5 w-4.5" />,
       items: [
         { id: "users", to: "/admin/users", icon: <Users className="h-4 w-4" />, label: "المستخدمين" },
         { id: "roles", to: "/admin/roles", icon: <ShieldCheck className="h-4 w-4" />, label: "الصلاحيات" },
@@ -152,7 +153,6 @@ const CollapsibleSidebarNav: React.FC<{ expanded: boolean }> = ({ expanded }) =>
         }
       }
     }
-    // Default to home if no match
     return path === '/' ? 'home' : '';
   };
 
@@ -183,25 +183,27 @@ const CollapsibleSidebarNav: React.FC<{ expanded: boolean }> = ({ expanded }) =>
             className="border-none"
           >
             <AccordionTrigger className={cn(
-              "py-2 px-3 rounded-md hover:bg-white/15 text-white font-semibold",
+              "py-2 px-3 rounded-md hover:bg-white/15 text-white font-medium",
               "flex items-center justify-between",
               expanded ? "px-4" : "px-2",
-              "data-[state=open]:bg-white/10"
+              "data-[state=open]:bg-white/20",
+              "no-underline"
             )}>
               <div className="flex items-center gap-3">
-                <span className="flex-shrink-0">{section.icon}</span>
+                <span className="flex-shrink-0 bg-white/15 p-2 rounded-md">{section.icon}</span>
                 {expanded && <span className="text-sm">{section.title}</span>}
               </div>
+              {expanded && <ChevronDown className="h-4 w-4 text-white/70 transition-transform duration-200" />}
             </AccordionTrigger>
             <AccordionContent className={cn(
               "pt-1 pb-0",
-              expanded ? "px-2" : "px-0"
+              expanded ? "px-2" : "px-0",
             )}>
               <motion.div
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
-                className="flex flex-col gap-1"
+                className="flex flex-col gap-1.5 pl-2"
               >
                 {section.items.map((item) => (
                   <NavItem

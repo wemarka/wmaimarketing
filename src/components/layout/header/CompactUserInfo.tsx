@@ -2,7 +2,7 @@
 import React from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -49,14 +49,12 @@ const CompactUserInfo = () => {
           variant="ghost" 
           className="h-9 rounded-full flex items-center gap-2 hover:bg-white/20"
         >
-          <div className="hidden md:flex items-center gap-2 text-sm text-white/90">
+          <div className="hidden md:flex items-center gap-1.5 text-sm text-white/90">
             <span>{userName}</span>
             <span className="text-white/60">|</span>
             <span>{formatDate()}</span>
             <span className="text-white/60">|</span>
-            <span>
-              {weather.condition} {weather.temp}°
-            </span>
+            <span>{weather.condition} {weather.temp}°</span>
           </div>
           
           <Avatar className="h-8 w-8 border-2 border-white/20">

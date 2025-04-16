@@ -20,14 +20,12 @@ interface SidebarContentProps {
   expanded: boolean;
   activePath: string;
   checkIsActive: (path: string) => boolean;
-  navigationSections?: NavSection[];
 }
 
 const SidebarContent: React.FC<SidebarContentProps> = ({
   expanded,
   activePath,
-  checkIsActive,
-  navigationSections
+  checkIsActive
 }) => {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
