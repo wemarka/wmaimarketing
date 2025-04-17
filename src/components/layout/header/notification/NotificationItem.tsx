@@ -13,24 +13,41 @@ interface NotificationItemProps {
     title: string;
     time: string;
     read: boolean;
+    category?: string;
+    urgent?: boolean;
+    actionUrl?: string;
+    actionText?: string;
   };
   onMarkAsRead: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
-const getTypeConfig = (type: string) => {
-  switch(type) {
-    case 'marketing':
-      return { bg: "bg-purple-100", text: "text-purple-700", label: "تسويق" };
-    case 'comment':
-      return { bg: "bg-blue-100", text: "text-blue-700", label: "تعليق" };
-    case 'post':
-      return { bg: "bg-green-100", text: "text-green-700", label: "نشر" };
-    case 'alert':
-      return { bg: "bg-amber-100", text: "text-amber-700", label: "تنبيه" };
-    default:
-      return { bg: "bg-gray-100", text: "text-gray-700", label: "إشعار" };
+const getTypeConfig = (type: string, category?: string) => {
+  const configs = {
+    post: { bg: "bg-blue-100", text: "text-blue-700", label: "منشور" },
+    content: { bg: "bg-purple-100", text: "text-purple-700", label: "محتوى" },
+    analytics: { bg: "bg-green-100", text: "text-green-700", label: "تحليلات" },
+    task: { bg: "bg-amber-100", text: "text-amber-700", label: "مهمة" },
+    approval: { bg: "bg-indigo-100", text: "text-indigo-700", label: "موافقة" },
+    alert: { bg: "bg-red-100", text: "text-red-700", label: "تنبيه" },
+    system: { bg: "bg-slate-100", text: "text-slate-700", label: "النظام" },
+  };
+
+  // Use category badge if available and no specific type match
+  if (category && !configs[type]) {
+    switch (category) {
+      case 'marketing':
+        return { bg: "bg-pink-100", text: "text-pink-700", label: "تسويق" };
+      case 'content':
+        return { bg: "bg-violet-100", text: "text-violet-700", label: "محتوى" };
+      case 'analytics':
+        return { bg: "bg-emerald-100", text: "text-emerald-700", label: "تحليلات" };
+      default:
+        return configs.system;
+    }
   }
+
+  return configs[type] || configs.system;
 };
 
 const NotificationItem: React.FC<NotificationItemProps> = ({
@@ -38,7 +55,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   onMarkAsRead,
   onDelete
 }) => {
-  const typeConfig = getTypeConfig(notification.type);
+  const typeConfig = getTypeConfig(notification.type, notification.category);
   
   return (
     <motion.div 
@@ -51,7 +68,8 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       <div 
         className={cn(
           "p-3 border-b hover:bg-muted/40 cursor-pointer relative group",
-          !notification.read && "bg-muted/20"
+          !notification.read && "bg-muted/20",
+          notification.urgent && "border-r-2 border-r-red-500"
         )}
         onClick={() => onMarkAsRead(notification.id)}
       >
@@ -64,6 +82,20 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
               {notification.title}
             </p>
             <p className="text-xs text-muted-foreground">{notification.time}</p>
+            {notification.actionText && notification.actionUrl && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="mt-2 h-7 px-2 text-xs"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMarkAsRead(notification.id);
+                  window.location.href = notification.actionUrl!;
+                }}
+              >
+                {notification.actionText}
+              </Button>
+            )}
           </div>
           <Button
             variant="ghost"

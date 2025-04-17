@@ -2,7 +2,7 @@
 /**
  * أنواع الإشعارات المختلفة في النظام
  */
-export type NotificationType = 'post' | 'message' | 'approval' | 'task' | 'system' | 'alert';
+export type NotificationType = 'post' | 'message' | 'approval' | 'task' | 'system' | 'alert' | 'content' | 'analytics';
 
 /**
  * واجهة الإشعار
@@ -17,6 +17,13 @@ export interface Notification {
   urgent?: boolean;
   actionUrl?: string;
   actionText?: string;
+  relatedIds?: {
+    postId?: string;
+    campaignId?: string;
+    taskId?: string;
+  };
+  category?: 'marketing' | 'content' | 'analytics' | 'system';
+  metadata?: Record<string, any>;
 }
 
 /**
@@ -29,5 +36,7 @@ export interface NotificationsState {
   markAsRead: (id: string) => void;
   markAllAsRead: () => void;
   deleteNotification: (id: string) => void;
-  clearAllNotifications: () => void; // Changed from deleteAllNotifications to clearAllNotifications
+  clearAllNotifications: () => void;
+  getNotificationsByType: (type: NotificationType) => Notification[];
+  getNotificationsByCategory: (category: string) => Notification[];
 }

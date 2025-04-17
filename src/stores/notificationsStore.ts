@@ -1,22 +1,11 @@
 
 import { create } from "zustand";
-import { Notification } from "@/types/notifications";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { Notification, NotificationsState } from "@/types/notifications";
 
-interface NotificationsState {
-  notifications: Notification[];
-  unreadCount: number;
-  addNotification: (notification: Notification) => void;
-  markAsRead: (id: string) => void;
-  markAllAsRead: () => void;
-  deleteNotification: (id: string) => void;
-  clearAllNotifications: () => void;
-}
-
-// استخدام الحفظ المحلي للإشعارات مع تقنية persist من zustand
 export const useNotificationsStore = create<NotificationsState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       notifications: [],
       unreadCount: 0,
       
@@ -26,7 +15,13 @@ export const useNotificationsStore = create<NotificationsState>()(
           return state;
         }
         
-        const newNotifications = [notification, ...state.notifications];
+        // تصنيف الإشعار تلقائياً إذا لم يكن مصنفاً
+        const enhancedNotification = {
+          ...notification,
+          category: notification.category || categorizeNotification(notification.type)
+        };
+        
+        const newNotifications = [enhancedNotification, ...state.notifications];
         const newUnreadCount = newNotifications.filter(n => !n.read).length;
         
         return {
@@ -66,6 +61,16 @@ export const useNotificationsStore = create<NotificationsState>()(
         notifications: [],
         unreadCount: 0,
       }),
+
+      getNotificationsByType: (type) => {
+        const state = get();
+        return state.notifications.filter(n => n.type === type);
+      },
+
+      getNotificationsByCategory: (category) => {
+        const state = get();
+        return state.notifications.filter(n => n.category === category);
+      }
     }),
     {
       name: "notifications-storage",
@@ -77,3 +82,19 @@ export const useNotificationsStore = create<NotificationsState>()(
     }
   )
 );
+
+// Helper function to categorize notifications
+function categorizeNotification(type: string): 'marketing' | 'content' | 'analytics' | 'system' {
+  switch (type) {
+    case 'post':
+    case 'campaign':
+      return 'marketing';
+    case 'content':
+    case 'task':
+      return 'content';
+    case 'analytics':
+      return 'analytics';
+    default:
+      return 'system';
+  }
+}
