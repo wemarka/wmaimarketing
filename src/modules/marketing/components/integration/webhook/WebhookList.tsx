@@ -1,17 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { WebhookItem } from './types';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import {
@@ -32,29 +21,23 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Copy, MoreHorizontal, RefreshCw, Trash2 } from 'lucide-react';
-
-const eventTypes = [
-  { id: "post_created", name: "تم إنشاء منشور" },
-  { id: "post_published", name: "تم نشر منشور" },
-  { id: "post_updated", name: "تم تحديث منشور" },
-  { id: "post_deleted", name: "تم حذف منشور" },
-  { id: "campaign_created", name: "تم إنشاء حملة" },
-  { id: "campaign_completed", name: "تم إكمال حملة" },
-  { id: "user_registered", name: "تسجيل مستخدم جديد" },
-  { id: "order_completed", name: "تم إكمال طلب" }
-];
+import { useWebhookForm } from './hooks/useWebhookForm';
+import { WebhookFormDialog } from './components/WebhookFormDialog';
 
 const WebhookList = () => {
   const [webhooks, setWebhooks] = useState<WebhookItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedWebhook, setSelectedWebhook] = useState<WebhookItem | null>(null);
-  const [formState, setFormState] = useState({
-    name: '',
-    endpoint: '',
-    eventTypes: [] as string[],
-    secretKey: '',
-  });
+  const {
+    isDialogOpen,
+    setIsDialogOpen,
+    selectedWebhook,
+    setSelectedWebhook,
+    formState,
+    setFormState,
+    resetForm,
+    handleEventTypeChange,
+    copySecret
+  } = useWebhookForm();
 
   useEffect(() => {
     const loadData = async () => {
@@ -111,13 +94,7 @@ const WebhookList = () => {
   };
 
   const handleAddWebhook = () => {
-    setFormState({
-      name: '',
-      endpoint: '',
-      eventTypes: [],
-      secretKey: '',
-    });
-    setSelectedWebhook(null);
+    resetForm();
     setIsDialogOpen(true);
   };
 
@@ -137,18 +114,13 @@ const WebhookList = () => {
     toast.success('تم حذف الويب هوك بنجاح');
   };
 
-  const handleEventTypeChange = (eventId: string) => {
-    setFormState(prev => {
-      const eventTypes = prev.eventTypes.includes(eventId)
-        ? prev.eventTypes.filter(id => id !== eventId)
-        : [...prev.eventTypes, eventId];
-      
-      return { ...prev, eventTypes };
-    });
-  };
-
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!formState.name || !formState.endpoint || formState.eventTypes.length === 0) {
+      toast.error("يرجى ملء جميع الحقول المطلوبة واختيار حدث واحد على الأقل");
+      return;
+    }
     
     const newWebhook: WebhookItem = {
       id: selectedWebhook?.id || Date.now().toString(),
@@ -174,9 +146,12 @@ const WebhookList = () => {
     setIsDialogOpen(false);
   };
 
-  const copySecret = (secret: string) => {
-    navigator.clipboard.writeText(secret);
-    toast.success('تم نسخ المفتاح السري');
+  const regenerateSecret = () => {
+    setFormState(prev => ({
+      ...prev,
+      secretKey: `whsec_${Math.random().toString(36).substring(2, 15)}`,
+    }));
+    toast.success("تم إنشاء مفتاح سرّي جديد");
   };
 
   const getEventNames = (eventIds: string[]) => {
@@ -275,95 +250,17 @@ const WebhookList = () => {
         </div>
       )}
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>{selectedWebhook ? 'تعديل ويب هوك' : 'إضافة ويب هوك'}</DialogTitle>
-            <DialogDescription>
-              {selectedWebhook
-                ? 'قم بتعديل إعدادات الويب هوك'
-                : 'أضف ويب هوك جديد للاتصال بخدمتك'}
-            </DialogDescription>
-          </DialogHeader>
-          
-          <form onSubmit={handleFormSubmit}>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="name">اسم الويب هوك</Label>
-                <Input
-                  id="name"
-                  value={formState.name}
-                  onChange={e => setFormState({ ...formState, name: e.target.value })}
-                  placeholder="مثال: تحديثات المنشورات"
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="endpoint">رابط الويب هوك (Endpoint)</Label>
-                <Input
-                  id="endpoint"
-                  value={formState.endpoint}
-                  onChange={e => setFormState({ ...formState, endpoint: e.target.value })}
-                  placeholder="https://example.com/webhook"
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label className="block mb-2">أحداث التشغيل</Label>
-                <div className="grid grid-cols-2 gap-2">
-                  {eventTypes.map(event => (
-                    <div key={event.id} className="flex items-center space-x-2 rtl:space-x-reverse">
-                      <Checkbox
-                        id={`event-${event.id}`}
-                        checked={formState.eventTypes.includes(event.id)}
-                        onCheckedChange={() => handleEventTypeChange(event.id)}
-                      />
-                      <label
-                        htmlFor={`event-${event.id}`}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        {event.name}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="secret" className="flex items-center justify-between">
-                  <span>المفتاح السري (اختياري)</span>
-                  {selectedWebhook && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => copySecret(formState.secretKey)}
-                      className="h-7 text-xs"
-                    >
-                      <Copy className="mr-1 h-3 w-3" /> نسخ
-                    </Button>
-                  )}
-                </Label>
-                <Input
-                  id="secret"
-                  value={formState.secretKey}
-                  onChange={e => setFormState({ ...formState, secretKey: e.target.value })}
-                  placeholder="المفتاح السري الخاص بك للتحقق من صحة الطلبات"
-                  type="text"
-                />
-              </div>
-            </div>
-            
-            <DialogFooter className="mt-6">
-              <Button type="submit" className="w-full sm:w-auto">
-                {selectedWebhook ? 'تحديث' : 'إضافة'} الويب هوك
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <WebhookFormDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        formState={formState}
+        setFormState={setFormState}
+        selectedWebhook={selectedWebhook}
+        onSubmit={handleFormSubmit}
+        handleEventTypeChange={handleEventTypeChange}
+        onCopySecret={copySecret}
+        onRegenerateSecret={regenerateSecret}
+      />
     </div>
   );
 };
