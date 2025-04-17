@@ -5,7 +5,7 @@ import { useSidebarStore } from "@/stores/sidebarStore";
 import { useTranslation } from "react-i18next";
 import {
   Sidebar,
-  SidebarContent,
+  SidebarContent as ShadcnSidebarContent,
   SidebarHeader as ShadcnSidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar";
@@ -22,7 +22,7 @@ const AppSidebar = () => {
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
 
   return (
-    <Sidebar className="bg-[#3a7a89] text-white border-r-0 z-50 min-h-screen">
+    <Sidebar className="bg-[#3a7a89] text-white border-r-0 z-50 min-h-screen fixed">
       <ShadcnSidebarHeader>
         <CustomSidebarHeader 
           expanded={expanded} 
@@ -30,12 +30,12 @@ const AppSidebar = () => {
         />
       </ShadcnSidebarHeader>
       
-      <SidebarContent>
+      <ShadcnSidebarContent>
         <SidebarNavContent 
           expanded={expanded}
           activePath={useSidebarStore(state => state.activePath)}
         />
-      </SidebarContent>
+      </ShadcnSidebarContent>
 
       <SidebarFooter className="p-4 border-t border-white/10">
         <Button

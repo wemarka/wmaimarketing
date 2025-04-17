@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { SidebarTooltip } from "./SidebarTooltip";
 import { useTooltip } from "@/hooks/use-tooltip";
+import { useTranslation } from "react-i18next";
 
 interface SidebarHeaderProps {
   expanded: boolean;
@@ -16,10 +17,12 @@ const CustomSidebarHeader: React.FC<SidebarHeaderProps> = ({
   toggleExpanded
 }) => {
   const { tooltipOpen, showTooltip, hideTooltip } = useTooltip();
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
   
   // Enhanced motion variants for animations
   const logoTextVariants = {
-    initial: { opacity: 0, x: -20 },
+    initial: { opacity: 0, x: isRTL ? 20 : -20 },
     animate: { 
       opacity: 1, 
       x: 0, 
@@ -33,7 +36,7 @@ const CustomSidebarHeader: React.FC<SidebarHeaderProps> = ({
     },
     exit: { 
       opacity: 0, 
-      x: -10, 
+      x: isRTL ? 10 : -10, 
       transition: { 
         duration: 0.2,
         ease: "easeOut"
@@ -63,7 +66,7 @@ const CustomSidebarHeader: React.FC<SidebarHeaderProps> = ({
         <motion.div 
           className={cn(
             "w-10 h-10 rounded-full bg-gradient-to-br from-white/95 to-white/85 flex items-center justify-center shadow-lg",
-            expanded ? "mr-3" : "mx-auto"
+            expanded ? (isRTL ? "ml-3" : "mr-3") : "mx-auto"
           )}
           variants={logoIconVariants}
           initial={false}
@@ -95,7 +98,10 @@ const CustomSidebarHeader: React.FC<SidebarHeaderProps> = ({
           "text-white shadow-sm hover:bg-white/25"
         )}
       >
-        {expanded ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        {expanded ? 
+          (isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />) : 
+          (isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />)
+        }
       </button>
     </div>
   );

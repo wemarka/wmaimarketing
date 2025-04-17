@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useTranslation } from "react-i18next";
 
 interface SidebarNavItemProps {
   item: NavItem;
@@ -13,6 +14,9 @@ interface SidebarNavItemProps {
 }
 
 const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ item, isActive, expanded }) => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
+
   return (
     <TooltipProvider>
       <Tooltip delayDuration={300}>
@@ -26,8 +30,10 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ item, isActive, expande
                 : "text-white/70 hover:bg-white/10 hover:text-white"
             )}
           >
-            <span className="mr-2 flex-shrink-0">{item.icon}</span>
+            <span className={isRTL && expanded ? "ml-2" : "mr-2"}>{item.icon}</span>
+            
             {expanded && <span className="truncate">{item.label}</span>}
+            
             {expanded && item.badgeText && (
               <span className={cn(
                 "ml-auto rounded-full px-1.5 py-0.5 text-xs",
@@ -36,6 +42,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ item, isActive, expande
                 {item.badgeText}
               </span>
             )}
+            
             {isActive && (
               <motion.div 
                 className="absolute inset-0 rounded-md bg-white/10 -z-10"
@@ -49,9 +56,13 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ item, isActive, expande
             )}
           </Link>
         </TooltipTrigger>
+        
         {!expanded && (
-          <TooltipContent side="right" className="flex items-center">
-            <span>{item.tooltip}</span>
+          <TooltipContent 
+            side={isRTL ? "left" : "right"} 
+            className="flex items-center bg-[#3a7a89]/90 text-white border-white/10"
+          >
+            <span>{item.tooltip || item.label}</span>
             {item.badgeText && (
               <span className={cn(
                 "ml-2 rounded-full px-1.5 py-0.5 text-xs",
