@@ -82,6 +82,14 @@ const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({
     });
   };
   
+  // دالة لحساب عدد الإشعارات غير المقروءة لنوع محدد
+  const getUnreadCount = (type: string | undefined) => {
+    if (!type || type === "all") {
+      return unreadCount;
+    }
+    return notifications.filter(n => !n.read && n.type === type).length;
+  };
+  
   const filteredNotifications = activeTab === "all" 
     ? notifications 
     : activeTab === "unread"
@@ -123,12 +131,7 @@ const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({
           <NotificationTabs 
             activeTab={activeTab} 
             onTabChange={setActiveTab} 
-            getUnreadCount={(type) => {
-              if (!type || type === "all") {
-                return unreadCount;
-              }
-              return notifications.filter(n => !n.read && n.type === type).length;
-            }} 
+            getUnreadCount={getUnreadCount} 
           />
           
           <TabsContent value={activeTab} className="m-0">

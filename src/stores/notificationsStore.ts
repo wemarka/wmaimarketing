@@ -1,64 +1,79 @@
 
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { Notification, NotificationsState } from '@/types/notifications';
+import { create } from "zustand";
+import { Notification } from "@/types/notifications";
+import { persist, createJSONStorage } from "zustand/middleware";
 
+interface NotificationsState {
+  notifications: Notification[];
+  unreadCount: number;
+  addNotification: (notification: Notification) => void;
+  markAsRead: (id: string) => void;
+  markAllAsRead: () => void;
+  deleteNotification: (id: string) => void;
+  clearAllNotifications: () => void;
+}
+
+// استخدام الحفظ المحلي للإشعارات مع تقنية persist من zustand
 export const useNotificationsStore = create<NotificationsState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       notifications: [],
       unreadCount: 0,
       
-      addNotification: (notification: Notification) => set((state) => {
-        // تجنب تكرار الإشعارات بنفس المعرف
+      addNotification: (notification) => set((state) => {
+        // تجنب تكرار الإشعارات
         if (state.notifications.some(n => n.id === notification.id)) {
           return state;
         }
         
-        const newNotifications = [notification, ...state.notifications].slice(0, 100); // الاحتفاظ بآخر 100 إشعار
+        const newNotifications = [notification, ...state.notifications];
         const newUnreadCount = newNotifications.filter(n => !n.read).length;
         
         return {
           notifications: newNotifications,
-          unreadCount: newUnreadCount
+          unreadCount: newUnreadCount,
         };
       }),
       
-      markAsRead: (id: string) => set((state) => {
-        const newNotifications = state.notifications.map(notification => 
-          notification.id === id ? { ...notification, read: true } : notification
+      markAsRead: (id) => set((state) => {
+        const updatedNotifications = state.notifications.map(n => 
+          n.id === id ? { ...n, read: true } : n
         );
-        
-        const newUnreadCount = newNotifications.filter(n => !n.read).length;
+        const newUnreadCount = updatedNotifications.filter(n => !n.read).length;
         
         return {
-          notifications: newNotifications,
-          unreadCount: newUnreadCount
+          notifications: updatedNotifications,
+          unreadCount: newUnreadCount,
         };
       }),
       
       markAllAsRead: () => set((state) => ({
-        notifications: state.notifications.map(notification => ({ ...notification, read: true })),
-        unreadCount: 0
+        notifications: state.notifications.map(n => ({ ...n, read: true })),
+        unreadCount: 0,
       })),
       
-      deleteNotification: (id: string) => set((state) => {
-        const newNotifications = state.notifications.filter(notification => notification.id !== id);
-        const newUnreadCount = newNotifications.filter(n => !n.read).length;
+      deleteNotification: (id) => set((state) => {
+        const filteredNotifications = state.notifications.filter(n => n.id !== id);
+        const newUnreadCount = filteredNotifications.filter(n => !n.read).length;
         
         return {
-          notifications: newNotifications,
-          unreadCount: newUnreadCount
+          notifications: filteredNotifications,
+          unreadCount: newUnreadCount,
         };
       }),
       
-      deleteAllNotifications: () => set({ notifications: [], unreadCount: 0 })
+      clearAllNotifications: () => set({
+        notifications: [],
+        unreadCount: 0,
+      }),
     }),
     {
-      name: 'notifications-storage',
-      partialize: (state) => ({
-        notifications: state.notifications
-      })
+      name: "notifications-storage",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ 
+        notifications: state.notifications,
+        unreadCount: state.unreadCount,
+      }),
     }
   )
 );

@@ -1,0 +1,125 @@
+
+/* تحسينات توافق الأجهزة المتعددة */
+
+/* تحسينات توافق الخطوط */
+html {
+  font-size: 16px;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+}
+
+/* تجنب تجاوز النص للحاويات */
+* {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* تحسين النواة الحيوية */
+@media screen and (max-width: 640px) {
+  :root {
+    --content-padding: 1rem;
+  }
+  
+  .container {
+    padding-left: var(--content-padding);
+    padding-right: var(--content-padding);
+  }
+  
+  .scroll-hidden-mobile {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scroll-hidden-mobile::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* تسريع طرق التحميل للأجهزة المحمولة */
+@media screen and (max-width: 768px) {
+  /* تقليل فضاء التنسيق */
+  .mobile-compact-space {
+    margin: 0.5rem !important;
+    padding: 0.5rem !important;
+  }
+  
+  /* تخطيط أكثر بساطة للجوال */
+  .mobile-stack {
+    flex-direction: column !important;
+  }
+  
+  /* إخفاء العناصر غير المهمة */
+  .hide-on-mobile {
+    display: none !important;
+  }
+  
+  /* تصغير الخط */
+  .mobile-text-sm {
+    font-size: 0.875rem !important;
+  }
+}
+
+/* تحسين رسومات الجوال */
+@media screen and (max-width: 768px) {
+  .chart-container {
+    height: 200px !important;
+  }
+  
+  /* تنسيقات خصيصا للأجهزة الصغيرة */
+  .chart-label {
+    font-size: 0.7rem !important;
+  }
+}
+
+/* تخصيص خاصية الطباعة */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    font-size: 12pt;
+    color: #000;
+    background-color: #fff;
+  }
+  
+  /* تحسين الطباعة للجداول */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  table, th, td {
+    border: 1px solid #ddd;
+  }
+}
+
+/* تحسينات توافق الشاشات الكبيرة */
+@media screen and (min-width: 1400px) {
+  .container {
+    max-width: 1320px;
+  }
+  
+  .xl-grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+/* دعم وضع الشاشة المظلم */
+@media (prefers-color-scheme: dark) {
+  img:not([src*=".svg"]) {
+    filter: brightness(0.9);
+  }
+}
+
+/* تحسينات خاصة بـ iPad و الأجهزة اللوحية */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .tablet-view {
+    display: block !important;
+  }
+  
+  .tablet-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}

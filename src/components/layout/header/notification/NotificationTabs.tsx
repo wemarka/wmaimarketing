@@ -1,7 +1,14 @@
 
 import React from "react";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { NotificationTabsProps } from "@/components/dashboard/notifications/types";
+import { Bell, AlertTriangle, CheckCircle, Info } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+
+export interface NotificationTabsProps {
+  activeTab: string;
+  onTabChange: (value: string) => void;
+  getUnreadCount: (type: string | undefined) => number;
+}
 
 const NotificationTabs: React.FC<NotificationTabsProps> = ({
   activeTab,
@@ -9,38 +16,75 @@ const NotificationTabs: React.FC<NotificationTabsProps> = ({
   getUnreadCount
 }) => {
   return (
-    <div className="border-b">
-      <TabsList className="w-full grid grid-cols-4 h-11 bg-transparent">
-        <TabsTrigger 
-          value="all" 
-          className="text-xs py-1.5 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-beauty-purple rounded-none"
-          onClick={() => onTabChange("all")}
-        >
-          الكل
-        </TabsTrigger>
-        <TabsTrigger 
-          value="unread" 
-          className="text-xs py-1.5 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-beauty-purple rounded-none"
-          onClick={() => onTabChange("unread")}
-        >
-          غير مقروء
-        </TabsTrigger>
-        <TabsTrigger 
-          value="marketing" 
-          className="text-xs py-1.5 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-beauty-purple rounded-none"
-          onClick={() => onTabChange("marketing")}
-        >
-          تسويق
-        </TabsTrigger>
-        <TabsTrigger 
-          value="comment" 
-          className="text-xs py-1.5 data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-beauty-purple rounded-none"
-          onClick={() => onTabChange("comment")}
-        >
-          تعليقات
-        </TabsTrigger>
-      </TabsList>
-    </div>
+    <TabsList className="grid grid-cols-4 p-1 bg-transparent">
+      <TabsTrigger 
+        value="all" 
+        className="flex items-center justify-center relative"
+        data-state={activeTab === "all" ? "active" : ""}
+      >
+        <Bell className="h-4 w-4" />
+        <span className="sr-only">الكل</span>
+        {getUnreadCount("all") > 0 && (
+          <Badge 
+            className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-[10px]" 
+            variant="destructive"
+          >
+            {getUnreadCount("all")}
+          </Badge>
+        )}
+      </TabsTrigger>
+      
+      <TabsTrigger 
+        value="alerts" 
+        className="flex items-center justify-center relative"
+        data-state={activeTab === "alerts" ? "active" : ""}
+      >
+        <AlertTriangle className="h-4 w-4" />
+        <span className="sr-only">تنبيهات</span>
+        {getUnreadCount("alerts") > 0 && (
+          <Badge 
+            className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-[10px]" 
+            variant="destructive"
+          >
+            {getUnreadCount("alerts")}
+          </Badge>
+        )}
+      </TabsTrigger>
+      
+      <TabsTrigger 
+        value="updates" 
+        className="flex items-center justify-center relative"
+        data-state={activeTab === "updates" ? "active" : ""}
+      >
+        <Info className="h-4 w-4" />
+        <span className="sr-only">تحديثات</span>
+        {getUnreadCount("updates") > 0 && (
+          <Badge 
+            className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-[10px]" 
+            variant="destructive"
+          >
+            {getUnreadCount("updates")}
+          </Badge>
+        )}
+      </TabsTrigger>
+      
+      <TabsTrigger 
+        value="unread" 
+        className="flex items-center justify-center relative"
+        data-state={activeTab === "unread" ? "active" : ""}
+      >
+        <CheckCircle className="h-4 w-4" />
+        <span className="sr-only">غير مقروءة</span>
+        {getUnreadCount("unread") > 0 && (
+          <Badge 
+            className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-[10px]" 
+            variant="destructive"
+          >
+            {getUnreadCount("unread")}
+          </Badge>
+        )}
+      </TabsTrigger>
+    </TabsList>
   );
 };
 
