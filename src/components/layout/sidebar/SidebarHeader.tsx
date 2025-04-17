@@ -3,6 +3,8 @@ import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { SidebarTooltip } from "./SidebarTooltip";
+import { useTooltip } from "@/hooks/use-tooltip";
 
 interface SidebarHeaderProps {
   expanded: boolean;
@@ -13,6 +15,8 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({
   expanded,
   toggleExpanded
 }) => {
+  const { tooltipOpen, showTooltip, hideTooltip } = useTooltip();
+  
   // Motion variants for animations
   const logoTextVariants = {
     initial: { opacity: 0, x: -20 },
@@ -29,9 +33,19 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({
     hover: { scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.25)" },
     tap: { scale: 0.9 }
   };
+  
+  const containerVariants = {
+    initial: { y: -20, opacity: 0 },
+    animate: { y: 0, opacity: 1, transition: { duration: 0.4, ease: "easeOut" } }
+  };
 
   return (
-    <div className="h-16 min-h-16 px-3 flex items-center justify-between border-b border-white/20 bg-gradient-to-b from-[#3a7a89]/90 to-transparent backdrop-blur-md">
+    <motion.div 
+      className="h-16 min-h-16 px-3 flex items-center justify-between border-b border-white/20 bg-gradient-to-b from-[#3a7a89]/90 to-transparent backdrop-blur-md"
+      initial="initial"
+      animate="animate"
+      variants={containerVariants}
+    >
       <div className="flex items-center overflow-hidden">
         <motion.div 
           className={cn(
@@ -62,20 +76,29 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({
         </AnimatePresence>
       </div>
       
-      <motion.button
-        onClick={toggleExpanded}
-        variants={buttonVariants}
-        whileHover="hover"
-        whileTap="tap"
-        className={cn(
-          "w-8 h-8 rounded-full flex items-center justify-center",
-          "bg-white/15 transition-colors border border-white/10",
-          "text-white shadow-sm"
-        )}
+      <SidebarTooltip
+        content={expanded ? "طي القائمة" : "توسيع القائمة"}
+        open={tooltipOpen}
+        onOpenChange={(open) => open ? showTooltip() : hideTooltip()}
+        side="bottom"
       >
-        {expanded ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-      </motion.button>
-    </div>
+        <motion.button
+          onClick={toggleExpanded}
+          variants={buttonVariants}
+          whileHover="hover"
+          whileTap="tap"
+          onMouseEnter={showTooltip}
+          onMouseLeave={hideTooltip}
+          className={cn(
+            "w-8 h-8 rounded-full flex items-center justify-center",
+            "bg-white/15 transition-colors border border-white/10",
+            "text-white shadow-sm"
+          )}
+        >
+          {expanded ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        </motion.button>
+      </SidebarTooltip>
+    </motion.div>
   );
 };
 

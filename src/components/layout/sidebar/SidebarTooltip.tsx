@@ -17,6 +17,10 @@ interface SidebarTooltipProps {
   className?: string;
   side?: "right" | "left" | "top" | "bottom";
   delay?: number;
+  align?: "center" | "start" | "end";
+  sideOffset?: number;
+  alignOffset?: number;
+  avoidCollisions?: boolean;
 }
 
 export const SidebarTooltip: React.FC<SidebarTooltipProps> = ({
@@ -26,7 +30,11 @@ export const SidebarTooltip: React.FC<SidebarTooltipProps> = ({
   onOpenChange,
   className,
   side = "right",
-  delay = 300
+  delay = 300,
+  align = "center",
+  sideOffset = 5,
+  alignOffset = 0,
+  avoidCollisions = true
 }) => {
   if (!content) {
     return <>{children}</>;
@@ -38,12 +46,15 @@ export const SidebarTooltip: React.FC<SidebarTooltipProps> = ({
         <TooltipTrigger asChild>{children}</TooltipTrigger>
         <TooltipContent
           side={side}
+          align={align}
+          sideOffset={sideOffset}
+          alignOffset={alignOffset}
+          avoidCollisions={avoidCollisions}
           className={cn(
             "bg-[#3a7a89]/95 text-white border-white/10 shadow-lg backdrop-blur-lg",
             "px-3 py-2 text-sm font-medium",
             className
           )}
-          sideOffset={5}
           asChild
         >
           <motion.div

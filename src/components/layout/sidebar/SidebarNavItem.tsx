@@ -91,6 +91,18 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
     hideTooltip();
   };
   
+  // Dynamic tooltip positioning based on item position
+  const getTooltipAlignment = () => {
+    // You could enhance this further by detecting the item's position in the viewport
+    return {
+      align: "center" as const,
+      side: "right" as const,
+      sideOffset: 8
+    };
+  };
+
+  const tooltipProps = getTooltipAlignment();
+  
   return (
     <SidebarTooltip
       content={!expanded ? item.tooltip || item.label : ""}
@@ -98,6 +110,7 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
       onOpenChange={open => open ? showTooltip() : hideTooltip()}
       className="z-50"
       delay={400}
+      {...tooltipProps}
     >
       <motion.div
         initial="initial"
