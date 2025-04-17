@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { RefreshCw, ChevronDown, Search, Filter, AlertCircle } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { WebhookEventLogItem, WebhookEventLogItemProps } from "./WebhookEventLogItem";
+import WebhookEventLogItem, { WebhookEventLogItemProps } from "./WebhookEventLogItem";
 
 interface WebhookEventLogListProps {
   events: WebhookEventLogItemProps[];

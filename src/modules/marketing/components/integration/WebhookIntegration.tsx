@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Filter, ArrowUpDown, RefreshCw, Bell } from "lucide-react";
+import { PlusCircle, Filter, ArrowUpDown, RefreshCw, Bell, CheckCircle2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { mockWebhookEvents, mockWebhookLogs } from './data/webhookData';
 import { WebhookEventLogItemProps } from "./WebhookEventLogItem";
@@ -72,8 +72,12 @@ const WebhookIntegration = () => {
     if (!webhook) return;
     
     toast({
-      title: "هل أنت متأكد من حذف الويب هوك؟",
-      description: `سيتم حذف "${webhook.name}" بشكل نهائي.`,
+      description: (
+        <div>
+          <div className="font-semibold mb-1">هل أنت متأكد من حذف الويب هوك؟</div>
+          <div>سيتم حذف "{webhook.name}" بشكل نهائي.</div>
+        </div>
+      ),
       action: {
         label: "نعم، حذف",
         onClick: () => {

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -32,7 +31,6 @@ const CreateWebhookForm: React.FC<CreateWebhookFormProps> = ({ onCancel, onSubmi
     events?: string;
   }>({});
 
-  // Event types with categories
   const eventTypes: EventType[] = [
     { id: 'content_created', name: 'إنشاء محتوى', description: 'يتم تشغيله عند إنشاء محتوى جديد', category: 'المحتوى' },
     { id: 'content_updated', name: 'تحديث محتوى', description: 'يتم تشغيله عند تحديث محتوى موجود', category: 'المحتوى' },
@@ -84,7 +82,6 @@ const CreateWebhookForm: React.FC<CreateWebhookFormProps> = ({ onCancel, onSubmi
     });
   };
 
-  // Function to advance to the next tab
   const goToNextTab = () => {
     if (activeTab === 'basic') {
       if (webhookName.trim() && webhookUrl.trim()) {
@@ -213,7 +210,7 @@ const CreateWebhookForm: React.FC<CreateWebhookFormProps> = ({ onCancel, onSubmi
               <p className="text-red-500 text-xs">{formErrors.events}</p>
             )}
             
-            <Alert variant="outline" className="mt-6 bg-muted/50">
+            <Alert className="mt-6 bg-muted/50">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
                 سيتم إرسال إشعار إلى الويب هوك عندما يحدث أي من الأحداث المحددة. يمكنك تغيير هذه الإعدادات في أي وقت.
