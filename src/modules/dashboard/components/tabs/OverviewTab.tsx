@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Grid, LayoutGrid, RefreshCw } from "lucide-react";
@@ -34,7 +33,7 @@ const OverviewTab = () => {
       toast({
         title: "تم تحديث البيانات",
         description: "تم تحديث البيانات بنجاح",
-        variant: "success",
+        variant: "default",
       });
     }, 1200);
   };

@@ -1,12 +1,11 @@
-
+import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { WebhookEventLogItemProps } from '../types';
 import { cn } from '@/lib/utils';
 import { Clipboard, RefreshCw, ArrowRight, Check, Copy } from 'lucide-react';
-import { useState } from 'react';
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 
 interface Props {
   log: WebhookEventLogItemProps | null;
@@ -63,13 +62,12 @@ const WebhookEventLogDetails = ({ log, open, onOpenChange }: Props) => {
   const handleRetry = () => {
     setRetrying(true);
     
-    // Simulate retry operation
     setTimeout(() => {
       setRetrying(false);
       toast({
         title: "تمت إعادة المحاولة",
         description: "تم إرسال الويب هوك مرة أخرى بنجاح",
-        variant: "success",
+        variant: "default",
       });
       onOpenChange(false);
     }, 1500);
