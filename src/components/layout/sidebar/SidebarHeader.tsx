@@ -55,6 +55,14 @@ const CustomSidebarHeader: React.FC<SidebarHeaderProps> = ({
     }
   };
 
+  const getChevronIcon = () => {
+    if (isRTL) {
+      return expanded ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />;
+    } else {
+      return expanded ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />;
+    }
+  };
+
   return (
     <div 
       className="h-16 min-h-16 px-3 flex items-center justify-between border-b border-white/20 bg-gradient-to-b from-[#3a7a89]/90 to-transparent backdrop-blur-md"
@@ -95,10 +103,7 @@ const CustomSidebarHeader: React.FC<SidebarHeaderProps> = ({
           "text-white shadow-sm hover:bg-white/25"
         )}
       >
-        {expanded ? 
-          (isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />) : 
-          (isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />)
-        }
+        {getChevronIcon()}
       </button>
     </div>
   );

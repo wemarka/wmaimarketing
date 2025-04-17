@@ -22,7 +22,10 @@ const AppSidebar = () => {
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
 
   return (
-    <Sidebar className="bg-[#3a7a89] text-white border-r-0 z-50 min-h-screen fixed">
+    <Sidebar 
+      className="bg-[#3a7a89] text-white border-r-0 z-50 min-h-screen fixed" 
+      side={isRTL ? "right" : "left"}
+    >
       <ShadcnSidebarHeader>
         <CustomSidebarHeader 
           expanded={expanded} 
@@ -42,8 +45,8 @@ const AppSidebar = () => {
           variant="ghost"
           className="w-full justify-start gap-2 text-white/80 hover:text-white hover:bg-white/10"
         >
-          <Settings className="h-5 w-5" />
-          <span>{expanded ? "الإعدادات" : ""}</span>
+          <Settings className={cn("h-5 w-5", !expanded && "mx-auto")} />
+          {expanded && <span>{isRTL ? "الإعدادات" : "Settings"}</span>}
         </Button>
       </SidebarFooter>
     </Sidebar>

@@ -1,8 +1,10 @@
 
-import React from "react";
-import { motion } from "framer-motion";
-import { NavSection } from "@/modules/dashboard/utils/types/sidebarTypes";
-import SidebarNavSection from "../SidebarNavSection";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { NavSection } from '@/modules/dashboard/utils/types/sidebarTypes';
+import SidebarNavItem from '../SidebarNavItem';
+import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 interface CollapsedViewSectionProps {
   navigationSections: NavSection[];
@@ -15,25 +17,50 @@ const CollapsedViewSection: React.FC<CollapsedViewSectionProps> = ({
   navigationSections,
   expanded,
   checkIsActive,
-  activePath,
+  activePath
 }) => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
+
+  // Animation variants for collapsed mode
+  const itemVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { duration: 0.15 }
+    }
+  };
+
   return (
     <motion.div 
-      key="collapsed-view"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="space-y-6"
+      initial="hidden"
+      animate="visible"
+      transition={{ staggerChildren: 0.1, delayChildren: 0.05 }}
     >
-      {navigationSections.map((section) => (
-        <SidebarNavSection
+      {navigationSections.map((section, index) => (
+        <motion.div
           key={section.title}
-          title={section.title}
-          items={section.items}
-          expanded={expanded}
-          checkIsActive={checkIsActive}
-          activePath={activePath}
-        />
+          variants={itemVariants}
+          className={cn(
+            "flex flex-col mb-3",
+            index < navigationSections.length - 1 && "border-b border-white/10 pb-3"
+          )}
+        >
+          <div className="h-6 mb-2 flex items-center justify-center">
+            <div className="w-2 h-2 bg-white/30 rounded-full" />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            {section.items.map((item) => (
+              <SidebarNavItem
+                key={item.to}
+                item={item}
+                isActive={checkIsActive(item.to)}
+                expanded={expanded}
+              />
+            ))}
+          </div>
+        </motion.div>
       ))}
     </motion.div>
   );

@@ -1,73 +1,48 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { useLocation } from 'react-router-dom';
 
-interface SidebarState {
+interface SidebarStoreState {
   expanded: boolean;
-  expandedSection: string | undefined;
   activePath: string;
-  isDarkMode: boolean;
-  sidebarPosition: 'left' | 'right';
-  isTransitioning: boolean;
-  setExpanded: (expanded: boolean) => void;
   toggleExpanded: () => void;
-  setExpandedSection: (section: string | undefined) => void;
   setActivePath: (path: string) => void;
-  setDarkMode: (isDarkMode: boolean) => void;
-  toggleDarkMode: () => void;
-  setSidebarPosition: (position: 'left' | 'right') => void;
-  setIsTransitioning: (isTransitioning: boolean) => void;
 }
 
-export const useSidebarStore = create<SidebarState>()(
+export const useSidebarStore = create<SidebarStoreState>()(
   persist(
-    (set) => ({
-      expanded: true, // Make sure sidebar starts expanded by default
-      expandedSection: undefined,
-      activePath: '/dashboard',
-      isDarkMode: false,
-      sidebarPosition: 'right' as const, // Set to right for RTL support
-      isTransitioning: false,
-      
-      setExpanded: (expanded) => set({ expanded }),
-      toggleExpanded: () => set((state) => ({ 
-        expanded: !state.expanded, 
-        isTransitioning: true 
-      })),
-      
-      setExpandedSection: (section) => set({ expandedSection: section }),
-      
-      setActivePath: (path) => set({ activePath: path }),
-      
-      setDarkMode: (isDarkMode) => set({ isDarkMode }),
-      toggleDarkMode: () => set((state) => ({ isDarkMode: !state.isDarkMode })),
-      
-      setSidebarPosition: (position) => set({ sidebarPosition: position }),
-      
-      setIsTransitioning: (isTransitioning) => set({ isTransitioning })
+    (set, get) => ({
+      expanded: true,
+      activePath: '/',
+      toggleExpanded: () => set({ expanded: !get().expanded }),
+      setActivePath: (path: string) => set({ activePath: path }),
     }),
     {
-      name: 'sidebar-storage',
-      partialize: (state) => ({ 
-        expanded: state.expanded, 
-        isDarkMode: state.isDarkMode,
-        sidebarPosition: state.sidebarPosition,
-        activePath: state.activePath
-      })
+      name: 'sidebar-store',
     }
   )
 );
 
-// Hook for checking active state of links
 export const useActivePath = () => {
-  const activePath = useSidebarStore((state) => state.activePath);
-  
+  const location = useLocation();
+  const setActivePath = useSidebarStore(state => state.setActivePath);
+
   const checkIsActive = (path: string): boolean => {
-    if (path === '/') {
-      return activePath === '/';
+    const currentPath = location.pathname;
+    
+    // Handle exact matches first
+    if (path === '/' && currentPath === '/') return true;
+    if (path === '/dashboard' && (currentPath === '/dashboard' || currentPath === '/')) return true;
+    
+    // Handle sub-paths
+    if (path !== '/' && path !== '/dashboard') {
+      if (currentPath === path) return true; // Exact match
+      if (currentPath.startsWith(`${path}/`)) return true; // Sub-path
     }
-    return activePath.startsWith(path);
+    
+    return false;
   };
-  
+
   return { checkIsActive };
 };
