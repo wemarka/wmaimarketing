@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle, Filter, ArrowUpDown, RefreshCw, Bell, CheckCircle2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { mockWebhookEvents, mockWebhookLogs } from './data/webhookData';
-import { WebhookEventLogItemProps } from "./WebhookEventLogItem";
+import { WebhookEventLogItemProps } from "./webhook";
 import { CreateWebhookForm, WebhookList, WebhookTabs } from './webhook';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion, AnimatePresence } from "framer-motion";
@@ -69,7 +69,6 @@ const WebhookIntegration = () => {
     if (!webhook) return;
     
     toast({
-      title: "تأكيد الحذف",
       description: `هل أنت متأكد من حذف الويب هوك "${webhook.name}" بشكل نهائي؟`,
       action: {
         label: "نعم، حذف",

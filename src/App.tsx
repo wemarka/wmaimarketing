@@ -39,12 +39,13 @@ import ContentCreator from './modules/content-creator/pages/ContentCreator';
 import NotificationCenter from './pages/NotificationCenter';
 import SocialIntegration from './pages/SocialIntegration';
 import DashboardPerformance from './pages/dashboard/Performance';
+import DashboardInteractions from './pages/dashboard/Interactions';
 
 // Import contexts
 import { AuthProvider } from './context/AuthContext';
 import { Toaster } from "@/components/ui/toaster";
 import { ActivityProvider } from './context/ActivityContext';
-import { QueryPerformanceProvider } from './context/QueryPerformanceProvider'; // Import the QueryPerformanceProvider
+import { QueryPerformanceProvider } from './context/QueryPerformanceProvider';
 
 // Import hooks
 import { useAuth } from './hooks/useAuth';
@@ -88,6 +89,7 @@ function App() {
                 <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/dashboard/performance" element={<ProtectedRoute><DashboardPerformance /></ProtectedRoute>} />
+                <Route path="/dashboard/interactions" element={<ProtectedRoute><DashboardInteractions /></ProtectedRoute>} />
                 <Route path="/analytics/:subtab?" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
 
                 <Route path="/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
