@@ -1,11 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import IntegratedDataCard from './IntegratedDataCard';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Filter, ListFilter } from 'lucide-react';
+import { useDebounce } from '@/hooks/useDebounce';
 
 interface IntegratedDataItem {
   id: string;
@@ -26,6 +27,7 @@ interface IntegratedDataItem {
   status?: string;
   date?: string;
   analyticsUrl?: string;
+  importance?: 'high' | 'medium' | 'low';
 }
 
 interface IntegratedDataSectionProps {
@@ -35,10 +37,11 @@ interface IntegratedDataSectionProps {
   loading?: boolean;
   emptyMessage?: string;
   showFilters?: boolean;
+  onRefresh?: () => Promise<void>;
 }
 
 /**
- * قسم لعرض البيانات المتكاملة بين المنشورات والحملات والتحليلات
+ * قسم لعرض البيانات المتكاملة بين المنشورات والحملات والتحليلات - محسن الأداء
  */
 const IntegratedDataSection: React.FC<IntegratedDataSectionProps> = ({
   title,
@@ -46,38 +49,91 @@ const IntegratedDataSection: React.FC<IntegratedDataSectionProps> = ({
   items = [],
   loading = false,
   emptyMessage = "لا توجد عناصر للعرض",
-  showFilters = true
+  showFilters = true,
+  onRefresh
 }) => {
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("date");
+  const [isRefreshing, setIsRefreshing] = useState(false);
   
-  // تصفية العناصر حسب النوع والبحث
-  const filteredItems = items.filter(item => {
-    // تطبيق تصفية النوع
-    if (filter !== "all" && item.type !== filter) return false;
-    
-    // تطبيق البحث
-    if (searchTerm && !item.title.includes(searchTerm) && !item.description.includes(searchTerm)) {
-      return false;
-    }
-    
-    return true;
-  });
+  // استخدام تقنية المهلة للبحث لتحسين الأداء
+  const debouncedSearch = useDebounce(searchTerm, 300);
   
-  // ترتيب العناصر
-  const sortedItems = [...filteredItems].sort((a, b) => {
-    switch (sortBy) {
-      case "date":
-        return (new Date(b.date || "")).getTime() - (new Date(a.date || "")).getTime();
-      case "title":
-        return a.title.localeCompare(b.title);
-      case "status":
-        return (a.status || "").localeCompare(b.status || "");
-      default:
-        return 0;
+  // تحسين الأداء باستخدام useMemo للتصفية والترتيب
+  const filteredItems = useMemo(() => {
+    return items.filter(item => {
+      // تطبيق تصفية النوع
+      if (filter !== "all" && item.type !== filter) return false;
+      
+      // تطبيق البحث
+      if (debouncedSearch && !item.title.includes(debouncedSearch) && !item.description.includes(debouncedSearch)) {
+        return false;
+      }
+      
+      return true;
+    });
+  }, [items, filter, debouncedSearch]);
+  
+  // تحسين الأداء باستخدام useMemo للترتيب
+  const sortedItems = useMemo(() => {
+    return [...filteredItems].sort((a, b) => {
+      switch (sortBy) {
+        case "date":
+          return (new Date(b.date || "")).getTime() - (new Date(a.date || "")).getTime();
+        case "title":
+          return a.title.localeCompare(b.title);
+        case "status":
+          return (a.status || "").localeCompare(b.status || "");
+        default:
+          return 0;
+      }
+    });
+  }, [filteredItems, sortBy]);
+  
+  // معالجة حدث تحديث البيانات
+  const handleRefresh = async () => {
+    if (onRefresh) {
+      setIsRefreshing(true);
+      try {
+        await onRefresh();
+      } catch (error) {
+        console.error("Error refreshing data:", error);
+      } finally {
+        setIsRefreshing(false);
+      }
     }
-  });
+  };
+
+  // استخدام تقنية التحميل البطيء لتحسين الأداء
+  const renderItems = () => {
+    // تحميل فوري للعناصر المهمة والمرئية في الشاشة الأولى
+    const visibleLimit = 9;
+    
+    return sortedItems.map((item, index) => {
+      // تعيين أهمية العناصر - سيتم تحميل العناصر المهمة أولاً
+      const importance = index < 3 ? 'high' : index < visibleLimit ? 'medium' : 'low';
+      const shouldLazyLoad = index >= visibleLimit;
+      
+      return (
+        <IntegratedDataCard
+          key={item.id}
+          title={item.title}
+          description={item.description}
+          sourceType={item.type}
+          sourceId={item.id}
+          metrics={item.metrics}
+          relatedItems={item.relatedItems}
+          status={item.status}
+          date={item.date}
+          analyticsUrl={item.analyticsUrl}
+          lazyLoad={shouldLazyLoad}
+          importance={item.importance || importance}
+          isLoading={loading}
+        />
+      );
+    });
+  };
 
   return (
     <div className="space-y-4">
@@ -110,7 +166,13 @@ const IntegratedDataSection: React.FC<IntegratedDataSectionProps> = ({
                 <SelectItem value="status">الحالة</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="icon">
+            <Button 
+              variant="outline" 
+              size="icon"
+              onClick={handleRefresh}
+              disabled={isRefreshing || loading}
+              className={isRefreshing ? "animate-spin" : ""}
+            >
               <Filter className="h-4 w-4" />
             </Button>
           </div>
@@ -130,27 +192,21 @@ const IntegratedDataSection: React.FC<IntegratedDataSectionProps> = ({
       
       {/* عرض البيانات */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-pulse">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="bg-muted h-48 rounded-md"></div>
+            <IntegratedDataCard
+              key={`skeleton-${i}`}
+              title=""
+              description=""
+              sourceType="post"
+              sourceId={`skeleton-${i}`}
+              isLoading={true}
+            />
           ))}
         </div>
       ) : sortedItems.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sortedItems.map((item) => (
-            <IntegratedDataCard
-              key={item.id}
-              title={item.title}
-              description={item.description}
-              sourceType={item.type}
-              sourceId={item.id}
-              metrics={item.metrics}
-              relatedItems={item.relatedItems}
-              status={item.status}
-              date={item.date}
-              analyticsUrl={item.analyticsUrl}
-            />
-          ))}
+          {renderItems()}
         </div>
       ) : (
         <div className="py-12 text-center">

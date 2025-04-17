@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowUpRight, FileBarChart, ArrowRightCircle, BarChart3 } from 'lucide-react';
+import { ArrowUpRight, FileBarChart, ArrowRightCircle, BarChart3, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface IntegratedDataCardProps {
   title: string;
@@ -25,10 +26,14 @@ interface IntegratedDataCardProps {
   status?: string;
   date?: string;
   analyticsUrl?: string;
+  lazyLoad?: boolean;
+  importance?: 'high' | 'medium' | 'low';
+  isLoading?: boolean;
+  onCardClick?: () => void;
 }
 
 /**
- * مكون يعرض بطاقة بيانات متكاملة تربط بين المنشورات والحملات والتحليلات
+ * مكون يعرض بطاقة بيانات متكاملة مُحسّنة الأداء تربط بين المنشورات والحملات والتحليلات
  */
 const IntegratedDataCard: React.FC<IntegratedDataCardProps> = ({
   title,
@@ -40,7 +45,14 @@ const IntegratedDataCard: React.FC<IntegratedDataCardProps> = ({
   status,
   date,
   analyticsUrl,
+  lazyLoad = false,
+  importance = 'medium',
+  isLoading = false,
+  onCardClick
 }) => {
+  const [isVisible, setIsVisible] = useState(!lazyLoad);
+  const [isDataLoaded, setIsDataLoaded] = useState(!lazyLoad);
+
   // تحديد أيقونة ولون المصدر
   const getSourceIcon = () => {
     switch (sourceType) {
@@ -92,9 +104,76 @@ const IntegratedDataCard: React.FC<IntegratedDataCardProps> = ({
       default: return '→';
     }
   };
+  
+  // استخدام Intersection Observer للتحميل البطيء
+  useEffect(() => {
+    if (!lazyLoad) return;
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setIsVisible(true);
+        
+        // محاكاة تأخير التحميل حسب الأهمية
+        const loadDelay = importance === 'high' ? 0 : importance === 'medium' ? 150 : 300;
+        
+        setTimeout(() => {
+          setIsDataLoaded(true);
+          observer.disconnect();
+        }, loadDelay);
+      }
+    }, { rootMargin: '200px' });
+    
+    const cardElement = document.getElementById(`card-${sourceId}`);
+    if (cardElement) {
+      observer.observe(cardElement);
+    }
+    
+    return () => observer.disconnect();
+  }, [lazyLoad, sourceId, importance]);
+  
+  if (lazyLoad && !isVisible) {
+    return <div id={`card-${sourceId}`} className="h-[200px]" />;
+  }
+
+  if (isLoading || (lazyLoad && !isDataLoaded)) {
+    return (
+      <Card id={`card-${sourceId}`} className="overflow-hidden animate-pulse">
+        <CardHeader className="pb-2 pt-4">
+          <div className="flex justify-between items-start">
+            <Skeleton className="h-5 w-[150px]" />
+            <Skeleton className="h-5 w-[100px] rounded-full" />
+          </div>
+        </CardHeader>
+        <CardContent className="pb-4">
+          <Skeleton className="h-4 w-full mb-3" />
+          <Skeleton className="h-4 w-3/4 mb-3" />
+          
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            {[1, 2].map((i) => (
+              <div key={i} className="bg-muted/30 p-2 rounded">
+                <Skeleton className="h-3 w-12 mb-1" />
+                <Skeleton className="h-4 w-10" />
+              </div>
+            ))}
+          </div>
+          
+          <div className="flex justify-between items-center mt-4">
+            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-8 w-20 rounded" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow">
+    <Card 
+      id={`card-${sourceId}`}
+      className={`overflow-hidden hover:shadow-md transition-shadow ${onCardClick ? 'cursor-pointer' : ''}`}
+      onClick={onCardClick}
+      data-source-type={sourceType}
+      data-source-id={sourceId}
+    >
       <CardHeader className="pb-2 pt-4">
         <div className="flex justify-between items-start">
           <CardTitle className="text-base">{title}</CardTitle>
@@ -153,9 +232,10 @@ const IntegratedDataCard: React.FC<IntegratedDataCardProps> = ({
             )}
             {date && <span>{date}</span>}
           </div>
-          <Button size="sm" variant="ghost" asChild>
+          <Button size="sm" variant="ghost" className="group" asChild>
             <Link to={getDetailsLink()}>
-              التفاصيل
+              <span className="mr-1">التفاصيل</span>
+              <ExternalLink className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </Button>
         </div>
