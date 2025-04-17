@@ -22,7 +22,7 @@ const AppSidebar = () => {
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
 
   return (
-    <Sidebar className="bg-[#3a7a89] text-white border-r-0 z-50">
+    <Sidebar className="bg-[#3a7a89] text-white border-r-0 z-50 min-h-screen">
       <ShadcnSidebarHeader>
         <CustomSidebarHeader 
           expanded={expanded} 

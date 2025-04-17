@@ -54,15 +54,6 @@ const CustomSidebarHeader: React.FC<SidebarHeaderProps> = ({
       } 
     }
   };
-  
-  const buttonVariants = {
-    hover: { 
-      scale: 1.1, 
-      backgroundColor: "rgba(255, 255, 255, 0.25)",
-      boxShadow: "0 0 8px rgba(255,255,255,0.3)" 
-    },
-    tap: { scale: 0.9 }
-  };
 
   return (
     <div 

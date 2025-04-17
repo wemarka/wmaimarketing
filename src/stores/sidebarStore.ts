@@ -24,9 +24,9 @@ export const useSidebarStore = create<SidebarState>()(
     (set) => ({
       expanded: true, // Make sure sidebar starts expanded by default
       expandedSection: undefined,
-      activePath: '/',
+      activePath: '/dashboard',
       isDarkMode: false,
-      sidebarPosition: 'left' as const, // Default to left position
+      sidebarPosition: 'right' as const, // Set to right for RTL support
       isTransitioning: false,
       
       setExpanded: (expanded) => set({ expanded }),
@@ -51,7 +51,8 @@ export const useSidebarStore = create<SidebarState>()(
       partialize: (state) => ({ 
         expanded: state.expanded, 
         isDarkMode: state.isDarkMode,
-        sidebarPosition: state.sidebarPosition
+        sidebarPosition: state.sidebarPosition,
+        activePath: state.activePath
       })
     }
   )
