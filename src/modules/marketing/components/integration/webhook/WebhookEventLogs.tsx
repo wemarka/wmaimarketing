@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Table, TableHeader, TableRow, TableHead, TableBody } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { WebhookEventLogItemProps } from './types';
-import { cn } from '@/lib/utils';
-import { RefreshCw, Eye } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
+import WebhookEventLogItem from './components/WebhookEventLogItem';
+import WebhookEventLogDetails from './components/WebhookEventLogDetails';
 
 const MOCK_EVENT_LOGS: WebhookEventLogItemProps[] = [
   {
@@ -51,9 +50,7 @@ const WebhookEventLogs = () => {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      
       await new Promise(resolve => setTimeout(resolve, 600));
-      
       setLogs(MOCK_EVENT_LOGS);
       setLoading(false);
     };
@@ -64,49 +61,6 @@ const WebhookEventLogs = () => {
   const handleViewDetails = (log: WebhookEventLogItemProps) => {
     setSelectedLog(log);
     setShowDetails(true);
-  };
-
-  const formatTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString('ar-EG');
-  };
-
-  const getStatusBadge = (status: 'success' | 'error' | 'pending') => {
-    const baseClasses = 'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium';
-    const statusClasses = {
-      success: 'bg-green-100 text-green-700',
-      error: 'bg-red-100 text-red-700',
-      pending: 'bg-amber-100 text-amber-700'
-    };
-    
-    return <Badge className={cn(baseClasses, statusClasses[status])}>{getStatusLabel(status)}</Badge>;
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch(status) {
-      case 'success':
-        return 'ناجح';
-      case 'error':
-        return 'خطأ';
-      case 'pending':
-        return 'قيد الانتظار';
-      default:
-        return status;
-    }
-  };
-
-  const getFormattedEventName = (event: string) => {
-    const eventMap: Record<string, string> = {
-      post_created: 'إنشاء منشور',
-      post_published: 'نشر منشور',
-      post_updated: 'تحديث منشور',
-      post_deleted: 'حذف منشور',
-      campaign_created: 'إنشاء حملة',
-      campaign_completed: 'اكتمال حملة',
-      user_registered: 'تسجيل مستخدم'
-    };
-    
-    return eventMap[event] || event;
   };
 
   return (
@@ -138,18 +92,11 @@ const WebhookEventLogs = () => {
           </TableHeader>
           <TableBody>
             {logs.map(log => (
-              <TableRow key={log.id}>
-                <TableCell className="font-medium">{getFormattedEventName(log.event)}</TableCell>
-                <TableCell>{log.platform}</TableCell>
-                <TableCell>{formatTimestamp(log.timestamp)}</TableCell>
-                <TableCell>{getStatusBadge(log.status)}</TableCell>
-                <TableCell className="max-w-[200px] truncate">{log.details}</TableCell>
-                <TableCell>
-                  <Button variant="ghost" size="sm" onClick={() => handleViewDetails(log)}>
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
+              <WebhookEventLogItem
+                key={log.id}
+                log={log}
+                onViewDetails={handleViewDetails}
+              />
             ))}
           </TableBody>
         </Table>
@@ -159,58 +106,11 @@ const WebhookEventLogs = () => {
         </div>
       )}
       
-      <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>تفاصيل حدث الويب هوك</DialogTitle>
-            <DialogDescription>
-              معرف الحدث: {selectedLog?.id}
-            </DialogDescription>
-          </DialogHeader>
-          
-          {selectedLog && (
-            <div className="mt-4">
-              <div className="grid grid-cols-[1fr_2fr] gap-2 gap-x-4 mb-4">
-                <div className="font-semibold text-muted-foreground">نوع الحدث</div>
-                <div>{getFormattedEventName(selectedLog.event)}</div>
-                
-                <div className="font-semibold text-muted-foreground">المنصة</div>
-                <div>{selectedLog.platform}</div>
-                
-                <div className="font-semibold text-muted-foreground">التوقيت</div>
-                <div>{formatTimestamp(selectedLog.timestamp)}</div>
-                
-                <div className="font-semibold text-muted-foreground">الحالة</div>
-                <div>{getStatusBadge(selectedLog.status)}</div>
-                
-                <div className="font-semibold text-muted-foreground">الوجهة</div>
-                <div>{selectedLog.destination}</div>
-                
-                <div className="font-semibold text-muted-foreground">التفاصيل</div>
-                <div>{selectedLog.details}</div>
-              </div>
-              
-              {selectedLog.payload && (
-                <>
-                  <h4 className="font-medium mt-4 mb-2">المحتوى المرسل</h4>
-                  <div className="bg-muted/30 rounded-md font-mono text-sm max-h-[200px] overflow-auto p-4 whitespace-pre">
-                    {selectedLog.payload}
-                  </div>
-                </>
-              )}
-              
-              {selectedLog.response && (
-                <>
-                  <h4 className="font-medium mt-4 mb-2">الرد المستلم</h4>
-                  <div className="bg-muted/30 rounded-md font-mono text-sm max-h-[200px] overflow-auto p-4 whitespace-pre">
-                    {selectedLog.response}
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <WebhookEventLogDetails
+        log={selectedLog}
+        open={showDetails}
+        onOpenChange={setShowDetails}
+      />
     </div>
   );
 };
