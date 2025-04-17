@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
-import { Post, formatDate, getAudienceSize } from "@/hooks/useUpcomingPosts";
+import { PostWithMeta, formatDate, getAudienceSize } from "@/hooks/useUpcomingPosts";
 
 // Platform configurations
 export const platforms = {
@@ -35,7 +35,7 @@ export const platforms = {
 };
 
 interface PostItemProps {
-  post: Post;
+  post: PostWithMeta;
   index: number;
   viewMode: "list" | "compact";
   onEdit: (id: string) => void;

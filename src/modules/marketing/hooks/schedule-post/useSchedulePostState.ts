@@ -6,13 +6,30 @@ import { getCampaigns } from "../../services/integrationService";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { schedulePostSchema } from "./validationSchema";
-import { SchedulePostForm } from './types';
+import { SchedulePostForm, UseSchedulePostState, UseSchedulePostStateSetters } from './types';
 
-export const useSchedulePostState = () => {
+export const useSchedulePostState = (): UseSchedulePostState & UseSchedulePostStateSetters => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [socialAccounts, setSocialAccounts] = useState<any[]>([]);
+  
+  // State variables
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [suggestedContent, setSuggestedContent] = useState("");
+  const [platform, setPlatform] = useState("");
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState("12:00");
+  const [selectedCampaign, setSelectedCampaign] = useState("");
+  const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
+  const [hashtags, setHashtags] = useState<string[]>([]);
+  const [mediaFiles, setMediaFiles] = useState<File[]>([]);
+  const [mediaUrls, setMediaUrls] = useState<string[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [enableCrossPosting, setEnableCrossPosting] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Initialize the form
   const form = useForm<SchedulePostForm>({
@@ -92,9 +109,32 @@ export const useSchedulePostState = () => {
   }, [user]);
   
   return {
-    form,
-    loading,
+    // State
+    title,
+    content,
+    suggestedContent,
+    platform,
+    selectedDate,
+    selectedTime,
     campaigns,
-    socialAccounts
+    selectedCampaign,
+    socialAccounts,
+    selectedAccounts,
+    hashtags,
+    mediaFiles,
+    mediaUrls,
+    previewUrls,
+    enableCrossPosting,
+    isGenerating,
+    isSubmitting,
+    
+    // Setters
+    setTitle,
+    setContent,
+    setSuggestedContent,
+    setPlatform,
+    setSelectedDate,
+    setSelectedTime,
+    setSelectedCampaign
   };
 };

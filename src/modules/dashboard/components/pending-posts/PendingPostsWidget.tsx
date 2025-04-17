@@ -9,37 +9,56 @@ import EmptyPostsPlaceholder from "./EmptyPostsPlaceholder";
 
 const PendingPostsWidget = () => {
   const [viewMode, setViewMode] = useState<"list" | "compact">("list");
-  const { posts, loading, handleApprove, handleReject } = usePendingPosts();
+  const { posts, isLoading, approvePost, rejectPost } = usePendingPosts();
 
   const toggleViewMode = () => {
     setViewMode(viewMode === "list" ? "compact" : "list");
   };
 
+  // Create adapter functions for component props
+  const handleApprove = (id: string) => approvePost(id);
+  const handleReject = (id: string) => rejectPost(id);
+
   return (
     <Card className="h-full">
       <CardHeader className="pb-3">
         <PostsHeader 
-          loading={loading} 
+          loading={isLoading} 
           postsCount={posts.length} 
           viewMode={viewMode}
           onToggleView={toggleViewMode}
         />
       </CardHeader>
       <CardContent className="px-6">
-        {loading ? (
+        {isLoading ? (
           <LoadingPosts />
         ) : posts.length > 0 ? (
           <div className="space-y-4">
-            {posts.map((post, index) => (
-              <PostItem 
-                key={post.id}
-                post={post}
-                index={index}
-                viewMode={viewMode}
-                onApprove={() => handleApprove(post.id)}
-                onReject={() => handleReject(post.id)}
-              />
-            ))}
+            {posts.map((post, index) => {
+              // Map PendingPost to Post format expected by PostItem
+              const adaptedPost = {
+                id: post.id,
+                title: post.title,
+                content: post.content,
+                platform: post.platform,
+                createdAt: post.created_at,
+                author: {
+                  name: post.profile?.first_name || 'Unknown User',
+                  avatar: post.profile?.avatar_url || undefined
+                }
+              };
+              
+              return (
+                <PostItem 
+                  key={post.id}
+                  post={adaptedPost}
+                  index={index}
+                  viewMode={viewMode}
+                  onApprove={handleApprove}
+                  onReject={handleReject}
+                />
+              );
+            })}
           </div>
         ) : (
           <EmptyPostsPlaceholder />

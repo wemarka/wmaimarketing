@@ -1,233 +1,234 @@
 
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle, Copy, RefreshCcw } from 'lucide-react';
 import { toast } from 'sonner';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Checkbox } from "@/components/ui/checkbox";
 
-// Available event types
-const eventTypes = [
-  { id: "new_post", label: "منشور جديد" },
-  { id: "post_updated", label: "تحديث منشور" },
-  { id: "post_published", label: "نشر منشور" },
-  { id: "new_order", label: "طلب جديد" },
-  { id: "order_payment", label: "دفعة جديدة" },
-  { id: "user_subscription", label: "اشتراك مستخدم" },
-  { id: "subscription_renewal", label: "تجديد اشتراك" },
-  { id: "new_review", label: "تقييم جديد" },
-  { id: "review_response", label: "رد على تقييم" },
+// Event types
+const eventCategories = [
+  {
+    title: 'أحداث المنشورات',
+    events: [
+      { id: 'post_created', name: 'تم إنشاء منشور' },
+      { id: 'post_updated', name: 'تم تحديث منشور' },
+      { id: 'post_published', name: 'تم نشر منشور' },
+      { id: 'post_deleted', name: 'تم حذف منشور' },
+    ]
+  },
+  {
+    title: 'أحداث الحملات',
+    events: [
+      { id: 'campaign_created', name: 'تم إنشاء حملة' },
+      { id: 'campaign_started', name: 'تم بدء حملة' },
+      { id: 'campaign_completed', name: 'تم إكمال حملة' },
+      { id: 'campaign_updated', name: 'تم تحديث حملة' },
+    ]
+  },
+  {
+    title: 'أحداث الحسابات',
+    events: [
+      { id: 'user_registered', name: 'تم تسجيل مستخدم جديد' },
+      { id: 'user_updated', name: 'تم تحديث حساب مستخدم' },
+      { id: 'user_deleted', name: 'تم حذف مستخدم' },
+    ]
+  }
 ];
 
-// Define form schema
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "يجب أن يكون الاسم أكثر من حرفين",
-  }),
-  endpoint: z.string().url({
-    message: "يجب إدخال رابط صحيح",
-  }),
-  eventTypes: z.array(z.string()).min(1, {
-    message: "يجب اختيار نوع حدث واحد على الأقل",
-  }),
-  generateSecret: z.boolean().default(false),
-  active: z.boolean().default(true),
-  description: z.string().optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
-const CreateWebhookForm: React.FC = () => {
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      endpoint: "",
-      eventTypes: [],
-      generateSecret: true,
-      active: true,
-      description: "",
-    },
+const CreateWebhookForm = () => {
+  const [formState, setFormState] = useState({
+    name: '',
+    endpoint: '',
+    secretKey: generateSecretKey(),
+    selectedEvents: [] as string[],
+    advancedMode: false,
   });
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Form data:", data);
-    toast.success("تم إنشاء الويب هوك بنجاح");
-    form.reset();
+  function generateSecretKey() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = 'whsec_';
+    for (let i = 0; i < 24; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+  }
+
+  const regenerateSecretKey = () => {
+    setFormState({
+      ...formState,
+      secretKey: generateSecretKey()
+    });
+    
+    toast.success("تم إنشاء مفتاح سرّي جديد");
+  };
+
+  const copySecretKey = () => {
+    navigator.clipboard.writeText(formState.secretKey);
+    toast.success("تم نسخ المفتاح السرّي");
+  };
+
+  const handleEventToggle = (eventId: string) => {
+    setFormState(prev => ({
+      ...prev,
+      selectedEvents: prev.selectedEvents.includes(eventId)
+        ? prev.selectedEvents.filter(id => id !== eventId)
+        : [...prev.selectedEvents, eventId]
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    if (!formState.name || !formState.endpoint || formState.selectedEvents.length === 0) {
+      toast.error("يرجى ملء جميع الحقول المطلوبة واختيار حدث واحد على الأقل");
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast.success("تم إنشاء الويب هوك بنجاح");
+      
+      // Reset the form
+      setFormState({
+        name: '',
+        endpoint: '',
+        secretKey: generateSecretKey(),
+        selectedEvents: [],
+        advancedMode: false,
+      });
+    } catch (error) {
+      console.error("Error creating webhook:", error);
+      toast.error("حدث خطأ أثناء إنشاء الويب هوك");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <Card>
-      <CardContent className="pt-6">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>اسم الويب هوك</FormLabel>
-                    <FormControl>
-                      <Input placeholder="مثال: إشعارات المبيعات" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="endpoint"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>رابط الويب هوك</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="https://example.com/webhook"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+      <CardHeader>
+        <CardTitle>إنشاء ويب هوك جديد</CardTitle>
+        <CardDescription>
+          قم بإعداد ويب هوك جديد لربط التطبيق مع الخدمات الخارجية
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-4">
+            <div className="grid gap-2">
+              <Label htmlFor="webhook-name">اسم الويب هوك</Label>
+              <Input 
+                id="webhook-name"
+                placeholder="مثال: تنبيهات المنشورات"
+                value={formState.name}
+                onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                required
               />
             </div>
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>وصف (اختياري)</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="وصف مختصر للويب هوك"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="eventTypes"
-              render={() => (
-                <FormItem>
-                  <FormLabel>أنواع الأحداث</FormLabel>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-                    {eventTypes.map((event) => (
-                      <FormField
-                        key={event.id}
-                        control={form.control}
-                        name="eventTypes"
-                        render={({ field }) => {
-                          return (
-                            <FormItem
-                              key={event.id}
-                              className="flex flex-row items-start space-x-3 space-y-0 space-x-reverse"
-                            >
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value?.includes(event.id)}
-                                  onCheckedChange={(checked) => {
-                                    return checked
-                                      ? field.onChange([...field.value, event.id])
-                                      : field.onChange(
-                                          field.value?.filter(
-                                            (value) => value !== event.id
-                                          )
-                                        )
-                                  }}
-                                />
-                              </FormControl>
-                              <FormLabel className="font-normal">
-                                {event.label}
-                              </FormLabel>
-                            </FormItem>
-                          )
-                        }}
-                      />
-                    ))}
+            
+            <div className="grid gap-2">
+              <Label htmlFor="webhook-endpoint">رابط الويب هوك (URL)</Label>
+              <Input 
+                id="webhook-endpoint"
+                placeholder="https://example.com/webhook"
+                value={formState.endpoint}
+                onChange={(e) => setFormState({ ...formState, endpoint: e.target.value })}
+                required
+              />
+              <p className="text-sm text-muted-foreground">
+                سيتم إرسال الطلبات إلى هذا العنوان عند حدوث الأحداث المحددة
+              </p>
+            </div>
+            
+            <div className="grid gap-2">
+              <Label className="flex items-center justify-between">
+                المفتاح السرّي
+                <div className="flex gap-2">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="icon"
+                    onClick={regenerateSecretKey}
+                  >
+                    <RefreshCcw className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="icon"
+                    onClick={copySecretKey}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+              </Label>
+              <Input 
+                value={formState.secretKey}
+                readOnly 
+                className="font-mono"
+              />
+              <p className="text-sm text-muted-foreground">
+                هذا المفتاح يستخدم للتحقق من صحة طلبات الويب هوك. احتفظ به بشكل آمن.
+              </p>
+            </div>
+            
+            <Alert className="mt-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                احفظ المفتاح السرّي الآن، لن تتمكن من مشاهدته بشكله الكامل مرة أخرى.
+              </AlertDescription>
+            </Alert>
+            
+            <div className="grid gap-2 mt-6">
+              <Label className="mb-2">اختر الأحداث التي تريد الاشتراك بها</Label>
+              
+              <div className="space-y-6">
+                {eventCategories.map(category => (
+                  <div key={category.title} className="space-y-2">
+                    <h4 className="font-medium text-sm">{category.title}</h4>
+                    <div className="grid gap-2 grid-cols-1 sm:grid-cols-2">
+                      {category.events.map(event => (
+                        <div key={event.id} className="flex items-center space-x-2 rtl:space-x-reverse">
+                          <Checkbox 
+                            id={`event-${event.id}`}
+                            checked={formState.selectedEvents.includes(event.id)}
+                            onCheckedChange={() => handleEventToggle(event.id)}
+                          />
+                          <label
+                            htmlFor={`event-${event.id}`}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {event.name}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="generateSecret"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">إنشاء مفتاح سر</FormLabel>
-                      <p className="text-sm text-muted-foreground">
-                        إنشاء مفتاح سر لتأمين الويب هوك
-                      </p>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="active"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">الحالة</FormLabel>
-                      <p className="text-sm text-muted-foreground">
-                        تفعيل أو تعطيل الويب هوك
-                      </p>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+                ))}
+              </div>
             </div>
-
-            <div className="flex justify-end space-x-2 space-x-reverse">
-              <Button type="button" variant="outline">
-                إلغاء
-              </Button>
-              <Button type="submit">إنشاء الويب هوك</Button>
-            </div>
-          </form>
-        </Form>
+          </div>
+          
+          <CardFooter className="px-0 pt-6 pb-2">
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'جارِ الإنشاء...' : 'إنشاء الويب هوك'}
+            </Button>
+          </CardFooter>
+        </form>
       </CardContent>
     </Card>
   );

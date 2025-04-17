@@ -65,11 +65,15 @@ export const useCampaigns = () => {
         // Handle posts count
         const postsCount = campaign.posts_count as unknown as { count: number } | null;
         
+        // Cast status to the proper type
+        const status = campaign.status as 'active' | 'draft' | 'completed' | 'cancelled';
+        
         return {
           ...campaign,
           creator: creatorData,
-          posts_count: postsCount ? postsCount.count : 0
-        };
+          posts_count: postsCount ? postsCount.count : 0,
+          status: status
+        } as Campaign;
       });
       
       setCampaigns(processedCampaigns);
@@ -151,7 +155,7 @@ export const useCampaigns = () => {
 
   return { 
     campaigns, 
-    isLoading, 
+    loading: isLoading, 
     error, 
     refreshCampaigns: fetchCampaigns,
     createCampaign,

@@ -2,6 +2,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
+import { format } from "date-fns";
+import { ar } from "date-fns/locale";
 
 export interface Post {
   id: string;
@@ -42,6 +44,30 @@ export interface PostWithMeta extends Post {
     };
   };
 }
+
+// Utility functions that need to be exported
+export const formatDate = (dateString: string): string => {
+  try {
+    return format(new Date(dateString), "PPp", { locale: ar });
+  } catch (error) {
+    return dateString;
+  }
+};
+
+export const getAudienceSize = (platform: string): string => {
+  // Sample audience sizes based on platform
+  const audiences: Record<string, string> = {
+    instagram: "24.5K",
+    facebook: "18.2K",
+    twitter: "12.3K",
+    linkedin: "8.7K",
+    youtube: "45.1K",
+    tiktok: "67.2K",
+    pinterest: "9.8K"
+  };
+  
+  return audiences[platform.toLowerCase()] || "0";
+};
 
 export const useUpcomingPosts = () => {
   const { user } = useAuth();
@@ -112,8 +138,18 @@ export const useUpcomingPosts = () => {
       
       // Process and transform data
       const processedPosts = postsData.map(post => {
-        const profile = post.profile as Profile;
-        const socialAccount = post.social_account as any;
+        // Safe handling of profile data
+        let profileData: Profile | undefined = undefined;
+        
+        // Check if profile exists and is not an error
+        if (post.profile && !('error' in post.profile)) {
+          profileData = {
+            id: post.profile.id,
+            first_name: post.profile.first_name,
+            last_name: post.profile.last_name,
+            avatar_url: post.profile.avatar_url
+          };
+        }
         
         // Add platform metadata
         const platform = post.platform?.toLowerCase();
@@ -125,7 +161,7 @@ export const useUpcomingPosts = () => {
         
         // Check if social_account exists and process insights safely
         let processedSocialAccount = null;
-        if (socialAccount) {
+        if (post.social_account) {
           let insights = { 
             followers: 0, 
             engagement: 0, 
@@ -133,19 +169,19 @@ export const useUpcomingPosts = () => {
           };
           
           // Check if insights exist and handle both string (JSON) and object formats
-          if (socialAccount.insights) {
+          if (post.social_account.insights) {
             try {
-              if (typeof socialAccount.insights === 'string') {
+              if (typeof post.social_account.insights === 'string') {
                 // Parse JSON string if needed
-                const parsedInsights = JSON.parse(socialAccount.insights);
+                const parsedInsights = JSON.parse(post.social_account.insights);
                 insights.followers = Number(parsedInsights.followers || 0);
                 insights.engagement = Number(parsedInsights.engagement || 0);
                 insights.postCount = Number(parsedInsights.postCount || 0);
               } else {
                 // Handle as object
-                insights.followers = Number(socialAccount.insights.followers || 0);
-                insights.engagement = Number(socialAccount.insights.engagement || 0);
-                insights.postCount = Number(socialAccount.insights.postCount || 0);
+                insights.followers = Number(post.social_account.insights.followers || 0);
+                insights.engagement = Number(post.social_account.insights.engagement || 0);
+                insights.postCount = Number(post.social_account.insights.postCount || 0);
               }
             } catch (e) {
               console.error("Error processing insights:", e);
@@ -153,20 +189,20 @@ export const useUpcomingPosts = () => {
           }
           
           processedSocialAccount = {
-            ...socialAccount,
+            ...post.social_account,
             insights
           };
         }
         
         return {
           ...post,
-          profile,
+          profile: profileData,
           platform_data: platformMeta,
           social_account: processedSocialAccount
         };
       });
       
-      setPosts(processedPosts as PostWithMeta[]);
+      setPosts(processedPosts);
       
     } catch (err) {
       console.error("Error fetching upcoming posts:", err);
@@ -198,10 +234,24 @@ export const useUpcomingPosts = () => {
       };
     }
   }, [fetchPosts, user]);
-
-  const refreshPosts = () => {
-    fetchPosts();
+  
+  // Add mock edit and delete handlers for the component to use
+  const handleEdit = (id: string) => {
+    console.log("Edit post:", id);
+    // Implement edit functionality
+  };
+  
+  const handleDelete = (id: string) => {
+    console.log("Delete post:", id);
+    // Implement delete functionality
   };
 
-  return { posts, isLoading, error, refreshPosts };
+  return { 
+    posts, 
+    loading: isLoading, 
+    error,
+    refreshPosts: fetchPosts,
+    handleEdit,
+    handleDelete 
+  };
 };

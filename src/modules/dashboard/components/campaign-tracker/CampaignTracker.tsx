@@ -49,9 +49,22 @@ const CampaignTracker = () => {
           </div>
         ) : filteredCampaigns.length > 0 ? (
           <div className="space-y-4">
-            {filteredCampaigns.map((campaign, index) => (
-              <CampaignItem key={campaign.id} campaign={campaign} index={index} />
-            ))}
+            {filteredCampaigns.map((campaign, index) => {
+              // Adapt campaign to match expected props of CampaignItem
+              const adaptedCampaign = {
+                id: campaign.id,
+                title: campaign.name,
+                description: campaign.description,
+                startDate: campaign.start_date,
+                endDate: campaign.end_date,
+                status: campaign.status,
+                progress: Math.random() * 100, // Sample progress
+                budget: campaign.budget,
+                leadsCount: campaign.posts_count || 0,
+              };
+              
+              return <CampaignItem key={campaign.id} campaign={adaptedCampaign} index={index} />;
+            })}
           </div>
         ) : (
           <EmptyCampaignState filter={filter} />

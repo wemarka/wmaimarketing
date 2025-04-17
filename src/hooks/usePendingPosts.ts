@@ -49,7 +49,7 @@ export const usePendingPosts = () => {
       const processedPosts = data.map(post => {
         // Check if profile exists and extract safely
         let profileData = null;
-        if (post.profile) {
+        if (post.profile && !('error' in post.profile)) {
           const profile = post.profile as any;
           profileData = {
             first_name: profile.first_name || null,

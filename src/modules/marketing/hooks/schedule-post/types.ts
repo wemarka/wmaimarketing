@@ -1,17 +1,21 @@
 
-import { SocialAccount } from "../../services/integrationService";
-import { Dispatch, SetStateAction } from "react";
+import { UseFormReturn } from "react-hook-form";
+import { SchedulePostFormSchema } from "./validationSchema";
 
+// Define the type for the form
+export type SchedulePostForm = SchedulePostFormSchema;
+
+// Define the state types
 export interface UseSchedulePostState {
   title: string;
   content: string;
   suggestedContent: string;
   platform: string;
-  selectedDate: Date | undefined;
+  selectedDate: Date;
   selectedTime: string;
   campaigns: any[];
   selectedCampaign: string;
-  socialAccounts: SocialAccount[];
+  socialAccounts: any[];
   selectedAccounts: string[];
   hashtags: string[];
   mediaFiles: File[];
@@ -22,44 +26,27 @@ export interface UseSchedulePostState {
   isSubmitting: boolean;
 }
 
+// Define the state setters
 export interface UseSchedulePostStateSetters {
-  setTitle: Dispatch<SetStateAction<string>>;
-  setContent: Dispatch<SetStateAction<string>>;
-  setSuggestedContent: Dispatch<SetStateAction<string>>;
-  setPlatform: Dispatch<SetStateAction<string>>;
-  setSelectedDate: Dispatch<SetStateAction<Date | undefined>>;
-  setSelectedTime: Dispatch<SetStateAction<string>>;
-  setSelectedCampaign: Dispatch<SetStateAction<string>>;
-  setSelectedAccounts: Dispatch<SetStateAction<string[]>>;
-  setHashtags: Dispatch<SetStateAction<string[]>>;
-  setMediaFiles: Dispatch<SetStateAction<File[]>>;
-  setMediaUrls: Dispatch<SetStateAction<string[]>>;
-  setPreviewUrls: Dispatch<SetStateAction<string[]>>;
-  setEnableCrossPosting: Dispatch<SetStateAction<boolean>>;
-  setIsGenerating: Dispatch<SetStateAction<boolean>>;
-  setIsSubmitting: Dispatch<SetStateAction<boolean>>;
+  setTitle: (title: string) => void;
+  setContent: (content: string) => void;
+  setSuggestedContent: (content: string) => void;
+  setPlatform: (platform: string) => void;
+  setSelectedDate: (date: Date) => void;
+  setSelectedTime: (time: string) => void;
+  setSelectedCampaign: (campaignId: string) => void;
 }
 
-export interface UseSchedulePostActions {
-  handleAccountToggle: (accountId: string, isChecked: boolean) => void;
-  toggleCrossPosting: (enabled: boolean) => void;
-  handleMediaChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+// Combine state and setters
+export type UseSchedulePostStateWithSetters = UseSchedulePostState & UseSchedulePostStateSetters;
+
+// Define the return type of the useSchedulePost hook
+export interface UseSchedulePostReturn extends UseSchedulePostState, UseSchedulePostStateSetters {
+  handleAccountToggle: (accountId: string) => void;
+  toggleCrossPosting: () => void;
+  handleMediaChange: (files: File[]) => void;
   removeMedia: (index: number) => void;
   handleGenerateSuggestion: () => Promise<void>;
   handleSubmit: () => Promise<void>;
   resetForm: () => void;
 }
-
-// The return type needs to include setters for states that need to be directly accessible
-export type UseSchedulePostReturn = UseSchedulePostState & 
-  UseSchedulePostActions & {
-    setTitle: Dispatch<SetStateAction<string>>;
-    setContent: Dispatch<SetStateAction<string>>;
-    setSuggestedContent: Dispatch<SetStateAction<string>>;
-    setPlatform: Dispatch<SetStateAction<string>>;
-    setSelectedDate: Dispatch<SetStateAction<Date | undefined>>;
-    setSelectedTime: Dispatch<SetStateAction<string>>;
-    setSelectedCampaign: Dispatch<SetStateAction<string>>;
-  };
-
-export type UseSchedulePostStateWithSetters = UseSchedulePostState & UseSchedulePostStateSetters;

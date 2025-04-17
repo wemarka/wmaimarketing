@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { useUpcomingPosts } from '@/hooks/useUpcomingPosts';
+import { useUpcomingPosts, formatDate } from '@/hooks/useUpcomingPosts';
 import PostsHeader from '@/components/dashboard/upcoming-posts/PostsHeader';
 import PostItem from '@/components/dashboard/upcoming-posts/PostItem';
 import EmptyPostsPlaceholder from '@/components/dashboard/upcoming-posts/EmptyPostsPlaceholder';
@@ -9,10 +9,9 @@ import LoadingPosts from '@/components/dashboard/upcoming-posts/LoadingPosts';
 import { Badge } from '@/components/ui/badge';
 import { CalendarClock } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { formatDate } from '@/hooks/useUpcomingPosts';
 
 const UpcomingPosts = () => {
-  const { posts, loading, handleEdit, handleDelete } = useUpcomingPosts();
+  const { posts, loading: isLoading, handleEdit, handleDelete } = useUpcomingPosts();
   const [viewMode, setViewMode] = useState<"list" | "compact">("compact");
 
   // Animation variants for the posts
@@ -35,14 +34,14 @@ const UpcomingPosts = () => {
     <Card>
       <CardHeader className="pb-3">
         <PostsHeader 
-          loading={loading}
+          loading={isLoading}
           postsCount={posts.length}
           viewMode={viewMode}
           onToggleView={() => setViewMode(viewMode === "list" ? "compact" : "list")}
         />
       </CardHeader>
       <CardContent>
-        {loading ? (
+        {isLoading ? (
           <LoadingPosts />
         ) : posts.length > 0 ? (
           <motion.div 
