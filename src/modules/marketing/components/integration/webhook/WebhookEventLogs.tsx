@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { WebhookEventLogItemProps } from './types';
-import '../webhook/WebhookEventLogs.scss';
+import { cn } from '@/lib/utils';
 import { RefreshCw, Eye } from 'lucide-react';
 
 const MOCK_EVENT_LOGS: WebhookEventLogItemProps[] = [
@@ -50,11 +49,9 @@ const WebhookEventLogs = () => {
   const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
-    // Simulated API loading
     const loadData = async () => {
       setLoading(true);
       
-      // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 600));
       
       setLogs(MOCK_EVENT_LOGS);
@@ -75,25 +72,27 @@ const WebhookEventLogs = () => {
   };
 
   const getStatusBadge = (status: 'success' | 'error' | 'pending') => {
-    let className = '';
-    let label = '';
+    const baseClasses = 'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium';
+    const statusClasses = {
+      success: 'bg-green-100 text-green-700',
+      error: 'bg-red-100 text-red-700',
+      pending: 'bg-amber-100 text-amber-700'
+    };
     
+    return <Badge className={cn(baseClasses, statusClasses[status])}>{getStatusLabel(status)}</Badge>;
+  };
+
+  const getStatusLabel = (status: string) => {
     switch(status) {
       case 'success':
-        className = 'webhook-log-badge--success';
-        label = 'ناجح';
-        break;
+        return 'ناجح';
       case 'error':
-        className = 'webhook-log-badge--error';
-        label = 'خطأ';
-        break;
+        return 'خطأ';
       case 'pending':
-        className = 'webhook-log-badge--pending';
-        label = 'قيد الانتظار';
-        break;
+        return 'قيد الانتظار';
+      default:
+        return status;
     }
-    
-    return <Badge className={className}>{label}</Badge>;
   };
 
   const getFormattedEventName = (event: string) => {
@@ -171,37 +170,41 @@ const WebhookEventLogs = () => {
           
           {selectedLog && (
             <div className="mt-4">
-              <div className="webhook-details-grid">
-                <div className="label">نوع الحدث</div>
-                <div className="value">{getFormattedEventName(selectedLog.event)}</div>
+              <div className="grid grid-cols-[1fr_2fr] gap-2 gap-x-4 mb-4">
+                <div className="font-semibold text-muted-foreground">نوع الحدث</div>
+                <div>{getFormattedEventName(selectedLog.event)}</div>
                 
-                <div className="label">المنصة</div>
-                <div className="value">{selectedLog.platform}</div>
+                <div className="font-semibold text-muted-foreground">المنصة</div>
+                <div>{selectedLog.platform}</div>
                 
-                <div className="label">التوقيت</div>
-                <div className="value">{formatTimestamp(selectedLog.timestamp)}</div>
+                <div className="font-semibold text-muted-foreground">التوقيت</div>
+                <div>{formatTimestamp(selectedLog.timestamp)}</div>
                 
-                <div className="label">الحالة</div>
-                <div className="value">{getStatusBadge(selectedLog.status)}</div>
+                <div className="font-semibold text-muted-foreground">الحالة</div>
+                <div>{getStatusBadge(selectedLog.status)}</div>
                 
-                <div className="label">الوجهة</div>
-                <div className="value">{selectedLog.destination}</div>
+                <div className="font-semibold text-muted-foreground">الوجهة</div>
+                <div>{selectedLog.destination}</div>
                 
-                <div className="label">التفاصيل</div>
-                <div className="value">{selectedLog.details}</div>
+                <div className="font-semibold text-muted-foreground">التفاصيل</div>
+                <div>{selectedLog.details}</div>
               </div>
               
               {selectedLog.payload && (
                 <>
                   <h4 className="font-medium mt-4 mb-2">المحتوى المرسل</h4>
-                  <div className="code-preview">{selectedLog.payload}</div>
+                  <div className="bg-muted/30 rounded-md font-mono text-sm max-h-[200px] overflow-auto p-4 whitespace-pre">
+                    {selectedLog.payload}
+                  </div>
                 </>
               )}
               
               {selectedLog.response && (
                 <>
                   <h4 className="font-medium mt-4 mb-2">الرد المستلم</h4>
-                  <div className="code-preview">{selectedLog.response}</div>
+                  <div className="bg-muted/30 rounded-md font-mono text-sm max-h-[200px] overflow-auto p-4 whitespace-pre">
+                    {selectedLog.response}
+                  </div>
                 </>
               )}
             </div>
