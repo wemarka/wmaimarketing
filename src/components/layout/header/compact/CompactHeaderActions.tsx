@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -19,10 +20,12 @@ import { cn } from "@/lib/utils";
 
 interface CompactHeaderActionsProps {
   onNotificationClick?: () => void;
+  notificationCount?: number;
 }
 
 const CompactHeaderActions: React.FC<CompactHeaderActionsProps> = ({
-  onNotificationClick = () => {}
+  onNotificationClick = () => {},
+  notificationCount = 0
 }) => {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
@@ -34,7 +37,6 @@ const CompactHeaderActions: React.FC<CompactHeaderActionsProps> = ({
   const taskCount = 3;
   const messageCount = 2;
   const reminderCount = 1;
-  const notificationCount = 4; // Add this line to define notification count
   
   // Total count for the badge
   const totalCount = notificationCount + taskCount + messageCount + reminderCount;

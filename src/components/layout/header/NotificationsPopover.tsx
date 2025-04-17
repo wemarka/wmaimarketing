@@ -16,7 +16,6 @@ import NotificationTabs from "./notification/NotificationTabs";
 import NotificationsList from "./notification/NotificationsList";
 
 interface NotificationsPopoverProps {
-  notificationCount?: number;
   onNotificationClick?: () => void;
 }
 
