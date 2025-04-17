@@ -3,8 +3,6 @@ import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import { SidebarTooltip } from "./SidebarTooltip";
-import { useTooltip } from "@/hooks/use-tooltip";
 import { useTranslation } from "react-i18next";
 
 interface SidebarHeaderProps {
@@ -16,7 +14,6 @@ const CustomSidebarHeader: React.FC<SidebarHeaderProps> = ({
   expanded,
   toggleExpanded
 }) => {
-  const { tooltipOpen, showTooltip, hideTooltip } = useTooltip();
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
   

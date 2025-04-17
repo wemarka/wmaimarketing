@@ -30,7 +30,10 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ item, isActive, expande
                 : "text-white/70 hover:bg-white/10 hover:text-white"
             )}
           >
-            <span className={isRTL && expanded ? "ml-2" : "mr-2"}>{item.icon}</span>
+            {/* Properly position icon based on RTL */}
+            <span className={cn(
+              isRTL ? expanded ? "ml-2" : "mx-auto" : expanded ? "mr-2" : "mx-auto"
+            )}>{item.icon}</span>
             
             {expanded && <span className="truncate">{item.label}</span>}
             
