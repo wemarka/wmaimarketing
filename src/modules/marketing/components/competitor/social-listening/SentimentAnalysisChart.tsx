@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Doughnut } from 'recharts';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
 const sentimentData = [
