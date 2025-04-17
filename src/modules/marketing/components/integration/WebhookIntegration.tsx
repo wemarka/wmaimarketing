@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Filter, ArrowUpDown, RefreshCw, Bell, CheckCircle2, AlertCircle } from "lucide-react";
@@ -68,8 +69,7 @@ const WebhookIntegration = () => {
     const webhook = webhookEvents.find(w => w.id === id);
     if (!webhook) return;
     
-    toast({
-      description: `هل أنت متأكد من حذف الويب هوك "${webhook.name}" بشكل نهائي؟`,
+    toast(`هل أنت متأكد من حذف الويب هوك "${webhook.name}" بشكل نهائي؟`, {
       action: {
         label: "نعم، حذف",
         onClick: () => {
