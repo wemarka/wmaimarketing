@@ -28,7 +28,7 @@ const NotificationCenter = () => {
     markAsRead, 
     markAllAsRead, 
     deleteNotification,
-    deleteAllNotifications
+    clearAllNotifications // Changed from deleteAllNotifications to clearAllNotifications
   } = useNotificationsStore();
 
   // عد الإشعارات غير المقروءة حسب النوع
@@ -75,7 +75,7 @@ const NotificationCenter = () => {
 
   // حذف جميع الإشعارات
   const handleDeleteAllNotifications = () => {
-    deleteAllNotifications();
+    clearAllNotifications(); // Changed from deleteAllNotifications to clearAllNotifications
     
     toast({
       title: t("dashboard.notifications.deletedAll", "All notifications deleted"),

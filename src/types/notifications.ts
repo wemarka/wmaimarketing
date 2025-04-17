@@ -29,5 +29,5 @@ export interface NotificationsState {
   markAsRead: (id: string) => void;
   markAllAsRead: () => void;
   deleteNotification: (id: string) => void;
-  deleteAllNotifications: () => void;
+  clearAllNotifications: () => void; // Changed from deleteAllNotifications to clearAllNotifications
 }
