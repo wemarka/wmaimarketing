@@ -2,7 +2,7 @@
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface SidebarHeaderProps {
   expanded: boolean;
@@ -13,43 +13,60 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({
   expanded,
   toggleExpanded
 }) => {
+  // Motion variants for animations
+  const logoTextVariants = {
+    initial: { opacity: 0, x: -20 },
+    animate: { opacity: 1, x: 0, transition: { duration: 0.4 } },
+    exit: { opacity: 0, x: -10, transition: { duration: 0.2 } }
+  };
+  
+  const logoIconVariants = {
+    expanded: { scale: 1 },
+    collapsed: { scale: 1.2, transition: { delay: 0.2, duration: 0.4, type: "spring" } }
+  };
+  
+  const buttonVariants = {
+    hover: { scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.25)" },
+    tap: { scale: 0.9 }
+  };
+
   return (
-    <div className="h-16 min-h-16 px-3 flex items-center justify-between border-b border-white/20">
+    <div className="h-16 min-h-16 px-3 flex items-center justify-between border-b border-white/20 bg-gradient-to-b from-[#3a7a89]/90 to-transparent backdrop-blur-md">
       <div className="flex items-center overflow-hidden">
-        {expanded ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="flex items-center"
-          >
-            <motion.div 
-              className="w-9 h-9 rounded-full bg-gradient-to-br from-white/95 to-white/85 flex items-center justify-center mr-3 shadow-lg"
-              whileHover={{ scale: 1.05, boxShadow: "0 0 8px rgba(255,255,255,0.3)" }}
-              whileTap={{ scale: 0.95 }}
+        <motion.div 
+          className={cn(
+            "w-10 h-10 rounded-full bg-gradient-to-br from-white/95 to-white/85 flex items-center justify-center shadow-lg",
+            expanded ? "mr-3" : "mx-auto"
+          )}
+          variants={logoIconVariants}
+          initial={false}
+          animate={expanded ? "expanded" : "collapsed"}
+          whileHover={{ scale: 1.05, boxShadow: "0 0 8px rgba(255,255,255,0.3)" }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <span className="text-[#3a7a89] font-bold text-xl">C</span>
+        </motion.div>
+        
+        <AnimatePresence>
+          {expanded && (
+            <motion.span 
+              className="text-white font-medium text-lg tracking-wide"
+              variants={logoTextVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
             >
-              <span className="text-[#3a7a89] font-bold text-lg">C</span>
-            </motion.div>
-            <span className="text-white font-medium text-lg tracking-wide">Circle</span>
-          </motion.div>
-        ) : (
-          <motion.div 
-            className="w-10 h-10 rounded-full bg-gradient-to-br from-white/95 to-white/85 flex items-center justify-center mx-auto shadow-lg"
-            whileHover={{ scale: 1.05, boxShadow: "0 0 8px rgba(255,255,255,0.3)" }}
-            whileTap={{ scale: 0.95 }}
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-          >
-            <span className="text-[#3a7a89] font-bold text-xl">C</span>
-          </motion.div>
-        )}
+              Circle
+            </motion.span>
+          )}
+        </AnimatePresence>
       </div>
       
       <motion.button
         onClick={toggleExpanded}
-        whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.25)" }}
-        whileTap={{ scale: 0.9 }}
+        variants={buttonVariants}
+        whileHover="hover"
+        whileTap="tap"
         className={cn(
           "w-8 h-8 rounded-full flex items-center justify-center",
           "bg-white/15 transition-colors border border-white/10",

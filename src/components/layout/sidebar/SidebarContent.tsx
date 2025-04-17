@@ -4,12 +4,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTranslation } from "react-i18next";
 import { useRBACSidebar } from "@/modules/dashboard/utils/sidebarItems";
 import { useAuth } from "@/context/AuthContext";
-import CollapsibleSidebarNav from "./CollapsibleSidebarNav";
 import { NavItem, NavSection } from "@/modules/dashboard/utils/types/sidebarTypes";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import { SidebarNavItem } from "./SidebarNavItem";
 import SidebarNavSection from "./SidebarNavSection";
+import { motion } from "framer-motion";
 
 interface SidebarContentProps {
   expanded: boolean;
@@ -80,16 +80,32 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
     setExpandedSection(expandedSection === section ? undefined : section);
   };
 
+  // Animation variants
+  const contentVariants = {
+    expanded: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+    collapsed: { opacity: 1 }
+  };
+
+  const sectionVariants = {
+    expanded: { opacity: 1, height: "auto" },
+    collapsed: { opacity: 0.8, height: "auto" }
+  };
+
   return (
     <ScrollArea 
       className="h-[calc(100vh-64px-80px)]" 
       scrollHideDelay={750}
       dir={isRTL ? "rtl" : "ltr"}
     >
-      <div className={cn(
-        "py-4 px-2",
-        !expanded && "px-1"
-      )}>
+      <motion.div 
+        className={cn(
+          "py-4 px-2",
+          !expanded && "px-1"
+        )}
+        variants={contentVariants}
+        initial="collapsed"
+        animate={expanded ? "expanded" : "collapsed"}
+      >
         {expanded ? (
           <Accordion
             type="single"
@@ -97,35 +113,43 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
             className="w-full"
             value={expandedSection}
           >
-            {navigationSections.map((section) => (
-              <AccordionItem 
-                value={section.title} 
+            {navigationSections.map((section, index) => (
+              <motion.div
                 key={section.title}
-                className="border-b-0 last:border-0"
+                variants={sectionVariants}
+                initial="collapsed"
+                animate="expanded"
+                transition={{ delay: index * 0.05 }}
               >
-                <AccordionTrigger 
-                  className={cn(
-                    "py-2 px-3 text-sm font-semibold hover:bg-white/5 rounded-md",
-                    "text-white/90 hover:text-white no-underline hover:no-underline",
-                    "data-[state=open]:bg-white/10"
-                  )}
-                  onClick={() => handleSectionToggle(section.title)}
+                <AccordionItem 
+                  value={section.title}
+                  className="border-b-0 last:border-0"
                 >
-                  {section.title}
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-1 pt-1">
-                    {section.items.map((item) => (
-                      <SidebarNavItem
-                        key={item.id}
-                        item={item}
-                        isActive={checkIsActive(item.to)}
-                        expanded={expanded}
-                      />
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+                  <AccordionTrigger 
+                    className={cn(
+                      "py-2 px-3 text-sm font-semibold hover:bg-white/5 rounded-md",
+                      "text-white/90 hover:text-white no-underline hover:no-underline",
+                      "data-[state=open]:bg-white/10",
+                      "transition-all duration-200"
+                    )}
+                    onClick={() => handleSectionToggle(section.title)}
+                  >
+                    {section.title}
+                  </AccordionTrigger>
+                  <AccordionContent className="pt-1 transition-all">
+                    <div className="space-y-1">
+                      {section.items.map((item) => (
+                        <SidebarNavItem
+                          key={item.id}
+                          item={item}
+                          isActive={checkIsActive(item.to)}
+                          expanded={expanded}
+                        />
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </motion.div>
             ))}
           </Accordion>
         ) : (
@@ -142,7 +166,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
             ))}
           </div>
         )}
-      </div>
+      </motion.div>
     </ScrollArea>
   );
 };

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { NavItem } from "@/modules/dashboard/utils/types/sidebarTypes";
 import { Link } from "react-router-dom";
 import { useTooltip } from "@/hooks/use-tooltip";
@@ -21,12 +21,13 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
 }) => {
   // Use tooltip for items when sidebar is collapsed
   const { showTooltip, hideTooltip, tooltipOpen } = useTooltip();
+  const [isHovered, setIsHovered] = useState(false);
   
   // Motion effects for icons
   const iconVariants = {
     expanded: { rotate: 0 },
-    collapsed: { rotate: expanded ? 0 : 360 },
-    hover: { scale: 1.1, rotate: 0 }
+    collapsed: { rotate: expanded ? 0 : 360, scale: expanded ? 1 : 1.2 },
+    hover: { scale: 1.2, rotate: 0 }
   };
   
   // Badge animation
@@ -61,12 +62,12 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
       backgroundColor: "rgba(255, 255, 255, 0)" 
     },
     hover: { 
-      backgroundColor: "rgba(255, 255, 255, 0.1)",
+      backgroundColor: "rgba(255, 255, 255, 0.15)",
       transition: { duration: 0.2 }
     },
     tap: { 
-      scale: 0.98,
-      backgroundColor: "rgba(255, 255, 255, 0.15)",
+      scale: 0.95,
+      backgroundColor: "rgba(255, 255, 255, 0.2)",
       transition: { duration: 0.1 }
     }
   };
@@ -74,8 +75,20 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   // Label animation
   const labelVariants = {
     initial: { opacity: 0, x: -5 },
-    animate: { opacity: 1, x: 0, transition: { duration: 0.2, delay: 0.1 } },
-    exit: { opacity: 0, x: -5, transition: { duration: 0.2 } }
+    animate: { opacity: 1, x: 0, transition: { duration: 0.2, delay: 0.05 } },
+    exit: { opacity: 0, x: -5, transition: { duration: 0.15 } }
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (!expanded) {
+      showTooltip();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    hideTooltip();
   };
   
   return (
@@ -84,7 +97,7 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
       open={!expanded ? tooltipOpen : false}
       onOpenChange={open => open ? showTooltip() : hideTooltip()}
       className="z-50"
-      delay={500}
+      delay={400}
     >
       <motion.div
         initial="initial"
@@ -92,11 +105,13 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
         whileTap="tap"
         variants={buttonVariants}
         className="rounded-md overflow-hidden"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         <Link
           to={item.to}
           className={cn(
-            "flex items-center text-sm px-3 py-2 rounded-md transition-all duration-200",
+            "flex items-center text-sm px-3 py-2.5 rounded-md transition-all duration-200",
             "hover:text-white relative group",
             isActive
               ? "bg-white/20 text-white"
@@ -107,11 +122,11 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
           <motion.div 
             className={cn(
               "flex items-center",
-              expanded ? "mr-2" : "mx-0"
+              expanded ? "mr-2.5" : "mx-0"
             )}
             variants={iconVariants}
             initial={expanded ? "expanded" : "collapsed"}
-            animate={expanded ? "expanded" : "collapsed"}
+            animate={expanded ? "expanded" : isHovered ? "hover" : "collapsed"}
             transition={{ duration: 0.3, type: "spring" }}
           >
             {item.icon}
@@ -141,7 +156,12 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
                   >
                     <Badge 
                       variant={item.variant || "default"}
-                      className="ml-2 bg-white/20 text-white text-xs"
+                      className={cn(
+                        "ml-2 text-xs",
+                        item.variant === "outline" 
+                          ? item.className || "bg-white/10 text-white" 
+                          : "bg-white/20 text-white"
+                      )}
                     >
                       {item.badgeText}
                     </Badge>
@@ -156,7 +176,7 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
             className="absolute inset-y-0 right-0 w-1 bg-white rounded-l-md"
             initial="inactive"
             animate={isActive ? "active" : "inactive"}
-            whileHover={!isActive ? "hover" : undefined}
+            whileHover={!isActive && isHovered ? "hover" : undefined}
             variants={activeIndicatorVariants}
           />
         </Link>

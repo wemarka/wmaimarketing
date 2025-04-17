@@ -8,14 +8,15 @@ import { toast } from "sonner";
 export const useSidebarNavigation = () => {
   const { i18n } = useTranslation();
   const isMobile = useMediaQuery("(max-width: 767px)");
+  const isTablet = useMediaQuery("(max-width: 1024px)");
   const location = useLocation();
   const [expanded, setExpanded] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [sidebarPosition, setSidebarPosition] = useState<"right" | "left">("right");
   
-  // Auto collapse sidebar on mobile
+  // Auto collapse sidebar on mobile and tablet
   useEffect(() => {
-    if (isMobile) {
+    if (isMobile || isTablet) {
       setExpanded(false);
     } else {
       // On desktop, retrieve from localStorage if available
@@ -26,7 +27,7 @@ export const useSidebarNavigation = () => {
         setExpanded(true); // Default to expanded on desktop
       }
     }
-  }, [isMobile]);
+  }, [isMobile, isTablet]);
   
   // Check if dark mode is already active and sync with system preference
   useEffect(() => {
@@ -62,6 +63,13 @@ export const useSidebarNavigation = () => {
     };
   }, []);
 
+  // Auto-collapse sidebar on route changes on mobile devices
+  useEffect(() => {
+    if (isMobile) {
+      setExpanded(false);
+    }
+  }, [location.pathname, isMobile]);
+
   // Update sidebar position when language changes
   useEffect(() => {
     updateSidebarPosition();
@@ -79,6 +87,14 @@ export const useSidebarNavigation = () => {
     
     // Save preference to localStorage
     localStorage.setItem("sidebar-expanded", String(newExpanded));
+    
+    // Show toast on mobile
+    if (isMobile) {
+      toast.success(
+        newExpanded ? 'تم فتح القائمة الجانبية' : 'تم طي القائمة الجانبية',
+        { duration: 1500 }
+      );
+    }
   };
 
   const toggleDarkMode = () => {
@@ -110,6 +126,7 @@ export const useSidebarNavigation = () => {
     toggleDarkMode,
     checkIsActive,
     location,
-    sidebarPosition
+    sidebarPosition,
+    isMobile
   };
 };

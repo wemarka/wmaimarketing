@@ -19,8 +19,21 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
   checkIsActive,
   activePath
 }) => {
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.05,
+        duration: 0.3,
+        ease: "easeOut"
+      }
+    })
+  };
+
   return (
-    <div className="mb-2">
+    <div className="mb-6">
       {/* Section title - only shown when expanded */}
       {expanded && (
         <motion.h3 
@@ -35,17 +48,37 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
       )}
       
       {/* Navigation items */}
-      <div className="space-y-1">
-        {items.map((item) => (
-          <div key={item.id}>
+      <motion.div 
+        className="space-y-1.5"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          visible: {
+            opacity: 1,
+            transition: {
+              when: "beforeChildren",
+              staggerChildren: 0.1
+            }
+          },
+          hidden: {
+            opacity: 0
+          }
+        }}
+      >
+        {items.map((item, i) => (
+          <motion.div 
+            key={item.id}
+            custom={i}
+            variants={itemVariants}
+          >
             <SidebarNavItem
               item={item}
               isActive={checkIsActive(item.to)}
               expanded={expanded}
             />
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 };

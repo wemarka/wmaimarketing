@@ -3,8 +3,9 @@ import React from "react";
 import { Moon, Sun, Settings, LogOut } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
+import { SidebarTooltip } from "./SidebarTooltip";
+import { useTooltip } from "@/hooks/use-tooltip";
 
 interface SidebarFooterProps {
   expanded: boolean;
@@ -25,11 +26,28 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({
   userInitials,
   avatarUrl
 }) => {
+  const { tooltipOpen: darkModeTooltipOpen, showTooltip: showDarkModeTooltip, hideTooltip: hideDarkModeTooltip } = useTooltip();
+  const { tooltipOpen: logoutTooltipOpen, showTooltip: showLogoutTooltip, hideTooltip: hideLogoutTooltip } = useTooltip();
+  
+  const buttonVariants = {
+    hover: { scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.25)" },
+    tap: { scale: 0.95 }
+  };
+  
+  const textVariants = {
+    initial: { opacity: 0, width: 0 },
+    animate: { opacity: 1, width: "auto", transition: { duration: 0.3 } },
+    exit: { opacity: 0, width: 0, transition: { duration: 0.2 } }
+  };
+
   return (
-    <div className="mt-auto p-3 border-t border-white/10">
+    <div className="mt-auto p-3 border-t border-white/10 backdrop-blur-sm bg-gradient-to-t from-[#276070]/80 to-transparent">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Avatar className="h-8 w-8 border border-white/20">
+          <Avatar className={cn(
+            "border border-white/20",
+            expanded ? "h-8 w-8" : "h-10 w-10"
+          )}>
             {avatarUrl ? (
               <AvatarImage src={avatarUrl} alt={displayName} />
             ) : (
@@ -42,9 +60,10 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({
           <AnimatePresence>
             {expanded && (
               <motion.div 
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: "auto" }}
-                exit={{ opacity: 0, width: 0 }}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                variants={textVariants}
                 className="overflow-hidden"
               >
                 <div className="flex flex-col">
@@ -61,38 +80,44 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({
         </div>
         
         <div className={cn("flex items-center", expanded ? "gap-2" : "flex-col gap-3")}>
-          <TooltipProvider delayDuration={300}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={toggleDarkMode}
-                  className="bg-white/10 hover:bg-white/20 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-                >
-                  {isDarkMode ? (
-                    <Sun className="h-4 w-4 text-white/90" />
-                  ) : (
-                    <Moon className="h-4 w-4 text-white/90" />
-                  )}
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                <p>{isDarkMode ? "الوضع المضيء" : "الوضع الداكن"}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <SidebarTooltip
+            content={!expanded ? (isDarkMode ? "الوضع المضيء" : "الوضع الداكن") : ""}
+            open={!expanded && darkModeTooltipOpen}
+            onOpenChange={open => open ? showDarkModeTooltip() : hideDarkModeTooltip()}
+          >
+            <motion.button
+              onClick={toggleDarkMode}
+              className="bg-white/10 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+              variants={buttonVariants}
+              whileHover="hover"
+              whileTap="tap"
+              onMouseEnter={!expanded ? showDarkModeTooltip : undefined}
+              onMouseLeave={!expanded ? hideDarkModeTooltip : undefined}
+            >
+              {isDarkMode ? (
+                <Sun className="h-4 w-4 text-white/90" />
+              ) : (
+                <Moon className="h-4 w-4 text-white/90" />
+              )}
+            </motion.button>
+          </SidebarTooltip>
           
-          <TooltipProvider delayDuration={300}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button className="bg-white/10 hover:bg-white/20 w-8 h-8 rounded-full flex items-center justify-center transition-colors">
-                  <LogOut className="h-4 w-4 text-white/90" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                <p>تسجيل الخروج</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <SidebarTooltip
+            content={!expanded ? "تسجيل الخروج" : ""}
+            open={!expanded && logoutTooltipOpen}
+            onOpenChange={open => open ? showLogoutTooltip() : hideLogoutTooltip()}
+          >
+            <motion.button 
+              className="bg-white/10 hover:bg-white/20 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+              variants={buttonVariants}
+              whileHover="hover"
+              whileTap="tap"
+              onMouseEnter={!expanded ? showLogoutTooltip : undefined}
+              onMouseLeave={!expanded ? hideLogoutTooltip : undefined}
+            >
+              <LogOut className="h-4 w-4 text-white/90" />
+            </motion.button>
+          </SidebarTooltip>
         </div>
       </div>
     </div>

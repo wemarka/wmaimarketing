@@ -6,11 +6,9 @@ import SidebarHeader from "./sidebar/SidebarHeader";
 import SidebarContent from "./sidebar/SidebarContent";
 import SidebarFooter from "./sidebar/SidebarFooter";
 import { useSidebarNavigation } from "./sidebar/useSidebarNavigation";
-import { getNavigationSections } from "./sidebar/navigationConfig";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const AppSidebar = () => {
   const { profile, user } = useAuth();
@@ -47,6 +45,43 @@ const AppSidebar = () => {
     : user?.email || "المستخدم";
     
   const displayRole = profile?.role || "مستخدم";
+
+  // Animation variants
+  const sidebarVariants = {
+    expanded: {
+      width: "16rem",
+      transition: {
+        duration: 0.3,
+        ease: "easeInOut",
+        type: "spring",
+        stiffness: 200,
+        damping: 25
+      }
+    },
+    collapsed: {
+      width: "4.5rem",
+      transition: {
+        duration: 0.3,
+        ease: "easeInOut",
+        type: "spring",
+        stiffness: 200,
+        damping: 25
+      }
+    },
+    hidden: {
+      x: sidebarPosition === "left" ? "-100%" : "100%",
+      opacity: 0
+    },
+    visible: {
+      x: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 30
+      }
+    }
+  };
   
   return (
     <motion.div 
@@ -58,14 +93,10 @@ const AppSidebar = () => {
         sidebarPosition === "left" ? "left-0 border-r" : "right-0 border-l",
         !mounted && "opacity-0"
       )}
-      initial={false}
-      animate={{
-        width: expanded ? "16rem" : "4.5rem",
-        transition: { 
-          duration: 0.3,
-          ease: "easeInOut"
-        }
-      }}
+      variants={sidebarVariants}
+      initial="hidden"
+      animate={mounted ? (expanded ? "expanded" : "collapsed") : "hidden"}
+      whileInView="visible"
     >
       <SidebarHeader 
         expanded={expanded} 
