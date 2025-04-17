@@ -1,135 +1,300 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Key, Laptop, AlertTriangle, Shield, Clock } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { motion } from "framer-motion";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { LogOut, Globe, Monitor, Smartphone, Calendar, Clock, AlertCircle } from "lucide-react";
+import { usePasswordManagement } from "@/hooks/usePasswordManagement";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
-interface SessionsInfoProps {
-  onLogoutOtherSessions: () => Promise<void>;
-  isLoading: boolean;
-}
+type SessionInfo = {
+  id: string;
+  created_at: string;
+  last_active: string;
+  ip_address: string;
+  user_agent: string;
+  is_current: boolean;
+  location?: string;
+  device_type: "desktop" | "mobile" | "tablet" | "unknown";
+};
 
-const SessionsInfo = ({ onLogoutOtherSessions, isLoading }: SessionsInfoProps) => {
-  const [notifyOnNewLogin, setNotifyOnNewLogin] = useState(true);
-  const [preventUnknownLogins, setPreventUnknownLogins] = useState(false);
+const SessionsInfo = () => {
+  const { loggingOut, logoutOtherSessions } = usePasswordManagement();
+  const [sessions, setSessions] = useState<SessionInfo[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        setLoading(true);
+        // في التطبيق الحقيقي، ستستخدم دالة RPC لجلب الجلسات
+        // هنا نستخدم بيانات تجريبية
+        
+        // محاكاة استدعاء الخادم
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // الجلسة الحالية
+        const currentSession = {
+          id: "current-session-123",
+          created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+          last_active: new Date().toISOString(),
+          ip_address: "192.168.1.1",
+          user_agent: navigator.userAgent,
+          is_current: true,
+          location: "الرياض، المملكة العربية السعودية",
+          device_type: detectDeviceType(navigator.userAgent)
+        };
+        
+        // جلسات أخرى
+        const otherSessions = [
+          {
+            id: "session-456",
+            created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
+            last_active: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
+            ip_address: "182.168.32.45",
+            user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15",
+            is_current: false,
+            location: "جدة، المملكة العربية السعودية",
+            device_type: "desktop" as const
+          },
+          {
+            id: "session-789",
+            created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(),
+            last_active: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+            ip_address: "104.28.42.25",
+            user_agent: "Mozilla/5.0 (iPhone; CPU iPhone OS 14_4 like Mac OS X)",
+            is_current: false,
+            location: "القاهرة، مصر",
+            device_type: "mobile" as const
+          }
+        ];
+        
+        setSessions([currentSession, ...otherSessions]);
+      } catch (error) {
+        console.error("Error fetching sessions:", error);
+        toast({
+          title: "خطأ في جلب المعلومات",
+          description: "تعذر جلب معلومات الجلسات النشطة",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchSessions();
+  }, []);
+  
+  // اكتشاف نوع الجهاز من معلومات المتصفح
+  const detectDeviceType = (userAgent: string): "desktop" | "mobile" | "tablet" | "unknown" => {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+    const isTablet = /iPad|tablet|PlayBook|Silk|Android(?!.*Mobile)/i.test(userAgent);
+    
+    if (isTablet) return "tablet";
+    if (isMobile) return "mobile";
+    if (userAgent.includes("Windows") || userAgent.includes("Macintosh") || userAgent.includes("Linux")) return "desktop";
+    return "unknown";
+  };
+  
+  // الحصول على أيقونة الجهاز
+  const getDeviceIcon = (deviceType: string) => {
+    switch (deviceType) {
+      case "desktop":
+        return <Monitor className="h-4 w-4" />;
+      case "mobile":
+        return <Smartphone className="h-4 w-4" />;
+      default:
+        return <Globe className="h-4 w-4" />;
+    }
+  };
+  
+  // تنسيق التاريخ
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-SA', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  };
+  
+  // تنسيق الوقت
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('ar-SA', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+  };
+  
+  // حساب الوقت منذ آخر نشاط
+  const getLastActiveText = (dateString: string) => {
+    const lastActive = new Date(dateString).getTime();
+    const now = Date.now();
+    const diffMinutes = Math.floor((now - lastActive) / (1000 * 60));
+    
+    if (diffMinutes < 1) return "الآن";
+    if (diffMinutes < 60) return `منذ ${diffMinutes} دقيقة`;
+    
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) return `منذ ${diffHours} ساعة`;
+    
+    const diffDays = Math.floor(diffHours / 24);
+    return `منذ ${diffDays} يوم`;
+  };
+  
+  // إنهاء جلسة محددة
+  const terminateSession = async (sessionId: string) => {
+    try {
+      // في التطبيق الحقيقي، ستستدعي وظيفة من الخادم لإنهاء الجلسة
+      // هنا نحذفها من القائمة المحلية فقط
+      
+      toast({
+        title: "جاري إنهاء الجلسة...",
+        description: "يتم الآن إنهاء الجلسة المحددة"
+      });
+      
+      // محاكاة تأخير الشبكة
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setSessions(currentSessions => 
+        currentSessions.filter(session => session.id !== sessionId)
+      );
+      
+      toast({
+        title: "تم إنهاء الجلسة",
+        description: "تم إنهاء الجلسة بنجاح"
+      });
+    } catch (error) {
+      console.error("Error terminating session:", error);
+      toast({
+        title: "خطأ",
+        description: "تعذر إنهاء الجلسة",
+        variant: "destructive"
+      });
+    }
+  };
   
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-      whileHover={{ y: -5 }}
-      className="transition-all duration-300"
-    >
-      <Card className="overflow-hidden border-2 border-border/30 shadow-md hover:shadow-xl transition-all duration-300">
-        <CardHeader className="bg-card/50 backdrop-blur-sm flex flex-row items-center gap-4">
-          <div className="p-2 rounded-full bg-primary/10">
-            <Key className="h-6 w-6 text-primary" />
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg flex items-center gap-2">
+          <Globe className="h-5 w-5 text-beauty-purple" />
+          الجلسات النشطة
+        </CardTitle>
+        <CardDescription>
+          مراجعة وإدارة جميع الجلسات النشطة لحسابك
+        </CardDescription>
+      </CardHeader>
+      
+      <CardContent className="space-y-4">
+        {loading ? (
+          <div className="py-8 text-center text-muted-foreground">
+            جاري تحميل معلومات الجلسات...
           </div>
-          <div>
-            <CardTitle className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-              جلسات تسجيل الدخول
-            </CardTitle>
-            <CardDescription>
-              إدارة جلسات تسجيل الدخول النشطة وإعدادات أمان الحساب
-            </CardDescription>
+        ) : sessions.length === 0 ? (
+          <div className="py-8 text-center text-muted-foreground">
+            لا توجد جلسات نشطة
           </div>
-        </CardHeader>
-        <CardContent className="p-6 space-y-6">
-          <motion.div 
-            className="rounded-md border border-muted p-4 space-y-4 hover:border-primary/20 transition-colors"
-            whileHover={{ scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 400, damping: 10 }}
-          >
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-full bg-green-50 border border-green-200">
-                  <Key className="h-4 w-4 text-green-600" />
-                </div>
-                <span className="font-medium">الجلسة الحالية</span>
-              </div>
-              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">نشطة</Badge>
-            </div>
-            
-            <div className="text-muted-foreground text-sm space-y-2">
-              <div className="flex items-center gap-2">
-                <Laptop className="h-4 w-4" />
-                <span>{navigator.userAgent.split(" ").slice(0, 3).join(" ")}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4" />
-                <span>تاريخ آخر دخول: {new Date().toLocaleDateString("ar-SA")}</span>
-              </div>
-            </div>
-          </motion.div>
-
-          <Separator />
-          
+        ) : (
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              إعدادات أمان الحساب
-            </h3>
-            
-            <motion.div className="space-y-3"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <div className="flex items-center justify-between p-3 rounded-md border border-muted hover:border-primary/30 transition-colors duration-200">
-                <div className="space-y-1">
-                  <Label htmlFor="notify-login" className="font-semibold">التنبيه عند تسجيل الدخول الجديد</Label>
-                  <p className="text-sm text-muted-foreground">تلقي إشعار عندما يتم تسجيل الدخول من جهاز جديد</p>
+            {sessions.map((session, index) => (
+              <motion.div
+                key={session.id}
+                className={`p-4 rounded-lg border ${session.is_current ? 'bg-beauty-purple/5 border-beauty-purple/20' : 'bg-gray-50 border-gray-100'}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+              >
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      {getDeviceIcon(session.device_type)}
+                      <span className="font-medium">
+                        {session.device_type === "mobile" ? "هاتف محمول" : 
+                         session.device_type === "tablet" ? "جهاز لوحي" : "جهاز كمبيوتر"}
+                      </span>
+                      {session.is_current && (
+                        <Badge variant="default" className="ml-2 bg-beauty-purple text-white">
+                          الجلسة الحالية
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    <div className="text-sm text-muted-foreground mb-2">
+                      {session.user_agent.split(' ').slice(0, 3).join(' ')}
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                      <div className="flex items-center gap-1">
+                        <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span>{session.ip_address}</span>
+                      </div>
+                      
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span>{formatDate(session.created_at)}</span>
+                      </div>
+                      
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span>{getLastActiveText(session.last_active)}</span>
+                      </div>
+                      
+                      {session.location && (
+                        <div className="flex items-center gap-1">
+                          <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+                          <span>{session.location}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {!session.is_current && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                      onClick={() => terminateSession(session.id)}
+                    >
+                      <LogOut className="h-4 w-4 mr-1" />
+                      إنهاء
+                    </Button>
+                  )}
                 </div>
-                <Switch
-                  id="notify-login"
-                  checked={notifyOnNewLogin}
-                  onCheckedChange={setNotifyOnNewLogin}
-                />
+              </motion.div>
+            ))}
+          </div>
+        )}
+        
+        {sessions.length > 1 && (
+          <>
+            <Separator className="my-4" />
+            
+            <div className="flex items-center justify-between">
+              <div className="text-sm flex items-center">
+                <AlertCircle className="h-4 w-4 text-amber-500 mr-1" />
+                <span>لديك {sessions.length - 1} جلسة نشطة أخرى</span>
               </div>
               
-              <div className="flex items-center justify-between p-3 rounded-md border border-muted hover:border-primary/30 transition-colors duration-200">
-                <div className="space-y-1">
-                  <Label htmlFor="prevent-unknown" className="font-semibold">منع تسجيل الدخول من أجهزة غير معروفة</Label>
-                  <p className="text-sm text-muted-foreground">طلب تأكيد إضافي عند تسجيل الدخول من جهاز جديد</p>
-                </div>
-                <Switch
-                  id="prevent-unknown"
-                  checked={preventUnknownLogins}
-                  onCheckedChange={setPreventUnknownLogins}
-                />
-              </div>
-            </motion.div>
-          </div>
-          
-          <Separator />
-          
-          <div className="rounded-md border border-amber-200 bg-amber-50 p-4 flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="text-amber-800 font-medium">أمان الحساب</p>
-              <p className="text-amber-700 text-sm mt-1">
-                تسجيل الخروج من جميع الجلسات الأخرى سيؤدي إلى تسجيل الخروج من جميع الأجهزة الأخرى المتصلة بحسابك.
-              </p>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="text-red-500 border-red-200 hover:bg-red-50"
+                onClick={logoutOtherSessions}
+                disabled={loggingOut}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                إنهاء جميع الجلسات الأخرى
+              </Button>
             </div>
-          </div>
-          
-          <Button 
-            variant="outline" 
-            className="w-full hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors" 
-            onClick={onLogoutOtherSessions}
-            disabled={isLoading}
-          >
-            {isLoading ? "جاري تسجيل الخروج..." : "تسجيل الخروج من جميع الجلسات الأخرى"}
-          </Button>
-        </CardContent>
-      </Card>
-    </motion.div>
+          </>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 
