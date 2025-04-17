@@ -1,10 +1,9 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import { NavSection } from "@/modules/dashboard/utils/types/sidebarTypes";
-import { SidebarNavItem } from "../SidebarNavItem";
+import SidebarNavItem from "../SidebarNavItem";
 
 interface NavigationSectionAccordionProps {
   section: NavSection;

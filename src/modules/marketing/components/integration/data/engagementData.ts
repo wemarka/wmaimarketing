@@ -1,7 +1,35 @@
 
 export const engagementData = [
-  { date: "2025-01", likes: 245, comments: 87, shares: 56 },
-  { date: "2025-02", likes: 290, comments: 102, shares: 68 },
-  { date: "2025-03", likes: 310, comments: 129, shares: 82 },
-  { date: "2025-04", likes: 365, comments: 142, shares: 94 },
+  { 
+    day: "2025-01", 
+    instagram: 245, 
+    facebook: 87, 
+    twitter: 120, 
+    linkedin: 45, 
+    tiktok: 180 
+  },
+  { 
+    day: "2025-02", 
+    instagram: 290, 
+    facebook: 102, 
+    twitter: 145, 
+    linkedin: 60, 
+    tiktok: 210 
+  },
+  { 
+    day: "2025-03", 
+    instagram: 310, 
+    facebook: 129, 
+    twitter: 190, 
+    linkedin: 75, 
+    tiktok: 265 
+  },
+  { 
+    day: "2025-04", 
+    instagram: 365, 
+    facebook: 142, 
+    twitter: 215, 
+    linkedin: 90, 
+    tiktok: 320 
+  },
 ];

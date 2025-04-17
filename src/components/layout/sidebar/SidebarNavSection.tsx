@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { SidebarNavItem } from "./SidebarNavItem";
+import SidebarNavItem from "./SidebarNavItem";
 import { motion, AnimatePresence } from "framer-motion";
 import { NavItem as NavItemType } from "@/modules/dashboard/utils/types/sidebarTypes";
 import { cn } from "@/lib/utils";
