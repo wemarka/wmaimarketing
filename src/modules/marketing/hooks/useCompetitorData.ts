@@ -13,6 +13,13 @@ export interface Competitor {
   categories: string[];
   strengths: string[];
   weaknesses: string[];
+  // Adding the missing properties needed in CompetitorDashboard and CompetitorComparison
+  website: string;
+  score: number;
+  trend: 'up' | 'down' | 'stable';
+  change: number;
+  category?: string;
+  strength?: string;
 }
 
 export interface Metric {
@@ -28,6 +35,8 @@ export const useCompetitorData = () => {
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
+  // Add the performanceData state for CompetitorComparison
+  const [performanceData, setPerformanceData] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchCompetitorData = async () => {
@@ -51,7 +60,14 @@ export const useCompetitorData = () => {
             mainPlatforms: ['انستجرام', 'تيك توك', 'يوتيوب'],
             categories: ['مستحضرات طبيعية', 'عناية بالبشرة'],
             strengths: ['تسويق المؤثرين', 'محتوى فيديو جذاب', 'تفاعل عالي'],
-            weaknesses: ['تأخر في الرد على التعليقات', 'محتوى غير متسق']
+            weaknesses: ['تأخر في الرد على التعليقات', 'محتوى غير متسق'],
+            // Add missing properties
+            website: 'https://example.com/purity',
+            score: 75,
+            trend: 'up',
+            change: 2.5,
+            category: 'مستحضرات طبيعية',
+            strength: 'high'
           },
           {
             id: '2',
@@ -64,7 +80,14 @@ export const useCompetitorData = () => {
             mainPlatforms: ['انستجرام', 'فيسبوك', 'تويتر'],
             categories: ['مكياج', 'عناية بالشعر'],
             strengths: ['عروض ترويجية جذابة', 'صور عالية الجودة', 'تغطية إعلامية قوية'],
-            weaknesses: ['أسعار مرتفعة', 'نقص في المحتوى التعليمي']
+            weaknesses: ['أسعار مرتفعة', 'نقص في المحتوى التعليمي'],
+            // Add missing properties
+            website: 'https://example.com/glossy',
+            score: 85,
+            trend: 'up',
+            change: 5.8,
+            category: 'مكياج',
+            strength: 'high'
           },
           {
             id: '3',
@@ -77,7 +100,14 @@ export const useCompetitorData = () => {
             mainPlatforms: ['يوتيوب', 'انستجرام', 'تيك توك'],
             categories: ['عناية بالبشرة', 'منتجات طبية'],
             strengths: ['محتوى علمي موثق', 'تعاون مع أطباء', 'تفاعل مجتمعي'],
-            weaknesses: ['تصميم بسيط للمنشورات', 'نقص في التنوع']
+            weaknesses: ['تصميم بسيط للمنشورات', 'نقص في التنوع'],
+            // Add missing properties
+            website: 'https://example.com/skinfirst',
+            score: 80,
+            trend: 'up',
+            change: 7.2,
+            category: 'عناية بالبشرة',
+            strength: 'medium'
           },
           {
             id: '4',
@@ -90,7 +120,14 @@ export const useCompetitorData = () => {
             mainPlatforms: ['انستجرام', 'فيسبوك'],
             categories: ['مكياج', 'عطور'],
             strengths: ['تغليف فاخر', 'منتجات حصرية', 'تصميم مميز للحملات'],
-            weaknesses: ['تأخر في مواكبة الاتجاهات', 'ضعف التفاعل', 'نقص في الابتكار']
+            weaknesses: ['تأخر في مواكبة الاتجاهات', 'ضعف التفاعل', 'نقص في الابتكار'],
+            // Add missing properties
+            website: 'https://example.com/blossom',
+            score: 65,
+            trend: 'down',
+            change: -1.5,
+            category: 'مكياج',
+            strength: 'medium'
           },
           {
             id: '5',
@@ -103,7 +140,14 @@ export const useCompetitorData = () => {
             mainPlatforms: ['انستجرام', 'تويتر', 'تيك توك'],
             categories: ['منتجات طبيعية', 'عناية بالشعر'],
             strengths: ['مكونات عضوية', 'قصص المستخدمين', 'محتوى تثقيفي جيد'],
-            weaknesses: ['نطاق محدود من المنتجات', 'توفر محدود']
+            weaknesses: ['نطاق محدود من المنتجات', 'توفر محدود'],
+            // Add missing properties
+            website: 'https://example.com/greenskin',
+            score: 78,
+            trend: 'up',
+            change: 4.2,
+            category: 'منتجات طبيعية',
+            strength: 'medium'
           }
         ];
         
@@ -116,9 +160,20 @@ export const useCompetitorData = () => {
           { category: 'حصة السوق (%)', your_brand: 22, competitor1: 18, competitor2: 35, competitor3: 12 },
           { category: 'تقييم العملاء (من 5)', your_brand: 4.5, competitor1: 4.2, competitor2: 3.8, competitor3: 4.8 }
         ];
+
+        // بيانات أداء المنافسين لمخطط الرادار
+        const performanceDataItems = [
+          { category: 'محتوى', your_brand: 8, competitor1: 6, competitor2: 9 },
+          { category: 'تفاعل', your_brand: 7, competitor1: 8, competitor2: 5 },
+          { category: 'سعر', your_brand: 6, competitor1: 9, competitor2: 7 },
+          { category: 'جودة', your_brand: 9, competitor1: 7, competitor2: 8 },
+          { category: 'خدمة عملاء', your_brand: 8, competitor1: 6, competitor2: 7 },
+          { category: 'توفر', your_brand: 7, competitor1: 8, competitor2: 6 }
+        ];
         
         setCompetitors(competitorsData);
         setMetrics(metricsData);
+        setPerformanceData(performanceDataItems);
       } catch (err: any) {
         setError(err);
         console.error("Error fetching competitor data:", err);
@@ -133,6 +188,7 @@ export const useCompetitorData = () => {
   return {
     competitors,
     metrics,
+    performanceData, // Add performanceData to the return value
     isLoading,
     error
   };
