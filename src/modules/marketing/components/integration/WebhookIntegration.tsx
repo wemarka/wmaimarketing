@@ -79,6 +79,7 @@ const WebhookIntegration = () => {
       },
       cancel: {
         label: "إلغاء",
+        onClick: () => {} // Add empty onClick handler to satisfy the Action type
       }
     });
   };
