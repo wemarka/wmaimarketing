@@ -1,133 +1,112 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { OpenAI } from "https://esm.sh/openai@4.0.0";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
-    if (!ANTHROPIC_API_KEY) {
-      throw new Error('ANTHROPIC_API_KEY is not set');
+    const apiKey = Deno.env.get('OPENAI_API_KEY');
+    if (!apiKey) {
+      throw new Error("OpenAI API key is missing");
     }
 
-    const { content, action, language } = await req.json();
+    const openai = new OpenAI({
+      apiKey: apiKey,
+    });
 
-    if (!content || !action) {
+    const body = await req.json();
+    const { content, action, language = 'ar' } = body;
+
+    if (!content) {
       return new Response(
         JSON.stringify({
-          error: "Missing required fields: content and action are required",
+          error: "Missing required field: content is required",
         }),
         {
           status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
         }
       );
     }
 
-    let systemPrompt = "أنت مساعد متخصص في تحسين المحتوى التسويقي وجعله أكثر إقناعاً وجاذبية للجمهور المستهدف في مجال التجميل ومستحضرات العناية بالبشرة. تقدم مساعدة باللغة العربية عند الطلب.";
-    let userPrompt = "";
-    const lang = language || "Arabic";
-
+    let prompt = '';
     switch (action) {
-      case "improve":
-        userPrompt = `تحسين النص التسويقي التالي وجعله أكثر جاذبية وإقناعاً (بنفس لغة النص الأصلي): "${content}"`;
+      case 'improve':
+        prompt = `
+          أنت خبير في تحسين المحتوى التسويقي لمنتجات التجميل.
+          قم بتحسين النص التالي ليكون أكثر جاذبية وتأثيرًا، مع الحفاظ على الرسالة الأساسية:
+          
+          "${content}"
+          
+          قم بإعادة صياغة المحتوى بأسلوب احترافي وجذاب، مع إضافة عبارات تسويقية مؤثرة إذا لزم الأمر.
+        `;
         break;
-      case "summarize":
-        userPrompt = `تلخيص النص التسويقي التالي مع الحفاظ على النقاط الرئيسية والرسائل التسويقية الأساسية (بنفس لغة النص الأصلي): "${content}"`;
+      case 'summarize':
+        prompt = `
+          لخص النص التالي في فقرة واحدة موجزة تحافظ على النقاط الرئيسية:
+          
+          "${content}"
+        `;
         break;
-      case "hashtags":
-        userPrompt = `اقتراح 5-7 هاشتاغات مناسبة لمحتوى تسويقي لمنتجات التجميل التالي باللغة ${lang}: "${content}". قدم الهاشتاغات فقط بدون أي نص إضافي.`;
+      case 'hashtags':
+        prompt = `
+          اقترح 5-7 هاشتاغات مناسبة باللغة العربية والإنجليزية لمحتوى منشور عن منتجات التجميل التالي:
+          
+          "${content}"
+          
+          قدم الهاشتاغات في صيغة #هاشتاغ فقط، مفصولة بمسافات.
+        `;
         break;
-      case "translate":
-        userPrompt = `ترجمة النص التسويقي التالي إلى اللغة ${lang} مع الحفاظ على المعنى والنبرة التسويقية المقنعة: "${content}"`;
+      case 'translate':
+        prompt = `
+          ترجم النص التالي إلى اللغة ${language === 'ar' ? 'العربية' : 'الإنجليزية'} مع مراعاة المصطلحات التسويقية المتخصصة في مجال التجميل:
+          
+          "${content}"
+        `;
         break;
       default:
-        userPrompt = `تحسين النص التسويقي التالي (بنفس لغة النص الأصلي): "${content}"`;
+        prompt = `
+          أنت خبير في تحسين المحتوى التسويقي لمنتجات التجميل.
+          قم بتحسين النص التالي ليكون أكثر جاذبية وتأثيرًا، مع الحفاظ على الرسالة الأساسية:
+          
+          "${content}"
+          
+          قم بإعادة صياغة المحتوى بأسلوب احترافي وجذاب، مع إضافة عبارات تسويقية مؤثرة إذا لزم الأمر.
+        `;
     }
 
-    // Log the request for debugging
-    console.log(`Processing ${action} request for content length: ${content.length}`);
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'claude-3-sonnet-20240229',
-        max_tokens: 1024,
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt
-          },
-          {
-            role: 'user',
-            content: userPrompt
-          }
-        ],
-        temperature: 0.7,
-      }),
+    const chatCompletion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Anthropic API error:', JSON.stringify(errorData, null, 2));
-      
-      if (errorData.error?.type === "authentication_error") {
-        return new Response(
-          JSON.stringify({ 
-            error: "Authentication error with Anthropic API. Please check your API key." 
-          }),
-          {
-            status: 401,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
-      }
-      
-      return new Response(
-        JSON.stringify({ 
-          error: `Error from Anthropic API: ${errorData.error?.message || 'Unknown error'}`,
-          details: errorData 
-        }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
-
-    const data = await response.json();
-    const enhancedContent = data.content[0].text;
+    const result = chatCompletion.choices[0]?.message?.content || '';
 
     return new Response(
-      JSON.stringify({ enhancedContent }),
+      JSON.stringify({ result }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
+
   } catch (error) {
-    console.error('Error in ai-content-enhancer function:', error);
+    console.error("Error enhancing content:", error);
     return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        stack: error.stack
-      }),
+      JSON.stringify({ error: `Error enhancing content: ${error.message}` }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
   }

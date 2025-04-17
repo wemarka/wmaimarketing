@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
-import { useCreateActivity } from "@/hooks/useCreateActivity";
 
 export interface Post {
   id: string;
@@ -18,7 +17,6 @@ export const useUpcomingPosts = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
-  const { logActivity } = useCreateActivity();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -65,7 +63,7 @@ export const useUpcomingPosts = () => {
     
     logActivity("content_edit", `تم فتح منشور للتحرير`);
     
-    navigate(`/scheduler/edit/${id}`);
+    navigate(`/schedule-post?edit=${id}`);
   };
 
   // Handle deleting a post
@@ -93,6 +91,21 @@ export const useUpcomingPosts = () => {
         description: "حدث خطأ أثناء حذف المنشور",
         variant: "destructive"
       });
+    }
+  };
+
+  // Log activity to user_activity_log
+  const logActivity = async (activity_type: string, description: string) => {
+    if (!user) return;
+    
+    try {
+      await supabase.from("user_activity_log").insert({
+        user_id: user.id,
+        activity_type,
+        description
+      });
+    } catch (error) {
+      console.error("Error logging activity:", error);
     }
   };
 
@@ -125,11 +138,41 @@ export const formatDate = (dateString: string) => {
   }) + `، ${date.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}`;
 };
 
-export const getAudienceSize = (platform: string) => {
-  switch (platform.toLowerCase()) {
-    case 'instagram': return "15.2K";
-    case 'facebook': return "8.7K";
-    case 'tiktok': return "12.4K";
-    default: return "5K";
+export const getAudienceSize = async (platform: string): Promise<string> => {
+  try {
+    // Get the current user
+    const { data: userData } = await supabase.auth.getUser();
+    
+    if (!userData.user) {
+      return "0";
+    }
+    
+    // Get social account for this platform
+    const { data } = await supabase
+      .from("social_accounts")
+      .select("insights")
+      .eq("user_id", userData.user.id)
+      .eq("platform", platform.toLowerCase())
+      .eq("status", "connected")
+      .single();
+    
+    if (data?.insights?.followers) {
+      const followers = parseInt(data.insights.followers);
+      if (followers >= 1000) {
+        return `${(followers / 1000).toFixed(1)}K`;
+      }
+      return followers.toString();
+    }
+    
+    // Fallback values if no real data
+    switch (platform.toLowerCase()) {
+      case 'instagram': return "15.2K";
+      case 'facebook': return "8.7K";
+      case 'tiktok': return "12.4K";
+      default: return "5K";
+    }
+  } catch (error) {
+    console.error("Error getting audience size:", error);
+    return "0";
   }
 };

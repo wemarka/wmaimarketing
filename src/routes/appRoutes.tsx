@@ -20,6 +20,8 @@ import SchedulePost from "@/pages/SchedulePost";
 import SocialIntegration from "@/pages/SocialIntegration";
 import DashboardPerformance from "@/pages/dashboard/Performance";
 import ImageUpload from "@/pages/ImageUpload";
+import VideoGenerator from "@/pages/VideoGenerator";
+import WebhookIntegrationPage from "@/pages/WebhookIntegration";
 
 // Other imports as needed
 
@@ -47,8 +49,12 @@ const AppRoutes = () => {
         <Route path="/schedule-post" element={<SchedulePost />} />
         <Route path="/social-integration" element={<SocialIntegration />} />
         
-        {/* Image Upload Route */}
+        {/* Media Routes */}
         <Route path="/image-upload" element={<ImageUpload />} />
+        <Route path="/video-generator" element={<VideoGenerator />} />
+        
+        {/* Integration Routes */}
+        <Route path="/webhook-integration" element={<WebhookIntegrationPage />} />
       </Route>
       
       {/* Not Found */}

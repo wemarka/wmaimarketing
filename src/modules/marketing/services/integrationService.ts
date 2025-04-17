@@ -1,73 +1,8 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { BaseService } from "./BaseService";
-import { toast } from "@/hooks/use-toast";
-
-export interface SocialAccount {
-  id: string;
-  platform: string;
-  account_name: string;
-  profile_name: string;
-  status: "connected" | "pending" | "error" | "disconnected";
-  user_id: string;
-  insights?: {
-    followers: number;
-    engagement: number;
-    postCount: number;
-  };
-}
-
-export interface ConnectAccountParams {
-  platform: string;
-  accountName: string;
-  profileName: string;
-}
-
-export interface PlatformStats {
-  platform: string;
-  followers: number;
-  engagement: number;
-  posts: number;
-  lastUpdated: string;
-  growth?: number;
-}
-
-export interface SchedulePostParams {
-  title: string;
-  content: string;
-  platform: string;
-  scheduledAt: string;
-  mediaUrls?: string[];
-  campaignId?: string;
-  crossPostAccountIds?: string[];
-}
-
-// Now we re-export from other service files for backward compatibility
-export {
-  getSocialAccounts,
-  connectAccount,
-  disconnectAccount
-} from "./accountService";
-
-export {
-  getPlatformStats,
-  getPostInsights
-} from "./analyticsService";
-
-export {
-  getCampaigns
-} from "./campaignService";
-
-export {
-  getSuggestedPostingTimes,
-  generateContentSuggestion,
-  generateHashtags
-} from "./contentService";
-
-export {
-  schedulePost,
-  crossPostContent
-} from "./postService";
+import { toast } from "@/components/ui/use-toast";
+import { SocialAccount, ConnectAccountParams, schedulePost } from "../types/socialTypes";
 
 // Class-based implementation of social integration service
 export class SocialIntegrationService extends BaseService {
@@ -79,7 +14,6 @@ export class SocialIntegrationService extends BaseService {
     try {
       const userId = await this.getCurrentUserId();
       
-      // Use explicit table name as string literal to satisfy TypeScript
       const { data, error } = await supabase
         .from('social_accounts')
         .select('*')
@@ -113,7 +47,6 @@ export class SocialIntegrationService extends BaseService {
     try {
       const userId = await this.getCurrentUserId();
       
-      // Use explicit table name as string literal to satisfy TypeScript
       const { data, error } = await supabase
         .from('social_accounts')
         .insert({
@@ -134,6 +67,11 @@ export class SocialIntegrationService extends BaseService {
       if (error) throw error;
       
       const insights = data.insights as Record<string, any>;
+      
+      toast({
+        title: "تم ربط الحساب",
+        description: `تم ربط حساب ${data.platform} بنجاح`
+      });
       
       return {
         id: data.id,
@@ -163,8 +101,8 @@ export class SocialIntegrationService extends BaseService {
       if (error) throw error;
       
       toast({
-        title: "Account Disconnected",
-        description: "Social media account has been disconnected successfully"
+        title: "تم فصل الحساب",
+        description: "تم فصل حساب التواصل الاجتماعي بنجاح"
       });
     } catch (error) {
       this.handleError(error, 'disconnecting account');
@@ -174,3 +112,16 @@ export class SocialIntegrationService extends BaseService {
 
 // Create a singleton instance of the service
 export const socialIntegrationService = new SocialIntegrationService();
+
+// Re-export functions for backward compatibility
+export const getSocialAccounts = async (): Promise<SocialAccount[]> => {
+  return socialIntegrationService.getSocialAccounts();
+};
+
+export const connectAccount = async (params: ConnectAccountParams): Promise<SocialAccount> => {
+  return socialIntegrationService.connectAccount(params);
+};
+
+export const disconnectAccount = async (accountId: string): Promise<void> => {
+  return socialIntegrationService.disconnectAccount(accountId);
+};

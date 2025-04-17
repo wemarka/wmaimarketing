@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface Campaign {
   id: string;
@@ -30,62 +31,80 @@ export const useCampaigns = () => {
     const fetchCampaigns = async () => {
       try {
         setLoading(true);
-        // Mocked data for now - in a real application, this would be fetched from an API
-        const mockCampaigns: Campaign[] = [
-          {
-            id: "1",
-            title: "حملة مستحضرات الجمال الشتوية",
-            description: "حملة ترويجية لمنتجات العناية بالبشرة خلال فصل الشتاء",
-            status: "active",
-            progress: 45,
-            budget: 5000,
-            spent: 2250,
-            startDate: "2025-03-01",
-            endDate: "2025-05-15",
-            target: "زيادة المبيعات 20%",
-            audience: "النساء 25-40 عام",
-            owner: {
-              name: "سارة أحمد",
-              avatar: "/avatars/sarah.png"
-            }
-          },
-          {
-            id: "2",
-            title: "إطلاق منتج جديد - كريم مرطب",
-            description: "إطلاق كريم الترطيب المكثف الجديد في الأسواق",
-            status: "active",
-            progress: 70,
-            budget: 3000,
-            spent: 2100,
-            startDate: "2025-04-01",
-            endDate: "2025-04-30",
-            target: "10000 عميل جديد",
-            audience: "جميع الفئات العمرية",
-            owner: {
-              name: "محمد علي",
-              avatar: "/avatars/mohammed.png"
-            }
-          },
-          {
-            id: "3",
-            title: "عروض العيد",
-            description: "عروض خاصة بمناسبة العيد على جميع المنتجات",
-            status: "planned",
-            progress: 0,
-            budget: 7000,
-            spent: 0,
-            startDate: "2025-05-01",
-            endDate: "2025-06-15",
-            target: "زيادة المبيعات 35%",
-            audience: "عملاء جدد وحاليين",
-            owner: {
-              name: "نورة سعيد",
-              avatar: "/avatars/noura.png"
-            }
-          }
-        ];
         
-        setCampaigns(mockCampaigns);
+        // Get the current user
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+        
+        if (userError || !userData.user) {
+          throw new Error("Authentication error");
+        }
+        
+        // Fetch campaigns from the database
+        const { data, error } = await supabase
+          .from('campaigns')
+          .select(`
+            id, 
+            name, 
+            description, 
+            status, 
+            budget,
+            start_date,
+            end_date,
+            target_audience,
+            profiles:user_id (
+              first_name,
+              last_name,
+              avatar_url
+            )
+          `)
+          .eq('user_id', userData.user.id)
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        
+        // To calculate progress and spent amounts (this would come from real data in a production app)
+        const calculateProgress = (startDate: string, endDate: string): number => {
+          const start = new Date(startDate).getTime();
+          const end = new Date(endDate).getTime();
+          const now = Date.now();
+          
+          if (now < start) return 0;
+          if (now > end) return 100;
+          
+          return Math.round(((now - start) / (end - start)) * 100);
+        };
+        
+        const calculateSpent = (budget: number, progress: number): number => {
+          return Math.round((budget * progress) / 100);
+        };
+        
+        // Map the data to the expected format
+        const campaignsData: Campaign[] = data.map(camp => {
+          const progress = calculateProgress(camp.start_date, camp.end_date);
+          const spent = calculateSpent(camp.budget, progress);
+          
+          return {
+            id: camp.id,
+            title: camp.name,
+            description: camp.description,
+            status: camp.status as "active" | "completed" | "planned",
+            progress,
+            budget: camp.budget,
+            spent,
+            startDate: camp.start_date,
+            endDate: camp.end_date,
+            target: camp.target_audience ? camp.target_audience.join(', ') : '',
+            audience: camp.target_audience ? camp.target_audience.join(', ') : '',
+            owner: {
+              name: camp.profiles 
+                ? `${camp.profiles.first_name || ''} ${camp.profiles.last_name || ''}`.trim() || 'مستخدم'
+                : 'مستخدم',
+              avatar: camp.profiles?.avatar_url
+            }
+          };
+        });
+        
+        setCampaigns(campaignsData);
         setError(null);
       } catch (err) {
         console.error("Error fetching campaigns:", err);

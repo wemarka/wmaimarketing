@@ -1,125 +1,89 @@
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { OpenAI } from "https://esm.sh/openai@4.0.0";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+};
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY')
-    if (!ANTHROPIC_API_KEY) {
-      throw new Error('ANTHROPIC_API_KEY is not set')
+    const apiKey = Deno.env.get('OPENAI_API_KEY');
+    if (!apiKey) {
+      throw new Error("OpenAI API key is missing");
     }
 
-    const { productType, duration, platform, style } = await req.json()
+    const openai = new OpenAI({
+      apiKey: apiKey,
+    });
 
-    if (!productType || !platform) {
+    const body = await req.json();
+    const { productType, platform, duration, style } = body;
+
+    if (!productType) {
       return new Response(
         JSON.stringify({
-          error: "Missing required fields: productType and platform are required",
+          error: "Missing required field: productType is required",
         }),
         {
           status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
         }
-      )
+      );
     }
 
-    // Create system prompt for video script generation
-    const systemPrompt = `أنت خبير في إنشاء أفكار وسيناريوهات للفيديوهات التسويقية لمنتجات التجميل. مهمتك إنشاء أفكار إبداعية وفعالة مناسبة للمنصة المحددة وتتماشى مع نوع المنتج والأسلوب المطلوب.`
-    
-    // Create user prompt based on provided parameters
-    const userPrompt = `أريد فكرة لفيديو تسويقي لمنتج ${productType} على منصة ${platform} بمدة ${duration || '15-30'} ثانية. 
-    أسلوب الفيديو يجب أن يكون ${style || 'عصري وجذاب'}. 
-    
-    قدم لي:
-    1. فكرة مختصرة للفيديو
-    2. سيناريو مفصل يتضمن المشاهد الرئيسية
-    3. النص المقترح (voice over) إن وجد
-    4. الموسيقى أو المؤثرات المقترحة
-    5. نصائح لتحسين مشاركة المستخدمين`
-
-    console.log(`Processing video idea request for product type: ${productType}, platform: ${platform}`)
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'claude-3-sonnet-20240229',
-        max_tokens: 2000,
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt
-          },
-          {
-            role: 'user',
-            content: userPrompt
-          }
-        ],
-        temperature: 0.8,
-      }),
-    })
-
-    if (!response.ok) {
-      const errorData = await response.json()
-      console.error('Anthropic API error:', JSON.stringify(errorData, null, 2))
+    const prompt = `
+      أنت خبير في تسويق منتجات التجميل عبر وسائل التواصل الاجتماعي.
+      اقترح فكرة مفصلة لفيديو مبتكر وإبداعي لمنتج ${productType} يمكن استخدامه على ${platform}.
       
-      if (errorData.error?.type === "authentication_error") {
-        return new Response(
-          JSON.stringify({ 
-            error: "Authentication error with Anthropic API. Please check your API key." 
-          }),
-          {
-            status: 401,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        )
-      }
+      المدة: ${duration} ثانية
+      الأسلوب: ${style}
       
-      return new Response(
-        JSON.stringify({ 
-          error: `Error from Anthropic API: ${errorData.error?.message || 'Unknown error'}`,
-          details: errorData 
-        }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
-    }
+      قدم اقتراحًا مفصلاً يتضمن:
+      1. عنوان جذاب للفيديو
+      2. المشهد الافتتاحي
+      3. تسلسل المشاهد والحركة
+      4. النص المقترح والتعليق الصوتي
+      5. الرسالة الرئيسية والدعوة للعمل
+      6. نصائح تقنية للتصوير والإضاءة والخلفية المناسبة
+      
+      قدم الإجابة باللغة العربية وبأسلوب احترافي.
+    `;
 
-    const data = await response.json()
-    const videoIdea = data.content[0].text
+    const chatCompletion = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const videoIdea = chatCompletion.choices[0]?.message?.content || '';
+
+    // Log activity in the database
+    // This would require Supabase client but for Edge Functions that's not easily possible
+    // Instead you could use a custom endpoint to log activity
 
     return new Response(
       JSON.stringify({ videoIdea }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
-    )
+    );
+
   } catch (error) {
-    console.error('Error in ai-video-ideas function:', error)
+    console.error("Error generating video idea:", error);
     return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        stack: error.stack 
-      }),
+      JSON.stringify({ error: `Error generating video idea: ${error.message}` }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
-    )
+    );
   }
-})
+});
