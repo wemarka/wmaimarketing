@@ -7,7 +7,8 @@ import PostItem from "./PostItem";
 import LoadingPosts from "./LoadingPosts";
 import EmptyPostsPlaceholder from "./EmptyPostsPlaceholder";
 
-interface Post {
+// Define a type that matches the PostItem component's expectations
+interface PendingPostItemData {
   id: string;
   title: string;
   content: string;
@@ -47,12 +48,20 @@ const PendingPostsWidget = () => {
         ) : posts.length > 0 ? (
           <div className="space-y-4">
             {posts.map((post, index) => {
-              // Map PendingPost to Post format expected by PostItem
-              const adaptedPost: Post = {
+              // Map PendingPost to the format expected by PostItem
+              // Make sure platform is explicitly handled as the allowed types
+              const platformMapping = (platform: string): "instagram" | "facebook" | "tiktok" | string => {
+                if (platform === "instagram" || platform === "facebook" || platform === "tiktok") {
+                  return platform;
+                }
+                return "facebook"; // Default fallback
+              };
+              
+              const adaptedPost: PendingPostItemData = {
                 id: post.id,
                 title: post.title,
                 content: post.content,
-                platform: post.platform as "instagram" | "facebook" | "tiktok" | string,
+                platform: platformMapping(post.platform),
                 createdAt: post.created_at,
                 author: {
                   name: post.profile?.first_name || 'Unknown User',

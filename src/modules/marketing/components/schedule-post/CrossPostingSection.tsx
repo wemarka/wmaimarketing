@@ -1,19 +1,25 @@
 
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { Switch } from "@/components/ui/switch";
+import React from 'react';
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Share2 } from "lucide-react";
-import CrossPostSection from "./CrossPostSection";
-import { SocialAccount } from "../../types/socialTypes";
+import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useTranslation } from "react-i18next";
+import { Card } from "@/components/ui/card";
+
+interface SocialAccount {
+  id: string;
+  platform: string;
+  account_name: string;
+  profile_name: string;
+  status: string;
+}
 
 interface CrossPostingSectionProps {
   accounts: SocialAccount[];
   enableCrossPosting: boolean;
   selectedAccounts: string[];
-  onToggleCrossPosting: (enabled: boolean) => void;
-  onAccountToggle: (accountId: string, isChecked: boolean) => void;
+  onToggleCrossPosting: () => void;
+  onAccountToggle: (accountId: string) => void;
 }
 
 const CrossPostingSection: React.FC<CrossPostingSectionProps> = ({
@@ -21,40 +27,61 @@ const CrossPostingSection: React.FC<CrossPostingSectionProps> = ({
   enableCrossPosting,
   selectedAccounts,
   onToggleCrossPosting,
-  onAccountToggle,
+  onAccountToggle
 }) => {
   const { t } = useTranslation();
+  
+  // Filter only active accounts
+  const activeAccounts = accounts.filter(account => account.status === 'connected');
 
   return (
-    <Card className="border">
-      <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0">
-        <CardTitle className="text-md flex items-center gap-2">
-          <Share2 className="h-4 w-4" />
-          {t("scheduler.crossPosting.title", "المشاركة المتعددة")}
-        </CardTitle>
-        <div className="flex items-center space-x-2 space-x-reverse">
-          <Switch
-            id="cross-posting"
-            checked={enableCrossPosting}
-            onCheckedChange={onToggleCrossPosting}
-          />
-          <Label htmlFor="cross-posting" className="cursor-pointer">
-            {enableCrossPosting
-              ? t("scheduler.crossPosting.enabled", "مفعل")
-              : t("scheduler.crossPosting.disabled", "معطل")}
-          </Label>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Label htmlFor="cross-posting">{t("scheduler.crossPosting.title", "النشر على منصات متعددة")}</Label>
+        <Switch
+          id="cross-posting"
+          checked={enableCrossPosting}
+          onCheckedChange={onToggleCrossPosting}
+        />
+      </div>
+      
+      {enableCrossPosting && activeAccounts.length > 0 ? (
+        <div className="space-y-3">
+          <p className="text-sm text-muted-foreground">
+            {t("scheduler.crossPosting.description", "اختر المنصات الإضافية التي تريد نشر المحتوى عليها")}
+          </p>
+          
+          <div className="grid gap-3">
+            {activeAccounts.map((account) => (
+              <Card key={account.id} className="p-3">
+                <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                  <Checkbox
+                    id={`account-${account.id}`}
+                    checked={selectedAccounts.includes(account.id)}
+                    onCheckedChange={() => onAccountToggle(account.id)}
+                  />
+                  <div className="grid gap-1">
+                    <Label
+                      htmlFor={`account-${account.id}`}
+                      className="font-medium"
+                    >
+                      {account.profile_name}
+                    </Label>
+                    <p className="text-sm text-muted-foreground">
+                      {account.platform} • {account.account_name}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
         </div>
-      </CardHeader>
-      {enableCrossPosting && (
-        <CardContent className="pt-0">
-          <CrossPostSection
-            accounts={accounts}
-            selectedAccounts={selectedAccounts}
-            onAccountToggle={onAccountToggle}
-          />
-        </CardContent>
-      )}
-    </Card>
+      ) : enableCrossPosting && activeAccounts.length === 0 ? (
+        <p className="text-sm text-muted-foreground">
+          {t("scheduler.crossPosting.noAccounts", "لا توجد حسابات متصلة للنشر المتعدد. قم بإضافة حسابات أولاً.")}
+        </p>
+      ) : null}
+    </div>
   );
 };
 

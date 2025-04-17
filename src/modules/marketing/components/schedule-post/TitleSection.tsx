@@ -3,10 +3,11 @@ import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
+import { Dispatch, SetStateAction } from "react";
 
-interface TitleSectionProps {
+export interface TitleSectionProps {
   title: string;
-  setTitle: (title: string) => void;
+  setTitle: Dispatch<SetStateAction<string>>;
 }
 
 const TitleSection: React.FC<TitleSectionProps> = ({

@@ -1,9 +1,10 @@
 
-import React, { useState, ChangeEvent } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { ImagePlus, Trash2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { ImagePlus, X } from "lucide-react";
+import { ChangeEvent } from "react";
 
 interface MediaSectionProps {
   previewUrls: string[];
@@ -14,72 +15,76 @@ interface MediaSectionProps {
 const MediaSection: React.FC<MediaSectionProps> = ({
   previewUrls,
   onMediaChange,
-  onRemoveMedia,
+  onRemoveMedia
 }) => {
   const { t } = useTranslation();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  const handleButtonClick = () => {
-    fileInputRef.current?.click();
+  const handleAddMediaClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h4 className="text-sm font-medium">
-            {t("scheduler.mediaSection.uploadLabel")}
-          </h4>
-          <p className="text-xs text-muted-foreground">
-            {t("scheduler.mediaSection.supportedFormats")}
-          </p>
-        </div>
+      <div className="flex justify-between items-center">
+        <Label>{t("scheduler.mediaSection.title", "الصور والوسائط")}</Label>
         <Button
-          type="button"
           variant="outline"
-          onClick={handleButtonClick}
+          size="sm"
           className="gap-1"
+          onClick={handleAddMediaClick}
         >
           <ImagePlus className="h-4 w-4" />
-          <span>{t("scheduler.mediaSection.uploadButton")}</span>
+          <span>{t("scheduler.mediaSection.addMedia", "إضافة وسائط")}</span>
         </Button>
-        <Input
-          type="file"
-          multiple
-          accept="image/*,video/*"
-          className="hidden"
-          ref={fileInputRef}
-          onChange={onMediaChange}
-        />
       </div>
 
-      {previewUrls.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {previewUrls.map((url, index) => (
-            <div
-              key={index}
-              className="relative group border rounded-md overflow-hidden aspect-square"
-            >
-              <img
-                src={url}
-                alt={`Preview ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*,video/*"
+        className="hidden"
+        multiple
+        onChange={onMediaChange}
+      />
+
+      <div>
+        {previewUrls.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {previewUrls.map((url, index) => (
+              <div key={index} className="relative group">
+                <img
+                  src={url}
+                  alt={`Media preview ${index + 1}`}
+                  className="rounded-md w-full h-24 object-cover"
+                />
                 <Button
-                  type="button"
                   variant="destructive"
                   size="icon"
-                  className="h-8 w-8"
+                  className="h-6 w-6 absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={() => onRemoveMedia(index)}
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <X className="h-3 w-3" />
                 </Button>
               </div>
+            ))}
+          </div>
+        ) : (
+          <div
+            className="border-2 border-dashed border-gray-200 rounded-md p-8 text-center cursor-pointer hover:bg-slate-50 transition-colors"
+            onClick={handleAddMediaClick}
+          >
+            <div className="flex flex-col items-center space-y-2">
+              <ImagePlus className="h-8 w-8 text-muted-foreground" />
+              <p className="text-muted-foreground">
+                {t("scheduler.mediaSection.dropzone", "اضغط لإضافة صور أو فيديوهات للمنشور")}
+              </p>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

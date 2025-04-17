@@ -1,56 +1,35 @@
 
-import React from "react";
+import React from 'react';
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CalendarIcon, Clock, Send } from "lucide-react";
 import { format } from "date-fns";
-import { CalendarIcon, Clock, Loader2, Instagram, Facebook, Linkedin, Twitter, Youtube, LucideIcon } from "lucide-react";
+import { ar } from 'date-fns/locale';
 import { useTranslation } from "react-i18next";
 
-interface SocialPlatformOption {
-  value: string;
-  label: string;
-  icon: LucideIcon;
-}
-
-interface TimeOption {
-  value: string;
-  label: string;
+interface Campaign {
+  id: string;
+  name: string;
 }
 
 interface SettingsSectionProps {
   platform: string;
   setPlatform: (platform: string) => void;
-  selectedDate: Date | undefined;
-  setSelectedDate: (date: Date | undefined) => void;
+  selectedDate: Date;
+  setSelectedDate: (date: Date) => void;
   selectedTime: string;
   setSelectedTime: (time: string) => void;
   selectedCampaign: string;
   setSelectedCampaign: (campaign: string) => void;
-  campaigns: any[];
+  campaigns: Campaign[];
   isSubmitting: boolean;
-  handleSubmit: () => void;
+  handleSubmit: () => Promise<void>;
   title: string;
   content: string;
 }
-
-const platformOptions: SocialPlatformOption[] = [
-  { value: "instagram", label: "Instagram", icon: Instagram },
-  { value: "facebook", label: "Facebook", icon: Facebook },
-  { value: "linkedin", label: "LinkedIn", icon: Linkedin },
-  { value: "twitter", label: "Twitter", icon: Twitter },
-  { value: "youtube", label: "YouTube", icon: Youtube },
-];
-
-const timeOptions: TimeOption[] = [
-  { value: "09:00", label: "9:00 AM" },
-  { value: "12:00", label: "12:00 PM" },
-  { value: "15:00", label: "3:00 PM" },
-  { value: "18:00", label: "6:00 PM" },
-  { value: "21:00", label: "9:00 PM" },
-];
 
 const SettingsSection: React.FC<SettingsSectionProps> = ({
   platform,
@@ -59,114 +38,119 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
   setSelectedDate,
   selectedTime,
   setSelectedTime,
-  selectedCampaign,
-  setSelectedCampaign,
-  campaigns,
   isSubmitting,
   handleSubmit,
   title,
   content
 }) => {
   const { t } = useTranslation();
-
+  
+  // Generate time options for the select field (30-minute intervals)
+  const timeOptions = [];
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) {
+      const hourString = hour.toString().padStart(2, '0');
+      const minuteString = minute.toString().padStart(2, '0');
+      timeOptions.push(`${hourString}:${minuteString}`);
+    }
+  }
+  
+  const platforms = [
+    { id: 'facebook', name: 'Facebook' },
+    { id: 'instagram', name: 'Instagram' },
+    { id: 'twitter', name: 'Twitter' },
+    { id: 'linkedin', name: 'LinkedIn' },
+    { id: 'tiktok', name: 'TikTok' }
+  ];
+  
+  const isPlatformSelected = !!platform;
+  const isContentReady = !!title && !!content;
+  const canSubmit = isPlatformSelected && isContentReady && !isSubmitting;
+  
   return (
-    <div className="flex-grow space-y-6">
-      <div className="space-y-3">
-        <Label htmlFor="platform">{t("scheduler.settingsSection.platform")}</Label>
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <Label htmlFor="platform">{t("scheduler.settings.platform", "المنصة")}</Label>
         <Select value={platform} onValueChange={setPlatform}>
-          <SelectTrigger>
-            <SelectValue placeholder={t("scheduler.settingsSection.selectPlatform")} />
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder={t("scheduler.settings.platformPlaceholder", "اختر منصة النشر")} />
           </SelectTrigger>
           <SelectContent>
-            {platformOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value} className="flex items-center">
-                <div className="flex items-center">
-                  <option.icon className="h-4 w-4 ml-1 text-muted-foreground" />
-                  <span className="ml-2">{option.label}</span>
-                </div>
+            {platforms.map((p) => (
+              <SelectItem key={p.id} value={p.id}>
+                {p.name}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
-
-      <div className="space-y-3">
-        <Label>{t("scheduler.settingsSection.date")}</Label>
+      
+      <div className="space-y-2">
+        <Label>{t("scheduler.settings.scheduleDate", "تاريخ النشر")}</Label>
         <Popover>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
               className="w-full justify-start text-left font-normal"
             >
-              <CalendarIcon className="ml-2 h-4 w-4" />
-              {selectedDate ? (
-                <span>{format(selectedDate, "PPP")}</span>
-              ) : (
-                <span>{t("scheduler.settingsSection.pickDate")}</span>
-              )}
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {format(selectedDate, 'PPP', { locale: ar })}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
+          <PopoverContent className="w-auto p-0">
             <Calendar
               mode="single"
               selected={selectedDate}
-              onSelect={setSelectedDate}
+              onSelect={(date) => date && setSelectedDate(date)}
               initialFocus
             />
           </PopoverContent>
         </Popover>
       </div>
-
-      <div className="space-y-3">
-        <Label>{t("scheduler.settingsSection.time")}</Label>
+      
+      <div className="space-y-2">
+        <Label htmlFor="time">{t("scheduler.settings.scheduleTime", "وقت النشر")}</Label>
         <Select value={selectedTime} onValueChange={setSelectedTime}>
-          <SelectTrigger>
-            <SelectValue placeholder={t("scheduler.settingsSection.selectTime")} />
-            <Clock className="h-4 w-4 ml-auto" />
+          <SelectTrigger className="w-full">
+            <SelectValue>
+              <div className="flex items-center">
+                <Clock className="mr-2 h-4 w-4" />
+                {selectedTime}
+              </div>
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            {timeOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
+            {timeOptions.map((time) => (
+              <SelectItem key={time} value={time}>
+                {time}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
-
-      {campaigns.length > 0 && (
-        <div className="space-y-3">
-          <Label htmlFor="campaign">{t("scheduler.settingsSection.campaign")}</Label>
-          <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
-            <SelectTrigger>
-              <SelectValue placeholder={t("scheduler.settingsSection.selectCampaign")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">{t("scheduler.settingsSection.noCampaign")}</SelectItem>
-              {campaigns.map((campaign) => (
-                <SelectItem key={campaign.id} value={campaign.id}>
-                  {campaign.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
       
       <Button
-        className="w-full"
+        className="w-full gap-2"
         onClick={handleSubmit}
-        disabled={isSubmitting || !title || !content || !platform || !selectedDate}
+        disabled={!canSubmit}
       >
-        {isSubmitting ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {t("common.scheduling")}
-          </>
-        ) : (
-          t("scheduler.settingsSection.scheduleButton")
-        )}
+        <Send className="h-4 w-4" />
+        {isSubmitting 
+          ? t("scheduler.settings.scheduling", "جاري الجدولة...") 
+          : t("scheduler.settings.schedule", "جدولة المنشور")}
       </Button>
+      
+      {!isPlatformSelected && (
+        <p className="text-sm text-amber-600">
+          {t("scheduler.settings.platformRequired", "الرجاء اختيار منصة للنشر")}
+        </p>
+      )}
+      
+      {!isContentReady && (
+        <p className="text-sm text-amber-600">
+          {t("scheduler.settings.contentRequired", "الرجاء إدخال عنوان ومحتوى للمنشور")}
+        </p>
+      )}
     </div>
   );
 };

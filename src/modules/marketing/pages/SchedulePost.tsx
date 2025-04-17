@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
 import { Helmet } from "react-helmet-async";
@@ -18,7 +18,7 @@ import AnimateInView from "@/components/ui/animate-in-view";
 
 const SchedulePost = () => {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState("content");
+  const [activeTab, setActiveTab] = React.useState("content");
   const {
     title,
     content,
@@ -46,20 +46,12 @@ const SchedulePost = () => {
     
     handleAccountToggle,
     toggleCrossPosting,
-    handleMediaChange,
+    handleFileInputChange,
     removeMedia,
     handleGenerateSuggestion,
     handleSubmit,
     resetForm
   } = useSchedulePost();
-
-  // Helper function to handle file input change events
-  const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const files = Array.from(event.target.files);
-      handleMediaChange(files);
-    }
-  };
 
   return (
     <Layout>

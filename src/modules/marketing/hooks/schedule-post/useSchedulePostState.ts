@@ -2,7 +2,7 @@
 import { useState, Dispatch, SetStateAction } from "react";
 import { UseSchedulePostState, UseSchedulePostStateSetters } from "./types";
 
-export const useSchedulePostState = () => {
+export const useSchedulePostState = (): UseSchedulePostState & UseSchedulePostStateSetters => {
   // Basic post details
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
@@ -30,9 +30,9 @@ export const useSchedulePostState = () => {
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // Combine state and setters
-  const state: UseSchedulePostState & UseSchedulePostStateSetters = {
-    // State
+  // Return the combined state and setters
+  return {
+    // State values
     title,
     content,
     suggestedContent,
@@ -51,7 +51,7 @@ export const useSchedulePostState = () => {
     isGenerating,
     isSubmitting,
     
-    // Setters
+    // Setter functions
     setTitle,
     setContent,
     setSuggestedContent,
@@ -70,6 +70,4 @@ export const useSchedulePostState = () => {
     setIsGenerating,
     setIsSubmitting
   };
-  
-  return state;
 };

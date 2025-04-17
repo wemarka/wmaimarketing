@@ -1,34 +1,43 @@
 
-import { useState } from "react";
 import { UseSchedulePostStateWithSetters } from "./types";
 
 export const useCrossPosting = (state: UseSchedulePostStateWithSetters) => {
-  // Use the state setter for proper typing
+  const {
+    selectedAccounts,
+    enableCrossPosting,
+    socialAccounts,
+    setSelectedAccounts,
+    setEnableCrossPosting
+  } = state;
+
   const handleAccountToggle = (accountId: string) => {
-    state.setSelectedAccounts((prev: string[]) => 
-      prev.includes(accountId)
-        ? prev.filter(id => id !== accountId)
-        : [...prev, accountId]
-    );
+    setSelectedAccounts((prev: string[]) => {
+      if (prev.includes(accountId)) {
+        return prev.filter(id => id !== accountId);
+      } else {
+        return [...prev, accountId];
+      }
+    });
   };
 
   const toggleCrossPosting = () => {
-    state.setEnableCrossPosting(!state.enableCrossPosting);
+    setEnableCrossPosting((prev: boolean) => !prev);
   };
 
-  const handlePlatformChange = (selectedPlatform: string) => {
-    // Update the platform
-    state.setPlatform(selectedPlatform);
+  const handlePlatformChange = (platform: string) => {
+    // Update platform
+    state.setPlatform(platform);
     
-    // Reset cross-posting when platform changes
-    state.setSelectedAccounts([]);
+    // Filter social accounts based on selected platform
+    const filteredAccounts = socialAccounts.filter(account => account.platform === platform);
     
-    return selectedPlatform;
+    if (filteredAccounts.length > 0 && enableCrossPosting) {
+      // Auto-select the first account of this platform if cross-posting is enabled
+      setSelectedAccounts([filteredAccounts[0].id]);
+    }
+    
+    return platform; // Return the platform for chaining
   };
 
-  return {
-    handleAccountToggle,
-    toggleCrossPosting,
-    handlePlatformChange
-  };
+  return { handleAccountToggle, toggleCrossPosting, handlePlatformChange };
 };

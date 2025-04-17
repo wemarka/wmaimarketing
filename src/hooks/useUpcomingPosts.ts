@@ -25,24 +25,30 @@ export interface Profile {
   avatar_url: string | null;
 }
 
+// Define social account insights type
+export interface SocialAccountInsights {
+  followers: number;
+  engagement: number;
+  postCount: number;
+}
+
+// Define social account type
+export interface SocialAccountType {
+  id: string;
+  platform: string;
+  account_name: string;
+  profile_name: string;
+  insights: SocialAccountInsights;
+}
+
 export interface PostWithMeta extends Post {
-  profile?: Profile;
+  profile?: Profile | null;
   platform_data?: {
     name: string;
     icon: string;
     color: string;
   };
-  social_account?: {
-    id: string;
-    platform: string;
-    account_name: string;
-    profile_name: string;
-    insights: {
-      followers: number;
-      engagement: number;
-      postCount: number;
-    };
-  };
+  social_account?: SocialAccountType | null;
 }
 
 // Utility functions that need to be exported
@@ -138,17 +144,21 @@ export const useUpcomingPosts = () => {
       
       // Process and transform data
       const processedPosts = postsData.map(post => {
-        // Safe handling of profile data
-        let profileData: Profile | undefined = undefined;
+        // Safe handling of profile data - check if it's an object first
+        let profileData: Profile | null = null;
         
-        // Check if profile exists and handle it safely
-        if (post.profile && typeof post.profile === 'object' && !Array.isArray(post.profile) && !('error' in post.profile)) {
-          profileData = {
-            id: post.profile?.id || '',
-            first_name: post.profile?.first_name || null,
-            last_name: post.profile?.last_name || null,
-            avatar_url: post.profile?.avatar_url || null
-          };
+        if (post.profile && typeof post.profile === 'object') {
+          // Make sure it's not an array and not an error object
+          if (!Array.isArray(post.profile) && !('error' in post.profile)) {
+            // Type assertion to help TypeScript understand this is a valid profile
+            const profileObj = post.profile as any;
+            profileData = {
+              id: profileObj.id || '',
+              first_name: profileObj.first_name || null,
+              last_name: profileObj.last_name || null,
+              avatar_url: profileObj.avatar_url || null
+            };
+          }
         }
         
         // Add platform metadata
@@ -162,51 +172,77 @@ export const useUpcomingPosts = () => {
           };
         
         // Check if social_account exists and process insights safely
-        let processedSocialAccount = undefined;
+        let processedSocialAccount: SocialAccountType | null = null;
         
-        if (post.social_account && typeof post.social_account === 'object' && !Array.isArray(post.social_account) && !('error' in post.social_account)) {
-          let insights = { 
-            followers: 0, 
-            engagement: 0, 
-            postCount: 0 
-          };
-          
-          // Check if insights exist and handle both string (JSON) and object formats
-          if (post.social_account.insights) {
-            try {
-              if (typeof post.social_account.insights === 'string') {
-                // Parse JSON string if needed
-                const parsedInsights = JSON.parse(post.social_account.insights);
-                insights.followers = Number(parsedInsights.followers || 0);
-                insights.engagement = Number(parsedInsights.engagement || 0);
-                insights.postCount = Number(parsedInsights.postCount || 0);
-              } else if (typeof post.social_account.insights === 'object') {
-                // Handle as object
-                const insightsObj = post.social_account.insights as any;
-                insights.followers = Number(insightsObj.followers || 0);
-                insights.engagement = Number(insightsObj.engagement || 0);
-                insights.postCount = Number(insightsObj.postCount || 0);
+        if (post.social_account && typeof post.social_account === 'object') {
+          // Make sure it's not an array and not an error object
+          if (!Array.isArray(post.social_account) && !('error' in post.social_account)) {
+            const socialAccountObj = post.social_account as any;
+            
+            // Default insights object
+            let insights: SocialAccountInsights = { 
+              followers: 0, 
+              engagement: 0, 
+              postCount: 0 
+            };
+            
+            // Check if insights exist and handle both string (JSON) and object formats
+            if (socialAccountObj.insights) {
+              try {
+                if (typeof socialAccountObj.insights === 'string') {
+                  // Parse JSON string if needed
+                  const parsedInsights = JSON.parse(socialAccountObj.insights);
+                  insights = {
+                    followers: Number(parsedInsights.followers || 0),
+                    engagement: Number(parsedInsights.engagement || 0),
+                    postCount: Number(parsedInsights.postCount || 0)
+                  };
+                } else if (typeof socialAccountObj.insights === 'object') {
+                  // Handle as object
+                  const insightsObj = socialAccountObj.insights;
+                  insights = {
+                    followers: Number(insightsObj.followers || 0),
+                    engagement: Number(insightsObj.engagement || 0),
+                    postCount: Number(insightsObj.postCount || 0)
+                  };
+                }
+              } catch (e) {
+                console.error("Error processing insights:", e);
               }
-            } catch (e) {
-              console.error("Error processing insights:", e);
             }
+            
+            // Create the processed social account object
+            processedSocialAccount = {
+              id: socialAccountObj.id || '',
+              platform: socialAccountObj.platform || '',
+              account_name: socialAccountObj.account_name || '',
+              profile_name: socialAccountObj.profile_name || '',
+              insights
+            };
           }
-          
-          processedSocialAccount = {
-            ...post.social_account,
-            insights
-          } as PostWithMeta['social_account'];
         }
         
-        // Construct the final post object safely
-        const processedPost: PostWithMeta = {
-          ...post as Post,
+        // Create a new post object as the base
+        const basePost: Post = {
+          id: post.id,
+          title: post.title,
+          content: post.content,
+          platform: post.platform,
+          scheduled_at: post.scheduled_at,
+          published_at: post.published_at,
+          media_url: post.media_url || [],
+          status: post.status,
+          user_id: post.user_id,
+          created_at: post.created_at
+        };
+        
+        // Construct the final post object with metadata
+        return {
+          ...basePost,
           profile: profileData,
           platform_data: platformMeta,
           social_account: processedSocialAccount
         };
-        
-        return processedPost;
       });
       
       setPosts(processedPosts);

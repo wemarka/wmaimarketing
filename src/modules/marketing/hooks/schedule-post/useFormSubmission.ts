@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { UseSchedulePostState, UseSchedulePostStateSetters } from "./types";
 import { schedulePost, SchedulePostParams } from "../../services/schedulerService";
 
-interface UseFormSubmissionProps {
+export interface UseFormSubmissionProps {
   state: UseSchedulePostState & UseSchedulePostStateSetters;
   resetForm: () => void;
 }

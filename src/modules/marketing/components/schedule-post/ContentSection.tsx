@@ -3,19 +3,21 @@ import React from "react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
+import { Sparkles, Check } from "lucide-react";
+import { Dispatch, SetStateAction } from "react";
 
-interface ContentSectionProps {
+export interface ContentSectionProps {
   title: string;
-  setTitle: (title: string) => void;
+  setTitle: Dispatch<SetStateAction<string>>;
   content: string;
-  setContent: (content: string) => void;
+  setContent: Dispatch<SetStateAction<string>>;
   suggestedContent: string;
-  setSuggestedContent: (content: string) => void;
-  hashtags: string[];
+  setSuggestedContent: Dispatch<SetStateAction<string>>;
   isGenerating: boolean;
-  onGenerateSuggestion: () => void;
+  onGenerateSuggestion: () => Promise<void>;
+  hashtags: string[];
 }
 
 const ContentSection: React.FC<ContentSectionProps> = ({
@@ -25,91 +27,72 @@ const ContentSection: React.FC<ContentSectionProps> = ({
   setContent,
   suggestedContent,
   setSuggestedContent,
-  hashtags,
   isGenerating,
   onGenerateSuggestion,
+  hashtags
 }) => {
   const { t } = useTranslation();
 
+  const handleAcceptSuggestion = () => {
+    setContent(suggestedContent);
+    setSuggestedContent("");
+  };
+
   return (
     <div className="space-y-6">
-      <div className="space-y-3">
-        <Label htmlFor="title">{t("scheduler.contentSection.title", "العنوان")}</Label>
-        <Input
-          id="title"
-          placeholder={t("scheduler.contentSection.titlePlaceholder", "أدخل عنوان المنشور هنا")}
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </div>
-
-      <div className="space-y-3">
-        <Label htmlFor="content">{t("scheduler.contentSection.content", "المحتوى")}</Label>
+      <div className="space-y-2">
+        <Label htmlFor="content">{t("scheduler.contentSection.content", "محتوى المنشور")}</Label>
         <Textarea
           id="content"
-          placeholder={t("scheduler.contentSection.contentPlaceholder", "اكتب محتوى المنشور هنا")}
+          placeholder={t("scheduler.contentSection.contentPlaceholder", "أدخل محتوى المنشور هنا")}
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          rows={4}
+          rows={6}
           className="resize-none"
         />
       </div>
 
-      <div className="flex justify-end">
-        <Button
-          variant="secondary"
-          onClick={onGenerateSuggestion}
-          disabled={isGenerating || !content.trim()}
-        >
-          {isGenerating ? (
-            <>
-              <Loader2 className="mr-2 rtl:ml-2 rtl:mr-0 h-4 w-4 animate-spin" />
-              {t("common.generating", "جاري التوليد...")}
-            </>
-          ) : (
-            <>
-              <Sparkles className="mr-2 rtl:ml-2 rtl:mr-0 h-4 w-4" />
-              {t("scheduler.contentSection.generateSuggestion", "توليد اقتراحات")}
-            </>
-          )}
-        </Button>
+      <div className="flex flex-wrap gap-2">
+        {hashtags.map((tag, index) => (
+          <Badge key={index} variant="secondary" className="text-sm">
+            #{tag}
+          </Badge>
+        ))}
       </div>
 
-      {suggestedContent && (
-        <div className="space-y-3 bg-secondary/30 p-4 rounded-md">
-          <Label htmlFor="suggestedContent">
-            {t("scheduler.contentSection.suggestedContent", "المحتوى المقترح")}
-          </Label>
-          <Textarea
-            id="suggestedContent"
-            value={suggestedContent}
-            onChange={(e) => setSuggestedContent(e.target.value)}
-            rows={4}
-            className="resize-none"
-          />
-
-          {hashtags.length > 0 && (
-            <div>
-              <Label>{t("scheduler.contentSection.suggestedHashtags", "الهاشتاغات المقترحة")}</Label>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {hashtags.map((tag, index) => (
-                  <div
-                    key={index}
-                    className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm"
-                  >
-                    #{tag}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+      {suggestedContent ? (
+        <div className="bg-muted p-4 rounded-md border">
+          <div className="flex justify-between items-center mb-2">
+            <h4 className="font-medium text-sm">{t("scheduler.contentSection.suggestedContent", "المحتوى المقترح")}</h4>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-8 gap-1 text-green-600"
+              onClick={handleAcceptSuggestion}
+            >
+              <Check className="h-4 w-4" />
+              <span>{t("scheduler.contentSection.accept", "قبول")}</span>
+            </Button>
+          </div>
+          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{suggestedContent}</p>
         </div>
+      ) : (
+        <Button
+          variant="outline"
+          className="w-full gap-2"
+          disabled={isGenerating || !title}
+          onClick={onGenerateSuggestion}
+        >
+          <Sparkles className="h-4 w-4" />
+          <span>
+            {isGenerating
+              ? t("scheduler.contentSection.generating", "جاري التوليد...")
+              : t("scheduler.contentSection.generateSuggestion", "اقتراح محتوى باستخدام الذكاء الاصطناعي")}
+          </span>
+        </Button>
       )}
     </div>
   );
 };
-
-// Add the missing Input component import
-import { Input } from "@/components/ui/input";
 
 export default ContentSection;

@@ -5,6 +5,7 @@ import { useCrossPosting } from "./schedule-post/useCrossPosting";
 import { useContentGeneration } from "./schedule-post/useContentGeneration";
 import { useFormReset } from "./schedule-post/useFormReset";
 import { useFormSubmission } from "./schedule-post/useFormSubmission";
+import { ChangeEvent } from "react";
 import { UseSchedulePostReturn } from "./schedule-post/types";
 
 export const useSchedulePost = (): UseSchedulePostReturn => {
@@ -28,9 +29,16 @@ export const useSchedulePost = (): UseSchedulePostReturn => {
   const { resetForm } = useFormReset(state);
   
   // Create form submission
-  const stateWithReset = { ...state, resetForm };
-  const { handleSubmit } = useFormSubmission(stateWithReset);
+  const { handleSubmit } = useFormSubmission({ state, resetForm });
 
+  // Create adapter function for file input handling
+  const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const files = Array.from(event.target.files);
+      handleMediaChange(files);
+    }
+  };
+  
   // Return the combined hook interface
   return {
     // State properties from useSchedulePostState
@@ -73,6 +81,7 @@ export const useSchedulePost = (): UseSchedulePostReturn => {
     handleAccountToggle,
     toggleCrossPosting,
     handleMediaChange,
+    handleFileInputChange, // Add the adapter function
     removeMedia,
     handleGenerateSuggestion,
     handleSubmit,
