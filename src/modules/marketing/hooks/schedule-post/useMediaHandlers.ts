@@ -2,27 +2,34 @@
 import { UseSchedulePostStateWithSetters } from "./types";
 
 export const useMediaHandlers = (state: UseSchedulePostStateWithSetters) => {
-  const { setMediaFiles, setPreviewUrls, previewUrls } = state;
+  const { 
+    setMediaFiles, 
+    setPreviewUrls
+  } = state;
 
   const handleMediaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files || event.target.files.length === 0) return;
     
     const files = Array.from(event.target.files);
-    setMediaFiles(prevFiles => [...prevFiles, ...files]);
-    
-    // Create preview URLs for the new files
     const newPreviewUrls = files.map(file => URL.createObjectURL(file));
-    setPreviewUrls(prevUrls => [...prevUrls, ...newPreviewUrls]);
+    
+    setMediaFiles(prev => [...prev, ...files]);
+    setPreviewUrls(prev => [...prev, ...newPreviewUrls]);
   };
 
   const removeMedia = (index: number) => {
-    setMediaFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
-    
-    // Revoke the URL to prevent memory leaks
-    if (previewUrls[index]) {
-      URL.revokeObjectURL(previewUrls[index]);
-    }
-    setPreviewUrls(prevUrls => prevUrls.filter((_, i) => i !== index));
+    setPreviewUrls(prev => {
+      const newUrls = [...prev];
+      URL.revokeObjectURL(newUrls[index]); // Prevent memory leaks
+      newUrls.splice(index, 1);
+      return newUrls;
+    });
+
+    setMediaFiles(prev => {
+      const newFiles = [...prev];
+      newFiles.splice(index, 1);
+      return newFiles;
+    });
   };
 
   return {

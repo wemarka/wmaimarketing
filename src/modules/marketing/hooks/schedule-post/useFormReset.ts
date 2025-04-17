@@ -3,7 +3,6 @@ import { UseSchedulePostStateWithSetters } from "./types";
 
 export const useFormReset = (state: UseSchedulePostStateWithSetters) => {
   const {
-    previewUrls,
     setTitle,
     setContent,
     setSuggestedContent,
@@ -11,11 +10,13 @@ export const useFormReset = (state: UseSchedulePostStateWithSetters) => {
     setSelectedDate,
     setSelectedTime,
     setSelectedCampaign,
+    setSelectedAccounts,
     setHashtags,
     setMediaFiles,
+    setMediaUrls,
     setPreviewUrls,
-    setSelectedAccounts,
-    setEnableCrossPosting
+    setEnableCrossPosting,
+    previewUrls
   } = state;
 
   const resetForm = () => {
@@ -26,21 +27,15 @@ export const useFormReset = (state: UseSchedulePostStateWithSetters) => {
     setSelectedDate(new Date());
     setSelectedTime("09:00");
     setSelectedCampaign("");
+    setSelectedAccounts([]);
     setHashtags([]);
     setMediaFiles([]);
+    setMediaUrls([]);
     
-    // Clean up preview URLs to prevent memory leaks
-    previewUrls.forEach(url => {
-      try {
-        // Use the global URL.revokeObjectURL instead of importing from 'url'
-        URL.revokeObjectURL(url);
-      } catch (error) {
-        console.error("Error revoking URL:", error);
-      }
-    });
-    
+    // Clean up URL objects to prevent memory leaks
+    previewUrls.forEach(url => URL.revokeObjectURL(url));
     setPreviewUrls([]);
-    setSelectedAccounts([]);
+    
     setEnableCrossPosting(false);
   };
 

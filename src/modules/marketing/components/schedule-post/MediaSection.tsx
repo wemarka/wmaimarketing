@@ -1,79 +1,91 @@
 
 import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Upload } from "lucide-react";
+import { ImagePlus, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 interface MediaSectionProps {
   previewUrls: string[];
-  handleMediaChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  removeMedia: (index: number) => void;
+  onMediaChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemoveMedia: (index: number) => void;
 }
 
 const MediaSection: React.FC<MediaSectionProps> = ({
   previewUrls,
-  handleMediaChange,
-  removeMedia,
+  onMediaChange,
+  onRemoveMedia,
 }) => {
   const { t } = useTranslation();
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleButtonClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
 
   return (
-    <div className="grid grid-cols-1 gap-6">
-      <div>
-        <Label htmlFor="media" className="block mb-3">
-          {t("scheduler.mediaSection.uploadMedia")}
-        </Label>
-
-        <div className="flex items-center justify-center w-full">
-          <Label
-            htmlFor="media"
-            className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-secondary/30 hover:bg-secondary/40"
-          >
-            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-              <Upload className="w-8 h-8 mb-3 text-muted-foreground" />
-              <p className="mb-2 text-sm text-muted-foreground">
-                {t("scheduler.mediaSection.dragAndDrop")}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {t("scheduler.mediaSection.supportedFormats")}
-              </p>
-            </div>
-            <Input
-              id="media"
-              type="file"
-              accept="image/*,video/*"
-              className="hidden"
-              onChange={handleMediaChange}
-              multiple
-            />
-          </Label>
-        </div>
-      </div>
-
-      {previewUrls.length > 0 && (
-        <div>
-          <Label className="block mb-3">{t("scheduler.mediaSection.preview")}</Label>
-          <div className="grid grid-cols-3 gap-4">
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-md">
+          {t("scheduler.mediaSection.title", "الوسائط")}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-3">
             {previewUrls.map((url, index) => (
-              <div key={index} className="relative group">
-                <img
-                  src={url}
-                  alt={`Preview ${index + 1}`}
-                  className="w-full h-24 object-cover rounded-md"
+              <div key={index} className="relative">
+                <img 
+                  src={url} 
+                  alt={`Preview ${index + 1}`} 
+                  className="h-20 w-20 object-cover rounded-md" 
                 />
-                <button
-                  className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => removeMedia(index)}
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="icon"
+                  className="h-6 w-6 absolute -top-2 -right-2 rounded-full"
+                  onClick={() => onRemoveMedia(index)}
                 >
-                  ✕
-                </button>
+                  <X className="h-3 w-3" />
+                </Button>
               </div>
             ))}
+            {previewUrls.length === 0 && (
+              <div className="w-full p-8 border-2 border-dashed rounded-md flex justify-center items-center">
+                <p className="text-muted-foreground text-center">
+                  {t("scheduler.mediaSection.noMedia", "لم يتم إضافة وسائط بعد")}
+                </p>
+              </div>
+            )}
+          </div>
+          
+          <div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,video/*"
+              multiple
+              onChange={onMediaChange}
+              className="hidden"
+              id="media-upload"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleButtonClick}
+              className="w-full"
+            >
+              <ImagePlus className="mr-2 h-4 w-4" />
+              {t("scheduler.mediaSection.addMedia", "إضافة وسائط")}
+            </Button>
           </div>
         </div>
-      )}
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

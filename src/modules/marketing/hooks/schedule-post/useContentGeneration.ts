@@ -1,38 +1,41 @@
 
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { generateContentSuggestion, generateHashtags } from "../../services/integrationService";
+import { generateContentSuggestion, generateHashtags } from "../../services/schedulerService";
 import { UseSchedulePostStateWithSetters } from "./types";
 
-export const useContentGeneration = (state: UseSchedulePostStateWithSetters) => {
+export const useContentGeneration = (
+  state: UseSchedulePostStateWithSetters
+) => {
   const { t } = useTranslation();
-  const { 
-    content, 
+  const {
+    content,
     platform,
-    setIsGenerating,
+    setHashtags,
     setSuggestedContent,
-    setHashtags
+    setIsGenerating
   } = state;
 
   const handleGenerateSuggestion = async () => {
-    if (!content.trim()) {
-      toast.error(t("scheduler.errors.emptyContent"));
+    if (!content.trim() || !platform) {
+      toast.error(t("scheduler.errors.noContentOrPlatform"));
       return;
     }
-    
+
     setIsGenerating(true);
     try {
-      const suggestion = await generateContentSuggestion(content, platform);
-      setSuggestedContent(suggestion);
-      
+      // Generate improved content
+      const improvedContent = await generateContentSuggestion(content, platform);
+      setSuggestedContent(improvedContent);
+
       // Generate hashtags
-      const tags = await generateHashtags(content, platform);
-      setHashtags(tags);
+      const generatedHashtags = await generateHashtags(content, platform);
+      setHashtags(generatedHashtags);
       
-      toast.success(t("scheduler.success.suggestionGenerated"));
+      toast.success(t("scheduler.success.contentGenerated"));
     } catch (error) {
-      console.error("Error generating suggestions:", error);
-      toast.error(t("scheduler.errors.suggestionFailed"));
+      console.error("Error generating content suggestion:", error);
+      toast.error(t("scheduler.errors.contentGenerationFailed"));
     } finally {
       setIsGenerating(false);
     }
