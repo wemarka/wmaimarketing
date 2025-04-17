@@ -9,9 +9,13 @@ import EngagementChart from './EngagementChart';
 import UpcomingPosts from './UpcomingPosts';
 import IntegrationAnalytics from './IntegrationAnalytics';
 import WebhookIntegration from './WebhookIntegration';
+import TikTokAnalytics from './TikTokAnalytics';
+import PlatformAnalyticsFilter from './PlatformAnalyticsFilter';
 
 const SocialIntegrationDashboard = () => {
   const [activeTab, setActiveTab] = React.useState('overview');
+  const [selectedPlatform, setSelectedPlatform] = React.useState('all');
+  const [selectedPeriod, setSelectedPeriod] = React.useState('week');
   
   return (
     <div className="space-y-8">
@@ -45,7 +49,7 @@ const SocialIntegrationDashboard = () => {
         
         <TabsContent value="overview" className="space-y-6">
           {/* Platform Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {platformData.map((platform) => (
               <PlatformCard 
                 key={platform.name}
@@ -64,12 +68,24 @@ const SocialIntegrationDashboard = () => {
             <UpcomingPosts posts={upcomingPostsData} />
           </div>
           
+          {/* TikTok Analytics */}
+          <TikTokAnalytics />
+          
           {/* Analytics */}
           <IntegrationAnalytics />
         </TabsContent>
         
-        <TabsContent value="analytics">
+        <TabsContent value="analytics" className="space-y-6">
+          <PlatformAnalyticsFilter 
+            onPlatformChange={setSelectedPlatform}
+            onPeriodChange={setSelectedPeriod}
+            onDateChange={(date) => console.log('Selected date:', date)}
+          />
           <IntegrationAnalytics />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <EngagementChart data={engagementData} />
+            <TikTokAnalytics />
+          </div>
         </TabsContent>
         
         <TabsContent value="webhooks">

@@ -37,6 +37,8 @@ import Profile from './pages/Profile';
 import Invitation from './pages/auth/Invitation';
 import ContentCreator from './modules/content-creator/pages/ContentCreator';
 import NotificationCenter from './pages/NotificationCenter';
+import SocialIntegration from './pages/SocialIntegration';
+import DashboardPerformance from './pages/dashboard/Performance';
 
 // Import contexts
 import { AuthProvider } from './context/AuthContext';
@@ -83,6 +85,7 @@ function App() {
 
               <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/dashboard/performance" element={<ProtectedRoute><DashboardPerformance /></ProtectedRoute>} />
               <Route path="/analytics/:subtab?" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
 
               <Route path="/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
@@ -107,6 +110,7 @@ function App() {
 
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/notifications" element={<ProtectedRoute><NotificationCenter /></ProtectedRoute>} />
+              <Route path="/integration" element={<ProtectedRoute><SocialIntegration /></ProtectedRoute>} />
             </Routes>
           </Router>
           <Toaster />
