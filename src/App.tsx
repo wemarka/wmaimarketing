@@ -18,6 +18,7 @@ import Content from './pages/Content';
 import MarketingCampaigns from './pages/marketing/Campaigns';
 import MarketingAudience from './pages/marketing/Audience';
 import MarketingInsights from './pages/marketing/Insights';
+import CompetitorAnalysis from './pages/marketing/CompetitorAnalysis';
 import Users from './pages/admin/Users';
 import Settings from './pages/admin/Settings';
 import Roles from './pages/admin/Roles';
@@ -94,6 +95,7 @@ function App() {
               <Route path="/marketing/campaigns" element={<ProtectedRoute><MarketingCampaigns /></ProtectedRoute>} />
               <Route path="/marketing/audience" element={<ProtectedRoute><MarketingAudience /></ProtectedRoute>} />
               <Route path="/marketing/insights" element={<ProtectedRoute><MarketingInsights /></ProtectedRoute>} />
+              <Route path="/marketing/competitors" element={<ProtectedRoute><CompetitorAnalysis /></ProtectedRoute>} />
 
               <Route path="/scheduling" element={<ProtectedRoute><Scheduling /></ProtectedRoute>} />
               <Route path="/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
