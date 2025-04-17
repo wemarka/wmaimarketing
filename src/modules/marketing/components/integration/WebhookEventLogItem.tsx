@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, CheckCircle, AlertCircle, AlertTriangle } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
+// Export the interface to make it available for other files
 export interface WebhookEventLogItemProps {
   event: string;
   timestamp: string;
