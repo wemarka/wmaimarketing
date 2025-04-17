@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -132,7 +133,7 @@ const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({
           
           <TabsContent value={activeTab} className="m-0">
             <NotificationsList
-              filteredNotifications={filteredNotifications}
+              notifications={filteredNotifications}
               activeTab={activeTab}
               onMarkAsRead={markAsRead}
               onDelete={deleteNotification}
