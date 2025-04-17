@@ -8,6 +8,7 @@ import PlatformCard from './PlatformCard';
 import EngagementChart from './EngagementChart';
 import UpcomingPosts from './UpcomingPosts';
 import IntegrationAnalytics from './IntegrationAnalytics';
+import WebhookIntegration from './WebhookIntegration';
 
 const SocialIntegrationDashboard = () => {
   const [activeTab, setActiveTab] = React.useState('overview');
@@ -68,15 +69,11 @@ const SocialIntegrationDashboard = () => {
         </TabsContent>
         
         <TabsContent value="analytics">
-          <div className="text-center py-20 text-muted-foreground">
-            قريبًا - سيتم إضافة تحليلات مفصلة لكل منصة
-          </div>
+          <IntegrationAnalytics />
         </TabsContent>
         
-        <TabsContent value="scheduler">
-          <div className="text-center py-20 text-muted-foreground">
-            قريبًا - سيتم إضافة أداة جدولة المنشورات لجميع المنصات
-          </div>
+        <TabsContent value="webhooks">
+          <WebhookIntegration />
         </TabsContent>
         
         <TabsContent value="settings">
