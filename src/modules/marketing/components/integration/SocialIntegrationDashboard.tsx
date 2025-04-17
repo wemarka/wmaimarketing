@@ -1,343 +1,278 @@
 
-import React, { useState } from "react";
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Instagram, Facebook, Twitter, MessageSquare, Plus, BarChart, Clock, Share2, Settings, CheckCircle2, XCircle } from "lucide-react";
-import { useSocialIntegration } from "../../hooks/useSocialIntegration";
-import ConnectedAccounts from "@/components/scheduler/ConnectedAccounts";
+import { ArrowUpRight, Settings, RefreshCw, Calendar, Activity } from 'lucide-react';
+import IntegrationAnalytics from './IntegrationAnalytics';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
-const SocialIntegrationDashboard: React.FC = () => {
-  const [addAccountOpen, setAddAccountOpen] = useState(false);
-  const [accountName, setAccountName] = useState("");
-  const [displayName, setDisplayName] = useState("");
-  const [activeTab, setActiveTab] = useState("accounts");
+const platformData = [
+  { name: 'انستغرام', posts: 42, engagement: 3.8, followers: 12500, trend: 'up' },
+  { name: 'فيسبوك', posts: 36, engagement: 2.1, followers: 8700, trend: 'stable' },
+  { name: 'تويتر', posts: 64, engagement: 1.5, followers: 5200, trend: 'down' },
+  { name: 'تيك توك', posts: 28, engagement: 4.2, followers: 15800, trend: 'up' },
+];
+
+const engagementData = [
+  { day: 'الأحد', instagram: 82, facebook: 43, twitter: 35, tiktok: 93 },
+  { day: 'الإثنين', instagram: 75, facebook: 51, twitter: 42, tiktok: 85 },
+  { day: 'الثلاثاء', instagram: 98, facebook: 38, twitter: 47, tiktok: 110 },
+  { day: 'الأربعاء', instagram: 105, facebook: 56, twitter: 39, tiktok: 145 },
+  { day: 'الخميس', instagram: 115, facebook: 65, twitter: 52, tiktok: 160 },
+  { day: 'الجمعة', instagram: 90, facebook: 48, twitter: 43, tiktok: 135 },
+  { day: 'السبت', instagram: 120, facebook: 59, twitter: 61, tiktok: 170 },
+];
+
+const SocialIntegrationDashboard = () => {
+  const [activeTab, setActiveTab] = React.useState('overview');
   
-  const {
-    accounts,
-    platformStats,
-    isLoading,
-    isConnecting,
-    selectedPlatform,
-    setSelectedPlatform,
-    handleConnectAccount,
-    handleDisconnectAccount,
-    loadSuggestedPostingTimes,
-    handleCrossPostContent
-  } = useSocialIntegration();
-
-  const platformIcons: { [key: string]: React.ReactNode } = {
-    instagram: <Instagram className="h-5 w-5" />,
-    facebook: <Facebook className="h-5 w-5" />,
-    twitter: <Twitter className="h-5 w-5" />,
-    tiktok: <MessageSquare className="h-5 w-5" />
-  };
-  
-  const platformColors: { [key: string]: string } = {
-    instagram: "bg-pink-100 text-pink-600",
-    facebook: "bg-blue-100 text-blue-600",
-    twitter: "bg-sky-100 text-sky-500",
-    tiktok: "bg-slate-100 text-slate-600"
-  };
-  
-  const platformNames: { [key: string]: string } = {
-    instagram: "انستجرام",
-    facebook: "فيسبوك",
-    twitter: "تويتر",
-    tiktok: "تيك توك"
-  };
-
-  const handleAddAccount = async () => {
-    if (!selectedPlatform || !accountName.trim() || !displayName.trim()) {
-      return;
-    }
-    
-    await handleConnectAccount({
-      platform: selectedPlatform,
-      accountName: accountName,
-      profileName: displayName
-    });
-    
-    setAddAccountOpen(false);
-    setAccountName("");
-    setDisplayName("");
-  };
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold">تكامل المنصات الاجتماعية</h1>
-          <p className="text-muted-foreground">إدارة حساباتك على منصات التواصل الاجتماعي والاستفادة من التكامل مع النظام</p>
+          <h1 className="text-3xl font-bold text-beauty-purple">إدارة منصات التواصل الاجتماعي</h1>
+          <p className="text-muted-foreground mt-2">
+            إدارة وتحليل جميع منصات التواصل الاجتماعي من مكان واحد
+          </p>
         </div>
-        <Button onClick={() => setAddAccountOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
-          ربط حساب جديد
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="flex items-center gap-1">
+            <Settings className="h-4 w-4" />
+            الإعدادات
+          </Button>
+          <Button size="sm" className="flex items-center gap-1 bg-beauty-purple hover:bg-beauty-purple/90">
+            <RefreshCw className="h-4 w-4" />
+            تحديث البيانات
+          </Button>
+        </div>
       </div>
       
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-6">
-          <TabsTrigger value="accounts">الحسابات المرتبطة</TabsTrigger>
-          <TabsTrigger value="analytics">تحليلات الأداء</TabsTrigger>
-          <TabsTrigger value="scheduling">جدولة النشر</TabsTrigger>
-          <TabsTrigger value="crossposting">النشر المتعدد</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="bg-muted/50">
+          <TabsTrigger value="overview">النظرة العامة</TabsTrigger>
+          <TabsTrigger value="analytics">التحليلات</TabsTrigger>
+          <TabsTrigger value="scheduler">جدولة المنشورات</TabsTrigger>
+          <TabsTrigger value="settings">إعدادات المنصات</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="accounts" className="space-y-6">
-          <ConnectedAccounts />
-        </TabsContent>
-        
-        <TabsContent value="analytics" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>تحليلات المنصات</CardTitle>
-              <CardDescription>
-                مقارنة أداء المحتوى الخاص بك عبر منصات التواصل الاجتماعي المختلفة
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {platformStats.map((stat, index) => (
-                  <Card key={index} className="overflow-hidden">
-                    <CardHeader className={`pb-2 ${platformColors[stat.platform]}`}>
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg flex items-center">
-                          {platformIcons[stat.platform]}
-                          <span className="mr-2">{platformNames[stat.platform]}</span>
-                        </CardTitle>
-                        <Badge className={stat.growth >= 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
-                          {stat.growth > 0 ? '+' : ''}{stat.growth}%
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-4">
-                      <div className="grid grid-cols-3 gap-2 text-center">
-                        <div>
-                          <p className="text-xs text-muted-foreground">المنشورات</p>
-                          <p className="font-semibold">{stat.posts}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">التفاعل</p>
-                          <p className="font-semibold">{stat.engagement}%</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">المتابعين</p>
-                          <p className="font-semibold">{stat.followers.toLocaleString()}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-              
-              <Button variant="outline" className="mt-6">
-                <BarChart className="h-4 w-4 mr-2" />
-                عرض تقرير التحليلات المفصل
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="scheduling" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>اقتراحات مواعيد النشر</CardTitle>
-              <CardDescription>
-                أفضل الأوقات للنشر بناءً على تحليل تفاعل الجمهور السابق
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                {["instagram", "facebook", "twitter"].map((platform) => (
-                  <Card key={platform} className="overflow-hidden">
-                    <CardHeader className={`pb-2 ${platformColors[platform]}`}>
-                      <CardTitle className="text-md flex items-center">
-                        {platformIcons[platform]}
-                        <span className="mr-2">{platformNames[platform]}</span>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-4">
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="flex items-center p-2 bg-muted/50 rounded-md">
-                          <Clock className="h-4 w-4 mr-2" />
-                          <span className="text-sm">السبت 10:00</span>
-                        </div>
-                        <div className="flex items-center p-2 bg-muted/50 rounded-md">
-                          <Clock className="h-4 w-4 mr-2" />
-                          <span className="text-sm">الأحد 19:30</span>
-                        </div>
-                        <div className="flex items-center p-2 bg-muted/50 rounded-md">
-                          <Clock className="h-4 w-4 mr-2" />
-                          <span className="text-sm">الثلاثاء 12:00</span>
-                        </div>
-                        <div className="flex items-center p-2 bg-muted/50 rounded-md">
-                          <Clock className="h-4 w-4 mr-2" />
-                          <span className="text-sm">الخميس 20:00</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-              
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                جدولة منشور جديد
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="crossposting" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>النشر المتعدد</CardTitle>
-              <CardDescription>
-                انشر محتواك على جميع منصات التواصل الاجتماعي المتصلة بنقرة واحدة
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">الحالة الحالية للنشر المتعدد</h3>
-                  <div className="space-y-3">
-                    {["instagram", "facebook", "twitter", "tiktok"].map((platform) => {
-                      const isConnected = accounts.some(acc => acc.platform === platform && acc.status === "connected");
-                      return (
-                        <div key={platform} className="flex items-center justify-between p-3 border rounded-md">
-                          <div className="flex items-center">
-                            <div className={`p-2 rounded-full ${platformColors[platform]}`}>
-                              {platformIcons[platform]}
-                            </div>
-                            <span className="mr-3">{platformNames[platform]}</span>
-                          </div>
-                          {isConnected ? (
-                            <Badge className="bg-green-100 text-green-800 flex items-center">
-                              <CheckCircle2 className="h-3 w-3 mr-1" />
-                              متصل
-                            </Badge>
-                          ) : (
-                            <Badge variant="outline" className="flex items-center">
-                              <XCircle className="h-3 w-3 mr-1" />
-                              غير متصل
-                            </Badge>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-                
-                <Card className="border-dashed">
-                  <CardContent className="pt-6">
-                    <div className="text-center space-y-4">
-                      <div className="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center">
-                        <Share2 className="h-6 w-6 text-muted-foreground" />
-                      </div>
-                      <h3 className="font-medium">جاهز للنشر المتعدد</h3>
-                      <p className="text-sm text-muted-foreground">
-                        انشر محتواك على جميع المنصات المتصلة بتنسيقات مخصصة لكل منصة
-                      </p>
-                      <div className="pt-2">
-                        <Button>
-                          <Plus className="h-4 w-4 mr-2" />
-                          إنشاء منشور جديد
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-              
-              <div className="mt-6 pt-6 border-t">
-                <h3 className="text-lg font-medium mb-4">مزايا النشر المتعدد</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 border rounded-md">
-                    <h4 className="font-medium mb-2">توفير الوقت والجهد</h4>
-                    <p className="text-sm text-muted-foreground">انشر مرة واحدة لجميع المنصات بدلاً من تكرار العمل</p>
-                  </div>
-                  <div className="p-4 border rounded-md">
-                    <h4 className="font-medium mb-2">تنسيق تلقائي</h4>
-                    <p className="text-sm text-muted-foreground">تنسيق المحتوى تلقائياً ليناسب كل منصة</p>
-                  </div>
-                  <div className="p-4 border rounded-md">
-                    <h4 className="font-medium mb-2">تحليلات موحدة</h4>
-                    <p className="text-sm text-muted-foreground">رؤية التفاعل والوصول على جميع المنصات في مكان واحد</p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-      
-      {/* Add Account Dialog */}
-      <Dialog open={addAccountOpen} onOpenChange={setAddAccountOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>ربط حساب جديد</DialogTitle>
-            <DialogDescription>
-              اختر المنصة وأدخل معلومات الحساب للاتصال
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="grid grid-cols-2 gap-3 py-4">
-            {Object.keys(platformNames).map((platform) => (
-              <Button
-                key={platform}
-                type="button"
-                variant={selectedPlatform === platform ? "default" : "outline"}
-                className="flex flex-col items-center justify-center gap-2 h-20"
-                onClick={() => setSelectedPlatform(platform)}
-              >
-                <div className={`rounded-full p-2 ${selectedPlatform === platform ? "bg-white" : platformColors[platform]}`}>
-                  {React.cloneElement(platformIcons[platform] as React.ReactElement, {
-                    className: `h-5 w-5 ${selectedPlatform === platform ? "text-primary-foreground" : ""}`
-                  })}
-                </div>
-                <span className="text-xs">{platformNames[platform]}</span>
-              </Button>
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {platformData.map((platform) => (
+              <PlatformCard 
+                key={platform.name}
+                name={platform.name}
+                posts={platform.posts}
+                engagement={platform.engagement}
+                followers={platform.followers}
+                trend={platform.trend}
+              />
             ))}
           </div>
           
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="accountName">اسم المستخدم</Label>
-              <Input
-                id="accountName"
-                placeholder="مثال: @beauty_brand"
-                value={accountName}
-                onChange={(e) => setAccountName(e.target.value)}
-              />
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-beauty-purple" />
+                  التفاعل اليومي
+                </CardTitle>
+                <CardDescription>مقارنة التفاعل اليومي على مختلف المنصات</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={engagementData}
+                      margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="day" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="instagram" name="انستغرام" stackId="a" fill="#E1306C" />
+                      <Bar dataKey="facebook" name="فيسبوك" stackId="a" fill="#4267B2" />
+                      <Bar dataKey="twitter" name="تويتر" stackId="a" fill="#1DA1F2" />
+                      <Bar dataKey="tiktok" name="تيك توك" stackId="a" fill="#000000" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
             
-            <div className="space-y-2">
-              <Label htmlFor="displayName">الاسم المعروض</Label>
-              <Input
-                id="displayName"
-                placeholder="مثال: Beauty Brand"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-              />
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-beauty-purple" />
+                  المنشورات القادمة
+                </CardTitle>
+                <CardDescription>آخر المنشورات المجدولة للنشر</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4 max-h-80 overflow-y-auto">
+                  <UpcomingPostItem
+                    title="إطلاق مجموعة منتجات الصيف"
+                    platform="instagram"
+                    date="2025-04-22"
+                    time="14:30"
+                  />
+                  <UpcomingPostItem
+                    title="نصائح العناية بالبشرة في رمضان"
+                    platform="facebook"
+                    date="2025-04-20"
+                    time="10:00"
+                  />
+                  <UpcomingPostItem
+                    title="كيف تختارين العطر المناسب؟"
+                    platform="tiktok"
+                    date="2025-04-19"
+                    time="18:45"
+                  />
+                  <UpcomingPostItem
+                    title="تخفيضات نهاية الأسبوع"
+                    platform="twitter"
+                    date="2025-04-18"
+                    time="09:15"
+                  />
+                  <UpcomingPostItem
+                    title="وصفات طبيعية للعناية بالشعر"
+                    platform="instagram"
+                    date="2025-04-18"
+                    time="12:00"
+                  />
+                </div>
+              </CardContent>
+            </Card>
           </div>
           
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setAddAccountOpen(false)}>إلغاء</Button>
-            <Button 
-              onClick={handleAddAccount} 
-              disabled={!selectedPlatform || !accountName.trim() || !displayName.trim() || isConnecting}
-            >
-              {isConnecting ? "جاري الربط..." : "ربط الحساب"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          <IntegrationAnalytics />
+        </TabsContent>
+        
+        <TabsContent value="analytics">
+          <div className="text-center py-20 text-muted-foreground">
+            قريبًا - سيتم إضافة تحليلات مفصلة لكل منصة
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="scheduler">
+          <div className="text-center py-20 text-muted-foreground">
+            قريبًا - سيتم إضافة أداة جدولة المنشورات لجميع المنصات
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="settings">
+          <div className="text-center py-20 text-muted-foreground">
+            قريبًا - سيتم إضافة إعدادات متقدمة لكل منصة
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+};
+
+const PlatformCard = ({ name, posts, engagement, followers, trend }: {
+  name: string;
+  posts: number;
+  engagement: number;
+  followers: number;
+  trend: 'up' | 'down' | 'stable';
+}) => {
+  const getPlatformColor = () => {
+    switch (name) {
+      case 'انستغرام': return '#E1306C';
+      case 'فيسبوك': return '#4267B2';
+      case 'تويتر': return '#1DA1F2';
+      case 'تيك توك': return '#000000';
+      default: return '#6941C6';
+    }
+  };
+  
+  const getTrendBadge = () => {
+    switch (trend) {
+      case 'up': return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">+2.5%</Badge>;
+      case 'down': return <Badge variant="outline" className="border-red-200 text-red-800">-1.2%</Badge>;
+      case 'stable': return <Badge variant="outline" className="border-gray-200 text-gray-800">مستقر</Badge>;
+      default: return null;
+    }
+  };
+  
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div 
+              className="w-4 h-4 rounded-full" 
+              style={{ backgroundColor: getPlatformColor() }}
+            />
+            <CardTitle className="text-base font-medium">{name}</CardTitle>
+          </div>
+          {getTrendBadge()}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-muted-foreground">المتابعين</span>
+            <span className="text-lg font-bold">{followers.toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-muted-foreground">المنشورات</span>
+            <span className="text-lg font-bold">{posts}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-muted-foreground">معدل التفاعل</span>
+            <span className="text-lg font-bold">{engagement}%</span>
+          </div>
+          
+          <Button 
+            variant="outline" 
+            className="w-full mt-2 border-dashed" 
+            style={{ borderColor: getPlatformColor(), color: getPlatformColor() }}
+          >
+            تفاصيل المنصة
+            <ArrowUpRight className="ms-2 h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+interface UpcomingPostItemProps {
+  title: string;
+  platform: string;
+  date: string;
+  time: string;
+}
+
+const UpcomingPostItem = ({ title, platform, date, time }: UpcomingPostItemProps) => {
+  const getPlatformIcon = () => {
+    switch (platform) {
+      case 'instagram': return <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-yellow-500 flex items-center justify-center text-white font-bold">In</div>;
+      case 'facebook': return <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">Fb</div>;
+      case 'twitter': return <div className="w-8 h-8 rounded-full bg-blue-400 flex items-center justify-center text-white font-bold">Tw</div>;
+      case 'tiktok': return <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white font-bold">Tk</div>;
+      default: return null;
+    }
+  };
+  
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-SA');
+  };
+  
+  return (
+    <div className="flex items-center gap-3 p-3 rounded-lg border">
+      {getPlatformIcon()}
+      <div className="flex-1">
+        <h3 className="font-medium">{title}</h3>
+        <div className="flex justify-between items-center mt-1">
+          <span className="text-sm text-muted-foreground">{formatDate(date)} - {time}</span>
+          <Badge variant="outline" className="text-beauty-purple border-beauty-purple/30">مجدول</Badge>
+        </div>
+      </div>
     </div>
   );
 };
