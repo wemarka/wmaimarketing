@@ -19,6 +19,7 @@ import { motion } from "framer-motion";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/context/AuthContext";
 import { useActivityLog } from "@/hooks/useActivityLog";
+import { ProfileFormValues } from "@/types/profile";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -42,6 +43,12 @@ const Profile = () => {
     setActiveTab(tab);
   };
 
+  // Create a wrapper function that adapts onUpdateProfile to return Promise<void>
+  const handleUpdateProfile = async (data: ProfileFormValues): Promise<void> => {
+    await onUpdateProfile(data);
+    // The return value is ignored, making this return Promise<void>
+  };
+
   return (
     <ProfileAuthGuard>
       <Layout>
@@ -62,9 +69,9 @@ const Profile = () => {
                 <ProfileSidebar 
                   avatarUrl={profileData.avatar_url || null}
                   userInitials={getUserInitials}
-                  firstName={profileData.first_name || null}
-                  lastName={profileData.last_name || null}
-                  role={profileData.role || null}
+                  firstName={profileData.first_name || ''}
+                  lastName={profileData.last_name || ''}
+                  role={profileData.role || 'مستخدم'}
                   onAvatarChange={updateAvatarUrl}
                   activeTab={activeTab}
                   onTabChange={handleTabChange}
@@ -76,7 +83,7 @@ const Profile = () => {
                   <ProfileTabs 
                     profileData={profileData}
                     userEmail={user?.email || ""}
-                    onUpdateProfile={onUpdateProfile}
+                    onUpdateProfile={handleUpdateProfile}
                     onChangePassword={onChangePassword}
                     onLogoutOtherSessions={onLogoutOtherSessions}
                     updating={updating}
@@ -92,7 +99,7 @@ const Profile = () => {
                     profileData={profileData}
                     userEmail={user?.email || ""}
                     userInitials={getUserInitials}
-                    onUpdateProfile={onUpdateProfile}
+                    onUpdateProfile={handleUpdateProfile}
                     onChangePassword={onChangePassword}
                     onLogoutOtherSessions={onLogoutOtherSessions}
                     onAvatarChange={updateAvatarUrl}
@@ -114,7 +121,7 @@ const Profile = () => {
                         <PersonalInfoCard 
                           profileData={profileData}
                           userEmail={user?.email || ""}
-                          onUpdateProfile={onUpdateProfile}
+                          onUpdateProfile={handleUpdateProfile}
                           isUpdating={updating}
                         />
                       </motion.div>
