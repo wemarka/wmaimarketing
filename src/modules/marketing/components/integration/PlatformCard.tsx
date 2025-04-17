@@ -11,7 +11,7 @@ interface PlatformCardProps {
   name: string;
   posts: number;
   engagement: number;
-  followers: number;
+  followers: string;
   trend: PlatformTrend;
 }
 
@@ -53,7 +53,7 @@ const PlatformCard = ({ name, posts, engagement, followers, trend }: PlatformCar
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <span className="text-sm text-muted-foreground">المتابعين</span>
-            <span className="text-lg font-bold">{followers.toLocaleString()}</span>
+            <span className="text-lg font-bold">{followers}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm text-muted-foreground">المنشورات</span>

@@ -12,6 +12,8 @@ export interface WebhookEventLogItemProps {
   platform: string;
   timestamp: string;
   details?: string;
+  destination?: string; // Added this optional property
+  payload?: string; // Added this optional property
 }
 
 const WebhookEventLogItem: React.FC<WebhookEventLogItemProps> = ({ 
@@ -19,7 +21,8 @@ const WebhookEventLogItem: React.FC<WebhookEventLogItemProps> = ({
   status, 
   platform, 
   timestamp, 
-  details 
+  details,
+  destination 
 }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -67,6 +70,9 @@ const WebhookEventLogItem: React.FC<WebhookEventLogItemProps> = ({
       </div>
       {details && (
         <p className="mt-2 text-sm text-muted-foreground">{details}</p>
+      )}
+      {destination && (
+        <p className="mt-1 text-xs text-muted-foreground">إلى: {destination}</p>
       )}
     </div>
   );

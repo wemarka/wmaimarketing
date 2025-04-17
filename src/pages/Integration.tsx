@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -577,6 +576,48 @@ const WebhookEventItem = ({
     <div className="flex items-center justify-between p-3 border rounded-md bg-card hover:bg-accent/50 transition-colors">
       <span className="text-sm">{event}</span>
       <Switch defaultChecked={isEnabled} />
+    </div>
+  );
+};
+
+const WebhookEventLogItem = ({ 
+  event, 
+  timestamp, 
+  status,
+  destination,
+  payload
+}: { 
+  event: string; 
+  timestamp: string; 
+  status: 'success' | 'error' | 'pending' | 'warning';
+  destination?: string;
+  payload?: string;
+}) => {
+  const normalizedStatus = status === 'warning' ? 'pending' : status;
+  
+  return (
+    <div className="border rounded-lg p-3 mb-2 hover:bg-muted/30 transition-colors">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className={
+            normalizedStatus === 'success' ? "bg-green-50 text-green-700 border-green-200" : 
+            normalizedStatus === 'error' ? "bg-red-50 text-red-700 border-red-200" : 
+            "bg-yellow-50 text-yellow-700 border-yellow-200"
+          }>
+            {normalizedStatus === 'success' ? 'ناجح' : normalizedStatus === 'error' ? 'فشل' : 'قيد التنفيذ'}
+          </Badge>
+          <span className="font-medium">{event}</span>
+        </div>
+        <span className="text-xs text-muted-foreground">{timestamp}</span>
+      </div>
+      {destination && (
+        <p className="mt-1 text-xs text-muted-foreground">الوجهة: {destination}</p>
+      )}
+      {payload && (
+        <div className="mt-2 p-2 bg-muted/30 rounded-md text-xs font-mono overflow-auto max-h-24">
+          {payload}
+        </div>
+      )}
     </div>
   );
 };

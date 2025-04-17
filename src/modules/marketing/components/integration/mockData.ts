@@ -1,78 +1,85 @@
 
 import { Instagram, Facebook, Twitter, Linkedin } from 'lucide-react';
+import { WebhookEventLogItemProps } from './WebhookEventLogItem';
 
 export const platformData = [
   {
     name: "انستغرام",
     icon: Instagram,
     posts: 124,
-    engagement: '4.8%',
+    engagement: 4.8,  // Changed from string to number
     followers: '12.5K',
-    trend: '+5.2%'
+    trend: 'up'  // Changed to a valid PlatformTrend value
   },
   {
     name: "فيسبوك",
     icon: Facebook,
     posts: 86,
-    engagement: '2.7%',
+    engagement: 2.7,  // Changed from string to number
     followers: '8.3K',
-    trend: '+1.8%'
+    trend: 'up'  // Changed to a valid PlatformTrend value
   },
   {
     name: "تويتر",
     icon: Twitter,
     posts: 210,
-    engagement: '3.1%',
+    engagement: 3.1,  // Changed from string to number
     followers: '5.2K',
-    trend: '+3.4%'
+    trend: 'up' 
   },
   {
     name: "لينكد إن",
     icon: Linkedin,
     posts: 42,
-    engagement: '1.9%',
+    engagement: 1.9,  // Changed from string to number
     followers: '3.6K',
-    trend: '+0.7%'
+    trend: 'down'
   }
 ];
 
+// Renamed 'name' to 'day' and added 'tiktok' field
 export const engagementData = [
-  { name: 'الأحد', instagram: 120, facebook: 80, twitter: 60, linkedin: 20 },
-  { name: 'الإثنين', instagram: 140, facebook: 100, twitter: 80, linkedin: 30 },
-  { name: 'الثلاثاء', instagram: 170, facebook: 120, twitter: 90, linkedin: 40 },
-  { name: 'الأربعاء', instagram: 190, facebook: 130, twitter: 100, linkedin: 50 },
-  { name: 'الخميس', instagram: 220, facebook: 150, twitter: 120, linkedin: 60 },
-  { name: 'الجمعة', instagram: 170, facebook: 110, twitter: 90, linkedin: 40 },
-  { name: 'السبت', instagram: 150, facebook: 90, twitter: 70, linkedin: 30 },
+  { day: 'الأحد', instagram: 120, facebook: 80, twitter: 60, linkedin: 20, tiktok: 30 },
+  { day: 'الإثنين', instagram: 140, facebook: 100, twitter: 80, linkedin: 30, tiktok: 35 },
+  { day: 'الثلاثاء', instagram: 170, facebook: 120, twitter: 90, linkedin: 40, tiktok: 45 },
+  { day: 'الأربعاء', instagram: 190, facebook: 130, twitter: 100, linkedin: 50, tiktok: 55 },
+  { day: 'الخميس', instagram: 220, facebook: 150, twitter: 120, linkedin: 60, tiktok: 65 },
+  { day: 'الجمعة', instagram: 170, facebook: 110, twitter: 90, linkedin: 40, tiktok: 50 },
+  { day: 'السبت', instagram: 150, facebook: 90, twitter: 70, linkedin: 30, tiktok: 40 },
 ];
 
+// Modified to match UpcomingPostItemProps: Converted scheduledTime to date and time
 export const upcomingPostsData = [
   { 
     id: '1',
     title: 'إطلاق المنتج الجديد', 
     platform: 'instagram', 
-    scheduledTime: '2025-04-18T09:00:00',
+    date: '2025-04-18',
+    time: '09:00',
     status: 'scheduled'
   },
   { 
     id: '2',
     title: 'نصائح للعناية بالبشرة في الصيف', 
     platform: 'facebook', 
-    scheduledTime: '2025-04-19T11:30:00',
+    date: '2025-04-19',
+    time: '11:30',
     status: 'draft'
   },
   { 
     id: '3', 
     title: 'حملة الخصومات', 
     platform: 'twitter',
-    scheduledTime: '2025-04-20T15:00:00', 
+    date: '2025-04-20',
+    time: '15:00', 
     status: 'scheduled'
   },
   { 
     id: '4',
     title: 'المنتجات الأكثر مبيعاً', 
     platform: 'linkedin', 
-    scheduledTime: '2025-04-21T10:00:00',
+    date: '2025-04-21',
+    time: '10:00',
     status: 'scheduled'
   },
 ];
@@ -82,4 +89,45 @@ export const tabItems = [
   { id: 'analytics', label: 'التحليلات' },
   { id: 'webhooks', label: 'الويب هوك' },
   { id: 'settings', label: 'الإعدادات' }
+];
+
+// Added mockWebhookEvents
+export const mockWebhookEvents: WebhookEventLogItemProps[] = [
+  {
+    id: '1',
+    event: 'نشر محتوى',
+    status: 'success',
+    platform: 'instagram',
+    timestamp: '2025-04-17T15:23:45',
+    details: 'تم نشر المحتوى بنجاح على منصة Instagram'
+  },
+  {
+    id: '2', 
+    event: 'تسجيل مستخدم',
+    status: 'success',
+    platform: 'facebook',
+    timestamp: '2025-04-17T14:17:22'
+  },
+  {
+    id: '3',
+    event: 'تحديث محتوى',
+    status: 'error',
+    platform: 'twitter',
+    timestamp: '2025-04-17T12:05:11',
+    details: 'فشل تحديث المحتوى بسبب خطأ في الاتصال'
+  },
+  {
+    id: '4',
+    event: 'نشر محتوى',
+    status: 'pending',
+    platform: 'linkedin',
+    timestamp: '2025-04-16T23:41:39'
+  },
+  {
+    id: '5',
+    event: 'إنشاء حملة إعلانية',
+    status: 'success',
+    platform: 'instagram',
+    timestamp: '2025-04-16T16:22:05'
+  }
 ];
