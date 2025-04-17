@@ -6,13 +6,13 @@ import { useTranslation } from "react-i18next";
 import {
   Sidebar,
   SidebarContent,
-  SidebarHeader,
+  SidebarHeader as ShadcnSidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import SidebarNavContent from "./sidebar/SidebarContent";
 import { Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import SidebarHeader from "./sidebar/SidebarHeader";
+import CustomSidebarHeader from "./sidebar/SidebarHeader";
 
 const AppSidebar = () => {
   const { i18n } = useTranslation();
@@ -23,10 +23,12 @@ const AppSidebar = () => {
 
   return (
     <Sidebar className="bg-[#3a7a89] text-white border-r-0 z-50">
-      <SidebarHeader 
-        expanded={expanded} 
-        toggleExpanded={toggleExpanded} 
-      />
+      <ShadcnSidebarHeader>
+        <CustomSidebarHeader 
+          expanded={expanded} 
+          toggleExpanded={toggleExpanded} 
+        />
+      </ShadcnSidebarHeader>
       
       <SidebarContent>
         <SidebarNavContent 

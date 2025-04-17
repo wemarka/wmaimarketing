@@ -11,7 +11,7 @@ interface SidebarHeaderProps {
   toggleExpanded: () => void;
 }
 
-const SidebarHeader: React.FC<SidebarHeaderProps> = ({
+const CustomSidebarHeader: React.FC<SidebarHeaderProps> = ({
   expanded,
   toggleExpanded
 }) => {
@@ -110,4 +110,4 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({
   );
 };
 
-export default SidebarHeader;
+export default CustomSidebarHeader;
