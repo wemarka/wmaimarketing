@@ -7,6 +7,18 @@ import PostItem from "./PostItem";
 import LoadingPosts from "./LoadingPosts";
 import EmptyPostsPlaceholder from "./EmptyPostsPlaceholder";
 
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  platform: "instagram" | "facebook" | "tiktok" | string;
+  createdAt: string;
+  author: {
+    name: string;
+    avatar: string | undefined;
+  };
+}
+
 const PendingPostsWidget = () => {
   const [viewMode, setViewMode] = useState<"list" | "compact">("list");
   const { posts, isLoading, approvePost, rejectPost } = usePendingPosts();
@@ -36,11 +48,11 @@ const PendingPostsWidget = () => {
           <div className="space-y-4">
             {posts.map((post, index) => {
               // Map PendingPost to Post format expected by PostItem
-              const adaptedPost = {
+              const adaptedPost: Post = {
                 id: post.id,
                 title: post.title,
                 content: post.content,
-                platform: post.platform as "instagram" | "facebook" | "tiktok",
+                platform: post.platform as "instagram" | "facebook" | "tiktok" | string,
                 createdAt: post.created_at,
                 author: {
                   name: post.profile?.first_name || 'Unknown User',

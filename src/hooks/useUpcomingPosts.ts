@@ -142,7 +142,7 @@ export const useUpcomingPosts = () => {
         let profileData: Profile | undefined = undefined;
         
         // Check if profile exists and handle it safely
-        if (post.profile && typeof post.profile === 'object' && !('error' in post.profile)) {
+        if (post.profile && typeof post.profile === 'object' && !Array.isArray(post.profile) && !('error' in post.profile)) {
           profileData = {
             id: post.profile?.id || '',
             first_name: post.profile?.first_name || null,
@@ -164,7 +164,7 @@ export const useUpcomingPosts = () => {
         // Check if social_account exists and process insights safely
         let processedSocialAccount = undefined;
         
-        if (post.social_account && typeof post.social_account === 'object' && !('error' in post.social_account)) {
+        if (post.social_account && typeof post.social_account === 'object' && !Array.isArray(post.social_account) && !('error' in post.social_account)) {
           let insights = { 
             followers: 0, 
             engagement: 0, 
@@ -172,7 +172,7 @@ export const useUpcomingPosts = () => {
           };
           
           // Check if insights exist and handle both string (JSON) and object formats
-          if (post.social_account?.insights) {
+          if (post.social_account.insights) {
             try {
               if (typeof post.social_account.insights === 'string') {
                 // Parse JSON string if needed
@@ -182,9 +182,10 @@ export const useUpcomingPosts = () => {
                 insights.postCount = Number(parsedInsights.postCount || 0);
               } else if (typeof post.social_account.insights === 'object') {
                 // Handle as object
-                insights.followers = Number(post.social_account.insights.followers || 0);
-                insights.engagement = Number(post.social_account.insights.engagement || 0);
-                insights.postCount = Number(post.social_account.insights.postCount || 0);
+                const insightsObj = post.social_account.insights as any;
+                insights.followers = Number(insightsObj.followers || 0);
+                insights.engagement = Number(insightsObj.engagement || 0);
+                insights.postCount = Number(insightsObj.postCount || 0);
               }
             } catch (e) {
               console.error("Error processing insights:", e);
@@ -194,12 +195,12 @@ export const useUpcomingPosts = () => {
           processedSocialAccount = {
             ...post.social_account,
             insights
-          };
+          } as PostWithMeta['social_account'];
         }
         
         // Construct the final post object safely
         const processedPost: PostWithMeta = {
-          ...post,
+          ...post as Post,
           profile: profileData,
           platform_data: platformMeta,
           social_account: processedSocialAccount

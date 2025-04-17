@@ -5,7 +5,7 @@ import Layout from "@/components/layout/Layout";
 import { Helmet } from "react-helmet-async";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarPlus, Clock, Settings } from "lucide-react";
+import { CalendarPlus, Settings } from "lucide-react";
 import { useSchedulePost } from "../hooks/useSchedulePost";
 import TitleSection from "../components/schedule-post/TitleSection";
 import ContentSection from "../components/schedule-post/ContentSection";
@@ -38,6 +38,7 @@ const SchedulePost = () => {
     
     setTitle,
     setContent,
+    setSuggestedContent,
     setPlatform,
     setSelectedDate,
     setSelectedTime,
@@ -70,7 +71,7 @@ const SchedulePost = () => {
         <PageHeader
           title={t("scheduler.title", "جدولة منشور")}
           description={t("scheduler.description", "قم بإنشاء وجدولة منشور جديد على منصات التواصل الاجتماعي.")}
-          variant="simple"
+          variant="default"
           icon={<CalendarPlus className="w-5 h-5" />}
         />
       </AnimateInView>
@@ -102,9 +103,12 @@ const SchedulePost = () => {
                   />
                   
                   <ContentSection
+                    title={title}
+                    setTitle={setTitle}
                     content={content}
-                    suggestedContent={suggestedContent}
                     setContent={setContent}
+                    suggestedContent={suggestedContent}
+                    setSuggestedContent={setSuggestedContent}
                     isGenerating={isGenerating}
                     onGenerateSuggestion={handleGenerateSuggestion}
                     hashtags={hashtags}
@@ -147,7 +151,7 @@ const SchedulePost = () => {
                         enableCrossPosting={enableCrossPosting}
                         selectedAccounts={selectedAccounts}
                         onToggleCrossPosting={toggleCrossPosting}
-                        onAccountToggle={(accountId, isChecked) => handleAccountToggle(accountId)}
+                        onAccountToggle={handleAccountToggle}
                       />
                     </>
                   )}

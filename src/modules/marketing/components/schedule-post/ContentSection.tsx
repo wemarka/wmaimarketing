@@ -1,7 +1,6 @@
 
 import React from "react";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Loader2 } from "lucide-react";
@@ -35,20 +34,20 @@ const ContentSection: React.FC<ContentSectionProps> = ({
   return (
     <div className="space-y-6">
       <div className="space-y-3">
-        <Label htmlFor="title">{t("scheduler.contentSection.title")}</Label>
+        <Label htmlFor="title">{t("scheduler.contentSection.title", "العنوان")}</Label>
         <Input
           id="title"
-          placeholder={t("scheduler.contentSection.titlePlaceholder")}
+          placeholder={t("scheduler.contentSection.titlePlaceholder", "أدخل عنوان المنشور هنا")}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
       </div>
 
       <div className="space-y-3">
-        <Label htmlFor="content">{t("scheduler.contentSection.content")}</Label>
+        <Label htmlFor="content">{t("scheduler.contentSection.content", "المحتوى")}</Label>
         <Textarea
           id="content"
-          placeholder={t("scheduler.contentSection.contentPlaceholder")}
+          placeholder={t("scheduler.contentSection.contentPlaceholder", "اكتب محتوى المنشور هنا")}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           rows={4}
@@ -65,12 +64,12 @@ const ContentSection: React.FC<ContentSectionProps> = ({
           {isGenerating ? (
             <>
               <Loader2 className="mr-2 rtl:ml-2 rtl:mr-0 h-4 w-4 animate-spin" />
-              {t("common.generating")}
+              {t("common.generating", "جاري التوليد...")}
             </>
           ) : (
             <>
               <Sparkles className="mr-2 rtl:ml-2 rtl:mr-0 h-4 w-4" />
-              {t("scheduler.contentSection.generateSuggestion")}
+              {t("scheduler.contentSection.generateSuggestion", "توليد اقتراحات")}
             </>
           )}
         </Button>
@@ -79,7 +78,7 @@ const ContentSection: React.FC<ContentSectionProps> = ({
       {suggestedContent && (
         <div className="space-y-3 bg-secondary/30 p-4 rounded-md">
           <Label htmlFor="suggestedContent">
-            {t("scheduler.contentSection.suggestedContent")}
+            {t("scheduler.contentSection.suggestedContent", "المحتوى المقترح")}
           </Label>
           <Textarea
             id="suggestedContent"
@@ -91,7 +90,7 @@ const ContentSection: React.FC<ContentSectionProps> = ({
 
           {hashtags.length > 0 && (
             <div>
-              <Label>{t("scheduler.contentSection.suggestedHashtags")}</Label>
+              <Label>{t("scheduler.contentSection.suggestedHashtags", "الهاشتاغات المقترحة")}</Label>
               <div className="flex flex-wrap gap-2 mt-2">
                 {hashtags.map((tag, index) => (
                   <div
@@ -109,5 +108,8 @@ const ContentSection: React.FC<ContentSectionProps> = ({
     </div>
   );
 };
+
+// Add the missing Input component import
+import { Input } from "@/components/ui/input";
 
 export default ContentSection;
