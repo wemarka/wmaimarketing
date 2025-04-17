@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -21,7 +20,6 @@ const EngagementChart: React.FC<EngagementChartProps> = ({ data }) => {
   
   const getFilteredData = () => {
     if (chartType === 'top') {
-      // Get only the top 3 platforms by average engagement
       const averages = {
         instagram: data.reduce((sum, point) => sum + point.instagram, 0) / data.length,
         facebook: data.reduce((sum, point) => sum + point.facebook, 0) / data.length,
@@ -106,8 +104,8 @@ const EngagementChart: React.FC<EngagementChartProps> = ({ data }) => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="day" />
               <YAxis />
-              <Tooltip formatter={(value, name) => [value, getPlatformName(name)]} />
-              <Legend formatter={(value) => getPlatformName(value)} />
+              <Tooltip formatter={(value, name) => [value, getPlatformName(String(name))]} />
+              <Legend formatter={(value) => getPlatformName(String(value))} />
               {platforms.map(platform => (
                 <Bar 
                   key={platform}
