@@ -9,10 +9,10 @@ import IntegrationAnalytics from './IntegrationAnalytics';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 const platformData = [
-  { name: 'انستغرام', posts: 42, engagement: 3.8, followers: 12500, trend: 'up' },
-  { name: 'فيسبوك', posts: 36, engagement: 2.1, followers: 8700, trend: 'stable' },
-  { name: 'تويتر', posts: 64, engagement: 1.5, followers: 5200, trend: 'down' },
-  { name: 'تيك توك', posts: 28, engagement: 4.2, followers: 15800, trend: 'up' },
+  { name: 'انستغرام', posts: 42, engagement: 3.8, followers: 12500, trend: 'up' as const },
+  { name: 'فيسبوك', posts: 36, engagement: 2.1, followers: 8700, trend: 'stable' as const },
+  { name: 'تويتر', posts: 64, engagement: 1.5, followers: 5200, trend: 'down' as const },
+  { name: 'تيك توك', posts: 28, engagement: 4.2, followers: 15800, trend: 'up' as const },
 ];
 
 const engagementData = [
