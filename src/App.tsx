@@ -44,6 +44,7 @@ import DashboardPerformance from './pages/dashboard/Performance';
 import { AuthProvider } from './context/AuthContext';
 import { Toaster } from "@/components/ui/toaster";
 import { ActivityProvider } from './context/ActivityContext';
+import { QueryPerformanceProvider } from './context/QueryPerformanceProvider'; // Import the QueryPerformanceProvider
 
 // Import hooks
 import { useAuth } from './hooks/useAuth';
@@ -73,49 +74,51 @@ function App() {
 
   return (
     <HelmetProvider>
-      <AuthProvider>
-        <ActivityProvider>
-          <Router>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password/:token" element={<ResetPassword />} />
-              <Route path="/invitation/:token" element={<Invitation />} />
+      <QueryPerformanceProvider>
+        <AuthProvider>
+          <ActivityProvider>
+            <Router>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password/:token" element={<ResetPassword />} />
+                <Route path="/invitation/:token" element={<Invitation />} />
 
-              <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/dashboard/performance" element={<ProtectedRoute><DashboardPerformance /></ProtectedRoute>} />
-              <Route path="/analytics/:subtab?" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+                <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/dashboard/performance" element={<ProtectedRoute><DashboardPerformance /></ProtectedRoute>} />
+                <Route path="/analytics/:subtab?" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
 
-              <Route path="/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
-              <Route path="/content/media" element={<ProtectedRoute><Media /></ProtectedRoute>} />
-              <Route path="/content/posts" element={<ProtectedRoute><Posts /></ProtectedRoute>} />
-              <Route path="/content/images" element={<ProtectedRoute><Images /></ProtectedRoute>} />
-              <Route path="/content/videos" element={<ProtectedRoute><Videos /></ProtectedRoute>} />
-              <Route path="/content/creator" element={<ProtectedRoute><ContentCreator /></ProtectedRoute>} />
+                <Route path="/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
+                <Route path="/content/media" element={<ProtectedRoute><Media /></ProtectedRoute>} />
+                <Route path="/content/posts" element={<ProtectedRoute><Posts /></ProtectedRoute>} />
+                <Route path="/content/images" element={<ProtectedRoute><Images /></ProtectedRoute>} />
+                <Route path="/content/videos" element={<ProtectedRoute><Videos /></ProtectedRoute>} />
+                <Route path="/content/creator" element={<ProtectedRoute><ContentCreator /></ProtectedRoute>} />
 
-              <Route path="/marketing/campaigns" element={<ProtectedRoute><MarketingCampaigns /></ProtectedRoute>} />
-              <Route path="/marketing/audience" element={<ProtectedRoute><MarketingAudience /></ProtectedRoute>} />
-              <Route path="/marketing/insights" element={<ProtectedRoute><MarketingInsights /></ProtectedRoute>} />
-              <Route path="/marketing/competitors" element={<ProtectedRoute><CompetitorAnalysis /></ProtectedRoute>} />
+                <Route path="/marketing/campaigns" element={<ProtectedRoute><MarketingCampaigns /></ProtectedRoute>} />
+                <Route path="/marketing/audience" element={<ProtectedRoute><MarketingAudience /></ProtectedRoute>} />
+                <Route path="/marketing/insights" element={<ProtectedRoute><MarketingInsights /></ProtectedRoute>} />
+                <Route path="/marketing/competitors" element={<ProtectedRoute><CompetitorAnalysis /></ProtectedRoute>} />
 
-              <Route path="/scheduling" element={<ProtectedRoute><Scheduling /></ProtectedRoute>} />
-              <Route path="/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
-              <Route path="/documentation" element={<ProtectedRoute><Documentation /></ProtectedRoute>} />
+                <Route path="/scheduling" element={<ProtectedRoute><Scheduling /></ProtectedRoute>} />
+                <Route path="/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
+                <Route path="/documentation" element={<ProtectedRoute><Documentation /></ProtectedRoute>} />
 
-              <Route path="/admin/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
-              <Route path="/admin/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-              <Route path="/admin/roles" element={<ProtectedRoute><Roles /></ProtectedRoute>} />
+                <Route path="/admin/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
+                <Route path="/admin/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                <Route path="/admin/roles" element={<ProtectedRoute><Roles /></ProtectedRoute>} />
 
-              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-              <Route path="/notifications" element={<ProtectedRoute><NotificationCenter /></ProtectedRoute>} />
-              <Route path="/integration" element={<ProtectedRoute><SocialIntegration /></ProtectedRoute>} />
-            </Routes>
-          </Router>
-          <Toaster />
-        </ActivityProvider>
-      </AuthProvider>
+                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                <Route path="/notifications" element={<ProtectedRoute><NotificationCenter /></ProtectedRoute>} />
+                <Route path="/integration" element={<ProtectedRoute><SocialIntegration /></ProtectedRoute>} />
+              </Routes>
+            </Router>
+            <Toaster />
+          </ActivityProvider>
+        </AuthProvider>
+      </QueryPerformanceProvider>
     </HelmetProvider>
   );
 }
