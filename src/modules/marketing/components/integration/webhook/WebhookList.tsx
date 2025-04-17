@@ -1,29 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { WebhookItem } from './types';
-import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Copy, MoreHorizontal, RefreshCw, Trash2 } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { useWebhookForm } from './hooks/useWebhookForm';
 import { WebhookFormDialog } from './components/WebhookFormDialog';
-import { eventTypes } from './constants';
+import { WebhookTable } from './components/WebhookTable';
 
 const WebhookList = () => {
   const [webhooks, setWebhooks] = useState<WebhookItem[]>([]);
@@ -147,20 +129,6 @@ const WebhookList = () => {
     setIsDialogOpen(false);
   };
 
-  const regenerateSecret = () => {
-    setFormState(prev => ({
-      ...prev,
-      secretKey: `whsec_${Math.random().toString(36).substring(2, 15)}`,
-    }));
-    toast.success("تم إنشاء مفتاح سرّي جديد");
-  };
-
-  const getEventNames = (eventIds: string[]) => {
-    return eventIds
-      .map(id => eventTypes.find(event => event.id === id)?.name || id)
-      .join('، ');
-  };
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-4">
@@ -174,75 +142,13 @@ const WebhookList = () => {
           <p className="mt-2 text-muted-foreground">جارِ تحميل الويب هوك...</p>
         </div>
       ) : webhooks.length > 0 ? (
-        <Table>
-          <TableCaption>قائمة الويب هوك المسجلة</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>الاسم</TableHead>
-              <TableHead>نقطة النهاية</TableHead>
-              <TableHead>الأحداث</TableHead>
-              <TableHead>الحالة</TableHead>
-              <TableHead>آخر تنفيذ</TableHead>
-              <TableHead className="w-[100px]"></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {webhooks.map(webhook => (
-              <TableRow key={webhook.id}>
-                <TableCell className="font-medium">{webhook.name}</TableCell>
-                <TableCell className="font-mono text-xs">
-                  {webhook.endpoint}
-                </TableCell>
-                <TableCell>
-                  <div className="max-w-[200px] truncate">
-                    {getEventNames(webhook.eventTypes)}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge 
-                    variant="outline" 
-                    className="bg-green-100 text-green-800"
-                  >
-                    {webhook.active ? 'نشط' : 'معطل'}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  {webhook.lastTriggered 
-                    ? new Date(webhook.lastTriggered).toLocaleDateString('ar-EG') 
-                    : 'لم يتم التشغيل بعد'}
-                </TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>خيارات</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => handleEditWebhook(webhook)}>
-                        تعديل
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => copySecret(webhook.secretKey || '')}>
-                        <Copy className="mr-2 h-4 w-4" /> نسخ المفتاح
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleToggleState(webhook.id)}>
-                        {webhook.active ? 'تعطيل' : 'تفعيل'}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-destructive focus:text-destructive"
-                        onClick={() => handleDeleteWebhook(webhook.id)}
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" /> حذف
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <WebhookTable
+          webhooks={webhooks}
+          onEditWebhook={handleEditWebhook}
+          onDeleteWebhook={handleDeleteWebhook}
+          onToggleState={handleToggleState}
+          onCopySecret={copySecret}
+        />
       ) : (
         <div className="text-center py-10 border rounded-lg bg-muted/10">
           <p className="text-muted-foreground">
@@ -260,7 +166,13 @@ const WebhookList = () => {
         onSubmit={handleFormSubmit}
         handleEventTypeChange={handleEventTypeChange}
         onCopySecret={copySecret}
-        onRegenerateSecret={regenerateSecret}
+        onRegenerateSecret={() => {
+          setFormState(prev => ({
+            ...prev,
+            secretKey: `whsec_${Math.random().toString(36).substring(2, 15)}`,
+          }));
+          toast.success("تم إنشاء مفتاح سرّي جديد");
+        }}
       />
     </div>
   );
