@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { socialMediaPerformanceData } from './mockData';
+import { socialMediaPerformanceData } from './data';
 
 const tiktokData = [
   { day: 'الأحد', views: 5800, likes: 450, shares: 120, comments: 85 },

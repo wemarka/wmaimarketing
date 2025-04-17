@@ -14,7 +14,15 @@ const eventTypes = [
   { id: 'order_placed', name: 'طلب جديد', enabled: false },
 ];
 
-const WebhookEventTypeList = () => {
+interface WebhookEventTypeListProps {
+  selectedEventType: string | null;
+  onSelectEventType: (eventType: string) => void;
+}
+
+const WebhookEventTypeList: React.FC<WebhookEventTypeListProps> = ({
+  selectedEventType,
+  onSelectEventType
+}) => {
   return (
     <Card className="border shadow-sm">
       <CardHeader className="pb-2">
@@ -27,6 +35,8 @@ const WebhookEventTypeList = () => {
               key={eventType.id}
               event={eventType.name} 
               isEnabled={eventType.enabled} 
+              isSelected={selectedEventType === eventType.id}
+              onClick={() => onSelectEventType(eventType.id)}
             />
           ))}
         </div>
@@ -35,19 +45,28 @@ const WebhookEventTypeList = () => {
   );
 };
 
-export const WebhookEventTypeItem = ({ 
-  event, 
-  isEnabled = true 
-}: { 
-  event: string; 
+interface WebhookEventTypeItemProps {
+  event: string;
   isEnabled?: boolean;
+  isSelected?: boolean;
+  onClick?: () => void;
+}
+
+export const WebhookEventTypeItem: React.FC<WebhookEventTypeItemProps> = ({ 
+  event, 
+  isEnabled = true,
+  isSelected = false,
+  onClick
 }) => {
   const [enabled, setEnabled] = React.useState(isEnabled);
   
   return (
-    <div className="flex items-center justify-between p-3 border rounded-md bg-card hover:bg-accent/50 transition-colors">
+    <div 
+      className={`flex items-center justify-between p-3 border rounded-md bg-card hover:bg-accent/50 transition-colors cursor-pointer ${isSelected ? 'ring-2 ring-beauty-purple' : ''}`}
+      onClick={onClick}
+    >
       <span className="text-sm">{event}</span>
-      <Switch checked={enabled} onCheckedChange={setEnabled} />
+      <Switch checked={enabled} onCheckedChange={setEnabled} onClick={(e) => e.stopPropagation()} />
     </div>
   );
 };
