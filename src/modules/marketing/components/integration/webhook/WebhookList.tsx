@@ -23,6 +23,7 @@ import {
 import { Copy, MoreHorizontal, RefreshCw, Trash2 } from 'lucide-react';
 import { useWebhookForm } from './hooks/useWebhookForm';
 import { WebhookFormDialog } from './components/WebhookFormDialog';
+import { eventTypes } from './constants';
 
 const WebhookList = () => {
   const [webhooks, setWebhooks] = useState<WebhookItem[]>([]);
