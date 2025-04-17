@@ -20,21 +20,28 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   expanded
 }) => {
   // Use tooltip for items when sidebar is collapsed
-  const { showTooltip, hideTooltip, tooltipOpen } = useTooltip();
+  const { showTooltip, hideTooltip, tooltipOpen } = useTooltip({ hoverDelay: 400 });
   const [isHovered, setIsHovered] = useState(false);
   
   // Motion effects for icons
   const iconVariants = {
     expanded: { rotate: 0 },
     collapsed: { rotate: expanded ? 0 : 360, scale: expanded ? 1 : 1.2 },
-    hover: { scale: 1.2, rotate: 0 }
+    hover: { 
+      scale: 1.2, 
+      rotate: 0, 
+      transition: { type: "spring", stiffness: 400, damping: 10 }
+    }
   };
   
   // Badge animation
   const badgeVariants = {
     expanded: { opacity: 1, scale: 1 },
     collapsed: { opacity: 0, scale: 0 },
-    hover: { scale: 1.2 }
+    hover: { 
+      scale: 1.2,
+      transition: { type: "spring", stiffness: 500 }
+    }
   };
   
   // Active indicator animation
@@ -75,8 +82,25 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   // Label animation
   const labelVariants = {
     initial: { opacity: 0, x: -5 },
-    animate: { opacity: 1, x: 0, transition: { duration: 0.2, delay: 0.05 } },
-    exit: { opacity: 0, x: -5, transition: { duration: 0.15 } }
+    animate: { 
+      opacity: 1, 
+      x: 0, 
+      transition: { 
+        type: "spring",
+        stiffness: 400,
+        damping: 25,
+        mass: 0.8,
+        delay: 0.05 
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      x: -5, 
+      transition: { 
+        duration: 0.15,
+        ease: "easeOut"
+      } 
+    }
   };
 
   const handleMouseEnter = () => {
@@ -93,7 +117,7 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   
   // Dynamic tooltip positioning based on item position
   const getTooltipAlignment = () => {
-    // You could enhance this further by detecting the item's position in the viewport
+    // Enhanced tooltip positioning logic
     return {
       align: "center" as const,
       side: "right" as const,
@@ -184,7 +208,7 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
             )}
           </AnimatePresence>
           
-          {/* Enhanced active indicator */}
+          {/* Enhanced active indicator with improved animation */}
           <motion.div 
             className="absolute inset-y-0 right-0 w-1 bg-white rounded-l-md"
             initial="inactive"

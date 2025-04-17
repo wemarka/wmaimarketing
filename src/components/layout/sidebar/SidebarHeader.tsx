@@ -17,26 +17,66 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({
 }) => {
   const { tooltipOpen, showTooltip, hideTooltip } = useTooltip();
   
-  // Motion variants for animations
+  // Enhanced motion variants for animations
   const logoTextVariants = {
     initial: { opacity: 0, x: -20 },
-    animate: { opacity: 1, x: 0, transition: { duration: 0.4 } },
-    exit: { opacity: 0, x: -10, transition: { duration: 0.2 } }
+    animate: { 
+      opacity: 1, 
+      x: 0, 
+      transition: { 
+        type: "spring",
+        stiffness: 500,
+        damping: 25,
+        mass: 0.8,
+        duration: 0.4 
+      } 
+    },
+    exit: { 
+      opacity: 0, 
+      x: -10, 
+      transition: { 
+        duration: 0.2,
+        ease: "easeOut"
+      } 
+    }
   };
   
   const logoIconVariants = {
     expanded: { scale: 1 },
-    collapsed: { scale: 1.2, transition: { delay: 0.2, duration: 0.4, type: "spring" } }
+    collapsed: { 
+      scale: 1.2, 
+      transition: { 
+        delay: 0.2, 
+        duration: 0.4, 
+        type: "spring",
+        stiffness: 400,
+        damping: 15
+      } 
+    }
   };
   
   const buttonVariants = {
-    hover: { scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.25)" },
+    hover: { 
+      scale: 1.1, 
+      backgroundColor: "rgba(255, 255, 255, 0.25)",
+      boxShadow: "0 0 8px rgba(255,255,255,0.3)" 
+    },
     tap: { scale: 0.9 }
   };
   
   const containerVariants = {
     initial: { y: -20, opacity: 0 },
-    animate: { y: 0, opacity: 1, transition: { duration: 0.4, ease: "easeOut" } }
+    animate: { 
+      y: 0, 
+      opacity: 1, 
+      transition: { 
+        duration: 0.4, 
+        ease: "easeOut",
+        type: "spring",
+        stiffness: 300,
+        damping: 20
+      } 
+    }
   };
 
   return (

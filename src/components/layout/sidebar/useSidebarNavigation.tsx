@@ -13,6 +13,7 @@ export const useSidebarNavigation = () => {
   const [expanded, setExpanded] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [sidebarPosition, setSidebarPosition] = useState<"right" | "left">("right");
+  const [isTransitioning, setIsTransitioning] = useState(false);
   
   // Auto collapse sidebar on mobile and tablet
   useEffect(() => {
@@ -82,11 +83,20 @@ export const useSidebarNavigation = () => {
   }, [i18n.language]);
 
   const toggleExpanded = () => {
+    // Prevent rapid toggling by setting a transitioning state
+    if (isTransitioning) return;
+    
+    setIsTransitioning(true);
     const newExpanded = !expanded;
     setExpanded(newExpanded);
     
     // Save preference to localStorage
     localStorage.setItem("sidebar-expanded", String(newExpanded));
+    
+    // Reset the transitioning state after animation completes
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 400); // Match this with the animation duration
     
     // Show toast on mobile
     if (isMobile) {
@@ -109,14 +119,23 @@ export const useSidebarNavigation = () => {
     );
   };
   
-  // Helper function to check if a route is active
+  // Enhanced helper function to check if a route is active with more specific matching
   const checkIsActive = (path: string): boolean => {
     // Exact match for root and dashboard
     if (path === '/' && location.pathname === '/') return true;
     if (path === '/dashboard' && location.pathname === '/dashboard') return true;
     
     // For other routes, check if current path starts with the given path
-    return path !== '/' && path !== '/dashboard' && location.pathname.startsWith(path);
+    // But ensure we're not just matching a prefix of another route
+    if (path !== '/' && path !== '/dashboard') {
+      // Check if it's exactly the same path
+      if (location.pathname === path) return true;
+      
+      // Or if it's a sub-path
+      if (location.pathname.startsWith(path + '/')) return true;
+    }
+    
+    return false;
   };
 
   return {
@@ -127,6 +146,7 @@ export const useSidebarNavigation = () => {
     checkIsActive,
     location,
     sidebarPosition,
-    isMobile
+    isMobile,
+    isTransitioning
   };
 };

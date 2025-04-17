@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 
 const AppSidebar = () => {
   const { profile, user } = useAuth();
-  const { expanded, toggleExpanded, isDarkMode, toggleDarkMode, checkIsActive, sidebarPosition } = useSidebarNavigation();
+  const { expanded, toggleExpanded, isDarkMode, toggleDarkMode, checkIsActive, sidebarPosition, isTransitioning } = useSidebarNavigation();
   const location = useLocation();
   const [activePath, setActivePath] = useState(location.pathname);
   const [mounted, setMounted] = useState(false);
@@ -46,7 +46,7 @@ const AppSidebar = () => {
     
   const displayRole = profile?.role || "مستخدم";
 
-  // Animation variants
+  // Enhanced animation variants
   const sidebarVariants = {
     expanded: {
       width: "16rem",
@@ -78,7 +78,9 @@ const AppSidebar = () => {
       transition: {
         type: "spring",
         stiffness: 300,
-        damping: 30
+        damping: 30,
+        when: "beforeChildren",
+        staggerChildren: 0.1
       }
     }
   };

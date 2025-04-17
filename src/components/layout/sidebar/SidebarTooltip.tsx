@@ -40,6 +40,12 @@ export const SidebarTooltip: React.FC<SidebarTooltipProps> = ({
     return <>{children}</>;
   }
 
+  const tooltipVariants = {
+    hidden: { opacity: 0, scale: 0.9, y: -5 },
+    visible: { opacity: 1, scale: 1, y: 0 },
+    exit: { opacity: 0, scale: 0.95, y: 3 }
+  };
+
   return (
     <TooltipProvider delayDuration={delay}>
       <Tooltip open={open} onOpenChange={onOpenChange}>
@@ -58,10 +64,11 @@ export const SidebarTooltip: React.FC<SidebarTooltipProps> = ({
           asChild
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={tooltipVariants}
+            transition={{ type: "spring", stiffness: 500, damping: 30, mass: 0.8 }}
           >
             {content}
           </motion.div>

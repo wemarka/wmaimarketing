@@ -22,6 +22,7 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
 }) => {
   const [hovered, setHovered] = useState(false);
   
+  // Enhanced animation variants
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
     visible: (i: number) => ({
@@ -30,6 +31,10 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
       transition: {
         delay: i * 0.05,
         duration: 0.3,
+        type: "spring",
+        stiffness: 400,
+        damping: 25,
+        mass: 0.8,
         ease: "easeOut"
       }
     })
@@ -41,19 +46,51 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
       opacity: 1,
       transition: {
         when: "beforeChildren",
-        staggerChildren: 0.1
+        staggerChildren: 0.1,
+        duration: 0.4,
+        ease: "easeOut"
       }
     },
     hover: {
       scale: expanded ? 1 : 1.05,
-      transition: { duration: 0.2 }
+      transition: { duration: 0.2, ease: "easeOut" }
     }
   };
   
   const titleVariants = {
     initial: { opacity: 0, y: -10 },
-    animate: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-    exit: { opacity: 0, y: -10, transition: { duration: 0.2 } }
+    animate: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { 
+        duration: 0.3,
+        type: "spring",
+        stiffness: 400,
+        damping: 25
+      } 
+    },
+    exit: { 
+      opacity: 0, 
+      y: -10, 
+      transition: { 
+        duration: 0.2,
+        ease: "easeIn"
+      } 
+    }
+  };
+  
+  const containerVariants = {
+    initial: { opacity: 0, y: 15 },
+    animate: { 
+      opacity: 1,
+      y: 0,
+      transition: { 
+        duration: 0.4,
+        type: "spring",
+        stiffness: 300,
+        damping: 20
+      }
+    }
   };
 
   return (
@@ -84,29 +121,21 @@ const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
         )}
       </AnimatePresence>
       
-      {/* Navigation items */}
+      {/* Navigation items with enhanced animations */}
       <motion.div 
         className="space-y-1.5"
         initial="hidden"
         animate="visible"
-        variants={{
-          visible: {
-            opacity: 1,
-            transition: {
-              when: "beforeChildren",
-              staggerChildren: 0.1
-            }
-          },
-          hidden: {
-            opacity: 0
-          }
-        }}
+        variants={containerVariants}
       >
         {items.map((item, i) => (
           <motion.div 
             key={item.id}
             custom={i}
             variants={itemVariants}
+            initial="hidden"
+            animate="visible"
+            layout
           >
             <SidebarNavItem
               item={item}
