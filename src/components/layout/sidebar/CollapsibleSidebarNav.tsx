@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useRBACSidebar } from "@/modules/dashboard/utils/sidebarItems";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import SidebarNavSection from "./SidebarNavSection";
-import { NavSection } from "@/modules/dashboard/utils/types/sidebarTypes";
+import { NavSection, UserRole } from "@/modules/dashboard/utils/types/sidebarTypes";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface CollapsibleSidebarNavProps {
@@ -17,7 +16,7 @@ const CollapsibleSidebarNav: React.FC<CollapsibleSidebarNavProps> = ({ expanded 
   const { profile } = useAuth();
   const { i18n, t } = useTranslation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
-  const userRole = profile?.role || "user";
+  const userRole = (profile?.role || "user") as UserRole;
   
   // Get navigation items based on user role
   const {

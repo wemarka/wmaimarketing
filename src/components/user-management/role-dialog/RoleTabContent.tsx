@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Info } from "lucide-react";
-import { AppRole } from "@/types/profile";
+import { UserRole } from "@/modules/dashboard/utils/types/sidebarTypes";
 import { User } from "@/hooks/user-management/types";
 import { roleInfo } from "@/hooks/user-management/useRoleManagement";
 
@@ -77,6 +77,32 @@ const RoleTabContent = ({ selectedUser, setSelectedUser }: RoleTabContentProps) 
             </div>
           </>
         );
+      case "editor":
+        return (
+          <>
+            <div className="flex items-center">
+              <Checkbox id="perm2" checked disabled />
+              <label htmlFor="perm2" className="mr-2">إنشاء وتحرير المحتوى النصي</label>
+            </div>
+            <div className="flex items-center">
+              <Checkbox id="perm6" checked disabled />
+              <label htmlFor="perm6" className="mr-2">إدارة المدونة</label>
+            </div>
+          </>
+        );
+      case "analyst":
+        return (
+          <>
+            <div className="flex items-center">
+              <Checkbox id="perm3" checked disabled />
+              <label htmlFor="perm3" className="mr-2">الوصول إلى التحليلات والتقارير</label>
+            </div>
+            <div className="flex items-center">
+              <Checkbox id="perm7" checked disabled />
+              <label htmlFor="perm7" className="mr-2">إنشاء تقارير أداء</label>
+            </div>
+          </>
+        );
       case "user":
       default:
         return (
@@ -102,7 +128,7 @@ const RoleTabContent = ({ selectedUser, setSelectedUser }: RoleTabContentProps) 
         </label>
         <Select
           value={selectedUser.role}
-          onValueChange={(value: AppRole) =>
+          onValueChange={(value: UserRole) =>
             setSelectedUser({ ...selectedUser, role: value })
           }
         >
@@ -113,6 +139,8 @@ const RoleTabContent = ({ selectedUser, setSelectedUser }: RoleTabContentProps) 
             <SelectItem value="admin">مدير</SelectItem>
             <SelectItem value="marketing">تسويق</SelectItem>
             <SelectItem value="designer">مصمم</SelectItem>
+            <SelectItem value="editor">محرر</SelectItem>
+            <SelectItem value="analyst">محلل</SelectItem>
             <SelectItem value="user">مستخدم</SelectItem>
           </SelectContent>
         </Select>
@@ -121,7 +149,7 @@ const RoleTabContent = ({ selectedUser, setSelectedUser }: RoleTabContentProps) 
       <Alert>
         <Info className="h-4 w-4" />
         <AlertDescription className="text-sm mt-0">
-          {roleInfo[selectedUser.role as keyof typeof roleInfo].description}
+          {roleInfo[selectedUser.role as keyof typeof roleInfo]?.description || "وصف الدور غير متوفر"}
         </AlertDescription>
       </Alert>
 

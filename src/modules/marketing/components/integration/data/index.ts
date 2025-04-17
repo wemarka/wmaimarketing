@@ -1,7 +1,6 @@
 
-export { platformData } from './platformData';
-export { engagementData } from './engagementData';
-export { upcomingPostsData } from './upcomingPostsData';
-export { tabItems } from './navData';
-export { mockWebhookEvents } from './webhookData';
-export { socialMediaPerformanceData } from './analyticsData';
+import { mockWebhookEvents } from "./webhookData";
+
+export {
+  mockWebhookEvents
+};

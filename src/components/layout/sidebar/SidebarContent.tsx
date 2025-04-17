@@ -1,10 +1,9 @@
-
 import React, { useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTranslation } from "react-i18next";
 import { useRBACSidebar } from "@/modules/dashboard/utils/sidebarItems";
 import { useAuth } from "@/context/AuthContext";
-import { NavSection } from "@/modules/dashboard/utils/types/sidebarTypes";
+import { NavSection, UserRole } from "@/modules/dashboard/utils/types/sidebarTypes";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { lazy, Suspense } from "react";
@@ -33,7 +32,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   const { i18n } = useTranslation();
   const { profile } = useAuth();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
-  const userRole = profile?.role || "user";
+  const userRole = (profile?.role || "user") as UserRole;
 
   const { checkIsActive } = useActivePath();
   const [expandedSection, setExpandedSection] = React.useState<string | undefined>();

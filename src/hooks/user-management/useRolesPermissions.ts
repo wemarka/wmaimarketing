@@ -2,7 +2,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { useCreateActivity } from "@/hooks/useCreateActivity";
 import { toast } from "@/hooks/use-toast";
-import { AppRole } from "@/types/profile";
+import { UserRole } from "@/modules/dashboard/utils/types/sidebarTypes";
 
 export interface Permission {
   id: number;
@@ -11,7 +11,7 @@ export interface Permission {
 }
 
 export interface RoleInfo {
-  name: AppRole;
+  name: UserRole;
   title: string;
   description: string;
   badge: string;
@@ -83,7 +83,7 @@ export const useRolesPermissions = () => {
     { id: 12, name: "إدارة الفرق", group: "الإدارة" },
   ];
 
-  const permissionMap: Record<AppRole, number[]> = {
+  const permissionMap: Record<UserRole, number[]> = {
     admin: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     manager: [1, 2, 4, 5, 9, 10, 11, 12],
     marketing: [4, 5, 6, 7, 8, 9, 10],
@@ -93,11 +93,11 @@ export const useRolesPermissions = () => {
     user: []
   };
   
-  const hasPermission = (role: AppRole, permissionId: number) => {
+  const hasPermission = (role: UserRole, permissionId: number) => {
     return permissionMap[role].includes(permissionId);
   };
   
-  const handleEditRole = (role: AppRole, onEditRole?: (role: AppRole) => void) => {
+  const handleEditRole = (role: UserRole, onEditRole?: (role: UserRole) => void) => {
     if (onEditRole) {
       logActivity("role_change", `تم بدء تحرير دور ${roles.find(r => r.name === role)?.title || role}`);
       

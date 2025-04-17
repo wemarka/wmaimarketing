@@ -15,17 +15,22 @@ import { getDocumentationItems } from "./navigation/documentationItems";
 export const useRBACSidebar = (role: UserRole) => {
   const { t } = useTranslation();
   
+  // Create a wrapper function to match the expected signature
+  const tWrapper = (key: string, fallback?: string): string => {
+    return t(key, { defaultValue: fallback || key });
+  };
+  
   // Get all navigation items
-  const allDashboardItems = getDashboardItems(t);
-  const allContentItems = getContentItems(t);
-  const allSchedulingItems = getSchedulingItems(t);
-  const allAnalyticsItems = getAnalyticsItems(t);
-  const allProductItems = getProductItems(t);
-  const allManagementItems = getManagementItems(t);
-  const allDocumentationItems = getDocumentationItems(t);
+  const allDashboardItems = getDashboardItems(tWrapper);
+  const allContentItems = getContentItems(tWrapper);
+  const allSchedulingItems = getSchedulingItems(tWrapper);
+  const allAnalyticsItems = getAnalyticsItems(tWrapper);
+  const allProductItems = getProductItems(tWrapper);
+  const allManagementItems = getManagementItems(tWrapper);
+  const allDocumentationItems = getDocumentationItems(tWrapper);
   
   // Filter items based on user role
-  const filterItemsByRole = (items) => {
+  const filterItemsByRole = (items: any[]) => {
     return items.filter((item) => {
       // If no roles are specified, or the item has no role restrictions, show to all users
       if (!item.roles || item.roles.length === 0) {

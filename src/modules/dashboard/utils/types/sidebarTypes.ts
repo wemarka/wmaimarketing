@@ -10,7 +10,7 @@ export interface NavItem {
   badgeText?: string;
   variant?: "default" | "outline";
   className?: string;
-  roles?: string[]; // For role-based access control
+  roles?: UserRole[]; // For role-based access control
 }
 
 export interface NavSection {
@@ -18,4 +18,4 @@ export interface NavSection {
   items: NavItem[];
 }
 
-export type UserRole = 'admin' | 'manager' | 'marketing' | 'designer' | 'user';
+export type UserRole = 'admin' | 'manager' | 'marketing' | 'designer' | 'editor' | 'analyst' | 'user';
