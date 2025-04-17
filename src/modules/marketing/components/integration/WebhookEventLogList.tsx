@@ -1,52 +1,54 @@
 
 import React from 'react';
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from 'lucide-react';
-import WebhookEventLogItem, { WebhookEventLogItemProps } from './WebhookEventLogItem';
+import { RefreshCw, ChevronDown } from 'lucide-react';
+import WebhookEventLogItem, { WebhookEventLogItemProps } from "./WebhookEventLogItem";
 
 interface WebhookEventLogListProps {
   events: WebhookEventLogItemProps[];
-  onRefresh: () => void;
-  isLoading: boolean;
+  isLoading?: boolean;
+  onRefresh?: () => void;
 }
 
-const WebhookEventLogList = ({ events, onRefresh, isLoading }: WebhookEventLogListProps) => {
+const WebhookEventLogList: React.FC<WebhookEventLogListProps> = ({ 
+  events, 
+  isLoading = false,
+  onRefresh = () => {}
+}) => {
   return (
-    <Card className="border shadow-sm">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-md">سجل الأحداث الأخيرة</CardTitle>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="gap-1"
-            onClick={onRefresh}
-            disabled={isLoading}
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-            تحديث
-          </Button>
-        </div>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle className="text-md">سجل الأحداث</CardTitle>
+        <Button 
+          size="sm" 
+          variant="ghost" 
+          onClick={onRefresh}
+          disabled={isLoading}
+          className="flex items-center gap-1"
+        >
+          <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          تحديث
+        </Button>
       </CardHeader>
-      <CardContent className="pt-0">
-        <div className="space-y-2 max-h-60 overflow-y-auto">
-          {events.map((event, index) => (
-            <WebhookEventLogItem
-              key={index}
-              event={event.event}
-              timestamp={event.timestamp}
-              status={event.status}
-              destination={event.destination}
-              payload={event.payload}
-            />
-          ))}
-          {events.length === 0 && (
-            <div className="text-center py-4 text-muted-foreground">
-              لا توجد أحداث مسجلة بعد
+      <CardContent>
+        <div className="space-y-3">
+          {events.length > 0 ? (
+            events.map((event) => (
+              <WebhookEventLogItem key={event.id} {...event} />
+            ))
+          ) : (
+            <div className="text-center py-6 text-muted-foreground">
+              لا توجد أحداث لعرضها
             </div>
           )}
         </div>
+        
+        {events.length > 5 && (
+          <Button variant="ghost" className="w-full mt-4 text-muted-foreground">
+            عرض المزيد <ChevronDown className="mr-1 h-4 w-4" />
+          </Button>
+        )}
       </CardContent>
     </Card>
   );

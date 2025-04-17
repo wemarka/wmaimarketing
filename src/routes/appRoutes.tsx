@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
@@ -19,6 +18,7 @@ import ContentPosts from "@/pages/content/Posts";
 import Scheduler from "@/pages/Scheduler";
 import SchedulePost from "@/pages/SchedulePost";
 import SocialIntegration from "@/pages/SocialIntegration";
+import DashboardPerformance from "@/pages/dashboard/Performance";
 
 // Other imports as needed
 
@@ -33,7 +33,8 @@ const AppRoutes = () => {
       {/* Protected Routes */}
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<Dashboard />} />
-        <Route path="/dashboard/*" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/performance" element={<DashboardPerformance />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/members" element={<Members />} />

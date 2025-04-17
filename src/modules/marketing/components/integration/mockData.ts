@@ -1,167 +1,85 @@
-// Tab items
+
+import { Instagram, Facebook, Twitter, Linkedin } from 'lucide-react';
+
+export const platformData = [
+  {
+    name: "انستغرام",
+    icon: Instagram,
+    posts: 124,
+    engagement: '4.8%',
+    followers: '12.5K',
+    trend: '+5.2%'
+  },
+  {
+    name: "فيسبوك",
+    icon: Facebook,
+    posts: 86,
+    engagement: '2.7%',
+    followers: '8.3K',
+    trend: '+1.8%'
+  },
+  {
+    name: "تويتر",
+    icon: Twitter,
+    posts: 210,
+    engagement: '3.1%',
+    followers: '5.2K',
+    trend: '+3.4%'
+  },
+  {
+    name: "لينكد إن",
+    icon: Linkedin,
+    posts: 42,
+    engagement: '1.9%',
+    followers: '3.6K',
+    trend: '+0.7%'
+  }
+];
+
+export const engagementData = [
+  { name: 'الأحد', instagram: 120, facebook: 80, twitter: 60, linkedin: 20 },
+  { name: 'الإثنين', instagram: 140, facebook: 100, twitter: 80, linkedin: 30 },
+  { name: 'الثلاثاء', instagram: 170, facebook: 120, twitter: 90, linkedin: 40 },
+  { name: 'الأربعاء', instagram: 190, facebook: 130, twitter: 100, linkedin: 50 },
+  { name: 'الخميس', instagram: 220, facebook: 150, twitter: 120, linkedin: 60 },
+  { name: 'الجمعة', instagram: 170, facebook: 110, twitter: 90, linkedin: 40 },
+  { name: 'السبت', instagram: 150, facebook: 90, twitter: 70, linkedin: 30 },
+];
+
+export const upcomingPostsData = [
+  { 
+    id: '1',
+    title: 'إطلاق المنتج الجديد', 
+    platform: 'instagram', 
+    scheduledTime: '2025-04-18T09:00:00',
+    status: 'scheduled'
+  },
+  { 
+    id: '2',
+    title: 'نصائح للعناية بالبشرة في الصيف', 
+    platform: 'facebook', 
+    scheduledTime: '2025-04-19T11:30:00',
+    status: 'draft'
+  },
+  { 
+    id: '3', 
+    title: 'حملة الخصومات', 
+    platform: 'twitter',
+    scheduledTime: '2025-04-20T15:00:00', 
+    status: 'scheduled'
+  },
+  { 
+    id: '4',
+    title: 'المنتجات الأكثر مبيعاً', 
+    platform: 'linkedin', 
+    scheduledTime: '2025-04-21T10:00:00',
+    status: 'scheduled'
+  },
+];
+
 export const tabItems = [
   { id: 'overview', label: 'نظرة عامة' },
   { id: 'analytics', label: 'التحليلات' },
-  { id: 'webhooks', label: 'Webhooks' },
+  { id: 'webhooks', label: 'الويب هوك' },
   { id: 'settings', label: 'الإعدادات' }
-];
-
-// Platform data
-export const platformData = [
-  {
-    name: "Instagram",
-    posts: 145,
-    engagement: 4.2,
-    followers: 15800,
-    trend: "up" as const
-  },
-  {
-    name: "Facebook",
-    posts: 89,
-    engagement: 2.8,
-    followers: 8500,
-    trend: "stable" as const
-  },
-  {
-    name: "Twitter",
-    posts: 217,
-    engagement: 3.1,
-    followers: 12300,
-    trend: "down" as const
-  },
-  {
-    name: "TikTok",
-    posts: 65,
-    engagement: 5.7,
-    followers: 22400,
-    trend: "up" as const
-  }
-];
-
-// Engagement data
-export const engagementData = [
-  {
-    day: "الأحد",
-    instagram: 420,
-    facebook: 280,
-    twitter: 150,
-    tiktok: 510
-  },
-  {
-    day: "الاثنين",
-    instagram: 380,
-    facebook: 310,
-    twitter: 180,
-    tiktok: 480
-  },
-  {
-    day: "الثلاثاء",
-    instagram: 450,
-    facebook: 300,
-    twitter: 200,
-    tiktok: 550
-  },
-  {
-    day: "الأربعاء",
-    instagram: 400,
-    facebook: 290,
-    twitter: 170,
-    tiktok: 520
-  },
-  {
-    day: "الخميس",
-    instagram: 430,
-    facebook: 320,
-    twitter: 190,
-    tiktok: 500
-  },
-  {
-    day: "الجمعة",
-    instagram: 480,
-    facebook: 350,
-    twitter: 220,
-    tiktok: 580
-  },
-  {
-    day: "السبت",
-    instagram: 500,
-    facebook: 370,
-    twitter: 230,
-    tiktok: 600
-  }
-];
-
-// Upcoming posts data
-export const upcomingPostsData = [
-  {
-    title: "إطلاق مجموعة مكياج جديدة",
-    platform: "instagram",
-    date: "2024-05-01",
-    time: "10:00"
-  },
-  {
-    title: "نصائح للعناية بالبشرة في الصيف",
-    platform: "facebook",
-    date: "2024-05-05",
-    time: "14:00"
-  },
-  {
-    title: "تغريدة حول منتج جديد",
-    platform: "twitter",
-    date: "2024-05-10",
-    time: "16:00"
-  },
-  {
-    title: "فيديو تعليمي للمكياج",
-    platform: "tiktok",
-    date: "2024-05-15",
-    time: "18:00"
-  }
-];
-
-// Webhook events data
-export const mockWebhookEvents = [
-  {
-    event: "نشر محتوى",
-    timestamp: "17/04/2025 15:23:45",
-    status: "success" as const,
-    destination: "https://example.com/webhook",
-    payload: `{
-      "event_type": "content_published",
-      "content_id": "post_1234",
-      "timestamp": "2025-04-17T15:23:45.000Z",
-      "platform": "instagram",
-      "status": "success",
-      "metadata": {
-        "engagement_rate": 3.2,
-        "likes": 423,
-        "comments": 52,
-        "shares": 18
-      }
-    }`
-  },
-  {
-    event: "تسجيل مستخدم",
-    timestamp: "17/04/2025 14:17:22",
-    status: "success" as const,
-    destination: "https://example.com/webhook"
-  },
-  {
-    event: "تحديث محتوى",
-    timestamp: "17/04/2025 12:05:11",
-    status: "error" as const,
-    destination: "https://example.com/webhook"
-  },
-  {
-    event: "نشر محتوى",
-    timestamp: "16/04/2025 23:41:39",
-    status: "warning" as const,
-    destination: "https://example.com/webhook"
-  },
-  {
-    event: "إنشاء حملة إعلانية",
-    timestamp: "16/04/2025 16:22:05",
-    status: "success" as const,
-    destination: "https://example.com/webhook"
-  }
 ];
