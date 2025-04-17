@@ -1,56 +1,30 @@
 
-import { WebhookEventLogItemProps } from '../WebhookEventLogItem';
-
-export const mockWebhookEvents: WebhookEventLogItemProps[] = [
+export const mockWebhookEvents = [
   {
     id: '1',
-    event: 'نشر محتوى',
-    status: 'success',
-    platform: 'instagram',
-    timestamp: '2025-04-17T15:23:45',
-    details: 'تم نشر المحتوى بنجاح على منصة Instagram',
-    destination: 'https://example.com/webhook'
+    name: 'محتوى جديد',
+    endpoint: 'https://api.example.com/webhooks/content',
+    eventTypes: ['content_created', 'content_updated', 'content_published'],
+    active: true,
+    lastTriggered: '2023-09-15T10:30:15',
+    createdAt: '2023-08-01T14:20:00'
   },
   {
-    id: '2', 
-    event: 'تسجيل مستخدم',
-    status: 'success',
-    platform: 'facebook',
-    timestamp: '2025-04-17T14:17:22',
-    destination: 'https://example.com/webhook'
+    id: '2',
+    name: 'تسجيل المستخدمين',
+    endpoint: 'https://api.example.com/webhooks/users',
+    eventTypes: ['user_registered'],
+    active: true,
+    lastTriggered: '2023-09-16T08:45:22',
+    createdAt: '2023-08-05T11:15:00'
   },
   {
     id: '3',
-    event: 'تحديث محتوى',
-    status: 'error',
-    platform: 'twitter',
-    timestamp: '2025-04-17T12:05:11',
-    details: 'فشل تحديث المحتوى بسبب خطأ في الاتصال',
-    destination: 'https://example.com/webhook'
-  },
-  {
-    id: '4',
-    event: 'نشر محتوى',
-    status: 'pending',
-    platform: 'linkedin',
-    timestamp: '2025-04-16T23:41:39',
-    destination: 'https://example.com/webhook'
-  },
-  {
-    id: '5',
-    event: 'إنشاء حملة إعلانية',
-    status: 'success',
-    platform: 'instagram',
-    timestamp: '2025-04-16T16:22:05',
-    destination: 'https://example.com/webhook'
-  },
-  {
-    id: '6',
-    event: 'نشر فيديو',
-    status: 'success',
-    platform: 'tiktok',
-    timestamp: '2025-04-17T18:10:25',
-    details: 'تم نشر الفيديو بنجاح على منصة TikTok',
-    destination: 'https://example.com/webhook'
+    name: 'تفاعلات المنتجات',
+    endpoint: 'https://api.example.com/webhooks/products',
+    eventTypes: ['product_created', 'content_interaction'],
+    active: false,
+    lastTriggered: null,
+    createdAt: '2023-08-10T15:30:00'
   }
 ];
