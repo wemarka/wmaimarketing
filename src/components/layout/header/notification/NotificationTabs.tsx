@@ -5,11 +5,13 @@ import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 interface NotificationTabsProps {
   activeTab: string;
   onTabChange: (value: string) => void;
+  getUnreadCount: (type?: string) => number;
 }
 
 const NotificationTabs: React.FC<NotificationTabsProps> = ({
   activeTab,
-  onTabChange
+  onTabChange,
+  getUnreadCount
 }) => {
   return (
     <div className="border-b">

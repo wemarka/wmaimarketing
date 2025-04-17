@@ -18,12 +18,10 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 interface CompactHeaderActionsProps {
-  notificationCount?: number;
   onNotificationClick?: () => void;
 }
 
 const CompactHeaderActions: React.FC<CompactHeaderActionsProps> = ({
-  notificationCount = 0,
   onNotificationClick = () => {}
 }) => {
   const { i18n } = useTranslation();
@@ -36,6 +34,7 @@ const CompactHeaderActions: React.FC<CompactHeaderActionsProps> = ({
   const taskCount = 3;
   const messageCount = 2;
   const reminderCount = 1;
+  const notificationCount = 4; // Add this line to define notification count
   
   // Total count for the badge
   const totalCount = notificationCount + taskCount + messageCount + reminderCount;
@@ -138,10 +137,7 @@ const CompactHeaderActions: React.FC<CompactHeaderActionsProps> = ({
       
       {/* Legacy NotificationsPopover - keeping for backward compatibility */}
       {isMobile && (
-        <NotificationsPopover
-          notificationCount={notificationCount}
-          onNotificationClick={onNotificationClick}
-        />
+        <NotificationsPopover onNotificationClick={onNotificationClick} />
       )}
     </div>
   );

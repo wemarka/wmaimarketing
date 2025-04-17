@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Notification, NotificationType } from "@/types/notifications";
@@ -69,7 +68,7 @@ export const subscribeToNotifications = (
           toast({
             title: notification.title,
             description: notification.message,
-            variant: 'success'
+            variant: 'default'
           });
         }
       }
@@ -117,7 +116,7 @@ export const subscribeToNotifications = (
     .on(
       'postgres_changes',
       {
-        event: '*', // جميع الأحداث (INSERT, UPDATE, DELETE)
+        event: '*', // جميع ��لأحداث (INSERT, UPDATE, DELETE)
         schema: 'public',
         table: 'social_accounts',
         filter: `user_id=eq.${userId}`
@@ -205,15 +204,9 @@ export const subscribeToNotifications = (
  */
 export const markNotificationAsRead = async (notificationId: string, read: boolean = true) => {
   try {
-    // تحديث حالة الإشعار في قاعدة البيانات
-    // ملاحظة: هذا الجزء سيحتاج إلى تعديل حسب طريقة تخزين الإشعارات في قاعدة البيانات
-    const { error } = await supabase
-      .from('notifications')
-      .update({ read })
-      .eq('id', notificationId);
-      
-    if (error) throw error;
-    
+    // في هذا التنفيذ، نحن نتعامل مع الإشعارات في الذاكرة فقط
+    // لا حاجة لتنفيذ استعلام Supabase لأننا لا نملك جدول الإشعارات بعد
+    console.log("Marking notification as read (in-memory only):", notificationId);
     return true;
   } catch (error) {
     console.error("Error marking notification as read:", error);
@@ -230,21 +223,15 @@ export const sendNotification = async (userId: string, notification: Omit<Notifi
   try {
     const fullNotification = {
       ...notification,
-      user_id: userId,
-      time: new Date().toISOString(),
-      read: false
+      id: `manual-${Date.now()}`,
+      time: new Date().toISOString()
     };
     
-    // إضافة الإشعار إلى قاعدة البيانات
-    const { data, error } = await supabase
-      .from('notifications')
-      .insert(fullNotification)
-      .select('id')
-      .single();
-      
-    if (error) throw error;
+    // في هذا التنفيذ، نحن نتعامل مع الإشعارات في الذاكرة فقط
+    // عند إنشاء جدول الإشعارات، سنحتاج إلى تحديث هذا
+    console.log("Sending notification (in-memory only):", fullNotification);
     
-    return data.id;
+    return fullNotification.id;
   } catch (error) {
     console.error("Error sending notification:", error);
     return null;

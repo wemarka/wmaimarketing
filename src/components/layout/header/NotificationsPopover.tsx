@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +16,7 @@ import NotificationTabs from "./notification/NotificationTabs";
 import NotificationsList from "./notification/NotificationsList";
 
 interface NotificationsPopoverProps {
+  notificationCount?: number;
   onNotificationClick?: () => void;
 }
 
@@ -116,7 +116,7 @@ const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({
       <PopoverContent className="w-[340px] p-0" align="end">
         <NotificationHeader 
           unreadCount={unreadCount} 
-          onMarkAllAsRead={handleMarkAllAsRead}
+          onMarkAllAsRead={markAllAsRead}
         />
         
         <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
@@ -135,8 +135,8 @@ const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({
             <NotificationsList
               filteredNotifications={filteredNotifications}
               activeTab={activeTab}
-              onMarkAsRead={handleMarkAsRead}
-              onDelete={handleDeleteNotification}
+              onMarkAsRead={markAsRead}
+              onDelete={deleteNotification}
             />
           </TabsContent>
         </Tabs>
