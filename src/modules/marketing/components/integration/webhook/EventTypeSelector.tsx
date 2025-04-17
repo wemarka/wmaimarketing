@@ -1,74 +1,79 @@
 
-import React from 'react';
-import { Checkbox } from "@/components/ui/checkbox";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import React, { useState, useMemo } from 'react';
+import { Search, Check, ChevronDown } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
-import { Search } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
 
 export interface EventType {
   id: string;
   name: string;
   description: string;
-  category?: string;
+  category: string;
 }
 
 interface EventTypeSelectorProps {
   eventTypes: EventType[];
   selectedEventTypes: string[];
-  onSelectEventType: (ids: string[]) => void;
-  title?: string;
-  maxHeight?: string;
-  showSearch?: boolean;
+  onSelectEventType: (eventTypes: string[]) => void;
 }
 
 const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
   eventTypes,
   selectedEventTypes,
-  onSelectEventType,
-  title = "اختر الأحداث",
-  maxHeight = "400px",
-  showSearch = true,
+  onSelectEventType
 }) => {
-  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   
-  // Group event types by category
-  const eventsByCategory = React.useMemo(() => {
-    const grouped: Record<string, EventType[]> = {};
+  // Group events by category
+  const eventsByCategory = useMemo(() => {
+    const categories: Record<string, EventType[]> = {};
     
-    eventTypes.forEach((event) => {
-      const category = event.category || 'عام';
-      if (!grouped[category]) {
-        grouped[category] = [];
+    eventTypes.forEach(event => {
+      if (!categories[event.category]) {
+        categories[event.category] = [];
       }
-      grouped[category].push(event);
+      categories[event.category].push(event);
     });
     
-    return grouped;
+    return categories;
   }, [eventTypes]);
   
-  // Filter events based on search query
-  const filteredEventTypes = React.useMemo(() => {
-    if (!searchQuery.trim()) return eventsByCategory;
+  // Filtered events based on search
+  const filteredEventsByCategory = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return eventsByCategory;
+    }
     
-    const filtered: Record<string, EventType[]> = {};
+    const result: Record<string, EventType[]> = {};
     
     Object.keys(eventsByCategory).forEach(category => {
-      const events = eventsByCategory[category].filter(
+      const filteredEvents = eventsByCategory[category].filter(
         event => 
-          event.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-          event.description.toLowerCase().includes(searchQuery.toLowerCase())
+          event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          event.id.toLowerCase().includes(searchQuery.toLowerCase())
       );
       
-      if (events.length > 0) {
-        filtered[category] = events;
+      if (filteredEvents.length > 0) {
+        result[category] = filteredEvents;
       }
     });
     
-    return filtered;
+    return result;
   }, [eventsByCategory, searchQuery]);
   
-  const handleToggleEvent = (eventId: string) => {
+  const toggleCategory = (category: string) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
+  };
+  
+  const toggleEventSelection = (eventId: string) => {
     if (selectedEventTypes.includes(eventId)) {
       onSelectEventType(selectedEventTypes.filter(id => id !== eventId));
     } else {
@@ -76,102 +81,194 @@ const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
     }
   };
   
-  const handleSelectAllInCategory = (category: string) => {
+  const selectAllInCategory = (category: string) => {
     const categoryEventIds = eventsByCategory[category].map(event => event.id);
-    const allSelected = categoryEventIds.every(id => selectedEventTypes.includes(id));
+    const currentlySelected = new Set(selectedEventTypes);
+    const allInCategorySelected = categoryEventIds.every(id => currentlySelected.has(id));
     
-    if (allSelected) {
-      // Deselect all in category
+    if (allInCategorySelected) {
+      // Deselect all in this category
       onSelectEventType(selectedEventTypes.filter(id => !categoryEventIds.includes(id)));
     } else {
-      // Select all in category
+      // Select all in this category
       const newSelected = new Set([...selectedEventTypes, ...categoryEventIds]);
       onSelectEventType([...newSelected]);
     }
   };
+  
+  const clearSelection = () => {
+    onSelectEventType([]);
+  };
+  
+  const selectAll = () => {
+    const allEventIds = eventTypes.map(event => event.id);
+    onSelectEventType(allEventIds);
+  };
 
   return (
     <div className="space-y-4">
-      <h3 className="text-base font-medium">{title}</h3>
+      <div className="flex flex-col space-y-2">
+        <label className="text-sm font-medium">أنواع الأحداث</label>
+        <p className="text-xs text-muted-foreground mb-2">حدد أنواع الأحداث التي تريد استلام إشعارات لها</p>
+      </div>
       
-      {showSearch && (
-        <div className="relative">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+      <div className="flex justify-between items-center mb-4">
+        <div className="relative flex-1 max-w-xs">
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            type="search"
-            placeholder="البحث عن الأحداث..."
-            className="pl-9"
+            placeholder="بحث عن نوع حدث..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
           />
+        </div>
+        
+        <div className="flex gap-2">
+          {selectedEventTypes.length > 0 && (
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={clearSelection}
+              className="text-xs"
+            >
+              مسح التحديد ({selectedEventTypes.length})
+            </Button>
+          )}
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={selectAll}
+            className="text-xs"
+          >
+            تحديد الكل
+          </Button>
+        </div>
+      </div>
+      
+      {Object.keys(filteredEventsByCategory).length === 0 ? (
+        <div className="text-center py-6 border rounded-md border-dashed">
+          <p className="text-muted-foreground">لا توجد أحداث تطابق بحثك</p>
+        </div>
+      ) : (
+        <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 pt-1 pb-1">
+          {Object.keys(filteredEventsByCategory).map((category) => {
+            const categoryEvents = filteredEventsByCategory[category];
+            const allSelected = categoryEvents.every(event => 
+              selectedEventTypes.includes(event.id)
+            );
+            const someSelected = categoryEvents.some(event => 
+              selectedEventTypes.includes(event.id)
+            ) && !allSelected;
+            
+            return (
+              <Collapsible 
+                key={category}
+                open={expandedCategories[category] || searchQuery.length > 0}
+                onOpenChange={() => toggleCategory(category)}
+                className="border rounded-md overflow-hidden"
+              >
+                <CollapsibleTrigger asChild>
+                  <div 
+                    className={cn(
+                      "flex items-center justify-between p-3 cursor-pointer hover:bg-muted/50 transition-colors",
+                      (expandedCategories[category] || searchQuery.length > 0) ? "border-b" : ""
+                    )}
+                    onClick={(e) => {
+                      // Prevent this click from toggling the collapsible
+                      e.stopPropagation();
+                      toggleCategory(category);
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className={cn(
+                          "h-5 w-5 rounded border flex items-center justify-center",
+                          allSelected ? "bg-primary border-primary" : someSelected ? "bg-primary/30 border-primary/30" : "bg-transparent"
+                        )}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          selectAllInCategory(category);
+                        }}
+                      >
+                        {(allSelected || someSelected) && (
+                          <Check className={cn("h-3 w-3", allSelected ? "text-white" : "text-white")} />
+                        )}
+                      </div>
+                      <div className="font-medium">{category}</div>
+                      <Badge variant="outline" className="text-xs">
+                        {categoryEvents.length}
+                      </Badge>
+                    </div>
+                    <ChevronDown 
+                      className={cn(
+                        "h-4 w-4 transition-transform", 
+                        (expandedCategories[category] || searchQuery.length > 0) ? "transform rotate-180" : ""
+                      )} 
+                    />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="p-1">
+                    {categoryEvents.map((event) => (
+                      <div 
+                        key={event.id}
+                        className={cn(
+                          "flex items-center gap-3 p-3 hover:bg-muted/30 rounded-md cursor-pointer transition-colors",
+                          selectedEventTypes.includes(event.id) ? "bg-muted/20" : ""
+                        )}
+                        onClick={() => toggleEventSelection(event.id)}
+                      >
+                        <div 
+                          className={cn(
+                            "h-5 w-5 rounded border flex items-center justify-center",
+                            selectedEventTypes.includes(event.id) ? "bg-primary border-primary" : "bg-transparent"
+                          )}
+                        >
+                          {selectedEventTypes.includes(event.id) && (
+                            <Check className="h-3 w-3 text-white" />
+                          )}
+                        </div>
+                        <div>
+                          <div className="font-medium text-sm">{event.name}</div>
+                          <div className="text-xs text-muted-foreground">{event.description}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            );
+          })}
         </div>
       )}
       
-      <ScrollArea className={`rounded-md border p-2`} style={{ maxHeight }}>
-        <div className="space-y-4 pr-4">
-          {Object.keys(filteredEventTypes).length > 0 ? (
-            Object.entries(filteredEventTypes).map(([category, events]) => (
-              <div key={category} className="space-y-2">
-                <div 
-                  className="flex items-center justify-between cursor-pointer py-1"
-                  onClick={() => handleSelectAllInCategory(category)}
-                >
-                  <h4 className="font-medium">{category}</h4>
-                  <Badge variant="outline">
-                    {events.filter(event => selectedEventTypes.includes(event.id)).length}/{events.length}
-                  </Badge>
-                </div>
-                
-                <div className="grid gap-2">
-                  {events.map((event) => (
-                    <div
-                      key={event.id}
-                      className={`flex items-start space-x-2 space-x-reverse border rounded-md p-2 ${
-                        selectedEventTypes.includes(event.id)
-                          ? 'bg-primary/5 border-primary/20'
-                          : 'hover:bg-muted/50'
-                      }`}
-                      onClick={() => handleToggleEvent(event.id)}
-                    >
-                      <Checkbox
-                        id={`event-${event.id}`}
-                        checked={selectedEventTypes.includes(event.id)}
-                        onCheckedChange={() => handleToggleEvent(event.id)}
-                        className="mt-1 ml-2"
-                      />
-                      <div className="flex-1">
-                        <label 
-                          htmlFor={`event-${event.id}`}
-                          className="font-medium cursor-pointer block"
-                        >
-                          {event.name}
-                        </label>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {event.description}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="text-center py-4 text-muted-foreground">
-              لم يتم العثور على أحداث مطابقة
-            </div>
-          )}
-        </div>
-      </ScrollArea>
-      
       {selectedEventTypes.length > 0 && (
-        <div className="flex justify-between items-center text-sm">
-          <span>تم اختيار {selectedEventTypes.length} من أصل {eventTypes.length}</span>
-          <button 
-            onClick={() => onSelectEventType([])}
-            className="text-primary hover:underline"
-          >
-            إلغاء الاختيار
-          </button>
+        <div className="flex flex-wrap gap-1 mt-2 border-t pt-3">
+          <div className="text-sm font-medium ml-2 self-center">الأحداث المحددة:</div>
+          {selectedEventTypes.map(id => {
+            const event = eventTypes.find(e => e.id === id);
+            return event ? (
+              <Badge 
+                key={id} 
+                variant="secondary"
+                className="px-2 py-1 flex items-center gap-1"
+              >
+                {event.name}
+                <button 
+                  className="ml-1 hover:bg-muted rounded-full"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleEventSelection(id);
+                  }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </Badge>
+            ) : null;
+          })}
         </div>
       )}
     </div>

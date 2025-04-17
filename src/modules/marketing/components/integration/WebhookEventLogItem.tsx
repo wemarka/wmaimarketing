@@ -1,9 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { ChevronDown, ChevronUp, Code, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export interface WebhookEventLogItemProps {
   id: string;
@@ -12,8 +15,9 @@ export interface WebhookEventLogItemProps {
   platform: string;
   timestamp: string;
   details?: string;
-  destination?: string; // Added this optional property
-  payload?: string; // Added this optional property
+  destination?: string;
+  payload?: string;
+  response?: string;
 }
 
 const WebhookEventLogItem: React.FC<WebhookEventLogItemProps> = ({ 
@@ -22,8 +26,12 @@ const WebhookEventLogItem: React.FC<WebhookEventLogItemProps> = ({
   platform, 
   timestamp, 
   details,
-  destination 
+  destination,
+  payload,
+  response
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'success':
@@ -53,28 +61,88 @@ const WebhookEventLogItem: React.FC<WebhookEventLogItemProps> = ({
   };
   
   const formattedTime = formatDistanceToNow(new Date(timestamp), { addSuffix: true, locale: ar });
+  const statusText = status === 'success' ? 'ناجح' : status === 'error' ? 'فشل' : 'قيد التنفيذ';
 
   return (
-    <div className="border rounded-lg p-3 hover:bg-muted/20 transition-colors">
-      <div className="flex items-center justify-between">
+    <Collapsible
+      open={isOpen}
+      onOpenChange={setIsOpen}
+      className={cn(
+        "border rounded-lg transition-all hover:shadow-sm",
+        isOpen ? "shadow-sm" : ""
+      )}
+    >
+      <div className="p-3 flex items-center justify-between cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
         <div className="flex items-center gap-2">
           <Badge variant="outline" className={cn("font-normal", getStatusColor(status))}>
-            {status === 'success' ? 'ناجح' : status === 'error' ? 'فشل' : 'قيد التنفيذ'}
+            {statusText}
           </Badge>
           <Badge variant="outline" className={cn("font-normal", getPlatformColor(platform))}>
             {platform}
           </Badge>
           <span className="font-medium">{event}</span>
         </div>
-        <span className="text-xs text-muted-foreground">{formattedTime}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">{formattedTime}</span>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </Button>
+          </CollapsibleTrigger>
+        </div>
       </div>
-      {details && (
-        <p className="mt-2 text-sm text-muted-foreground">{details}</p>
-      )}
-      {destination && (
-        <p className="mt-1 text-xs text-muted-foreground">إلى: {destination}</p>
-      )}
-    </div>
+      
+      <CollapsibleContent>
+        <div className="border-t p-3 bg-muted/5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            {details && (
+              <div>
+                <h4 className="text-sm font-medium mb-1">التفاصيل</h4>
+                <p className="text-sm text-muted-foreground">{details}</p>
+              </div>
+            )}
+            {destination && (
+              <div>
+                <h4 className="text-sm font-medium mb-1">الوجهة</h4>
+                <div className="flex items-center">
+                  <Code className="h-3 w-3 mr-1 text-muted-foreground" />
+                  <p className="text-sm font-mono overflow-hidden text-ellipsis">{destination}</p>
+                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0 mr-1" title="فتح في نافذة جديدة">
+                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          {(payload || response) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {payload && (
+                <div>
+                  <h4 className="text-sm font-medium mb-1">البيانات المرسلة</h4>
+                  <div className="bg-muted p-2 rounded-md max-h-40 overflow-y-auto">
+                    <pre className="text-xs font-mono whitespace-pre-wrap overflow-x-auto">
+                      {typeof payload === 'string' ? payload : JSON.stringify(JSON.parse(payload), null, 2)}
+                    </pre>
+                  </div>
+                </div>
+              )}
+              
+              {response && (
+                <div>
+                  <h4 className="text-sm font-medium mb-1">الرد</h4>
+                  <div className="bg-muted p-2 rounded-md max-h-40 overflow-y-auto">
+                    <pre className="text-xs font-mono whitespace-pre-wrap overflow-x-auto">
+                      {typeof response === 'string' ? response : JSON.stringify(JSON.parse(response), null, 2)}
+                    </pre>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 };
 
