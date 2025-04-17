@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Table, TableHeader, TableRow, TableHead, TableBody } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -5,6 +6,14 @@ import { WebhookEventLogItemProps } from './types';
 import { RefreshCw } from 'lucide-react';
 import WebhookEventLogItem from './components/WebhookEventLogItem';
 import WebhookEventLogDetails from './components/WebhookEventLogDetails';
+import { AdvancedFilters } from './components/AdvancedFilters';
+import { ExportButton } from './components/ExportButton';
+import { isWithinInterval } from 'date-fns';
+
+interface DateRange {
+  from: Date;
+  to?: Date;
+}
 
 const MOCK_EVENT_LOGS: WebhookEventLogItemProps[] = [
   {
@@ -46,6 +55,11 @@ const WebhookEventLogs = () => {
   const [loading, setLoading] = useState(true);
   const [selectedLog, setSelectedLog] = useState<WebhookEventLogItemProps | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [dateRange, setDateRange] = useState<DateRange>();
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  
+  // استخراج المنصات المتاحة من البيانات
+  const availablePlatforms = Array.from(new Set(MOCK_EVENT_LOGS.map(log => log.platform)));
 
   useEffect(() => {
     const loadData = async () => {
@@ -63,14 +77,51 @@ const WebhookEventLogs = () => {
     setShowDetails(true);
   };
 
+  const handlePlatformChange = (platform: string) => {
+    setSelectedPlatforms(prev => 
+      prev.includes(platform) 
+        ? prev.filter(p => p !== platform)
+        : [...prev, platform]
+    );
+  };
+
+  // تطبيق الفلاتر على السجلات
+  const filteredLogs = logs.filter(log => {
+    // فلتر التاريخ
+    if (dateRange?.from) {
+      const logDate = new Date(log.timestamp);
+      const endDate = dateRange.to || dateRange.from;
+      if (!isWithinInterval(logDate, { start: dateRange.from, end: endDate })) {
+        return false;
+      }
+    }
+
+    // فلتر المنصات
+    if (selectedPlatforms.length > 0 && !selectedPlatforms.includes(log.platform)) {
+      return false;
+    }
+
+    return true;
+  });
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-medium">سجل أحداث الويب هوك</h3>
-        <Button variant="outline" size="sm">
-          <RefreshCw className="h-4 w-4 mr-2" />
-          تحديث
-        </Button>
+        <div className="flex items-center gap-2">
+          <AdvancedFilters
+            dateRange={dateRange}
+            onDateRangeChange={setDateRange}
+            selectedPlatforms={selectedPlatforms}
+            onPlatformChange={handlePlatformChange}
+            availablePlatforms={availablePlatforms}
+          />
+          <ExportButton events={filteredLogs} />
+          <Button variant="outline" size="sm" disabled={loading}>
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''} ml-2`} />
+            تحديث
+          </Button>
+        </div>
       </div>
       
       {loading ? (
@@ -78,7 +129,7 @@ const WebhookEventLogs = () => {
           <RefreshCw className="h-10 w-10 animate-spin mx-auto text-muted-foreground" />
           <p className="mt-2 text-muted-foreground">جارِ تحميل السجل...</p>
         </div>
-      ) : logs.length > 0 ? (
+      ) : filteredLogs.length > 0 ? (
         <Table>
           <TableHeader>
             <TableRow>
@@ -91,7 +142,7 @@ const WebhookEventLogs = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {logs.map(log => (
+            {filteredLogs.map(log => (
               <WebhookEventLogItem
                 key={log.id}
                 log={log}
@@ -102,7 +153,7 @@ const WebhookEventLogs = () => {
         </Table>
       ) : (
         <div className="text-center py-10 border rounded-lg bg-muted/10">
-          <p className="text-muted-foreground">لا توجد أحداث للعرض حاليًا.</p>
+          <p className="text-muted-foreground">لا توجد أحداث للعرض حالياً.</p>
         </div>
       )}
       
@@ -116,3 +167,4 @@ const WebhookEventLogs = () => {
 };
 
 export default WebhookEventLogs;
+
