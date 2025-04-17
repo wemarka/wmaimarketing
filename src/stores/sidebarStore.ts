@@ -22,11 +22,11 @@ interface SidebarState {
 export const useSidebarStore = create<SidebarState>()(
   persist(
     (set) => ({
-      expanded: true,
+      expanded: true, // Make sure sidebar starts expanded by default
       expandedSection: undefined,
       activePath: '/',
       isDarkMode: false,
-      sidebarPosition: 'left' as const,
+      sidebarPosition: 'left' as const, // Default to left position
       isTransitioning: false,
       
       setExpanded: (expanded) => set({ expanded }),
@@ -57,7 +57,7 @@ export const useSidebarStore = create<SidebarState>()(
   )
 );
 
-// Hook للتحقق من حالة النشاط للروابط
+// Hook for checking active state of links
 export const useActivePath = () => {
   const activePath = useSidebarStore((state) => state.activePath);
   

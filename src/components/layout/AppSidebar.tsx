@@ -12,18 +12,21 @@ import {
 import SidebarNavContent from "./sidebar/SidebarContent";
 import { Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import SidebarHeader from "./sidebar/SidebarHeader";
 
 const AppSidebar = () => {
   const { i18n } = useTranslation();
   const { profile } = useAuth();
   const expanded = useSidebarStore((state) => state.expanded);
+  const toggleExpanded = useSidebarStore((state) => state.toggleExpanded);
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
 
   return (
-    <Sidebar>
-      <SidebarHeader className="h-16 px-4 flex items-center border-b border-white/10">
-        <span className="text-xl font-bold text-white">Circle</span>
-      </SidebarHeader>
+    <Sidebar className="bg-[#3a7a89] text-white border-r-0 z-50">
+      <SidebarHeader 
+        expanded={expanded} 
+        toggleExpanded={toggleExpanded} 
+      />
       
       <SidebarContent>
         <SidebarNavContent 
