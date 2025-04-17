@@ -23,7 +23,7 @@ const NotificationHeader: React.FC<NotificationHeaderProps> = ({ unreadCount, ti
           animate={{ scale: 1 }}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
         >
-          {unreadCount} {t("notificationCenter.unread", "unread")}
+          {unreadCount} {t("notificationCenter.unread", "غير مقروء")}
         </motion.span>
       )}
     </div>

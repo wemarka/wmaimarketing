@@ -1,62 +1,49 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Check, Trash2, Settings } from "lucide-react";
+import { CheckCircle, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useToast } from "@/components/ui/use-toast";
 
 interface NotificationActionsProps {
-  onMarkAllAsRead: () => void;
-  onDeleteAllNotifications: () => void;
-  unreadCount: number;
-  notificationsCount: number;
+  onMarkAllRead: () => void;
+  onClearAll: () => void;
+  hasUnread: boolean;
+  hasNotifications: boolean;
 }
 
 const NotificationActions: React.FC<NotificationActionsProps> = ({
-  onMarkAllAsRead,
-  onDeleteAllNotifications,
-  unreadCount,
-  notificationsCount
+  onMarkAllRead,
+  onClearAll,
+  hasUnread,
+  hasNotifications
 }) => {
   const { t } = useTranslation();
-  const { toast } = useToast();
+  
+  if (!hasNotifications) {
+    return null;
+  }
   
   return (
-    <div className="flex gap-2">
-      <Button
-        variant="outline"
-        size="sm"
-        className="flex items-center gap-1"
-        onClick={onMarkAllAsRead}
-        disabled={unreadCount === 0}
+    <div className="flex justify-between items-center p-2 border-t">
+      <Button 
+        variant="ghost" 
+        size="sm" 
+        className="text-xs"
+        disabled={!hasUnread}
+        onClick={onMarkAllRead}
       >
-        <Check className="h-4 w-4" />
-        <span>{t("notificationCenter.markAllRead", "Mark all read")}</span>
+        <CheckCircle className="h-3.5 w-3.5 mr-1" />
+        {t("notificationCenter.markAllRead", "تحديد الكل كمقروء")}
       </Button>
       
-      <Button
-        variant="outline"
-        size="sm"
-        className="flex items-center gap-1 text-destructive hover:bg-destructive/10"
-        onClick={onDeleteAllNotifications}
-        disabled={notificationsCount === 0}
+      <Button 
+        variant="ghost" 
+        size="sm" 
+        className="text-xs text-destructive hover:text-destructive/90"
+        onClick={onClearAll}
       >
-        <Trash2 className="h-4 w-4" />
-        <span>{t("notificationCenter.clearAll", "Clear all")}</span>
-      </Button>
-      
-      <Button
-        variant="ghost"
-        size="icon"
-        title={t("notificationCenter.settings", "Notification Settings")}
-        onClick={() => {
-          toast({
-            title: t("notificationCenter.settingsToast", "Notification Settings"),
-            description: t("notificationCenter.settingsComingSoon", "Settings panel coming soon")
-          });
-        }}
-      >
-        <Settings className="h-4 w-4" />
+        <Trash2 className="h-3.5 w-3.5 mr-1" />
+        {t("notificationCenter.clearAll", "مسح الكل")}
       </Button>
     </div>
   );

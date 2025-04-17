@@ -1,131 +1,214 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import { Helmet } from "react-helmet-async";
-import { motion } from "framer-motion";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTranslation } from "react-i18next";
-import { useToast } from "@/components/ui/use-toast";
-import { useNotificationsStore } from "@/stores/notificationsStore";
 import { 
   NotificationHeader, 
   NotificationActions,
-  NotificationContent
+  NotificationContent,
+  EmptyNotifications
 } from "@/components/notification-center";
+import { toast } from "@/components/ui/use-toast";
 
-const NotificationCenter = () => {
+// Types for our notifications
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  timestamp: Date;
+  read: boolean;
+  type: "system" | "campaign" | "competitor" | "ai" | "email";
+  priority?: "high" | "normal" | "low";
+}
+
+// Sample data for demonstrations
+const sampleNotifications: Notification[] = [
+  {
+    id: "1",
+    title: "تحليل جديد للمنافسين",
+    message: "تم اكتشاف استراتيجية تسويقية جديدة من المنافس الرئيسي",
+    timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
+    read: false,
+    type: "competitor",
+    priority: "high"
+  },
+  {
+    id: "2",
+    title: "إنشاء محتوى جديد",
+    message: "قام الذكاء الاصطناعي بإنشاء 5 منشورات جديدة للمراجعة",
+    timestamp: new Date(Date.now() - 1000 * 60 * 120), // 2 hours ago
+    read: false,
+    type: "ai"
+  },
+  {
+    id: "3",
+    title: "تقرير أداء الحملة",
+    message: "حققت حملة 'مجموعة الصيف' معدل تحويل بنسبة 15%",
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5), // 5 hours ago
+    read: true,
+    type: "campaign"
+  },
+  {
+    id: "4",
+    title: "تقرير حملة البريد الإلكتروني",
+    message: "تم فتح 65% من رسائل البريد الإلكتروني في الحملة الأخيرة",
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
+    read: true,
+    type: "email"
+  },
+  {
+    id: "5",
+    title: "تحديث النظام",
+    message: "تم تحديث النظام إلى الإصدار الجديد بنجاح",
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 48), // 2 days ago
+    read: true,
+    type: "system"
+  }
+];
+
+const NotificationCenter: React.FC = () => {
   const { t } = useTranslation();
-  const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<string>("all");
+  const [activeTab, setActiveTab] = useState("all");
+  const [notifications, setNotifications] = useState<Notification[]>(sampleNotifications);
   
-  // استخدام متجر الإشعارات
-  const { 
-    notifications, 
-    unreadCount,
-    markAsRead, 
-    markAllAsRead, 
-    deleteNotification,
-    clearAllNotifications
-  } = useNotificationsStore();
-
-  // عد الإشعارات غير المقروءة حسب النوع
-  const getUnreadCount = (type?: string) => {
-    if (!type || type === "all") {
-      return unreadCount;
-    }
-    return notifications.filter(n => !n.read && n.type === type).length;
-  };
+  // Filter notifications based on active tab
+  const filteredNotifications = notifications.filter(notification => {
+    if (activeTab === "all") return true;
+    if (activeTab === "unread") return !notification.read;
+    return notification.type === activeTab;
+  });
   
-  // وضع علامة "مقروء" على إشعار
-  const handleMarkAsRead = (id: string) => {
-    markAsRead(id);
-    
-    // عرض toast للإشعار المقروء حديثًا
-    const notification = notifications.find(n => n.id === id);
-    if (notification && !notification.read) {
-      toast({
-        title: t("dashboard.notifications.markedAsRead", "Notification marked as read"),
-        description: notification.title
-      });
-    }
-  };
+  // Count unread notifications
+  const unreadCount = notifications.filter(n => !n.read).length;
   
-  // وضع علامة "مقروء" على جميع الإشعارات
-  const handleMarkAllAsRead = () => {
-    markAllAsRead();
-    
+  // Handle marking a notification as read
+  const handleNotificationClick = (id: string) => {
+    setNotifications(prev => 
+      prev.map(notification => 
+        notification.id === id 
+          ? { ...notification, read: true } 
+          : notification
+      )
+    );
     toast({
-      title: t("dashboard.notifications.markAllReadSuccess", "All notifications marked as read"),
-      description: t("dashboard.notifications.updated", "Notifications have been updated")
+      title: t("notificationCenter.notificationRead", "تم تحديد الإشعار كمقروء"),
+      duration: 2000
     });
   };
-
-  // حذف إشعار
-  const handleDeleteNotification = (id: string) => {
-    deleteNotification(id);
-    
+  
+  // Mark all notifications as read
+  const handleMarkAllRead = () => {
+    setNotifications(prev => 
+      prev.map(notification => ({ ...notification, read: true }))
+    );
     toast({
-      title: t("dashboard.notifications.deleted", "Notification deleted"),
-      description: t("dashboard.notifications.deleteSuccess", "The notification has been removed")
+      title: t("notificationCenter.allMarkedRead", "تم تحديد جميع الإشعارات كمقروءة"),
+      duration: 2000
     });
   };
-
-  // حذف جميع الإشعارات
-  const handleDeleteAllNotifications = () => {
-    clearAllNotifications();
-    
+  
+  // Clear all notifications
+  const handleClearAll = () => {
+    setNotifications([]);
     toast({
-      title: t("dashboard.notifications.deletedAll", "All notifications deleted"),
-      description: t("dashboard.notifications.deleteAllSuccess", "All notifications have been removed")
+      title: t("notificationCenter.allCleared", "تم مسح جميع الإشعارات"),
+      duration: 2000
     });
   };
-
-  // معالجة تغيير التبويب
-  const handleTabChange = (value: string) => {
-    setActiveTab(value);
-  };
-
+  
   return (
     <Layout>
       <Helmet>
-        <title>{t("notificationCenter.pageTitle", "Notification Center")} - سيركل</title>
+        <title>{t("notificationCenter.pageTitle", "مركز الإشعارات - سيركل")}</title>
       </Helmet>
       
-      <div className="max-w-4xl mx-auto">
-        <motion.div
-          className="mb-6"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="flex items-center justify-between">
-            <NotificationHeader 
-              unreadCount={unreadCount} 
-              title={t("notificationCenter.title", "Notification Center")} 
-            />
-            
-            <NotificationActions 
-              onMarkAllAsRead={handleMarkAllAsRead}
-              onDeleteAllNotifications={handleDeleteAllNotifications}
-              unreadCount={unreadCount}
-              notificationsCount={notifications.length}
-            />
-          </div>
-        </motion.div>
+      <div className="p-6">
+        <NotificationHeader 
+          title={t("notificationCenter.title", "مركز الإشعارات")}
+          unreadCount={unreadCount}
+        />
         
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <NotificationContent 
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-            notifications={notifications}
-            getUnreadCount={getUnreadCount}
-            onMarkAsRead={handleMarkAsRead}
-            onDelete={handleDeleteNotification}
+        <Card className="mt-6">
+          <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <div className="border-b">
+              <TabsList className="p-0 h-12 w-full rounded-none bg-transparent border-b border-transparent flex items-center justify-start gap-2 px-4">
+                <TabsTrigger 
+                  value="all"
+                  className="data-[state=active]:border-b-2 data-[state=active]:border-beauty-purple rounded-none h-12 px-4"
+                >
+                  {t("notificationCenter.tabs.all", "الكل")}
+                  <span className="ml-2 text-xs bg-muted rounded-full h-5 min-w-5 inline-flex items-center justify-center px-1">
+                    {notifications.length}
+                  </span>
+                </TabsTrigger>
+                
+                <TabsTrigger 
+                  value="unread"
+                  className="data-[state=active]:border-b-2 data-[state=active]:border-beauty-purple rounded-none h-12 px-4"
+                >
+                  {t("notificationCenter.tabs.unread", "غير مقروء")}
+                  {unreadCount > 0 && (
+                    <span className="ml-2 text-xs bg-beauty-pink text-white rounded-full h-5 min-w-5 inline-flex items-center justify-center px-1">
+                      {unreadCount}
+                    </span>
+                  )}
+                </TabsTrigger>
+                
+                <TabsTrigger 
+                  value="competitor"
+                  className="data-[state=active]:border-b-2 data-[state=active]:border-beauty-purple rounded-none h-12 px-4"
+                >
+                  {t("notificationCenter.tabs.competitor", "المنافسين")}
+                </TabsTrigger>
+                
+                <TabsTrigger 
+                  value="ai"
+                  className="data-[state=active]:border-b-2 data-[state=active]:border-beauty-purple rounded-none h-12 px-4"
+                >
+                  {t("notificationCenter.tabs.ai", "الذكاء الاصطناعي")}
+                </TabsTrigger>
+                
+                <TabsTrigger 
+                  value="campaign"
+                  className="data-[state=active]:border-b-2 data-[state=active]:border-beauty-purple rounded-none h-12 px-4"
+                >
+                  {t("notificationCenter.tabs.campaign", "الحملات")}
+                </TabsTrigger>
+                
+                <TabsTrigger 
+                  value="email"
+                  className="data-[state=active]:border-b-2 data-[state=active]:border-beauty-purple rounded-none h-12 px-4"
+                >
+                  {t("notificationCenter.tabs.email", "البريد الإلكتروني")}
+                </TabsTrigger>
+              </TabsList>
+            </div>
+            
+            <div className="p-0">
+              {/* The content will be the same for all tabs, just filtered differently */}
+              <TabsContent value={activeTab} className="m-0">
+                {filteredNotifications.length > 0 ? (
+                  <NotificationContent 
+                    notifications={filteredNotifications}
+                    onNotificationClick={handleNotificationClick}
+                  />
+                ) : (
+                  <EmptyNotifications />
+                )}
+              </TabsContent>
+            </div>
+          </Tabs>
+          
+          <NotificationActions 
+            onMarkAllRead={handleMarkAllRead}
+            onClearAll={handleClearAll}
+            hasUnread={unreadCount > 0}
+            hasNotifications={notifications.length > 0}
           />
-        </motion.div>
+        </Card>
       </div>
     </Layout>
   );

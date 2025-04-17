@@ -10,7 +10,7 @@ const EmptyNotifications: React.FC = () => {
     <div className="py-12 text-center">
       <Bell className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
       <p className="text-muted-foreground">
-        {t("notificationCenter.noNotifications", "No notifications to display")}
+        {t("notificationCenter.noNotifications", "لا توجد إشعارات لعرضها")}
       </p>
     </div>
   );
