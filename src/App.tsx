@@ -1,7 +1,10 @@
+import { useEffect } from 'react';
+import { Routes, Route, useLocation } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
+import { useNotificationsStore } from "./stores/notificationsStore";
+import { subscribeToNotifications } from "./services/notificationService";
+import "./App.css";
 
-import { Routes, Route, BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
-import { Toaster } from "@/components/ui/toaster";
 import { QueryPerformanceProvider } from './context/QueryPerformanceProvider';
 import RequireAuth from "@/components/auth/RequireAuth";
 import RoleBasedGuard from "@/components/auth/RoleBasedGuard";
@@ -59,11 +62,31 @@ import ProductList from "./modules/product/pages/ProductList";
 import AddProduct from "./modules/product/pages/AddProduct";
 
 function App() {
+  const { user } = useAuth();
+  const location = useLocation();
+  const { addNotification } = useNotificationsStore();
+  
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+    
+    if (user?.id) {
+      unsubscribe = subscribeToNotifications(user.id, (notification) => {
+        addNotification(notification);
+      });
+    }
+    
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [user?.id, addNotification]);
+
   return (
     <QueryPerformanceProvider>
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
+          <Routes location={location}>
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />

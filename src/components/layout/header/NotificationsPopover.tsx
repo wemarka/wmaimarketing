@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,81 +8,74 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { useNotificationsStore } from "@/stores/notificationsStore";
+import { subscribeToNotifications } from "@/services/notificationService";
 
 import NotificationHeader from "./notification/NotificationHeader";
 import NotificationTabs from "./notification/NotificationTabs";
 import NotificationsList from "./notification/NotificationsList";
 
 interface NotificationsPopoverProps {
-  notificationCount?: number;
   onNotificationClick?: () => void;
 }
 
-// Sample notifications data
-const notifications = [
-  {
-    id: "1",
-    type: "marketing",
-    title: "إحصائيات الحملة الأخيرة جاهزة",
-    time: "منذ ٢٠ دقيقة",
-    read: false,
-  },
-  {
-    id: "2",
-    type: "comment",
-    title: "علق شخص ما على منشورك \"أفضل منتجات العناية للبشرة\"",
-    time: "منذ ساعتين",
-    read: false,
-  },
-  {
-    id: "3",
-    type: "post",
-    title: "تم نشر المحتوى المجدول بنجاح",
-    time: "منذ ٥ ساعات",
-    read: false,
-  },
-  {
-    id: "4", 
-    type: "alert",
-    title: "تنبيه: انخفض معدل التفاعل بنسبة 15%",
-    time: "منذ يوم واحد",
-    read: true,
-  }
-];
-
 const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({
-  notificationCount = 0,
   onNotificationClick = () => {}
 }) => {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
-  const [notificationsData, setNotificationsData] = useState(notifications);
+  const { user } = useAuth();
+  
+  // استخدام متجر الإشعارات
+  const { 
+    notifications, 
+    unreadCount,
+    addNotification, 
+    markAsRead, 
+    markAllAsRead, 
+    deleteNotification 
+  } = useNotificationsStore();
+
+  // الاشتراك في الإشعارات في الوقت الحقيقي
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+    
+    if (user?.id) {
+      unsubscribe = subscribeToNotifications(user.id, (notification) => {
+        addNotification(notification);
+      });
+    }
+    
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [user?.id, addNotification]);
 
   const handleViewAllClick = () => {
     onNotificationClick();
     setOpen(false);
   };
   
-  const markAllAsRead = () => {
-    setNotificationsData(prev => prev.map(notif => ({ ...notif, read: true })));
+  const handleMarkAsRead = (id: string) => {
+    markAsRead(id);
+  };
+  
+  const handleMarkAllAsRead = () => {
+    markAllAsRead();
+    
     toast({
       title: "تم تحديد جميع الإشعارات كمقروءة",
       description: "تم تحديث حالة الإشعارات",
     });
-    onNotificationClick();
   };
   
-  const markAsRead = (id: string) => {
-    setNotificationsData(prev => 
-      prev.map(notif => 
-        notif.id === id ? { ...notif, read: true } : notif
-      )
-    );
-  };
-  
-  const deleteNotification = (id: string) => {
-    setNotificationsData(prev => prev.filter(notif => notif.id !== id));
+  const handleDeleteNotification = (id: string) => {
+    deleteNotification(id);
+    
     toast({
       title: "تم حذف الإشعار",
       description: "تم حذف الإشعار بنجاح",
@@ -90,12 +83,10 @@ const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({
   };
   
   const filteredNotifications = activeTab === "all" 
-    ? notificationsData 
+    ? notifications 
     : activeTab === "unread"
-      ? notificationsData.filter(n => !n.read)
-      : notificationsData.filter(n => n.type === activeTab);
-      
-  const unreadCount = notificationsData.filter(n => !n.read).length;
+      ? notifications.filter(n => !n.read)
+      : notifications.filter(n => n.type === activeTab);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -125,18 +116,27 @@ const NotificationsPopover: React.FC<NotificationsPopoverProps> = ({
       <PopoverContent className="w-[340px] p-0" align="end">
         <NotificationHeader 
           unreadCount={unreadCount} 
-          onMarkAllAsRead={markAllAsRead}
+          onMarkAllAsRead={handleMarkAllAsRead}
         />
         
         <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
-          <NotificationTabs activeTab={activeTab} onTabChange={setActiveTab} />
+          <NotificationTabs 
+            activeTab={activeTab} 
+            onTabChange={setActiveTab} 
+            getUnreadCount={(type) => {
+              if (!type || type === "all") {
+                return unreadCount;
+              }
+              return notifications.filter(n => !n.read && n.type === type).length;
+            }} 
+          />
           
           <TabsContent value={activeTab} className="m-0">
             <NotificationsList
               filteredNotifications={filteredNotifications}
               activeTab={activeTab}
-              onMarkAsRead={markAsRead}
-              onDelete={deleteNotification}
+              onMarkAsRead={handleMarkAsRead}
+              onDelete={handleDeleteNotification}
             />
           </TabsContent>
         </Tabs>

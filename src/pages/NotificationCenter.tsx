@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
@@ -9,11 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Check, Trash2, Bell, Settings } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useNotificationsStore } from "@/stores/notificationsStore";
 
 import {
   NotificationTabs,
-  NotificationsList,
-  Notification
+  NotificationsList
 } from "@/components/dashboard/notifications";
 
 const NotificationCenter = () => {
@@ -21,114 +21,29 @@ const NotificationCenter = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<string>("all");
   
-  // Sample notification data - in a real app, this would come from an API
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: "1",
-      title: t("notifications.new.approval", "New post awaiting approval"),
-      message: t("notifications.new.approvalDesc", "There's a new post titled 'Best Skincare Products' awaiting your approval"),
-      time: t("notifications.time.minutes", "10 minutes ago"),
-      type: "approval",
-      read: false,
-      urgent: true,
-      actionUrl: "/scheduler?tab=workflow",
-      actionText: t("notifications.action.review", "Review Now")
-    },
-    {
-      id: "2",
-      title: t("notifications.scheduled.post", "Post scheduled for tomorrow"),
-      message: t("notifications.scheduled.postDesc", "The post 'Skincare Tips' will be published tomorrow at 10:00 AM"),
-      time: t("notifications.time.hours", "2 hours ago"),
-      type: "post",
-      read: false,
-      actionUrl: "/scheduler",
-      actionText: t("notifications.action.view", "View Post")
-    },
-    {
-      id: "6",
-      title: t("notifications.new.message", "New message from Marketing team"),
-      message: t("notifications.new.messageDesc", "The marketing team sent you a message about the upcoming campaign"),
-      time: t("notifications.time.minutes", "30 minutes ago"),
-      type: "message",
-      read: false,
-      actionUrl: "/messages",
-      actionText: t("notifications.action.read", "Read Message")
-    },
-    {
-      id: "3",
-      title: t("notifications.completed.task", "Task 'Update Product Images' completed"),
-      message: t("notifications.completed.taskDesc", "Product images have been successfully updated"),
-      time: t("notifications.time.day", "1 day ago"),
-      type: "task",
-      read: true,
-      actionUrl: "/content-tools"
-    },
-    {
-      id: "4",
-      title: t("notifications.system.update", "System Update"),
-      message: t("notifications.system.updateDesc", "The system has been successfully updated to the latest version"),
-      time: t("notifications.time.days", "2 days ago"),
-      type: "system",
-      read: true
-    },
-    {
-      id: "5",
-      title: t("notifications.reminder.campaign", "Reminder: Ad campaign scheduled"),
-      message: t("notifications.reminder.campaignDesc", "You have an ad campaign scheduled for today at 3:00 PM"),
-      time: t("notifications.time.hours", "5 hours ago"),
-      type: "post",
-      read: false,
-      urgent: true,
-      actionUrl: "/scheduler"
-    },
-    {
-      id: "7",
-      title: t("notifications.analytics.report", "Weekly analytics report available"),
-      message: t("notifications.analytics.reportDesc", "Your weekly analytics report is now available for review"),
-      time: t("notifications.time.day", "1 day ago"),
-      type: "system",
-      read: false,
-      actionUrl: "/analytics",
-      actionText: t("notifications.action.view", "View Report")
-    },
-    {
-      id: "8", 
-      title: t("notifications.product.update", "New product added to catalog"),
-      message: t("notifications.product.updateDesc", "A new product has been added to your catalog"),
-      time: t("notifications.time.hours", "3 hours ago"),
-      type: "task",
-      read: false,
-      actionUrl: "/product/list",
-      actionText: t("notifications.action.view", "View Product")
-    },
-    {
-      id: "9",
-      title: t("notifications.comment.new", "New comment on your post"),
-      message: t("notifications.comment.newDesc", "A user left a comment on your post about skincare routines"),
-      time: t("notifications.time.minutes", "45 minutes ago"),
-      type: "message",
-      read: true,
-      actionUrl: "/content-tools"
-    }
-  ]);
+  // استخدام متجر الإشعارات
+  const { 
+    notifications, 
+    unreadCount,
+    markAsRead, 
+    markAllAsRead, 
+    deleteNotification,
+    deleteAllNotifications
+  } = useNotificationsStore();
 
-  // Count unread notifications by type
+  // عد الإشعارات غير المقروءة حسب النوع
   const getUnreadCount = (type?: string) => {
     if (!type || type === "all") {
-      return notifications.filter(n => !n.read).length;
+      return unreadCount;
     }
     return notifications.filter(n => !n.read && n.type === type).length;
   };
   
-  // Mark notification as read
-  const markAsRead = (id: string) => {
-    setNotifications(prev => 
-      prev.map(notification => 
-        notification.id === id ? { ...notification, read: true } : notification
-      )
-    );
+  // وضع علامة "مقروء" على إشعار
+  const handleMarkAsRead = (id: string) => {
+    markAsRead(id);
     
-    // Show toast for newly read notification
+    // عرض toast للإشعار المقروء حديثًا
     const notification = notifications.find(n => n.id === id);
     if (notification && !notification.read) {
       toast({
@@ -138,11 +53,9 @@ const NotificationCenter = () => {
     }
   };
   
-  // Mark all notifications as read
-  const markAllAsRead = () => {
-    setNotifications(prev => 
-      prev.map(notification => ({ ...notification, read: true }))
-    );
+  // وضع علامة "مقروء" على جميع الإشعارات
+  const handleMarkAllAsRead = () => {
+    markAllAsRead();
     
     toast({
       title: t("dashboard.notifications.markAllReadSuccess", "All notifications marked as read"),
@@ -150,9 +63,9 @@ const NotificationCenter = () => {
     });
   };
 
-  // Delete a notification
-  const deleteNotification = (id: string) => {
-    setNotifications(prev => prev.filter(notification => notification.id !== id));
+  // حذف إشعار
+  const handleDeleteNotification = (id: string) => {
+    deleteNotification(id);
     
     toast({
       title: t("dashboard.notifications.deleted", "Notification deleted"),
@@ -160,9 +73,9 @@ const NotificationCenter = () => {
     });
   };
 
-  // Delete all notifications
-  const deleteAllNotifications = () => {
-    setNotifications([]);
+  // حذف جميع الإشعارات
+  const handleDeleteAllNotifications = () => {
+    deleteAllNotifications();
     
     toast({
       title: t("dashboard.notifications.deletedAll", "All notifications deleted"),
@@ -170,7 +83,7 @@ const NotificationCenter = () => {
     });
   };
 
-  // Handle tab change
+  // معالجة تغيير التبويب
   const handleTabChange = (value: string) => {
     setActiveTab(value);
   };
@@ -178,7 +91,7 @@ const NotificationCenter = () => {
   return (
     <Layout>
       <Helmet>
-        <title>{t("notificationCenter.pageTitle", "Notification Center")} - بيوتي</title>
+        <title>{t("notificationCenter.pageTitle", "Notification Center")} - سيركل</title>
       </Helmet>
       
       <div className="max-w-4xl mx-auto">
@@ -192,14 +105,14 @@ const NotificationCenter = () => {
             <div className="flex items-center gap-3">
               <Bell className="h-6 w-6 text-beauty-purple" />
               <h1 className="text-2xl font-bold">{t("notificationCenter.title", "Notification Center")}</h1>
-              {getUnreadCount() > 0 && (
+              {unreadCount > 0 && (
                 <motion.span 
                   className="bg-beauty-pink text-white text-sm px-2 py-0.5 rounded-full"
                   initial={{ scale: 0.8 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 500, damping: 30 }}
                 >
-                  {getUnreadCount()} {t("notificationCenter.unread", "unread")}
+                  {unreadCount} {t("notificationCenter.unread", "unread")}
                 </motion.span>
               )}
             </div>
@@ -209,8 +122,8 @@ const NotificationCenter = () => {
                 variant="outline"
                 size="sm"
                 className="flex items-center gap-1"
-                onClick={markAllAsRead}
-                disabled={getUnreadCount() === 0}
+                onClick={handleMarkAllAsRead}
+                disabled={unreadCount === 0}
               >
                 <Check className="h-4 w-4" />
                 <span>{t("notificationCenter.markAllRead", "Mark all read")}</span>
@@ -220,7 +133,7 @@ const NotificationCenter = () => {
                 variant="outline"
                 size="sm"
                 className="flex items-center gap-1 text-destructive hover:bg-destructive/10"
-                onClick={deleteAllNotifications}
+                onClick={handleDeleteAllNotifications}
                 disabled={notifications.length === 0}
               >
                 <Trash2 className="h-4 w-4" />
@@ -272,9 +185,14 @@ const NotificationCenter = () => {
                     </div>
                   ) : (
                     <NotificationsList 
-                      notifications={notifications} 
+                      notifications={notifications.filter(n => 
+                        activeTab === "all" || 
+                        (activeTab === "unread" && !n.read) ||
+                        n.type === activeTab
+                      )}
                       activeTab={activeTab}
-                      onMarkAsRead={markAsRead}
+                      onMarkAsRead={handleMarkAsRead}
+                      onDelete={handleDeleteNotification}
                     />
                   )}
                 </TabsContent>
