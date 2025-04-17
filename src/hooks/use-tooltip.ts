@@ -28,11 +28,13 @@ export function useTooltip({
     };
   }, [tooltipTimeout]);
 
-  const showTooltip = useCallback((immediate = false) => {
+  const showTooltip = useCallback((immediateOrEvent?: boolean | React.MouseEvent) => {
     if (tooltipTimeout) {
       clearTimeout(tooltipTimeout);
       setTooltipTimeout(null);
     }
+    
+    const immediate = typeof immediateOrEvent === 'boolean' ? immediateOrEvent : false;
     
     if (immediate) {
       setTooltipOpen(true);
@@ -45,11 +47,13 @@ export function useTooltip({
     }
   }, [tooltipTimeout, hoverDelay]);
 
-  const hideTooltip = useCallback((immediate = false) => {
+  const hideTooltip = useCallback((immediateOrEvent?: boolean | React.MouseEvent) => {
     if (tooltipTimeout) {
       clearTimeout(tooltipTimeout);
       setTooltipTimeout(null);
     }
+    
+    const immediate = typeof immediateOrEvent === 'boolean' ? immediateOrEvent : false;
     
     if (immediate) {
       setTooltipOpen(false);

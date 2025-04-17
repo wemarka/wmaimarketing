@@ -127,8 +127,8 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({
           variants={buttonVariants}
           whileHover="hover"
           whileTap="tap"
-          onMouseEnter={showTooltip}
-          onMouseLeave={hideTooltip}
+          onMouseEnter={() => showTooltip()}
+          onMouseLeave={() => hideTooltip()}
           className={cn(
             "w-8 h-8 rounded-full flex items-center justify-center",
             "bg-white/15 transition-colors border border-white/10",

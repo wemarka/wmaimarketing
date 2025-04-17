@@ -90,8 +90,8 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({
         >
           <div 
             className="flex items-center gap-3"
-            onMouseEnter={!expanded ? showProfileTooltip : undefined}
-            onMouseLeave={!expanded ? hideProfileTooltip : undefined}
+            onMouseEnter={() => !expanded && showProfileTooltip()}
+            onMouseLeave={() => !expanded && hideProfileTooltip()}
           >
             <motion.div
               whileHover={{ scale: 1.05, boxShadow: "0 0 8px rgba(255,255,255,0.2)" }}
@@ -147,8 +147,8 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({
               variants={buttonVariants}
               whileHover="hover"
               whileTap="tap"
-              onMouseEnter={!expanded ? showDarkModeTooltip : undefined}
-              onMouseLeave={!expanded ? hideDarkModeTooltip : undefined}
+              onMouseEnter={() => !expanded && showDarkModeTooltip()}
+              onMouseLeave={() => !expanded && hideDarkModeTooltip()}
             >
               {isDarkMode ? (
                 <Sun className="h-4 w-4 text-white/90" />
@@ -169,8 +169,8 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({
               variants={buttonVariants}
               whileHover="hover"
               whileTap="tap"
-              onMouseEnter={!expanded ? showLogoutTooltip : undefined}
-              onMouseLeave={!expanded ? hideLogoutTooltip : undefined}
+              onMouseEnter={() => !expanded && showLogoutTooltip()}
+              onMouseLeave={() => !expanded && hideLogoutTooltip()}
             >
               <LogOut className="h-4 w-4 text-white/90" />
             </motion.button>
