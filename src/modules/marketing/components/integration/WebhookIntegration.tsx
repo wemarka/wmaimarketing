@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Filter, ArrowUpDown, RefreshCw, Bell, CheckCircle2, AlertCircle } from "lucide-react";
@@ -25,7 +24,6 @@ const WebhookIntegration = () => {
     eventTypes: string[];
     description?: string;
   }) => {
-    // In a real implementation, this would send a request to create the webhook
     const newWebhook = {
       id: `${Date.now()}`,
       name: webhookData.name,
@@ -51,7 +49,6 @@ const WebhookIntegration = () => {
       }
     });
     
-    // Reset form
     setIsCreating(false);
     setActiveTab('configured');
   };
@@ -72,12 +69,8 @@ const WebhookIntegration = () => {
     if (!webhook) return;
     
     toast({
-      description: (
-        <div>
-          <div className="font-semibold mb-1">هل أنت متأكد من حذف الويب هوك؟</div>
-          <div>سيتم حذف "{webhook.name}" بشكل نهائي.</div>
-        </div>
-      ),
+      title: "تأكيد الحذف",
+      description: `هل أنت متأكد من حذف الويب هوك "${webhook.name}" بشكل نهائي؟`,
       action: {
         label: "نعم، حذف",
         onClick: () => {
@@ -92,11 +85,9 @@ const WebhookIntegration = () => {
   };
   
   const handleTriggerWebhook = (id: string) => {
-    // In a real implementation, this would manually trigger the webhook
     const webhook = webhookEvents.find(w => w.id === id);
     if (!webhook) return;
     
-    // Create a new log entry with the correct status type
     const newLog: WebhookEventLogItemProps = {
       id: `log${Date.now()}`,
       event: webhook.eventTypes[0] || "manual_trigger",
@@ -122,7 +113,6 @@ const WebhookIntegration = () => {
     
     setEventLogs([newLog, ...eventLogs]);
     
-    // Update the last triggered time
     setWebhookEvents(webhookEvents.map(w => 
       w.id === id ? { ...w, lastTriggered: new Date().toISOString() } : w
     ));
@@ -131,16 +121,13 @@ const WebhookIntegration = () => {
       description: `تم تشغيل "${webhook.name}" يدويًا`
     });
 
-    // Change to logs tab to show the new log
     setActiveTab('logs');
   };
   
   const handleRefreshLogs = () => {
     setIsLoadingLogs(true);
     
-    // Simulate loading
     setTimeout(() => {
-      // Generate a new random log
       const webhookId = webhookEvents.length > 0 ? 
         webhookEvents[Math.floor(Math.random() * webhookEvents.length)].id : 
         'unknown';
@@ -177,7 +164,6 @@ const WebhookIntegration = () => {
     const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
     setSortOrder(newSortOrder);
     
-    // Sort logs based on timestamp
     const sortedLogs = [...eventLogs].sort((a, b) => {
       const dateA = new Date(a.timestamp).getTime();
       const dateB = new Date(b.timestamp).getTime();
@@ -188,7 +174,6 @@ const WebhookIntegration = () => {
     toast.success(`تم ترتيب السجلات ${newSortOrder === 'asc' ? 'تصاعديًا' : 'تنازليًا'}`);
   };
 
-  // Summary statistics
   const activeWebhooks = webhookEvents.filter(w => w.active).length;
   const inactiveWebhooks = webhookEvents.length - activeWebhooks;
   const successfulEvents = eventLogs.filter(log => log.status === 'success').length;
@@ -234,7 +219,6 @@ const WebhookIntegration = () => {
         </div>
       </div>
       
-      {/* Dashboard Stats */}
       {!isCreating && webhookEvents.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
