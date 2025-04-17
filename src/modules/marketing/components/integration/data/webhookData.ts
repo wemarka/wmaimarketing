@@ -32,11 +32,12 @@ export const mockWebhookEvents = [
   }
 ];
 
+// Updated the status properties to use the correct literal types: "success", "error", or "pending"
 export const mockWebhookLogs = [
   {
     id: "log1",
     event: "content_created",
-    status: "success",
+    status: "success" as const,
     platform: "المنصة الرئيسية",
     timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
     details: "تم إنشاء مقالة جديدة بعنوان 'أحدث التقنيات في عالم التجميل'",
@@ -45,7 +46,7 @@ export const mockWebhookLogs = [
   {
     id: "log2",
     event: "user_registered",
-    status: "success",
+    status: "success" as const,
     platform: "منصة المستخدمين",
     timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
     destination: "https://api.example.com/webhooks/users"
@@ -53,7 +54,7 @@ export const mockWebhookLogs = [
   {
     id: "log3",
     event: "content_updated",
-    status: "error",
+    status: "error" as const,
     platform: "المنصة الرئيسية",
     timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
     details: "فشل في الوصول إلى الخادم بعد 3 محاولات",
@@ -62,7 +63,7 @@ export const mockWebhookLogs = [
   {
     id: "log4",
     event: "product_created",
-    status: "pending",
+    status: "pending" as const,
     platform: "منصة المنتجات",
     timestamp: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
     details: "جاري معالجة الطلب...",

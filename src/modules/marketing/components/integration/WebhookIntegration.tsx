@@ -12,6 +12,7 @@ import WebhookEventLogList from "./WebhookEventLogList";
 import { PlusCircle, CheckCircle2, AlertCircle, Clock, Code, ExternalLink, Trash2, Copy, Edit, PlayCircle } from "lucide-react";
 import { mockWebhookEvents, mockWebhookLogs } from './data/webhookData';
 import { toast } from "sonner";
+import { WebhookEventLogItemProps } from "./WebhookEventLogItem";
 
 const WebhookIntegration = () => {
   const [activeTab, setActiveTab] = useState('configured');
@@ -20,7 +21,7 @@ const WebhookIntegration = () => {
   const [webhookName, setWebhookName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [webhookEvents, setWebhookEvents] = useState(mockWebhookEvents);
-  const [eventLogs, setEventLogs] = useState(mockWebhookLogs);
+  const [eventLogs, setEventLogs] = useState<WebhookEventLogItemProps[]>(mockWebhookLogs);
   const [isLoadingLogs, setIsLoadingLogs] = useState(false);
   const [maxRetries, setMaxRetries] = useState('3');
   
@@ -67,8 +68,8 @@ const WebhookIntegration = () => {
     const webhook = webhookEvents.find(w => w.id === id);
     if (!webhook) return;
     
-    // Create a new log entry
-    const newLog = {
+    // Create a new log entry with the correct status type
+    const newLog: WebhookEventLogItemProps = {
       id: `log${Date.now()}`,
       event: webhook.eventTypes[0] || "manual_trigger",
       status: "success",

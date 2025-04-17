@@ -1,72 +1,53 @@
 
 import React from 'react';
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-
-const eventTypes = [
-  { id: 'content_created', name: 'إنشاء محتوى جديد', enabled: true },
-  { id: 'content_updated', name: 'تحديث محتوى', enabled: true },
-  { id: 'content_published', name: 'نشر محتوى', enabled: true },
-  { id: 'campaign_created', name: 'إنشاء حملة إعلانية', enabled: false },
-  { id: 'user_registered', name: 'تسجيل مستخدم', enabled: true },
-  { id: 'content_interaction', name: 'تفاعل مع محتوى', enabled: false },
-  { id: 'product_created', name: 'إضافة منتج جديد', enabled: false },
-  { id: 'order_placed', name: 'طلب جديد', enabled: false },
-];
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Check } from 'lucide-react';
 
 interface WebhookEventTypeListProps {
   selectedEventType: string | null;
-  onSelectEventType: (eventType: string) => void;
+  onSelectEventType: (type: string) => void;
 }
 
 const WebhookEventTypeList: React.FC<WebhookEventTypeListProps> = ({
   selectedEventType,
   onSelectEventType
 }) => {
-  return (
-    <Card className="border shadow-sm">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-md">الأحداث المفعلة:</CardTitle>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          {eventTypes.map(eventType => (
-            <WebhookEventTypeItem 
-              key={eventType.id}
-              event={eventType.name} 
-              isEnabled={eventType.enabled} 
-              isSelected={selectedEventType === eventType.id}
-              onClick={() => onSelectEventType(eventType.id)}
-            />
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
+  const eventTypes = [
+    { id: 'content_created', name: 'إنشاء محتوى', description: 'يتم تشغيله عند إنشاء محتوى جديد' },
+    { id: 'content_updated', name: 'تحديث محتوى', description: 'يتم تشغيله عند تحديث محتوى موجود' },
+    { id: 'content_published', name: 'نشر محتوى', description: 'يتم تشغيله عند نشر محتوى' },
+    { id: 'user_registered', name: 'تسجيل مستخدم', description: 'يتم تشغيله عند تسجيل مستخدم جديد' },
+    { id: 'product_created', name: 'إنشاء منتج', description: 'يتم تشغيله عند إضافة منتج جديد' },
+    { id: 'content_interaction', name: 'تفاعل مع محتوى', description: 'يتم تشغيله عند تفاعل المستخدم مع المحتوى' }
+  ];
 
-interface WebhookEventTypeItemProps {
-  event: string;
-  isEnabled?: boolean;
-  isSelected?: boolean;
-  onClick?: () => void;
-}
-
-export const WebhookEventTypeItem: React.FC<WebhookEventTypeItemProps> = ({ 
-  event, 
-  isEnabled = true,
-  isSelected = false,
-  onClick
-}) => {
-  const [enabled, setEnabled] = React.useState(isEnabled);
-  
   return (
-    <div 
-      className={`flex items-center justify-between p-3 border rounded-md bg-card hover:bg-accent/50 transition-colors cursor-pointer ${isSelected ? 'ring-2 ring-beauty-purple' : ''}`}
-      onClick={onClick}
-    >
-      <span className="text-sm">{event}</span>
-      <Switch checked={enabled} onCheckedChange={setEnabled} onClick={(e) => e.stopPropagation()} />
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        {eventTypes.map((eventType) => (
+          <div
+            key={eventType.id}
+            className={`border rounded-lg p-3 cursor-pointer transition-all ${
+              selectedEventType === eventType.id
+                ? 'border-primary bg-primary/5'
+                : 'border-border hover:bg-muted/50'
+            }`}
+            onClick={() => onSelectEventType(eventType.id)}
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <h4 className="font-medium">{eventType.name}</h4>
+                <p className="text-sm text-muted-foreground mt-1">{eventType.description}</p>
+              </div>
+              {selectedEventType === eventType.id && (
+                <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                  <Check className="h-3 w-3 text-primary-foreground" />
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
