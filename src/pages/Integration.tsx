@@ -352,7 +352,7 @@ const fetchAnalytics = async () => {
                   <div className="flex items-center justify-between">
                     <h3 className="font-medium">مثال للاستخدام</h3>
                     <Button variant="ghost" className="text-xs gap-1">
-                      عرض المزيد من الأمثلة
+                      عرض المزيد من ��لأمثلة
                       <ArrowRight className="h-3 w-3" />
                     </Button>
                   </div>
@@ -423,32 +423,32 @@ const fetchAnalytics = async () => {
                     </CardHeader>
                     <CardContent className="pt-0">
                       <div className="space-y-2 max-h-60 overflow-y-auto">
-                        <WebhookEventLogItem
+                        <CustomWebhookEventLogItem
                           event="نشر محتوى" 
                           timestamp="17/04/2025 15:23:45" 
                           status="success" 
                           destination="https://example.com/webhook"
                           payload={webhookPayloadExample}
                         />
-                        <WebhookEventLogItem
+                        <CustomWebhookEventLogItem
                           event="تسجيل مستخدم" 
                           timestamp="17/04/2025 14:17:22" 
                           status="success" 
                           destination="https://example.com/webhook"
                         />
-                        <WebhookEventLogItem 
+                        <CustomWebhookEventLogItem 
                           event="تحديث محتوى" 
                           timestamp="17/04/2025 12:05:11" 
                           status="error" 
                           destination="https://example.com/webhook"
                         />
-                        <WebhookEventLogItem
+                        <CustomWebhookEventLogItem
                           event="نشر محتوى" 
                           timestamp="16/04/2025 23:41:39" 
                           status="warning" 
                           destination="https://example.com/webhook"
                         />
-                        <WebhookEventLogItem
+                        <CustomWebhookEventLogItem
                           event="إنشاء حملة إعلانية" 
                           timestamp="16/04/2025 16:22:05" 
                           status="success" 
@@ -580,7 +580,7 @@ const WebhookEventItem = ({
   );
 };
 
-const WebhookEventLogItem = ({ 
+const CustomWebhookEventLogItem = ({ 
   event, 
   timestamp, 
   status,
@@ -596,29 +596,16 @@ const WebhookEventLogItem = ({
   const normalizedStatus = status === 'warning' ? 'pending' : status;
   
   return (
-    <div className="border rounded-lg p-3 mb-2 hover:bg-muted/30 transition-colors">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className={
-            normalizedStatus === 'success' ? "bg-green-50 text-green-700 border-green-200" : 
-            normalizedStatus === 'error' ? "bg-red-50 text-red-700 border-red-200" : 
-            "bg-yellow-50 text-yellow-700 border-yellow-200"
-          }>
-            {normalizedStatus === 'success' ? 'ناجح' : normalizedStatus === 'error' ? 'فشل' : 'قيد التنفيذ'}
-          </Badge>
-          <span className="font-medium">{event}</span>
-        </div>
-        <span className="text-xs text-muted-foreground">{timestamp}</span>
-      </div>
-      {destination && (
-        <p className="mt-1 text-xs text-muted-foreground">الوجهة: {destination}</p>
-      )}
-      {payload && (
-        <div className="mt-2 p-2 bg-muted/30 rounded-md text-xs font-mono overflow-auto max-h-24">
-          {payload}
-        </div>
-      )}
-    </div>
+    <WebhookEventLogItem
+      id={timestamp}
+      event={event}
+      timestamp={timestamp}
+      status={normalizedStatus}
+      platform=""
+      details={payload ? undefined : undefined}
+      destination={destination}
+      payload={payload}
+    />
   );
 };
 

@@ -1,39 +1,40 @@
 
 import { Instagram, Facebook, Twitter, Linkedin } from 'lucide-react';
 import { WebhookEventLogItemProps } from './WebhookEventLogItem';
+import { PlatformTrend } from './PlatformCard';
 
 export const platformData = [
   {
     name: "انستغرام",
     icon: Instagram,
     posts: 124,
-    engagement: 4.8,  // Changed from string to number
+    engagement: 4.8,
     followers: '12.5K',
-    trend: 'up'  // Changed to a valid PlatformTrend value
+    trend: 'up' as PlatformTrend
   },
   {
     name: "فيسبوك",
     icon: Facebook,
     posts: 86,
-    engagement: 2.7,  // Changed from string to number
+    engagement: 2.7,
     followers: '8.3K',
-    trend: 'up'  // Changed to a valid PlatformTrend value
+    trend: 'up' as PlatformTrend
   },
   {
     name: "تويتر",
     icon: Twitter,
     posts: 210,
-    engagement: 3.1,  // Changed from string to number
+    engagement: 3.1,
     followers: '5.2K',
-    trend: 'up' 
+    trend: 'up' as PlatformTrend
   },
   {
     name: "لينكد إن",
     icon: Linkedin,
     posts: 42,
-    engagement: 1.9,  // Changed from string to number
+    engagement: 1.9,
     followers: '3.6K',
-    trend: 'down'
+    trend: 'down' as PlatformTrend
   }
 ];
 
@@ -99,14 +100,16 @@ export const mockWebhookEvents: WebhookEventLogItemProps[] = [
     status: 'success',
     platform: 'instagram',
     timestamp: '2025-04-17T15:23:45',
-    details: 'تم نشر المحتوى بنجاح على منصة Instagram'
+    details: 'تم نشر المحتوى بنجاح على منصة Instagram',
+    destination: 'https://example.com/webhook'
   },
   {
     id: '2', 
     event: 'تسجيل مستخدم',
     status: 'success',
     platform: 'facebook',
-    timestamp: '2025-04-17T14:17:22'
+    timestamp: '2025-04-17T14:17:22',
+    destination: 'https://example.com/webhook'
   },
   {
     id: '3',
@@ -114,20 +117,23 @@ export const mockWebhookEvents: WebhookEventLogItemProps[] = [
     status: 'error',
     platform: 'twitter',
     timestamp: '2025-04-17T12:05:11',
-    details: 'فشل تحديث المحتوى بسبب خطأ في الاتصال'
+    details: 'فشل تحديث المحتوى بسبب خطأ في الاتصال',
+    destination: 'https://example.com/webhook'
   },
   {
     id: '4',
     event: 'نشر محتوى',
     status: 'pending',
     platform: 'linkedin',
-    timestamp: '2025-04-16T23:41:39'
+    timestamp: '2025-04-16T23:41:39',
+    destination: 'https://example.com/webhook'
   },
   {
     id: '5',
     event: 'إنشاء حملة إعلانية',
     status: 'success',
     platform: 'instagram',
-    timestamp: '2025-04-16T16:22:05'
+    timestamp: '2025-04-16T16:22:05',
+    destination: 'https://example.com/webhook'
   }
 ];
