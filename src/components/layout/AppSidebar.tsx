@@ -13,6 +13,7 @@ import SidebarNavContent from "./sidebar/SidebarContent";
 import { Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CustomSidebarHeader from "./sidebar/SidebarHeader";
+import { cn } from "@/lib/utils";
 
 const AppSidebar = () => {
   const { i18n } = useTranslation();
