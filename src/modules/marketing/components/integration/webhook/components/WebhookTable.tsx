@@ -19,9 +19,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Copy, MoreHorizontal, Trash2 } from 'lucide-react';
+import { Copy, MoreHorizontal, Trash2, Link2, Layers } from 'lucide-react';
 import { WebhookItem } from '../types';
 import { eventTypes } from '../constants';
+import { Link } from 'react-router-dom';
+import { useToast } from '@/components/ui/use-toast';
 
 interface WebhookTableProps {
   webhooks: WebhookItem[];
@@ -38,10 +40,21 @@ export const WebhookTable = ({
   onToggleState,
   onCopySecret,
 }: WebhookTableProps) => {
+  const { toast } = useToast();
+  
   const getEventNames = (eventIds: string[]) => {
     return eventIds
       .map(id => eventTypes.find(event => event.id === id)?.name || id)
       .join('، ');
+  };
+  
+  // معالجة النقر على روابط التكامل
+  const handleIntegrationClick = (type: string, id: string) => {
+    // هنا يمكن تطبيق منطق إضافي للتعامل مع الروابط مثل تخزين البيانات في الجلسة
+    toast({
+      title: "تم النقر على رابط التكامل",
+      description: `نوع التكامل: ${type}، المعرف: ${id}`,
+    });
   };
 
   return (
@@ -54,6 +67,7 @@ export const WebhookTable = ({
           <TableHead>الأحداث</TableHead>
           <TableHead>الحالة</TableHead>
           <TableHead>آخر تنفيذ</TableHead>
+          <TableHead>التكاملات</TableHead>
           <TableHead className="w-[100px]"></TableHead>
         </TableRow>
       </TableHeader>
@@ -72,7 +86,7 @@ export const WebhookTable = ({
             <TableCell>
               <Badge 
                 variant="outline" 
-                className="bg-green-100 text-green-800"
+                className={webhook.active ? "bg-green-100 text-green-800" : "bg-slate-100 text-slate-800"}
               >
                 {webhook.active ? 'نشط' : 'معطل'}
               </Badge>
@@ -81,6 +95,32 @@ export const WebhookTable = ({
               {webhook.lastTriggered 
                 ? new Date(webhook.lastTriggered).toLocaleDateString('ar-EG') 
                 : 'لم يتم التشغيل بعد'}
+            </TableCell>
+            <TableCell>
+              <div className="flex gap-1">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-8 w-8 p-0" 
+                  asChild
+                  title="ربط بالمنشورات"
+                >
+                  <Link to={`/marketing/posts?webhook=${webhook.id}`} onClick={() => handleIntegrationClick('posts', webhook.id)}>
+                    <Link2 className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-8 w-8 p-0"
+                  asChild
+                  title="ربط بالحملات"
+                >
+                  <Link to={`/marketing/campaigns?webhook=${webhook.id}`} onClick={() => handleIntegrationClick('campaigns', webhook.id)}>
+                    <Layers className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
             </TableCell>
             <TableCell>
               <DropdownMenu>
