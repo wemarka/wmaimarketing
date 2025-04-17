@@ -95,69 +95,53 @@ const Profile = () => {
                     onTabChange={handleTabChange}
                   />
                   
-                  <ProfileContent
-                    profileData={profileData}
-                    userEmail={user?.email || ""}
-                    userInitials={getUserInitials}
-                    onUpdateProfile={handleUpdateProfile}
-                    onChangePassword={onChangePassword}
-                    onLogoutOtherSessions={onLogoutOtherSessions}
-                    onAvatarChange={updateAvatarUrl}
-                    updating={updating}
-                    changingPassword={changingPassword}
-                    loggingOut={loggingOut}
-                    activities={activities}
-                    activitiesLoading={activitiesLoading}
-                    activeTab={activeTab}
-                    onTabChange={handleTabChange}
-                  >
-                    <TabsContent value="personal">
-                      <motion.div 
-                        className="space-y-6"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <PersonalInfoCard 
-                          profileData={profileData}
-                          userEmail={user?.email || ""}
-                          onUpdateProfile={handleUpdateProfile}
-                          isUpdating={updating}
-                        />
-                      </motion.div>
-                    </TabsContent>
-                    
-                    <TabsContent value="security">
-                      <motion.div 
-                        className="space-y-6"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <AccountSecurityCard />
-                        <PasswordManagementCard 
-                          onChangePassword={onChangePassword}
-                          isChangingPassword={changingPassword}
-                          onLogoutOtherSessions={onLogoutOtherSessions}
-                          loggingOut={loggingOut}
-                        />
-                        <SessionsInfo />
-                      </motion.div>
-                    </TabsContent>
-                    
-                    <TabsContent value="activity">
-                      <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <ActivityLog 
-                          activities={activities} 
-                          isLoading={activitiesLoading}
-                        />
-                      </motion.div>
-                    </TabsContent>
-                  </ProfileContent>
+                  {/* Fix: Instead of passing children to ProfileContent, we'll use TabsContent components directly */}
+                  <TabsContent value="personal">
+                    <motion.div 
+                      className="space-y-6"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <PersonalInfoCard 
+                        profileData={profileData}
+                        userEmail={user?.email || ""}
+                        onUpdateProfile={handleUpdateProfile}
+                        isUpdating={updating}
+                      />
+                    </motion.div>
+                  </TabsContent>
+                  
+                  <TabsContent value="security">
+                    <motion.div 
+                      className="space-y-6"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <AccountSecurityCard />
+                      <PasswordManagementCard 
+                        onChangePassword={onChangePassword}
+                        isChangingPassword={changingPassword}
+                        onLogoutOtherSessions={onLogoutOtherSessions}
+                        loggingOut={loggingOut}
+                      />
+                      <SessionsInfo />
+                    </motion.div>
+                  </TabsContent>
+                  
+                  <TabsContent value="activity">
+                    <motion.div 
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <ActivityLog 
+                        activities={activities} 
+                        isLoading={activitiesLoading}
+                      />
+                    </motion.div>
+                  </TabsContent>
                 </Tabs>
               </div>
             </div>
