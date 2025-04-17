@@ -17,7 +17,7 @@ interface Post {
     name: string;
     avatar?: string;
   };
-  platform: "instagram" | "facebook" | "tiktok";
+  platform: "instagram" | "facebook" | "tiktok" | string;
   createdAt: string;
   scheduledFor?: string;
 }

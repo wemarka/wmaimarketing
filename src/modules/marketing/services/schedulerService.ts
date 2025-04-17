@@ -2,7 +2,11 @@
 import { supabase } from "@/integrations/supabase/client";
 import { SchedulePostParams, PostResponse } from "../types/socialTypes";
 
-export { SchedulePostParams };
+// Export the type properly
+export type { SchedulePostParams };
+
+// Import the content generation functions from contentService
+export { generateContentSuggestion, generateHashtags } from "./contentService";
 
 export const schedulePost = async (params: SchedulePostParams): Promise<PostResponse> => {
   try {

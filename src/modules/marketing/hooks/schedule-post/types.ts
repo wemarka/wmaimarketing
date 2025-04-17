@@ -1,5 +1,5 @@
 
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, ChangeEvent } from "react";
 
 // Define the state types
 export interface UseSchedulePostState {
@@ -68,6 +68,7 @@ export interface UseSchedulePostReturn extends UseSchedulePostState {
   handleAccountToggle: (accountId: string) => void;
   toggleCrossPosting: () => void;
   handleMediaChange: (files: File[]) => void;
+  handleFileInputChange: (event: ChangeEvent<HTMLInputElement>) => void; // Add this line
   removeMedia: (index: number) => void;
   handleGenerateSuggestion: () => Promise<void>;
   handleSubmit: () => Promise<void>;

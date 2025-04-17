@@ -1,7 +1,7 @@
 
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { generateContentSuggestion, generateHashtags } from "../../services/schedulerService";
+import { generateContentSuggestion, generateHashtags } from "../../services/contentService";
 import { UseSchedulePostStateWithSetters } from "./types";
 
 export const useContentGeneration = (

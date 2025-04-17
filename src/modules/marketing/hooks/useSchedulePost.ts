@@ -81,7 +81,7 @@ export const useSchedulePost = (): UseSchedulePostReturn => {
     handleAccountToggle,
     toggleCrossPosting,
     handleMediaChange,
-    handleFileInputChange, // Add the adapter function
+    handleFileInputChange,
     removeMedia,
     handleGenerateSuggestion,
     handleSubmit,
