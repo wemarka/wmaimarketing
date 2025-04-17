@@ -1,167 +1,141 @@
 
-import { useState, useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from 'sonner';
 
 export interface PendingPost {
   id: string;
   title: string;
   content: string;
-  platform: "instagram" | "facebook" | "tiktok";
-  createdAt: string;
-  scheduledFor?: string;
-  author: {
-    name: string;
-    avatar?: string;
+  platform: string;
+  scheduled_at: string;
+  media_url: string[];
+  status: string;
+  user_id: string;
+  created_at: string;
+  profile?: {
+    first_name: string | null;
+    last_name: string | null;
+    avatar_url: string | null;
   };
 }
 
 export const usePendingPosts = () => {
+  const { user } = useAuth();
   const [posts, setPosts] = useState<PendingPost[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchPendingPosts = useCallback(async () => {
+    if (!user) return;
+    
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const { data, error: fetchError } = await supabase
+        .from('posts')
+        .select(`
+          *,
+          profile:profiles(first_name, last_name, avatar_url)
+        `)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+      
+      if (fetchError) throw fetchError;
+      
+      // Safely handle profile data typing
+      const processedPosts = data.map(post => {
+        // Check if profile exists and extract safely
+        let profileData = null;
+        if (post.profile) {
+          const profile = post.profile as any;
+          profileData = {
+            first_name: profile.first_name || null,
+            last_name: profile.last_name || null,
+            avatar_url: profile.avatar_url || null
+          };
+        }
+        
+        return {
+          ...post,
+          profile: profileData
+        };
+      });
+      
+      setPosts(processedPosts);
+    } catch (err) {
+      console.error("Error fetching pending posts:", err);
+      setError("فشل في تحميل المنشورات المعلقة");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user]);
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setLoading(true);
-        
-        // Get the current user
-        const { data: userData, error: userError } = await supabase.auth.getUser();
-        
-        if (userError || !userData.user) {
-          throw new Error("Authentication error");
-        }
-        
-        // Fetch pending posts from the database
-        const { data, error } = await supabase
-          .from('posts')
-          .select(`
-            id, 
-            title, 
-            content, 
-            platform, 
-            created_at,
-            scheduled_at,
-            user_id
-          `)
-          .eq('status', 'pending')
-          .order('created_at', { ascending: false });
-        
-        if (error) throw error;
+    fetchPendingPosts();
+    
+    // Set up a real-time subscription for posts updates
+    if (user) {
+      const postsSubscription = supabase
+        .channel('pending-posts-changes')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'posts',
+          filter: `status=eq.pending`
+        }, () => {
+          fetchPendingPosts();
+        })
+        .subscribe();
+      
+      return () => {
+        supabase.removeChannel(postsSubscription);
+      };
+    }
+  }, [fetchPendingPosts, user]);
 
-        // Create a map to store user profile info
-        const userProfileMap = new Map<string, { name: string, avatar?: string }>();
-        const userIds = [...new Set(data.map(post => post.user_id))];
-        
-        // Fetch profiles for all unique user IDs
-        if (userIds.length > 0) {
-          const { data: profilesData } = await supabase
-            .from('profiles')
-            .select('id, first_name, last_name, avatar_url')
-            .in('id', userIds);
-            
-          if (profilesData) {
-            profilesData.forEach(profile => {
-              userProfileMap.set(profile.id, {
-                name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'مستخدم',
-                avatar: profile.avatar_url
-              });
-            });
-          }
-        }
-        
-        // Map the data to the expected format
-        const pendingPosts: PendingPost[] = data.map(post => {
-          // Get user profile info from the map or use default
-          const authorInfo = userProfileMap.get(post.user_id) || {
-            name: 'مستخدم',
-            avatar: undefined
-          };
-          
-          return {
-            id: post.id,
-            title: post.title,
-            content: post.content,
-            platform: post.platform as "instagram" | "facebook" | "tiktok",
-            createdAt: post.created_at,
-            scheduledFor: post.scheduled_at,
-            author: authorInfo
-          };
-        });
-        
-        setPosts(pendingPosts);
-      } catch (error) {
-        console.error("Error fetching pending posts:", error);
-        toast({
-          title: "خطأ في جلب البيانات",
-          description: "تعذر تحميل المنشورات المعلقة",
-          variant: "destructive",
-        });
-        setPosts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, [toast]);
-
-  const handleApprove = async (id: string) => {
+  const approvePost = async (postId: string) => {
     try {
       const { error } = await supabase
         .from('posts')
-        .update({ 
-          status: 'scheduled',
-          updated_at: new Date().toISOString() 
-        })
-        .eq('id', id);
-        
+        .update({ status: 'scheduled' })
+        .eq('id', postId);
+      
       if (error) throw error;
       
-      setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
-      
-      toast({
-        title: "تمت الموافقة",
-        description: `تمت الموافقة على المنشور بنجاح.`,
-      });
-    } catch (error) {
-      console.error("Error approving post:", error);
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء الموافقة على المنشور",
-        variant: "destructive",
-      });
+      toast.success("تمت الموافقة على المنشور");
+      fetchPendingPosts();
+    } catch (err) {
+      console.error("Error approving post:", err);
+      toast.error("فشل في الموافقة على المنشور");
     }
   };
 
-  const handleReject = async (id: string) => {
+  const rejectPost = async (postId: string) => {
     try {
       const { error } = await supabase
         .from('posts')
-        .update({ 
-          status: 'rejected',
-          updated_at: new Date().toISOString() 
-        })
-        .eq('id', id);
-        
+        .update({ status: 'rejected' })
+        .eq('id', postId);
+      
       if (error) throw error;
       
-      setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
-      
-      toast({
-        title: "تم الرفض",
-        description: `تم رفض المنشور.`,
-      });
-    } catch (error) {
-      console.error("Error rejecting post:", error);
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء رفض المنشور",
-        variant: "destructive",
-      });
+      toast.success("تم رفض المنشور");
+      fetchPendingPosts();
+    } catch (err) {
+      console.error("Error rejecting post:", err);
+      toast.error("فشل في رفض المنشور");
     }
   };
 
-  return { posts, loading, handleApprove, handleReject };
+  return { 
+    posts, 
+    isLoading, 
+    error, 
+    refreshPosts: fetchPendingPosts,
+    approvePost,
+    rejectPost
+  };
 };

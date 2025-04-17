@@ -1,7 +1,46 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { BaseService } from "./BaseService";
 import { toast } from "@/components/ui/use-toast";
-import { SocialAccount, ConnectAccountParams, SchedulePostParams, PlatformStats } from "../types/socialTypes";
+import { SchedulePostParams } from "../types/socialTypes";
+
+// Define missing types
+export interface SocialAccount {
+  id: string;
+  platform: string;
+  account_name: string;
+  profile_name: string;
+  status: "connected" | "pending" | "error" | "disconnected";
+  user_id: string;
+  insights?: {
+    followers: number;
+    engagement: number;
+    postCount: number;
+  };
+}
+
+export interface ConnectAccountParams {
+  platform: string;
+  accountName: string;
+  profileName: string;
+  oauthCode?: string;
+}
+
+export interface PlatformStats {
+  platform: string;
+  posts: number;
+  engagement: number;
+  followers: number;
+  growth: number;
+  lastUpdated: string;
+}
+
+export interface PostResponse {
+  status: "success" | "error";
+  platform: string;
+  postId?: string;
+  error?: string;
+}
 
 // Class-based implementation of social integration service
 export class SocialIntegrationService extends BaseService {

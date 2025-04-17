@@ -1,150 +1,207 @@
 
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 
 export interface Post {
   id: string;
   title: string;
+  content: string;
   platform: string;
   scheduled_at: string;
-  media_url: string[] | null;
+  published_at: string | null;
+  media_url: string[];
+  status: string;
+  user_id: string;
+  created_at: string;
+}
+
+export interface Profile {
+  id: string;
+  first_name: string | null;
+  last_name: string | null;
+  avatar_url: string | null;
+}
+
+export interface PostWithMeta extends Post {
+  profile?: Profile;
+  platform_data?: {
+    name: string;
+    icon: string;
+    color: string;
+  };
+  social_account?: {
+    id: string;
+    platform: string;
+    account_name: string;
+    profile_name: string;
+    insights: {
+      followers: number;
+      engagement: number;
+      postCount: number;
+    };
+  };
 }
 
 export const useUpcomingPosts = () => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
   const { user } = useAuth();
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState<PostWithMeta[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Fetch the upcoming posts
-  useEffect(() => {
-    const fetchPosts = async () => {
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const now = new Date().toISOString();
-
-        const { data, error } = await supabase
-          .from("posts")
-          .select("id, title, platform, scheduled_at, media_url")
-          .eq("user_id", user.id)
-          .eq("status", "scheduled")
-          .gt("scheduled_at", now)
-          .order("scheduled_at", { ascending: true })
-          .limit(4);
-
-        if (error) throw error;
-
-        setPosts(data || []);
-      } catch (error) {
-        console.error("Error fetching upcoming posts:", error);
-        setPosts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, [user]);
-
-  // Handle editing a post
-  const handleEdit = (id: string) => {
-    toast({
-      title: "تحرير المنشور",
-      description: `جاري فتح المنشور للتحرير`
-    });
-    
-    logActivity("content_edit", `تم فتح منشور للتحرير`);
-    
-    navigate(`/schedule-post?edit=${id}`);
-  };
-
-  // Handle deleting a post
-  const handleDelete = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from("posts")
-        .update({ status: "deleted" })
-        .eq("id", id);
-
-      if (error) throw error;
-
-      setPosts((prevPosts) => prevPosts.filter(post => post.id !== id));
-      
-      logActivity("content_delete", `تم حذف منشور مجدول`);
-
-      toast({
-        title: "تم الحذف",
-        description: `تم حذف المنشور بنجاح`
-      });
-    } catch (error) {
-      console.error("Error deleting post:", error);
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء حذف المنشور",
-        variant: "destructive"
-      });
+  const platformData = {
+    instagram: {
+      name: "Instagram",
+      icon: "instagram",
+      color: "#E1306C"
+    },
+    facebook: {
+      name: "Facebook",
+      icon: "facebook",
+      color: "#1877F2"
+    },
+    twitter: {
+      name: "Twitter",
+      icon: "twitter",
+      color: "#1DA1F2"
+    },
+    linkedin: {
+      name: "LinkedIn",
+      icon: "linkedin",
+      color: "#0A66C2"
+    },
+    youtube: {
+      name: "YouTube",
+      icon: "youtube",
+      color: "#FF0000"
+    },
+    tiktok: {
+      name: "TikTok",
+      icon: "tiktok",
+      color: "#000000"
+    },
+    pinterest: {
+      name: "Pinterest",
+      icon: "pinterest",
+      color: "#E60023"
     }
   };
 
-  // Log activity to user_activity_log
-  const logActivity = async (activity_type: string, description: string) => {
+  const fetchPosts = useCallback(async () => {
     if (!user) return;
     
     try {
-      await supabase.from("user_activity_log").insert({
-        user_id: user.id,
-        activity_type,
-        description
+      setIsLoading(true);
+      setError(null);
+      
+      // Fetch posts scheduled for the future
+      const { data: postsData, error: postsError } = await supabase
+        .from('posts')
+        .select(`
+          *,
+          profile:profiles(id, first_name, last_name, avatar_url),
+          social_account:social_accounts(id, platform, account_name, profile_name, insights)
+        `)
+        .eq('user_id', user.id)
+        .eq('status', 'scheduled')
+        .gt('scheduled_at', new Date().toISOString())
+        .order('scheduled_at', { ascending: true })
+        .limit(10);
+      
+      if (postsError) throw postsError;
+      
+      // Process and transform data
+      const processedPosts = postsData.map(post => {
+        const profile = post.profile as Profile;
+        const socialAccount = post.social_account as any;
+        
+        // Add platform metadata
+        const platform = post.platform?.toLowerCase();
+        const platformMeta = platformData[platform as keyof typeof platformData] || {
+          name: platform,
+          icon: "globe",
+          color: "#718096"
+        };
+        
+        // Check if social_account exists and process insights safely
+        let processedSocialAccount = null;
+        if (socialAccount) {
+          let insights = { 
+            followers: 0, 
+            engagement: 0, 
+            postCount: 0 
+          };
+          
+          // Check if insights exist and handle both string (JSON) and object formats
+          if (socialAccount.insights) {
+            try {
+              if (typeof socialAccount.insights === 'string') {
+                // Parse JSON string if needed
+                const parsedInsights = JSON.parse(socialAccount.insights);
+                insights.followers = Number(parsedInsights.followers || 0);
+                insights.engagement = Number(parsedInsights.engagement || 0);
+                insights.postCount = Number(parsedInsights.postCount || 0);
+              } else {
+                // Handle as object
+                insights.followers = Number(socialAccount.insights.followers || 0);
+                insights.engagement = Number(socialAccount.insights.engagement || 0);
+                insights.postCount = Number(socialAccount.insights.postCount || 0);
+              }
+            } catch (e) {
+              console.error("Error processing insights:", e);
+            }
+          }
+          
+          processedSocialAccount = {
+            ...socialAccount,
+            insights
+          };
+        }
+        
+        return {
+          ...post,
+          profile,
+          platform_data: platformMeta,
+          social_account: processedSocialAccount
+        };
       });
-    } catch (error) {
-      console.error("Error logging activity:", error);
+      
+      setPosts(processedPosts as PostWithMeta[]);
+      
+    } catch (err) {
+      console.error("Error fetching upcoming posts:", err);
+      setError("فشل في تحميل المنشورات القادمة");
+    } finally {
+      setIsLoading(false);
     }
+  }, [user]);
+
+  useEffect(() => {
+    fetchPosts();
+    
+    // Set up a real-time subscription for posts updates
+    if (user) {
+      const postsSubscription = supabase
+        .channel('table-db-changes')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'posts',
+          filter: `user_id=eq.${user.id}`
+        }, () => {
+          fetchPosts();
+        })
+        .subscribe();
+      
+      return () => {
+        supabase.removeChannel(postsSubscription);
+      };
+    }
+  }, [fetchPosts, user]);
+
+  const refreshPosts = () => {
+    fetchPosts();
   };
 
-  return {
-    posts,
-    loading,
-    handleEdit,
-    handleDelete
-  };
-};
-
-// Utility functions
-export const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
-  if (date.toDateString() === now.toDateString()) {
-    return `اليوم، ${date.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}`;
-  }
-  
-  if (date.toDateString() === tomorrow.toDateString()) {
-    return `غداً، ${date.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}`;
-  }
-  
-  return date.toLocaleDateString('ar-SA', {
-    day: 'numeric',
-    month: 'numeric'
-  }) + `، ${date.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}`;
-};
-
-export const getAudienceSize = (platform: string): string => {
-  // Non-async version that doesn't return a Promise
-  // This provides default values instead of making an async request
-  switch (platform.toLowerCase()) {
-    case 'instagram': return "15.2K";
-    case 'facebook': return "8.7K";
-    case 'tiktok': return "12.4K";
-    default: return "5K";
-  }
+  return { posts, isLoading, error, refreshPosts };
 };

@@ -1,136 +1,160 @@
 
-import { useState, useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from 'sonner';
 
 export interface Campaign {
   id: string;
-  title: string;
+  name: string;
   description: string;
-  status: "active" | "completed" | "planned";
-  progress: number;
+  start_date: string;
+  end_date: string;
   budget: number;
-  spent: number;
-  startDate: string;
-  endDate: string;
-  target: string;
-  audience: string;
-  owner: {
-    name: string;
-    avatar?: string;
+  status: 'active' | 'draft' | 'completed' | 'cancelled';
+  target_audience: string[];
+  user_id: string;
+  creator?: {
+    first_name: string | null;
+    last_name: string | null;
+    avatar_url: string | null;
   };
+  posts_count?: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export const useCampaigns = () => {
+  const { user } = useAuth();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
-  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchCampaigns = async () => {
-      try {
-        setLoading(true);
-        
-        // Get the current user
-        const { data: userData, error: userError } = await supabase.auth.getUser();
-        
-        if (userError || !userData.user) {
-          throw new Error("Authentication error");
+  const fetchCampaigns = useCallback(async () => {
+    if (!user) return;
+    
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const { data, error: fetchError } = await supabase
+        .from('campaigns')
+        .select(`
+          *,
+          creator:profiles(first_name, last_name, avatar_url),
+          posts_count:posts(count)
+        `)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      
+      if (fetchError) throw fetchError;
+      
+      // Process and transform data
+      const processedCampaigns = data.map(campaign => {
+        // Safely handle creator data typing
+        let creatorData = null;
+        if (campaign.creator) {
+          const creator = campaign.creator as any;
+          creatorData = {
+            first_name: creator.first_name || null,
+            last_name: creator.last_name || null,
+            avatar_url: creator.avatar_url || null
+          };
         }
         
-        // Fetch campaigns from the database
-        const { data, error } = await supabase
-          .from('campaigns')
-          .select(`
-            id, 
-            name, 
-            description, 
-            status, 
-            budget,
-            start_date,
-            end_date,
-            target_audience
-          `)
-          .eq('user_id', userData.user.id)
-          .order('created_at', { ascending: false });
+        // Handle posts count
+        const postsCount = campaign.posts_count as unknown as { count: number } | null;
         
-        if (error) throw error;
-
-        // Fetch user profile separately
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('first_name, last_name, avatar_url')
-          .eq('id', userData.user.id)
-          .single();
-          
-        // To calculate progress and spent amounts (this would come from real data in a production app)
-        const calculateProgress = (startDate: string, endDate: string): number => {
-          const start = new Date(startDate).getTime();
-          const end = new Date(endDate).getTime();
-          const now = Date.now();
-          
-          if (now < start) return 0;
-          if (now > end) return 100;
-          
-          return Math.round(((now - start) / (end - start)) * 100);
+        return {
+          ...campaign,
+          creator: creatorData,
+          posts_count: postsCount ? postsCount.count : 0
         };
-        
-        const calculateSpent = (budget: number, progress: number): number => {
-          return Math.round((budget * progress) / 100);
-        };
-        
-        // Map the data to the expected format
-        const campaignsData: Campaign[] = data.map(camp => {
-          const progress = calculateProgress(camp.start_date, camp.end_date);
-          const spent = calculateSpent(camp.budget, progress);
-          
-          // Set default owner info
-          let ownerName = 'مستخدم';
-          let ownerAvatar: string | undefined = undefined;
-          
-          // If profile data exists, use it
-          if (profileData && !profileError) {
-            ownerName = `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim() || 'مستخدم';
-            ownerAvatar = profileData.avatar_url;
-          }
-          
-          return {
-            id: camp.id,
-            title: camp.name,
-            description: camp.description,
-            status: camp.status as "active" | "completed" | "planned",
-            progress,
-            budget: camp.budget,
-            spent,
-            startDate: camp.start_date,
-            endDate: camp.end_date,
-            target: camp.target_audience ? camp.target_audience.join(', ') : '',
-            audience: camp.target_audience ? camp.target_audience.join(', ') : '',
-            owner: {
-              name: ownerName,
-              avatar: ownerAvatar
-            }
-          };
-        });
-        
-        setCampaigns(campaignsData);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching campaigns:", err);
-        setError(err instanceof Error ? err : new Error("Unknown error occurred"));
-        toast({
-          title: "خطأ في جلب البيانات",
-          description: "تعذر تحميل بيانات الحملات",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+      });
+      
+      setCampaigns(processedCampaigns);
+    } catch (err) {
+      console.error("Error fetching campaigns:", err);
+      setError("فشل في تحميل الحملات");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user]);
 
+  useEffect(() => {
     fetchCampaigns();
-  }, [toast]);
+    
+    // Set up a real-time subscription for campaign updates
+    if (user) {
+      const campaignsSubscription = supabase
+        .channel('campaigns-changes')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'campaigns',
+          filter: `user_id=eq.${user.id}`
+        }, () => {
+          fetchCampaigns();
+        })
+        .subscribe();
+      
+      return () => {
+        supabase.removeChannel(campaignsSubscription);
+      };
+    }
+  }, [fetchCampaigns, user]);
 
-  return { campaigns, loading, error };
+  const createCampaign = async (campaignData: Omit<Campaign, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'creator' | 'posts_count'>) => {
+    if (!user) {
+      toast.error("يجب تسجيل الدخول لإنشاء حملة");
+      return null;
+    }
+    
+    try {
+      const { data, error } = await supabase
+        .from('campaigns')
+        .insert({
+          ...campaignData,
+          user_id: user.id
+        })
+        .select()
+        .single();
+      
+      if (error) throw error;
+      
+      toast.success("تم إنشاء الحملة بنجاح");
+      fetchCampaigns();
+      return data;
+    } catch (err) {
+      console.error("Error creating campaign:", err);
+      toast.error("فشل في إنشاء الحملة");
+      return null;
+    }
+  };
+
+  const updateCampaignStatus = async (campaignId: string, status: Campaign['status']) => {
+    try {
+      const { error } = await supabase
+        .from('campaigns')
+        .update({ status })
+        .eq('id', campaignId);
+      
+      if (error) throw error;
+      
+      toast.success("تم تحديث حالة الحملة");
+      fetchCampaigns();
+    } catch (err) {
+      console.error("Error updating campaign status:", err);
+      toast.error("فشل في تحديث حالة الحملة");
+    }
+  };
+
+  return { 
+    campaigns, 
+    isLoading, 
+    error, 
+    refreshCampaigns: fetchCampaigns,
+    createCampaign,
+    updateCampaignStatus
+  };
 };
