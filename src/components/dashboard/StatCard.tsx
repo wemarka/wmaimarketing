@@ -11,7 +11,8 @@ import {
   Percent, 
   DollarSign, 
   Users, 
-  Hash
+  Hash,
+  Sparkles
 } from "lucide-react";
 
 interface StatCardProps {
@@ -25,6 +26,8 @@ interface StatCardProps {
   format?: "number" | "percentage" | "currency" | "none";
   animate?: boolean;
   delay?: number;
+  featured?: boolean;
+  animation?: "fade" | "slide-up" | "slide-right" | "slide-left" | "scale" | "bounce";
 }
 
 const StatCard = ({
@@ -37,7 +40,9 @@ const StatCard = ({
   trend = "week",
   format = "none",
   animate = true,
-  delay = 0
+  delay = 0,
+  featured = false,
+  animation = "slide-up"
 }: StatCardProps) => {
   const { t } = useTranslation();
   
@@ -61,7 +66,11 @@ const StatCard = ({
   };
 
   const cardContent = (
-    <Card className={cn("overflow-hidden hover:shadow-md transition-all bg-card border rounded-lg", className)}>
+    <Card className={cn(
+      "overflow-hidden hover:shadow-md transition-all bg-card border rounded-lg", 
+      featured && "border-primary/20 bg-primary/5 shadow-lg",
+      className
+    )}>
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div>
@@ -81,9 +90,20 @@ const StatCard = ({
                 <span>{change} {getTrendText()}</span>
               </p>
             )}
+            {featured && (
+              <div className="mt-2 pt-2 border-t border-primary/10">
+                <span className="text-xs flex items-center gap-1 text-primary">
+                  <Sparkles className="h-3 w-3" />
+                  <span>{t("dashboard.stats.featured", "مميز")}</span>
+                </span>
+              </div>
+            )}
           </div>
           <motion.div 
-            className="bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900 p-3 rounded-lg shadow-sm"
+            className={cn(
+              "p-3 rounded-lg shadow-sm",
+              featured ? "bg-gradient-to-br from-primary/20 to-primary/5" : "bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900"
+            )}
             whileHover={{ scale: 1.05, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400, damping: 15 }}
@@ -98,9 +118,10 @@ const StatCard = ({
   if (animate) {
     return (
       <AnimateInView
-        animation="slide-up"
+        animation={animation}
         delay={delay}
         className="w-full"
+        once={true}
       >
         {cardContent}
       </AnimateInView>

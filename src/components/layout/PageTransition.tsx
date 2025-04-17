@@ -7,7 +7,7 @@ interface PageTransitionProps {
   children: React.ReactNode;
   mode?: "wait" | "sync" | "popLayout";
   initial?: boolean;
-  type?: "fade" | "slide" | "scale" | "none";
+  type?: "fade" | "slide" | "scale" | "zoom" | "slide-up" | "none";
   duration?: number;
   className?: string;
 }
@@ -39,6 +39,16 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
       animate: { opacity: 1, x: 0 },
       exit: { opacity: 0, x: -20 }
     },
+    "slide-up": {
+      initial: initial ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 },
+      animate: { opacity: 1, y: 0 },
+      exit: { opacity: 0, y: -20 }
+    },
+    zoom: {
+      initial: initial ? { opacity: 0, scale: 0.8 } : { opacity: 1, scale: 1 },
+      animate: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 300, damping: 20 } },
+      exit: { opacity: 0, scale: 1.1 }
+    },
     none: {
       initial: {},
       animate: {},
@@ -51,6 +61,8 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
     fade: { duration },
     scale: { type: "spring", stiffness: 400, damping: 30 },
     slide: { type: "spring", stiffness: 300, damping: 30 },
+    "slide-up": { type: "spring", stiffness: 350, damping: 25 },
+    zoom: { type: "spring", stiffness: 500, damping: 25, velocity: 1 },
     none: { duration: 0 }
   };
 

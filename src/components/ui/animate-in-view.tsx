@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { motion, useAnimation, Variants } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
@@ -11,7 +11,8 @@ interface AnimateInViewProps {
   duration?: number;
   once?: boolean;
   threshold?: number;
-  animation?: "fade" | "slide-up" | "slide-right" | "scale" | "none";
+  animation?: "fade" | "slide-up" | "slide-right" | "slide-left" | "scale" | "bounce" | "none";
+  distance?: number;
 }
 
 export const AnimateInView: React.FC<AnimateInViewProps> = ({
@@ -22,12 +23,13 @@ export const AnimateInView: React.FC<AnimateInViewProps> = ({
   duration = 0.5,
   once = true,
   threshold = 0.1,
-  animation = "fade"
+  animation = "fade",
+  distance = 20
 }) => {
   const controls = useAnimation();
-  const [ref, inView] = useInView({ 
+  const [ref, inView] = useInView({
     threshold,
-    triggerOnce: once 
+    triggerOnce: once
   });
 
   // Animation variants
@@ -43,7 +45,7 @@ export const AnimateInView: React.FC<AnimateInViewProps> = ({
       }
     },
     "slide-up": {
-      hidden: { opacity: 0, y: 20 },
+      hidden: { opacity: 0, y: distance },
       visible: { 
         opacity: 1, 
         y: 0,
@@ -57,7 +59,21 @@ export const AnimateInView: React.FC<AnimateInViewProps> = ({
       }
     },
     "slide-right": {
-      hidden: { opacity: 0, x: -20 },
+      hidden: { opacity: 0, x: -distance },
+      visible: { 
+        opacity: 1, 
+        x: 0,
+        transition: {
+          duration,
+          delay,
+          type: "spring",
+          stiffness: 300,
+          damping: 30
+        }
+      }
+    },
+    "slide-left": {
+      hidden: { opacity: 0, x: distance },
       visible: { 
         opacity: 1, 
         x: 0,
@@ -81,6 +97,20 @@ export const AnimateInView: React.FC<AnimateInViewProps> = ({
           type: "spring",
           stiffness: 300,
           damping: 30
+        }
+      }
+    },
+    bounce: {
+      hidden: { opacity: 0, y: distance },
+      visible: { 
+        opacity: 1, 
+        y: 0,
+        transition: {
+          duration,
+          delay,
+          type: "spring",
+          stiffness: 400,
+          damping: 8
         }
       }
     },
