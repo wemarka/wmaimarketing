@@ -144,23 +144,26 @@ export const useUpcomingPosts = () => {
         // Check if profile exists and handle it safely
         if (post.profile && typeof post.profile === 'object' && !('error' in post.profile)) {
           profileData = {
-            id: post.profile.id || '',
-            first_name: post.profile.first_name,
-            last_name: post.profile.last_name,
-            avatar_url: post.profile.avatar_url
+            id: post.profile?.id || '',
+            first_name: post.profile?.first_name || null,
+            last_name: post.profile?.last_name || null,
+            avatar_url: post.profile?.avatar_url || null
           };
         }
         
         // Add platform metadata
         const platform = post.platform?.toLowerCase();
-        const platformMeta = platformData[platform as keyof typeof platformData] || {
-          name: platform,
-          icon: "globe",
-          color: "#718096"
-        };
+        const platformMeta = platform && platform in platformData 
+          ? platformData[platform as keyof typeof platformData] 
+          : {
+              name: platform || 'Unknown',
+              icon: "globe",
+              color: "#718096"
+          };
         
         // Check if social_account exists and process insights safely
-        let processedSocialAccount = null;
+        let processedSocialAccount = undefined;
+        
         if (post.social_account && typeof post.social_account === 'object' && !('error' in post.social_account)) {
           let insights = { 
             followers: 0, 
@@ -169,7 +172,7 @@ export const useUpcomingPosts = () => {
           };
           
           // Check if insights exist and handle both string (JSON) and object formats
-          if (post.social_account.insights) {
+          if (post.social_account?.insights) {
             try {
               if (typeof post.social_account.insights === 'string') {
                 // Parse JSON string if needed
@@ -194,12 +197,15 @@ export const useUpcomingPosts = () => {
           };
         }
         
-        return {
+        // Construct the final post object safely
+        const processedPost: PostWithMeta = {
           ...post,
           profile: profileData,
           platform_data: platformMeta,
           social_account: processedSocialAccount
-        } as PostWithMeta;
+        };
+        
+        return processedPost;
       });
       
       setPosts(processedPosts);
@@ -235,7 +241,7 @@ export const useUpcomingPosts = () => {
     }
   }, [fetchPosts, user]);
   
-  // Add mock edit and delete handlers for the component to use
+  // Add handlers for the component to use
   const handleEdit = (id: string) => {
     console.log("Edit post:", id);
     // Implement edit functionality

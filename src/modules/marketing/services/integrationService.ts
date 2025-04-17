@@ -9,6 +9,9 @@ import {
   PostResponse 
 } from "../types/socialTypes";
 
+// Export types to be used by other modules
+export type { SocialAccount, ConnectAccountParams, PlatformStats, SchedulePostParams, PostResponse };
+
 // Get campaigns
 export const getCampaigns = async (): Promise<Campaign[]> => {
   try {

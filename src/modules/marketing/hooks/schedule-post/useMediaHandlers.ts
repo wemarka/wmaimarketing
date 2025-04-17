@@ -14,19 +14,19 @@ export const useMediaHandlers = (state: UseSchedulePostStateWithSetters) => {
     const files = Array.from(event.target.files);
     const newPreviewUrls = files.map(file => URL.createObjectURL(file));
     
-    setMediaFiles(prev => [...prev, ...files]);
-    setPreviewUrls(prev => [...prev, ...newPreviewUrls]);
+    setMediaFiles((prev: File[]) => [...prev, ...files]);
+    setPreviewUrls((prev: string[]) => [...prev, ...newPreviewUrls]);
   };
 
   const removeMedia = (index: number) => {
-    setPreviewUrls(prev => {
+    setPreviewUrls((prev: string[]) => {
       const newUrls = [...prev];
       URL.revokeObjectURL(newUrls[index]); // Prevent memory leaks
       newUrls.splice(index, 1);
       return newUrls;
     });
 
-    setMediaFiles(prev => {
+    setMediaFiles((prev: File[]) => {
       const newFiles = [...prev];
       newFiles.splice(index, 1);
       return newFiles;

@@ -8,10 +8,8 @@ import {
   getPlatformStats,
   getSuggestedPostingTimes,
   crossPostContent,
-  type SocialAccount,
-  type ConnectAccountParams,
-  type PlatformStats
 } from "../services/integrationService";
+import type { SocialAccount, ConnectAccountParams, PlatformStats } from "../types/socialTypes";
 
 export const useSocialIntegration = () => {
   const [isLoading, setIsLoading] = useState(true);

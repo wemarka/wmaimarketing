@@ -1,173 +1,161 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "@/components/layout/Layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { Helmet } from "react-helmet-async";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CalendarPlus, Clock, Settings } from "lucide-react";
+import { useSchedulePost } from "../hooks/useSchedulePost";
+import TitleSection from "../components/schedule-post/TitleSection";
 import ContentSection from "../components/schedule-post/ContentSection";
 import MediaSection from "../components/schedule-post/MediaSection";
 import SettingsSection from "../components/schedule-post/SettingsSection";
-import CrossPostSection from "../components/schedule-post/CrossPostSection";
-import { useSchedulePost } from "../hooks/useSchedulePost";
-import { Separator } from "@/components/ui/separator";
+import CampaignSection from "../components/schedule-post/CampaignSection";
+import CrossPostingSection from "../components/schedule-post/CrossPostingSection";
+import PageHeader from "@/components/layout/PageHeader";
+import AnimateInView from "@/components/ui/animate-in-view";
 
 const SchedulePost = () => {
   const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState("content");
   const {
     title,
-    setTitle,
     content,
-    setContent,
     suggestedContent,
-    setSuggestedContent,
     platform,
-    setPlatform,
     selectedDate,
-    setSelectedDate,
     selectedTime,
-    setSelectedTime,
-    isGenerating,
-    isSubmitting,
     campaigns,
     selectedCampaign,
-    setSelectedCampaign,
+    socialAccounts,
+    selectedAccounts,
     hashtags,
     previewUrls,
+    enableCrossPosting,
+    isGenerating,
+    isSubmitting,
+    
+    setTitle,
+    setContent,
+    setPlatform,
+    setSelectedDate,
+    setSelectedTime,
+    setSelectedCampaign,
+    
+    handleAccountToggle,
+    toggleCrossPosting,
     handleMediaChange,
     removeMedia,
     handleGenerateSuggestion,
     handleSubmit,
-    socialAccounts,
-    selectedAccounts,
-    enableCrossPosting,
-    toggleCrossPosting,
-    handleAccountToggle
+    resetForm
   } = useSchedulePost();
+
+  // Helper function to handle file input change events
+  const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const files = Array.from(event.target.files);
+      handleMediaChange(files);
+    }
+  };
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold">{t("scheduler.title")}</h1>
-            <p className="text-muted-foreground mt-1">{t("scheduler.subtitle")}</p>
-          </div>
-          <Button variant="outline" onClick={() => window.history.back()}>
-            {t("common.back")}
-          </Button>
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("scheduler.contentSection.title")}</CardTitle>
-                <CardDescription>
-                  {t("scheduler.contentSection.description")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <ContentSection
-                  title={title}
-                  setTitle={setTitle}
-                  content={content}
-                  setContent={setContent}
-                  suggestedContent={suggestedContent}
-                  setSuggestedContent={setSuggestedContent}
-                  hashtags={hashtags}
-                  isGenerating={isGenerating}
-                  onGenerateSuggestion={handleGenerateSuggestion}
-                />
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("scheduler.mediaSection.title")}</CardTitle>
-                <CardDescription>
-                  {t("scheduler.mediaSection.description")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <MediaSection
-                  previewUrls={previewUrls}
-                  onMediaChange={handleMediaChange}
-                  onRemoveMedia={removeMedia}
-                />
-              </CardContent>
-            </Card>
-          </div>
-          
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("scheduler.settingsSection.title")}</CardTitle>
-                <CardDescription>
-                  {t("scheduler.settingsSection.description")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <SettingsSection
-                  platform={platform}
-                  setPlatform={setPlatform}
-                  selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate}
-                  selectedTime={selectedTime}
-                  setSelectedTime={setSelectedTime}
-                  selectedCampaign={selectedCampaign}
-                  setSelectedCampaign={setSelectedCampaign}
-                  campaigns={campaigns}
-                  isSubmitting={isSubmitting}
-                  handleSubmit={handleSubmit}
-                  title={title}
-                  content={content}
-                />
-              </CardContent>
-            </Card>
+      <Helmet>
+        <title>{t("scheduler.title", "جدولة منشور")} - سيركل</title>
+      </Helmet>
+      
+      <AnimateInView animation="fade">
+        <PageHeader
+          title={t("scheduler.title", "جدولة منشور")}
+          description={t("scheduler.description", "قم بإنشاء وجدولة منشور جديد على منصات التواصل الاجتماعي.")}
+          variant="simple"
+          icon={<CalendarPlus className="w-5 h-5" />}
+        />
+      </AnimateInView>
 
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle>{t("scheduler.crossPostingSection.title")}</CardTitle>
-                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                    <Switch
-                      id="cross-posting"
-                      checked={enableCrossPosting}
-                      onCheckedChange={toggleCrossPosting}
-                      disabled={!platform}
-                    />
-                    <Label htmlFor="cross-posting">{enableCrossPosting ? t("enabled", "Enabled") : t("disabled", "Disabled")}</Label>
-                  </div>
-                </div>
-                <CardDescription>
-                  {t("scheduler.crossPostingSection.description")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {enableCrossPosting ? (
-                  <CrossPostSection
-                    accounts={socialAccounts.filter(account => account.status === "connected")}
-                    selectedAccounts={selectedAccounts}
-                    onAccountToggle={handleAccountToggle}
+      <div className="container py-6 max-w-4xl">
+        <AnimateInView animation="slide-up" delay={0.1}>
+          <Card>
+            <CardContent className="p-6">
+              <Tabs 
+                defaultValue="content" 
+                value={activeTab} 
+                onValueChange={setActiveTab}
+                className="w-full"
+              >
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="content" className="flex items-center gap-2">
+                    <span>{t("scheduler.tabs.content", "المحتوى والوسائط")}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="settings" className="flex items-center gap-2">
+                    <Settings className="h-4 w-4" />
+                    <span>{t("scheduler.tabs.settings", "الإعدادات والجدولة")}</span>
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="content" className="py-6 space-y-8">
+                  <TitleSection 
+                    title={title} 
+                    setTitle={setTitle}
                   />
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-4 text-center text-muted-foreground">
-                    <p className="mb-2">
-                      {t("scheduler.crossPostingSection.disabled")}
-                    </p>
-                    {!platform && (
-                      <p className="text-sm">
-                        {t("scheduler.crossPostingSection.selectPlatform")}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+                  
+                  <ContentSection
+                    content={content}
+                    suggestedContent={suggestedContent}
+                    setContent={setContent}
+                    isGenerating={isGenerating}
+                    onGenerateSuggestion={handleGenerateSuggestion}
+                    hashtags={hashtags}
+                  />
+                  
+                  <MediaSection
+                    previewUrls={previewUrls}
+                    onMediaChange={handleFileInputChange}
+                    onRemoveMedia={removeMedia}
+                  />
+                </TabsContent>
+
+                <TabsContent value="settings" className="py-6 space-y-8">
+                  <SettingsSection
+                    platform={platform}
+                    setPlatform={setPlatform}
+                    selectedDate={selectedDate}
+                    setSelectedDate={setSelectedDate}
+                    selectedTime={selectedTime}
+                    setSelectedTime={setSelectedTime}
+                    selectedCampaign={selectedCampaign}
+                    setSelectedCampaign={setSelectedCampaign}
+                    campaigns={campaigns}
+                    isSubmitting={isSubmitting}
+                    handleSubmit={handleSubmit}
+                    title={title}
+                    content={content}
+                  />
+                  
+                  {platform && (
+                    <>
+                      <CampaignSection
+                        campaigns={campaigns}
+                        selectedCampaign={selectedCampaign}
+                        onCampaignChange={setSelectedCampaign}
+                      />
+                      
+                      <CrossPostingSection
+                        accounts={socialAccounts}
+                        enableCrossPosting={enableCrossPosting}
+                        selectedAccounts={selectedAccounts}
+                        onToggleCrossPosting={toggleCrossPosting}
+                        onAccountToggle={(accountId, isChecked) => handleAccountToggle(accountId)}
+                      />
+                    </>
+                  )}
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </AnimateInView>
       </div>
     </Layout>
   );

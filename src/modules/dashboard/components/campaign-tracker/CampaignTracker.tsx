@@ -7,14 +7,32 @@ import CampaignItem from './CampaignItem';
 import EmptyCampaignState from './EmptyCampaignState';
 import { Skeleton } from '@/components/ui/skeleton';
 
+// Define campaign status type to match what's expected in CampaignItem
+type CampaignStatus = 'active' | 'completed' | 'planned';
+
+// Define a safe mapping function from API status to UI status
+const mapStatusToUIStatus = (status: string): CampaignStatus => {
+  switch(status) {
+    case 'active': return 'active';
+    case 'completed': return 'completed';
+    case 'draft': 
+    case 'planned': 
+    case 'cancelled': 
+    default: return 'planned';
+  }
+};
+
 const CampaignTracker = () => {
-  const { campaigns, isLoading, error } = useCampaigns();
+  const { campaigns, loading, error } = useCampaigns();
   const [filter, setFilter] = useState<'all' | 'active' | 'completed' | 'planned'>('all');
 
   // Filter campaigns based on status
   const filteredCampaigns = campaigns.filter(campaign => {
     if (filter === 'all') return true;
-    return campaign.status === filter;
+    
+    // Map the API status to our UI status options
+    const uiStatus = mapStatusToUIStatus(campaign.status);
+    return uiStatus === filter;
   });
 
   return (
@@ -24,11 +42,11 @@ const CampaignTracker = () => {
           activeFilter={filter} 
           onFilterChange={setFilter}
           campaignsCount={filteredCampaigns.length}
-          loading={isLoading}
+          loading={loading}
         />
       </CardHeader>
       <CardContent>
-        {isLoading ? (
+        {loading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="border rounded-xl p-5 space-y-3">
@@ -57,7 +75,7 @@ const CampaignTracker = () => {
                 description: campaign.description,
                 startDate: campaign.start_date,
                 endDate: campaign.end_date,
-                status: campaign.status,
+                status: mapStatusToUIStatus(campaign.status),
                 progress: Math.random() * 100, // Sample progress
                 budget: campaign.budget,
                 leadsCount: campaign.posts_count || 0,
