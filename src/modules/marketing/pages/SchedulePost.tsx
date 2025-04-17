@@ -93,8 +93,8 @@ const SchedulePost = () => {
               <CardContent>
                 <MediaSection
                   previewUrls={previewUrls}
-                  handleMediaChange={handleMediaChange}
-                  removeMedia={removeMedia}
+                  onMediaChange={handleMediaChange}
+                  onRemoveMedia={removeMedia}
                 />
               </CardContent>
             </Card>

@@ -1,35 +1,30 @@
 
-import { useLocation, Link } from "react-router-dom";
-import { useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 const NotFound = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
-  }, [location.pathname]);
-
+  const { t } = useTranslation();
+  
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background">
-      <div className="max-w-md text-center px-4">
-        <div className="h-24 w-24 rounded-full bg-gradient-to-br from-beauty-pink to-beauty-purple mx-auto mb-8 flex items-center justify-center text-white text-4xl font-bold">
-          404
-        </div>
-        <h1 className="text-3xl font-bold mb-2">Page not found</h1>
+      <Helmet>
+        <title>{t('notFound.title', '404 - الصفحة غير موجودة')} - سيركل</title>
+      </Helmet>
+      
+      <div className="text-center max-w-md px-4">
+        <h1 className="text-6xl font-bold mb-4">404</h1>
+        <h2 className="text-2xl font-semibold mb-4">
+          {t('notFound.heading', 'الصفحة غير موجودة')}
+        </h2>
         <p className="text-muted-foreground mb-8">
-          Sorry, we couldn't find the page you're looking for. It might have been moved or deleted.
+          {t('notFound.description', 'عذراً، الصفحة التي تبحث عنها غير موجودة أو ربما تم نقلها.')}
         </p>
-        <Link to="/">
-          <Button className="flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back to dashboard
-          </Button>
-        </Link>
+        <Button asChild>
+          <Link to="/">{t('notFound.backHome', 'العودة إلى الرئيسية')}</Link>
+        </Button>
       </div>
     </div>
   );

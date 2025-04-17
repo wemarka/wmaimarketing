@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
@@ -6,13 +7,13 @@ import ProtectedRoute from "./ProtectedRoute";
 
 // Pages
 import Dashboard from "@/pages/Dashboard";
-import Login from "@/pages/Login";
-import Settings from "@/pages/Settings";
+import Login from "@/pages/auth/Login";
+import Settings from "@/pages/admin/Settings";
 import Profile from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
-import Register from "@/pages/Register";
-import ResetPassword from "@/pages/ResetPassword";
-import Members from "@/pages/Members";
+import Register from "@/pages/auth/Register";
+import ResetPassword from "@/pages/auth/ResetPassword";
+import Members from "@/pages/admin/Members";
 import ContentCreator from "@/pages/ContentCreator";
 import ContentPosts from "@/pages/content/Posts";
 import Scheduler from "@/pages/Scheduler";
