@@ -19,6 +19,7 @@ import Scheduler from "@/pages/Scheduler";
 import SchedulePost from "@/pages/SchedulePost";
 import SocialIntegration from "@/pages/SocialIntegration";
 import DashboardPerformance from "@/pages/dashboard/Performance";
+import ImageUpload from "@/pages/ImageUpload";
 
 // Other imports as needed
 
@@ -45,6 +46,9 @@ const AppRoutes = () => {
         <Route path="/scheduler" element={<Scheduler />} />
         <Route path="/schedule-post" element={<SchedulePost />} />
         <Route path="/social-integration" element={<SocialIntegration />} />
+        
+        {/* Image Upload Route */}
+        <Route path="/image-upload" element={<ImageUpload />} />
       </Route>
       
       {/* Not Found */}
