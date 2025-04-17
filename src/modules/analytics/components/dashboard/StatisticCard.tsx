@@ -29,9 +29,13 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
   
   return (
     <motion.div
-      whileHover={{ y: -2, transition: { duration: 0.2 } }}
+      whileHover={{ y: -3, transition: { duration: 0.2 } }}
+      whileTap={{ y: 0 }}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
     >
-      <Card className="border-none shadow-sm overflow-hidden">
+      <Card className="border bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md transition-all overflow-hidden">
         <CardContent className="p-6">
           <div className="flex justify-between items-center">
             <div className="flex flex-col">
@@ -68,11 +72,12 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.5, type: "spring" }}
+                    className="animate-pulse"
                   >
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <Sparkles className="h-4 w-4 text-yellow-500" />
+                          <Sparkles className="h-4 w-4 text-amber-400" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="text-xs">أداء ممتاز! استمر في العمل الجيد</p>
@@ -87,6 +92,19 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
             <div className={cn("p-2 rounded-lg", iconBgClass)}>
               {icon}
             </div>
+          </div>
+          
+          {/* Mini spark line chart */}
+          <div className="mt-3 h-1.5 bg-muted/50 rounded-full w-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${Math.min(Math.abs(numericChange) * 3, 100)}%` }}
+              transition={{ delay: 0.5, duration: 1, ease: "easeOut" }}
+              className={cn(
+                "h-full rounded-full",
+                positive ? "bg-green-500" : "bg-red-500"
+              )}
+            ></motion.div>
           </div>
           
           <motion.div 

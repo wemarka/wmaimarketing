@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Grid, LayoutGrid } from "lucide-react";
+import { Grid, LayoutGrid, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EngagementInsights from "@/modules/dashboard/components/engagement-insights/EngagementInsights";
 import CampaignTracker from "@/modules/dashboard/components/campaign-tracker/CampaignTracker";
@@ -12,17 +12,49 @@ import PopularityCard from "../cards/PopularityCard";
 import PerformanceCard from "../cards/PerformanceCard";
 import RegionTargetingCard from "../cards/RegionTargetingCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "@/components/ui/use-toast";
 
 const OverviewTab = () => {
   const { t } = useTranslation();
   const [layout, setLayout] = React.useState<"default" | "compact">("default");
   const [activeTab, setActiveTab] = React.useState("summary");
   
+  // Function to refresh data - would connect to real API in production
+  const handleRefresh = () => {
+    // Show loading spinner on button
+    const button = document.getElementById('refresh-button');
+    if (button) button.classList.add('animate-spin');
+    
+    // Simulate data fetching
+    setTimeout(() => {
+      // Remove loading spinner
+      if (button) button.classList.remove('animate-spin');
+      
+      // Show success toast
+      toast({
+        title: "تم تحديث البيانات",
+        description: "تم تحديث البيانات بنجاح",
+        variant: "success",
+      });
+    }, 1200);
+  };
+  
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">{t("dashboard.overview.title", "النظرة العامة")}</h2>
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 text-transparent bg-clip-text">
+          {t("dashboard.overview.title", "النظرة العامة")}
+        </h2>
         <div className="flex items-center space-x-2 space-x-reverse">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleRefresh}
+            className="flex items-center gap-1.5 mr-2"
+          >
+            <RefreshCw id="refresh-button" className="h-3.5 w-3.5" />
+            <span>{t("common.refresh", "تحديث")}</span>
+          </Button>
           <Button 
             variant="outline" 
             size="icon"
@@ -44,17 +76,17 @@ const OverviewTab = () => {
         onValueChange={setActiveTab}
         className="w-full"
       >
-        <TabsList className="mb-6 bg-background/50 border">
-          <TabsTrigger value="summary" className="data-[state=active]:bg-primary/10">
+        <TabsList className="mb-6 bg-background/50 border rounded-full p-1 w-full md:w-auto">
+          <TabsTrigger value="summary" className="rounded-full data-[state=active]:bg-primary/10 text-sm">
             ملخص الأداء
           </TabsTrigger>
-          <TabsTrigger value="analytics" className="data-[state=active]:bg-primary/10">
+          <TabsTrigger value="analytics" className="rounded-full data-[state=active]:bg-primary/10 text-sm">
             التحليلات
           </TabsTrigger>
-          <TabsTrigger value="campaigns" className="data-[state=active]:bg-primary/10">
+          <TabsTrigger value="campaigns" className="rounded-full data-[state=active]:bg-primary/10 text-sm">
             الحملات
           </TabsTrigger>
-          <TabsTrigger value="content" className="data-[state=active]:bg-primary/10">
+          <TabsTrigger value="content" className="rounded-full data-[state=active]:bg-primary/10 text-sm">
             المحتوى
           </TabsTrigger>
         </TabsList>
