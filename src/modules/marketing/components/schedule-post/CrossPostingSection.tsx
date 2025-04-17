@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Share2 } from "lucide-react";
 import CrossPostSection from "./CrossPostSection";
-import { SocialAccount } from "../../services/integrationService";
+import { SocialAccount } from "../../types/socialTypes";
 
 interface CrossPostingSectionProps {
   accounts: SocialAccount[];

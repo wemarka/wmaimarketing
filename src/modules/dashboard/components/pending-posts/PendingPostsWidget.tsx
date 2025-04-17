@@ -40,7 +40,7 @@ const PendingPostsWidget = () => {
                 id: post.id,
                 title: post.title,
                 content: post.content,
-                platform: post.platform,
+                platform: post.platform as "instagram" | "facebook" | "tiktok",
                 createdAt: post.created_at,
                 author: {
                   name: post.profile?.first_name || 'Unknown User',

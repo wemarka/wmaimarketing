@@ -11,7 +11,7 @@ import { CalendarClock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const UpcomingPosts = () => {
-  const { posts, loading: isLoading, handleEdit, handleDelete } = useUpcomingPosts();
+  const { posts, isLoading, handleEdit, handleDelete } = useUpcomingPosts();
   const [viewMode, setViewMode] = useState<"list" | "compact">("compact");
 
   // Animation variants for the posts

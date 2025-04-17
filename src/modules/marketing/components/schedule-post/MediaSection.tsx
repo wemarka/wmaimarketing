@@ -1,14 +1,13 @@
 
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { ImagePlus, X } from "lucide-react";
+import React, { useState, ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
+import { ImagePlus, Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface MediaSectionProps {
   previewUrls: string[];
-  onMediaChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onMediaChange: (event: ChangeEvent<HTMLInputElement>) => void;
   onRemoveMedia: (index: number) => void;
 }
 
@@ -21,71 +20,67 @@ const MediaSection: React.FC<MediaSectionProps> = ({
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleButtonClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+    fileInputRef.current?.click();
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-md">
-          {t("scheduler.mediaSection.title", "الوسائط")}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="flex flex-wrap gap-3">
-            {previewUrls.map((url, index) => (
-              <div key={index} className="relative">
-                <img 
-                  src={url} 
-                  alt={`Preview ${index + 1}`} 
-                  className="h-20 w-20 object-cover rounded-md" 
-                />
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h4 className="text-sm font-medium">
+            {t("scheduler.mediaSection.uploadLabel")}
+          </h4>
+          <p className="text-xs text-muted-foreground">
+            {t("scheduler.mediaSection.supportedFormats")}
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleButtonClick}
+          className="gap-1"
+        >
+          <ImagePlus className="h-4 w-4" />
+          <span>{t("scheduler.mediaSection.uploadButton")}</span>
+        </Button>
+        <Input
+          type="file"
+          multiple
+          accept="image/*,video/*"
+          className="hidden"
+          ref={fileInputRef}
+          onChange={onMediaChange}
+        />
+      </div>
+
+      {previewUrls.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {previewUrls.map((url, index) => (
+            <div
+              key={index}
+              className="relative group border rounded-md overflow-hidden aspect-square"
+            >
+              <img
+                src={url}
+                alt={`Preview ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                 <Button
                   type="button"
                   variant="destructive"
                   size="icon"
-                  className="h-6 w-6 absolute -top-2 -right-2 rounded-full"
+                  className="h-8 w-8"
                   onClick={() => onRemoveMedia(index)}
                 >
-                  <X className="h-3 w-3" />
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
-            ))}
-            {previewUrls.length === 0 && (
-              <div className="w-full p-8 border-2 border-dashed rounded-md flex justify-center items-center">
-                <p className="text-muted-foreground text-center">
-                  {t("scheduler.mediaSection.noMedia", "لم يتم إضافة وسائط بعد")}
-                </p>
-              </div>
-            )}
-          </div>
-          
-          <div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*,video/*"
-              multiple
-              onChange={onMediaChange}
-              className="hidden"
-              id="media-upload"
-            />
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleButtonClick}
-              className="w-full"
-            >
-              <ImagePlus className="mr-2 h-4 w-4" />
-              {t("scheduler.mediaSection.addMedia", "إضافة وسائط")}
-            </Button>
-          </div>
+            </div>
+          ))}
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 };
 

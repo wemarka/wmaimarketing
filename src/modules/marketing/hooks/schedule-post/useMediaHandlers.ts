@@ -1,4 +1,5 @@
 
+import { ChangeEvent } from "react";
 import { UseSchedulePostStateWithSetters } from "./types";
 
 export const useMediaHandlers = (state: UseSchedulePostStateWithSetters) => {
@@ -7,7 +8,7 @@ export const useMediaHandlers = (state: UseSchedulePostStateWithSetters) => {
     setPreviewUrls
   } = state;
 
-  const handleMediaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMediaChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files || event.target.files.length === 0) return;
     
     const files = Array.from(event.target.files);

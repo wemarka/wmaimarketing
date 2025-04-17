@@ -28,7 +28,8 @@ export interface PlatformStats {
   engagement: number;
   followers: number;
   growth: number;
-  lastUpdated: string;
+  accountName: string;
+  lastUpdated?: string;
 }
 
 export interface SchedulePostParams {

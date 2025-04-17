@@ -35,6 +35,14 @@ export interface UseSchedulePostStateSetters {
   setSelectedDate: (date: Date) => void;
   setSelectedTime: (time: string) => void;
   setSelectedCampaign: (campaignId: string) => void;
+  setSelectedAccounts: (accounts: string[]) => void;
+  setHashtags: (hashtags: string[]) => void;
+  setMediaFiles: (files: File[]) => void;
+  setMediaUrls: (urls: string[]) => void;
+  setPreviewUrls: (urls: string[]) => void;
+  setEnableCrossPosting: (enabled: boolean) => void;
+  setIsGenerating: (generating: boolean) => void;
+  setIsSubmitting: (submitting: boolean) => void;
 }
 
 // Combine state and setters

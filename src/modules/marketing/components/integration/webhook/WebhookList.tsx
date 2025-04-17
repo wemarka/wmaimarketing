@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -34,7 +33,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Copy, MoreHorizontal, RefreshCw, Trash2 } from 'lucide-react';
 
-// Sample event types
 const eventTypes = [
   { id: "post_created", name: "تم إنشاء منشور" },
   { id: "post_published", name: "تم نشر منشور" },
@@ -59,10 +57,8 @@ const WebhookList = () => {
   });
 
   useEffect(() => {
-    // Simulate API loading
     const loadData = async () => {
       setIsLoading(true);
-      // Mock data for demonstration
       const mockWebhooks: WebhookItem[] = [
         {
           id: '1',
@@ -115,7 +111,6 @@ const WebhookList = () => {
   };
 
   const handleAddWebhook = () => {
-    // Reset form and open dialog
     setFormState({
       name: '',
       endpoint: '',
@@ -167,13 +162,11 @@ const WebhookList = () => {
     };
 
     if (selectedWebhook) {
-      // Update existing
       setWebhooks(prevWebhooks =>
         prevWebhooks.map(hook => (hook.id === selectedWebhook.id ? newWebhook : hook))
       );
       toast.success('تم تحديث الويب هوك بنجاح');
     } else {
-      // Add new
       setWebhooks(prevWebhooks => [...prevWebhooks, newWebhook]);
       toast.success('تم إضافة الويب هوك بنجاح');
     }
@@ -194,7 +187,6 @@ const WebhookList = () => {
 
   return (
     <div className="space-y-4">
-      {/* Webhooks Management UI */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-medium">الويب هوك المتاح</h2>
         <Button onClick={handleAddWebhook}>إضافة ويب هوك</Button>
@@ -232,11 +224,8 @@ const WebhookList = () => {
                 </TableCell>
                 <TableCell>
                   <Badge 
-                    variant={webhook.active ? "outline" : "outline"} 
-                    className={webhook.active 
-                      ? "bg-green-50 text-green-700 border-green-300 hover:bg-green-100" 
-                      : "bg-gray-50 text-gray-500 border-gray-300 hover:bg-gray-100"
-                    }
+                    variant="outline" 
+                    className="bg-green-100 text-green-800"
                   >
                     {webhook.active ? 'نشط' : 'معطل'}
                   </Badge>
@@ -286,7 +275,6 @@ const WebhookList = () => {
         </div>
       )}
 
-      {/* Add/Edit Webhook Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>

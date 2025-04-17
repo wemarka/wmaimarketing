@@ -141,10 +141,10 @@ export const useUpcomingPosts = () => {
         // Safe handling of profile data
         let profileData: Profile | undefined = undefined;
         
-        // Check if profile exists and is not an error
-        if (post.profile && !('error' in post.profile)) {
+        // Check if profile exists and handle it safely
+        if (post.profile && typeof post.profile === 'object' && !('error' in post.profile)) {
           profileData = {
-            id: post.profile.id,
+            id: post.profile.id || '',
             first_name: post.profile.first_name,
             last_name: post.profile.last_name,
             avatar_url: post.profile.avatar_url
@@ -161,7 +161,7 @@ export const useUpcomingPosts = () => {
         
         // Check if social_account exists and process insights safely
         let processedSocialAccount = null;
-        if (post.social_account) {
+        if (post.social_account && typeof post.social_account === 'object' && !('error' in post.social_account)) {
           let insights = { 
             followers: 0, 
             engagement: 0, 
@@ -177,7 +177,7 @@ export const useUpcomingPosts = () => {
                 insights.followers = Number(parsedInsights.followers || 0);
                 insights.engagement = Number(parsedInsights.engagement || 0);
                 insights.postCount = Number(parsedInsights.postCount || 0);
-              } else {
+              } else if (typeof post.social_account.insights === 'object') {
                 // Handle as object
                 insights.followers = Number(post.social_account.insights.followers || 0);
                 insights.engagement = Number(post.social_account.insights.engagement || 0);
@@ -199,7 +199,7 @@ export const useUpcomingPosts = () => {
           profile: profileData,
           platform_data: platformMeta,
           social_account: processedSocialAccount
-        };
+        } as PostWithMeta;
       });
       
       setPosts(processedPosts);
@@ -248,7 +248,7 @@ export const useUpcomingPosts = () => {
 
   return { 
     posts, 
-    loading: isLoading, 
+    isLoading, 
     error,
     refreshPosts: fetchPosts,
     handleEdit,

@@ -8,7 +8,7 @@ import EmptyCampaignState from './EmptyCampaignState';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const CampaignTracker = () => {
-  const { campaigns, loading, error } = useCampaigns();
+  const { campaigns, isLoading, error } = useCampaigns();
   const [filter, setFilter] = useState<'all' | 'active' | 'completed' | 'planned'>('all');
 
   // Filter campaigns based on status
@@ -24,11 +24,11 @@ const CampaignTracker = () => {
           activeFilter={filter} 
           onFilterChange={setFilter}
           campaignsCount={filteredCampaigns.length}
-          loading={loading}
+          loading={isLoading}
         />
       </CardHeader>
       <CardContent>
-        {loading ? (
+        {isLoading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="border rounded-xl p-5 space-y-3">
@@ -61,6 +61,16 @@ const CampaignTracker = () => {
                 progress: Math.random() * 100, // Sample progress
                 budget: campaign.budget,
                 leadsCount: campaign.posts_count || 0,
+                target: Array.isArray(campaign.target_audience) && campaign.target_audience.length > 0 
+                  ? campaign.target_audience[0] 
+                  : "General audience",
+                audience: "All genders, 25-54",
+                owner: {
+                  name: campaign.creator?.first_name 
+                    ? `${campaign.creator.first_name} ${campaign.creator.last_name || ''}` 
+                    : "Admin User",
+                  avatar: campaign.creator?.avatar_url
+                }
               };
               
               return <CampaignItem key={campaign.id} campaign={adaptedCampaign} index={index} />;

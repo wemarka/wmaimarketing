@@ -11,7 +11,7 @@ import EmptyPostsPlaceholder from "./upcoming-posts/EmptyPostsPlaceholder";
 
 const UpcomingPosts = () => {
   const [viewMode, setViewMode] = useState<"list" | "compact">("list");
-  const { posts, loading, handleEdit, handleDelete } = useUpcomingPosts();
+  const { posts, isLoading, handleEdit, handleDelete } = useUpcomingPosts();
 
   const toggleViewMode = () => {
     setViewMode(viewMode === "list" ? "compact" : "list");
@@ -21,14 +21,14 @@ const UpcomingPosts = () => {
     <Card className="h-full">
       <CardHeader className="pb-3">
         <PostsHeader 
-          loading={loading} 
+          loading={isLoading} 
           postsCount={posts.length} 
           viewMode={viewMode}
           onToggleView={toggleViewMode}
         />
       </CardHeader>
       <CardContent className="px-6">
-        {loading ? (
+        {isLoading ? (
           <LoadingPosts />
         ) : posts.length > 0 ? (
           <div className="space-y-4">
