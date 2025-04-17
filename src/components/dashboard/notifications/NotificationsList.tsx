@@ -3,8 +3,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Notification } from "@/types/notifications";
-import { Bell, MessageSquare, Calendar, CheckCircle, AlertTriangle, Info } from "lucide-react";
+import { Notification } from "./types";
+import { Bell, MessageSquare, Calendar, CheckCircle, AlertTriangle, Info, FileText, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NotificationsListProps {
@@ -33,6 +33,10 @@ const NotificationsList: React.FC<NotificationsListProps> = ({
         return <AlertTriangle className="h-5 w-5 text-red-500" />;
       case "task":
         return <CheckCircle className="h-5 w-5 text-purple-500" />;
+      case "content":
+        return <FileText className="h-5 w-5 text-violet-500" />;
+      case "analytics":
+        return <BarChart3 className="h-5 w-5 text-emerald-500" />;
       case "system":
       default:
         return <Info className="h-5 w-5 text-slate-500" />;

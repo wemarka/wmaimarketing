@@ -1,6 +1,6 @@
 
 export interface NotificationIconProps {
-  type: "approval" | "post" | "task" | "system" | "message" | "alert";
+  type: "approval" | "post" | "task" | "system" | "message" | "alert" | "content" | "analytics";
   className?: string;
   urgent?: boolean;
 }
@@ -10,11 +10,12 @@ export interface Notification {
   title: string;
   message: string;
   time: string;
-  type: "approval" | "post" | "task" | "system" | "message" | "alert";
+  type: "approval" | "post" | "task" | "system" | "message" | "alert" | "content" | "analytics";
   read: boolean;
   urgent?: boolean;
   actionUrl?: string;
   actionText?: string;
+  category?: "marketing" | "content" | "analytics" | "system";
 }
 
 export interface NotificationItemProps {

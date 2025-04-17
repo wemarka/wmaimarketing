@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Bell, CheckCircle, Calendar, AlertTriangle, Info, MessageSquare } from "lucide-react";
+import { Bell, CheckCircle, Calendar, AlertTriangle, Info, MessageSquare, BarChart3, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationIconProps } from "./types";
 
@@ -17,6 +17,8 @@ export const NotificationIcon: React.FC<NotificationIconProps> = ({
       type === "post" ? "text-blue-500" :
       type === "task" ? "text-green-500" :
       type === "message" ? "text-purple-500" :
+      type === "content" ? "text-violet-500" :
+      type === "analytics" ? "text-emerald-500" :
       "text-slate-500"
   );
 
@@ -27,6 +29,8 @@ export const NotificationIcon: React.FC<NotificationIconProps> = ({
       type === "post" ? "bg-blue-100" :
       type === "task" ? "bg-green-100" :
       type === "message" ? "bg-purple-100" :
+      type === "content" ? "bg-violet-100" :
+      type === "analytics" ? "bg-emerald-100" :
       "bg-slate-100"
   );
 
@@ -42,6 +46,10 @@ export const NotificationIcon: React.FC<NotificationIconProps> = ({
         <CheckCircle className={iconClass} />
       ) : type === "message" ? (
         <MessageSquare className={iconClass} />
+      ) : type === "content" ? (
+        <FileText className={iconClass} />
+      ) : type === "analytics" ? (
+        <BarChart3 className={iconClass} />
       ) : (
         <Info className={iconClass} />
       )}
