@@ -2,7 +2,13 @@
 import React from "react";
 import { BarChart3, MessageSquare, Settings, Share2 } from "lucide-react";
 
-export const tabItems = [
+interface TabItem {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+}
+
+export const tabItems: TabItem[] = [
   {
     id: "overview",
     label: "نظرة عامة",
