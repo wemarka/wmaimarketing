@@ -1,8 +1,7 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { BaseService } from "./BaseService";
 import { toast } from "@/components/ui/use-toast";
-import { SocialAccount, ConnectAccountParams, SchedulePostParams } from "../types/socialTypes";
+import { SocialAccount, ConnectAccountParams, SchedulePostParams, PlatformStats } from "../types/socialTypes";
 
 // Class-based implementation of social integration service
 export class SocialIntegrationService extends BaseService {
@@ -109,7 +108,7 @@ export class SocialIntegrationService extends BaseService {
     }
   }
 
-  async getPlatformStats(): Promise<any[]> {
+  async getPlatformStats(): Promise<PlatformStats[]> {
     try {
       const userId = await this.getCurrentUserId();
       
@@ -284,21 +283,25 @@ export const disconnectAccount = async (accountId: string): Promise<void> => {
   return socialIntegrationService.disconnectAccount(accountId);
 };
 
-export const getPlatformStats = async () => {
+export const getPlatformStats = async (): Promise<PlatformStats[]> => {
   return socialIntegrationService.getPlatformStats();
 };
 
-export const getSuggestedPostingTimes = async (platform: string) => {
+export const getSuggestedPostingTimes = async (platform: string): Promise<any[]> => {
   return socialIntegrationService.getSuggestedPostingTimes(platform);
 };
 
-export const schedulePost = async (params: SchedulePostParams) => {
+export const schedulePost = async (params: SchedulePostParams): Promise<any> => {
   return socialIntegrationService.schedulePost(params);
 };
 
-export const crossPostContent = async (content: string, mediaUrls: string[], platforms: string[]) => {
+export const crossPostContent = async (content: string, mediaUrls: string[], platforms: string[]): Promise<any[]> => {
   return socialIntegrationService.crossPostContent(content, mediaUrls, platforms);
 };
 
-// Export types for use in other files
+// Import and re-export getCampaigns from campaignService
+import { getCampaigns } from "./campaignService";
+export { getCampaigns };
+
+// Export types
 export type { SocialAccount, ConnectAccountParams, PlatformStats, SchedulePostParams };
