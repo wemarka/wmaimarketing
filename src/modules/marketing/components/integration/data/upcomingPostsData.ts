@@ -1,43 +1,27 @@
 
 export const upcomingPostsData = [
-  { 
-    id: '1',
-    title: 'إطلاق المنتج الجديد', 
-    platform: 'instagram', 
-    date: '2025-04-18',
-    time: '09:00',
-    status: 'scheduled'
+  {
+    id: "post-1",
+    title: "إطلاق منتج جديد",
+    platform: "فيسبوك",
+    scheduledFor: "2025-04-20T10:00:00",
+    imageUrl: "/placeholder-post-1.jpg",
+    status: "scheduled",
   },
-  { 
-    id: '2',
-    title: 'نصائح للعناية بالبشرة في الصيف', 
-    platform: 'facebook', 
-    date: '2025-04-19',
-    time: '11:30',
-    status: 'draft'
+  {
+    id: "post-2",
+    title: "عرض ترويجي لفصل الصيف",
+    platform: "انستغرام",
+    scheduledFor: "2025-04-21T15:30:00",
+    imageUrl: "/placeholder-post-2.jpg",
+    status: "draft",
   },
-  { 
-    id: '3', 
-    title: 'حملة الخصومات', 
-    platform: 'twitter',
-    date: '2025-04-20',
-    time: '15:00', 
-    status: 'scheduled'
-  },
-  { 
-    id: '4',
-    title: 'المنتجات الأكثر مبيعاً', 
-    platform: 'linkedin', 
-    date: '2025-04-21',
-    time: '10:00',
-    status: 'scheduled'
-  },
-  { 
-    id: '5',
-    title: 'مقاطع فيديو قصيرة للمنتجات', 
-    platform: 'tiktok', 
-    date: '2025-04-21',
-    time: '16:30',
-    status: 'scheduled'
+  {
+    id: "post-3",
+    title: "نصائح للعناية بالمنتج",
+    platform: "تيك توك",
+    scheduledFor: "2025-04-22T12:45:00",
+    imageUrl: "/placeholder-post-3.jpg",
+    status: "scheduled",
   },
 ];

@@ -1,73 +1,23 @@
 
 import React from "react";
-import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
+import { useSidebarStore } from "@/stores/sidebarStore";
+import { useTranslation } from "react-i18next";
 import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
   SidebarFooter,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem
 } from "@/components/ui/sidebar";
-import { 
-  LayoutDashboard, 
-  FileText,
-  Image, 
-  Video,
-  CalendarDays,
-  BarChart,
-  Settings,
-  Users,
-  Sparkles,
-  MessageSquare
-} from "lucide-react";
+import SidebarNavContent from "./sidebar/SidebarContent";
+import { Settings } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const AppSidebar = () => {
   const { i18n } = useTranslation();
   const { profile } = useAuth();
+  const expanded = useSidebarStore((state) => state.expanded);
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
-
-  const navigationItems = [
-    {
-      id: "dashboard",
-      label: "لوحة التحكم",
-      icon: <LayoutDashboard className="h-5 w-5" />,
-      href: "/dashboard"
-    },
-    {
-      id: "content",
-      label: "المحتوى",
-      icon: <FileText className="h-5 w-5" />,
-      href: "/content"
-    },
-    {
-      id: "media",
-      label: "الوسائط",
-      icon: <Image className="h-5 w-5" />,
-      href: "/media"
-    },
-    {
-      id: "schedule",
-      label: "الجدولة",
-      icon: <CalendarDays className="h-5 w-5" />,
-      href: "/schedule"
-    },
-    {
-      id: "analytics",
-      label: "التحليلات",
-      icon: <BarChart className="h-5 w-5" />,
-      href: "/analytics"
-    },
-    {
-      id: "users",
-      label: "المستخدمين",
-      icon: <Users className="h-5 w-5" />,
-      href: "/users",
-      role: "admin"
-    }
-  ];
 
   return (
     <Sidebar>
@@ -76,25 +26,20 @@ const AppSidebar = () => {
       </SidebarHeader>
       
       <SidebarContent>
-        <SidebarMenu>
-          {navigationItems.map((item) => (
-            <SidebarMenuItem key={item.id}>
-              <SidebarMenuButton asChild>
-                <a href={item.href} className="flex items-center gap-2 text-white/80 hover:text-white">
-                  {item.icon}
-                  <span>{item.label}</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
+        <SidebarNavContent 
+          expanded={expanded}
+          activePath={useSidebarStore(state => state.activePath)}
+        />
       </SidebarContent>
 
       <SidebarFooter className="p-4 border-t border-white/10">
-        <div className="flex items-center gap-2 text-white/80 hover:text-white">
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-2 text-white/80 hover:text-white hover:bg-white/10"
+        >
           <Settings className="h-5 w-5" />
-          <span>الإعدادات</span>
-        </div>
+          <span>{expanded ? "الإعدادات" : ""}</span>
+        </Button>
       </SidebarFooter>
     </Sidebar>
   );

@@ -1,43 +1,27 @@
 
 export const mockWebhookEvents = [
   {
-    id: "webhook-001",
-    name: "تحديث المنشور",
-    endpoint: "https://api.example.com/webhooks/post-update",
-    event: "post.updated",
-    enabled: true,
-    lastTriggered: "2023-08-15T14:30:00Z",
+    id: "webhook-1",
+    name: "نشر تلقائي",
+    endpoint: "https://api.example.com/hooks/post",
     status: "active",
-    successRate: 98.2
+    lastTriggered: "2025-04-15T14:30:00",
+    events: ["post.created", "post.updated"],
   },
   {
-    id: "webhook-002",
-    name: "إنشاء المحتوى",
-    endpoint: "https://api.example.com/webhooks/content-create",
-    event: "content.created",
-    enabled: true,
-    lastTriggered: "2023-08-14T09:15:00Z",
+    id: "webhook-2",
+    name: "تحليل المحتوى",
+    endpoint: "https://analytics.example.com/incoming",
     status: "active",
-    successRate: 100
+    lastTriggered: "2025-04-16T09:15:00",
+    events: ["content.analyzed"],
   },
   {
-    id: "webhook-003",
-    name: "تنبيه التحليلات",
-    endpoint: "https://api.example.com/webhooks/analytics-alert",
-    event: "analytics.threshold_exceeded",
-    enabled: false,
-    lastTriggered: "2023-08-10T16:45:00Z",
+    id: "webhook-3",
+    name: "إشعارات التفاعل",
+    endpoint: "https://notifications.example.com/webhook",
     status: "inactive",
-    successRate: 92.7
+    lastTriggered: null,
+    events: ["engagement.comment", "engagement.like", "engagement.share"],
   },
-  {
-    id: "webhook-004",
-    name: "تحديث الملف الشخصي",
-    endpoint: "https://api.example.com/webhooks/profile-update",
-    event: "user.profile_updated",
-    enabled: true,
-    lastTriggered: "2023-08-13T11:20:00Z",
-    status: "active",
-    successRate: 99.5
-  }
 ];
