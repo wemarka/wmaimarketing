@@ -42,7 +42,7 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
                   <SelectValue placeholder={t("scheduler.campaignSection.selectPlaceholder", "اختر حملة تسويقية")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">
+                  <SelectItem value="none">
                     {t("scheduler.campaignSection.noCampaign", "بدون حملة")}
                   </SelectItem>
                   {campaigns.map((campaign) => (
