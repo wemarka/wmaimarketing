@@ -1,32 +1,42 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTranslation } from "react-i18next";
 import { useRBACSidebar } from "@/modules/dashboard/utils/sidebarItems";
 import { useAuth } from "@/context/AuthContext";
-import { NavItem, NavSection } from "@/modules/dashboard/utils/types/sidebarTypes";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { NavSection } from "@/modules/dashboard/utils/types/sidebarTypes";
 import { cn } from "@/lib/utils";
-import { SidebarNavItem } from "./SidebarNavItem";
-import SidebarNavSection from "./SidebarNavSection";
 import { motion, AnimatePresence } from "framer-motion";
+import { lazy, Suspense } from "react";
+import { useSidebarStore, useActivePath } from "@/stores/sidebarStore";
+
+// Lazy loaded components
+const ExpandedViewSection = lazy(() => import('./sections/ExpandedViewSection'));
+const CollapsedViewSection = lazy(() => import('./sections/CollapsedViewSection'));
+
+// Loading fallback
+const LoadingFallback = () => (
+  <div className="flex justify-center p-4">
+    <div className="w-8 h-8 rounded-full border-2 border-white/20 border-t-white/80 animate-spin"></div>
+  </div>
+);
 
 interface SidebarContentProps {
   expanded: boolean;
   activePath: string;
-  checkIsActive: (path: string) => boolean;
 }
 
 const SidebarContent: React.FC<SidebarContentProps> = ({
   expanded,
   activePath,
-  checkIsActive
 }) => {
   const { i18n } = useTranslation();
   const { profile } = useAuth();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
   const userRole = profile?.role || "user";
-  const [activeSection, setActiveSection] = useState<string | null>(null);
+
+  const { checkIsActive } = useActivePath();
+  const [expandedSection, setExpandedSection] = React.useState<string | undefined>();
   
   // Get user role-based navigation items
   const {
@@ -81,23 +91,14 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
           return section.title;
         }
       }
-      return navigationSections.length > 0 ? navigationSections[0].title : null;
+      return navigationSections.length > 0 ? navigationSections[0].title : undefined;
     };
     
-    setActiveSection(findActiveSectionIndex());
-  }, [activePath, navigationSections, checkIsActive]);
-  
-  // Track which section is currently expanded
-  const [expandedSection, setExpandedSection] = useState<string | undefined>(
-    navigationSections.length > 0 ? navigationSections[0].title : undefined
-  );
-  
-  // Update expanded section when active section changes
-  useEffect(() => {
+    const activeSection = findActiveSectionIndex();
     if (activeSection && expanded) {
       setExpandedSection(activeSection);
     }
-  }, [activeSection, expanded]);
+  }, [activePath, navigationSections, checkIsActive, expanded]);
   
   const handleSectionToggle = (section: string) => {
     // Implement accordion behavior - only one section open at a time
@@ -119,38 +120,6 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
     collapsed: { opacity: 1 }
   };
 
-  const sectionVariants = {
-    expanded: { 
-      opacity: 1, 
-      height: "auto",
-      transition: { 
-        duration: 0.3,
-        type: "spring",
-        stiffness: 300,
-        damping: 30
-      }
-    },
-    collapsed: { 
-      opacity: 0.8, 
-      height: "auto" 
-    }
-  };
-  
-  const accordionVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { 
-        duration: 0.3,
-        ease: "easeOut",
-        type: "spring",
-        stiffness: 400,
-        damping: 25
-      }
-    }
-  };
-
   return (
     <ScrollArea 
       className="h-[calc(100vh-64px-80px)]" 
@@ -168,77 +137,23 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
       >
         <AnimatePresence mode="wait">
           {expanded ? (
-            <motion.div
-              key="expanded-view"
-              initial="hidden"
-              animate="visible"
-              variants={accordionVariants}
-            >
-              <Accordion
-                type="single"
-                collapsible
-                className="w-full"
-                value={expandedSection}
-              >
-                {navigationSections.map((section, index) => (
-                  <motion.div
-                    key={section.title}
-                    variants={sectionVariants}
-                    initial="collapsed"
-                    animate="expanded"
-                    transition={{ delay: index * 0.05 }}
-                  >
-                    <AccordionItem 
-                      value={section.title}
-                      className="border-b-0 last:border-0"
-                    >
-                      <AccordionTrigger 
-                        className={cn(
-                          "py-2 px-3 text-sm font-semibold hover:bg-white/5 rounded-md",
-                          "text-white/90 hover:text-white no-underline hover:no-underline",
-                          "data-[state=open]:bg-white/10",
-                          "transition-all duration-200"
-                        )}
-                        onClick={() => handleSectionToggle(section.title)}
-                      >
-                        {section.title}
-                      </AccordionTrigger>
-                      <AccordionContent className="pt-1 transition-all">
-                        <div className="space-y-1">
-                          {section.items.map((item) => (
-                            <SidebarNavItem
-                              key={item.id}
-                              item={item}
-                              isActive={checkIsActive(item.to)}
-                              expanded={expanded}
-                            />
-                          ))}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </motion.div>
-                ))}
-              </Accordion>
-            </motion.div>
+            <Suspense fallback={<LoadingFallback />}>
+              <ExpandedViewSection
+                navigationSections={navigationSections}
+                expandedSection={expandedSection}
+                handleSectionToggle={handleSectionToggle}
+                checkIsActive={checkIsActive}
+              />
+            </Suspense>
           ) : (
-            <motion.div 
-              key="collapsed-view"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="space-y-6"
-            >
-              {navigationSections.map((section) => (
-                <SidebarNavSection
-                  key={section.title}
-                  title={section.title}
-                  items={section.items}
-                  expanded={expanded}
-                  checkIsActive={checkIsActive}
-                  activePath={activePath}
-                />
-              ))}
-            </motion.div>
+            <Suspense fallback={<LoadingFallback />}>
+              <CollapsedViewSection
+                navigationSections={navigationSections}
+                expanded={expanded}
+                checkIsActive={checkIsActive}
+                activePath={activePath}
+              />
+            </Suspense>
           )}
         </AnimatePresence>
       </motion.div>

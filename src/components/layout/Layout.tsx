@@ -1,49 +1,81 @@
 
-import React from "react";
-import AppSidebar from "./AppSidebar";
+import React, { useEffect } from "react";
 import Header from "./Header";
-import { useIsMobile } from "@/hooks/use-mobile";
+import AppSidebar from "./AppSidebar";
 import PageTransition from "./PageTransition";
+import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
+import { useSidebarStore } from "@/stores/sidebarStore";
+import { Toaster } from "@/components/ui/toaster";
 
 interface LayoutProps {
   children: React.ReactNode;
-  pageType?: "default" | "minimal" | "centered";
-  contentClassName?: string;
-  navbarBgColor?: string;
-  transition?: "fade" | "slide" | "scale" | "none";
+  fluid?: boolean;
 }
 
-const Layout: React.FC<LayoutProps> = ({
-  children,
-  pageType = "default",
-  contentClassName = "",
-  navbarBgColor,
-  transition = "fade"
-}) => {
-  const isMobile = useIsMobile();
+const Layout: React.FC<LayoutProps> = ({ children, fluid = false }) => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
   
-  // Classes for the main content area based on page type
-  const contentClasses = {
-    default: "p-4 md:p-6 lg:p-8",
-    minimal: "p-2 md:p-4",
-    centered: "p-4 md:p-6 lg:p-8 flex items-center justify-center"
+  const { expanded, sidebarPosition } = useSidebarStore();
+
+  // Set RTL direction based on language
+  useEffect(() => {
+    document.dir = isRTL ? "rtl" : "ltr";
+    document.documentElement.lang = i18n.language || "ar";
+  }, [isRTL, i18n.language]);
+
+  const contentVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.3,
+        ease: "easeInOut"
+      }
+    },
+    exit: {
+      opacity: 0,
+      y: -20,
+      transition: {
+        duration: 0.2,
+        ease: "easeInOut"
+      }
+    }
   };
 
-  // Determine the sidebar offset based on the sidebar's state
-  const mainContentClass = "flex-1 min-h-screen";
-  
   return (
-    <div className="min-h-screen w-full flex">
+    <div className="relative min-h-screen bg-background text-foreground">
       <AppSidebar />
-      <div className={mainContentClass}>
-        <Header bgColor={navbarBgColor} />
-        <PageTransition type={transition}>
-          <main className={`${contentClasses[pageType]} ${contentClassName}`}>
+      
+      <div className={cn(
+        "transition-all duration-300 ease-in-out min-h-screen flex flex-col",
+        expanded 
+          ? sidebarPosition === "left" ? "ml-64" : "mr-64" 
+          : sidebarPosition === "left" ? "ml-[4.5rem]" : "mr-[4.5rem]",
+      )}>
+        <Header />
+        
+        <motion.main
+          className={cn(
+            "flex-1 pb-8",
+            fluid ? "container-fluid px-4" : "container px-4 md:px-8"
+          )}
+          key={isRTL ? "rtl" : "ltr"}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          variants={contentVariants}
+        >
+          <PageTransition>
             {children}
-          </main>
-        </PageTransition>
+          </PageTransition>
+        </motion.main>
       </div>
+      
+      <Toaster />
     </div>
   );
 };

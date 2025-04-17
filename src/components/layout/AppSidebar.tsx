@@ -5,19 +5,30 @@ import { useAuth } from "@/context/AuthContext";
 import SidebarHeader from "./sidebar/SidebarHeader";
 import SidebarContent from "./sidebar/SidebarContent";
 import SidebarFooter from "./sidebar/SidebarFooter";
-import { useSidebarNavigation } from "./sidebar/useSidebarNavigation";
 import { motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useSidebarStore } from "@/stores/sidebarStore";
 
 const AppSidebar = () => {
   const { profile, user } = useAuth();
-  const { expanded, toggleExpanded, isDarkMode, toggleDarkMode, checkIsActive, sidebarPosition, isTransitioning } = useSidebarNavigation();
   const location = useLocation();
-  const [activePath, setActivePath] = useState(location.pathname);
   const [mounted, setMounted] = useState(false);
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
+  
+  // الحصول على حالة الشريط الجانبي من متجر Zustand
+  const { 
+    expanded, 
+    toggleExpanded, 
+    isDarkMode, 
+    toggleDarkMode, 
+    sidebarPosition,
+    activePath,
+    setActivePath,
+    isTransitioning,
+    setIsTransitioning
+  } = useSidebarStore();
   
   // Handle initial mount animation
   useEffect(() => {
@@ -32,7 +43,17 @@ const AppSidebar = () => {
   // Update active path when location changes
   useEffect(() => {
     setActivePath(location.pathname);
-  }, [location]);
+  }, [location, setActivePath]);
+
+  // Reset transition state after animation completes
+  useEffect(() => {
+    if (isTransitioning) {
+      const timer = setTimeout(() => {
+        setIsTransitioning(false);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isTransitioning, setIsTransitioning]);
   
   // Profile info
   const userInitials = profile?.first_name && profile?.last_name 
@@ -107,7 +128,6 @@ const AppSidebar = () => {
       
       <SidebarContent 
         expanded={expanded} 
-        checkIsActive={checkIsActive} 
         activePath={activePath}
       />
       
