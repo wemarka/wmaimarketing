@@ -21,3 +21,9 @@ export interface WebhookEventLogItemProps {
   payload?: string;
   response?: string;
 }
+
+// Additional types needed for WebhookTabs
+export interface WebhookTabsProps {
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
+}
