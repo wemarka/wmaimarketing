@@ -26,9 +26,13 @@ export const useSecurityMonitor = () => {
     
     try {
       setLoading(true);
-      const { data, error } = await supabase.rpc('get_user_sessions', {
-        user_id: user.id
-      });
+      // Use from() instead of rpc() since get_user_sessions doesn't exist as a function
+      const { data, error } = await supabase
+        .from('user_activity_log')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(10);
       
       if (error) throw error;
       
@@ -43,7 +47,7 @@ export const useSecurityMonitor = () => {
             id: `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
             type: 'session' as const,
             severity: 'high' as const,
-            message: `تم اكتشاف جلسة مشبوهة من موقع: ${session.ip_address}`,
+            message: `تم اكتشاف جلسة مشبوهة من موقع: ${session.activity_type}`,
             timestamp: new Date().toISOString(),
             resolved: false
           }));
@@ -53,12 +57,10 @@ export const useSecurityMonitor = () => {
       }
       
       // تحديث وقت آخر تسجيل دخول
-      const lastSession = [...sessions].sort((a, b) => 
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      )[0];
+      const lastSession = sessions.length > 0 ? sessions[0] : null;
       
       if (lastSession) {
-        setLastLoginAt(lastSession.created_at);
+        setLastLoginAt(lastSession.created_at as string);
       }
       
     } catch (error) {
