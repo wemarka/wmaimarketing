@@ -1,72 +1,62 @@
 
-export const mockWebhookEvents = [
+import { WebhookItem, WebhookEventLogItemProps } from '../webhook/types';
+
+export const mockWebhookEvents: WebhookItem[] = [
   {
-    id: '1',
-    name: 'محتوى جديد',
-    endpoint: 'https://api.example.com/webhooks/content',
-    eventTypes: ['content_created', 'content_updated', 'content_published'],
+    id: "webhook-1",
+    name: "إشعار المنشورات الجديدة",
+    endpoint: "https://example.com/webhook/posts",
+    eventTypes: ["post.created", "post.scheduled"],
     active: true,
-    lastTriggered: '2023-09-15T10:30:15',
-    createdAt: '2023-08-01T14:20:00',
-    secretKey: 'wh_sec_70d2f5a3e1b6c9d8'
+    lastTriggered: new Date(Date.now() - 3600000).toISOString(),
+    createdAt: new Date(Date.now() - 86400000 * 10).toISOString()
   },
   {
-    id: '2',
-    name: 'تسجيل المستخدمين',
-    endpoint: 'https://api.example.com/webhooks/users',
-    eventTypes: ['user_registered'],
+    id: "webhook-2",
+    name: "إشعار التعليقات والردود",
+    endpoint: "https://example.com/webhook/comments",
+    eventTypes: ["comment.created", "comment.replied"],
     active: true,
-    lastTriggered: '2023-09-16T08:45:22',
-    createdAt: '2023-08-05T11:15:00',
-    secretKey: 'wh_sec_85c7e6f1d2a3b4e5'
+    lastTriggered: new Date(Date.now() - 7200000).toISOString(),
+    createdAt: new Date(Date.now() - 86400000 * 5).toISOString()
   },
   {
-    id: '3',
-    name: 'تفاعلات المنتجات',
-    endpoint: 'https://api.example.com/webhooks/products',
-    eventTypes: ['product_created', 'content_interaction'],
+    id: "webhook-3",
+    name: "تحليلات وإحصاءات",
+    endpoint: "https://example.com/webhook/analytics",
+    eventTypes: ["analytics.daily", "analytics.weekly"],
     active: false,
     lastTriggered: null,
-    createdAt: '2023-08-10T15:30:00',
-    secretKey: 'wh_sec_91f3e5d7c2b4a6e3'
+    createdAt: new Date(Date.now() - 86400000 * 2).toISOString()
   }
 ];
 
-// Updated the status properties to use the correct literal types: "success", "error", or "pending"
-export const mockWebhookLogs = [
+export const mockWebhookLogs: WebhookEventLogItemProps[] = [
   {
-    id: "log1",
-    event: "content_created",
-    status: "success" as const,
-    platform: "المنصة الرئيسية",
-    timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-    details: "تم إنشاء مقالة جديدة بعنوان 'أحدث التقنيات في عالم التجميل'",
-    destination: "https://api.example.com/webhooks/content"
+    id: "log-1",
+    event: "post.created",
+    status: "success",
+    platform: "Instagram",
+    timestamp: new Date(Date.now() - 3600000).toISOString(),
+    details: "تم إنشاء منشور جديد بنجاح",
+    destination: "https://example.com/webhook/posts"
   },
   {
-    id: "log2",
-    event: "user_registered",
-    status: "success" as const,
-    platform: "منصة المستخدمين",
-    timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
-    destination: "https://api.example.com/webhooks/users"
+    id: "log-2",
+    event: "post.scheduled",
+    status: "success",
+    platform: "Twitter",
+    timestamp: new Date(Date.now() - 7200000).toISOString(),
+    details: "تم جدولة منشور للنشر",
+    destination: "https://example.com/webhook/posts"
   },
   {
-    id: "log3",
-    event: "content_updated",
-    status: "error" as const,
-    platform: "المنصة الرئيسية",
-    timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
-    details: "فشل في الوصول إلى الخادم بعد 3 محاولات",
-    destination: "https://api.example.com/webhooks/content"
-  },
-  {
-    id: "log4",
-    event: "product_created",
-    status: "pending" as const,
-    platform: "منصة المنتجات",
-    timestamp: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
-    details: "جاري معالجة الطلب...",
-    destination: "https://api.example.com/webhooks/products"
+    id: "log-3",
+    event: "comment.created",
+    status: "error",
+    platform: "Facebook",
+    timestamp: new Date(Date.now() - 10800000).toISOString(),
+    details: "فشل إرسال إشعار التعليق الجديد",
+    destination: "https://example.com/webhook/comments"
   }
 ];

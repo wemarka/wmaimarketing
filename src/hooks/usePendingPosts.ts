@@ -43,32 +43,52 @@ export const usePendingPosts = () => {
             platform, 
             created_at,
             scheduled_at,
-            profiles:user_id (
-              first_name,
-              last_name,
-              avatar_url
-            )
+            user_id
           `)
           .eq('status', 'pending')
           .order('created_at', { ascending: false });
         
         if (error) throw error;
+
+        // Create a map to store user profile info
+        const userProfileMap = new Map<string, { name: string, avatar?: string }>();
+        const userIds = [...new Set(data.map(post => post.user_id))];
+        
+        // Fetch profiles for all unique user IDs
+        if (userIds.length > 0) {
+          const { data: profilesData } = await supabase
+            .from('profiles')
+            .select('id, first_name, last_name, avatar_url')
+            .in('id', userIds);
+            
+          if (profilesData) {
+            profilesData.forEach(profile => {
+              userProfileMap.set(profile.id, {
+                name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'مستخدم',
+                avatar: profile.avatar_url
+              });
+            });
+          }
+        }
         
         // Map the data to the expected format
-        const pendingPosts: PendingPost[] = data.map(post => ({
-          id: post.id,
-          title: post.title,
-          content: post.content,
-          platform: post.platform as "instagram" | "facebook" | "tiktok",
-          createdAt: post.created_at,
-          scheduledFor: post.scheduled_at,
-          author: {
-            name: post.profiles 
-              ? `${post.profiles.first_name || ''} ${post.profiles.last_name || ''}`.trim() || 'مستخدم'
-              : 'مستخدم',
-            avatar: post.profiles?.avatar_url
-          }
-        }));
+        const pendingPosts: PendingPost[] = data.map(post => {
+          // Get user profile info from the map or use default
+          const authorInfo = userProfileMap.get(post.user_id) || {
+            name: 'مستخدم',
+            avatar: undefined
+          };
+          
+          return {
+            id: post.id,
+            title: post.title,
+            content: post.content,
+            platform: post.platform as "instagram" | "facebook" | "tiktok",
+            createdAt: post.created_at,
+            scheduledFor: post.scheduled_at,
+            author: authorInfo
+          };
+        });
         
         setPosts(pendingPosts);
       } catch (error) {

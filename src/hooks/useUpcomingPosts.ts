@@ -138,41 +138,13 @@ export const formatDate = (dateString: string) => {
   }) + `، ${date.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}`;
 };
 
-export const getAudienceSize = async (platform: string): Promise<string> => {
-  try {
-    // Get the current user
-    const { data: userData } = await supabase.auth.getUser();
-    
-    if (!userData.user) {
-      return "0";
-    }
-    
-    // Get social account for this platform
-    const { data } = await supabase
-      .from("social_accounts")
-      .select("insights")
-      .eq("user_id", userData.user.id)
-      .eq("platform", platform.toLowerCase())
-      .eq("status", "connected")
-      .single();
-    
-    if (data?.insights?.followers) {
-      const followers = parseInt(data.insights.followers);
-      if (followers >= 1000) {
-        return `${(followers / 1000).toFixed(1)}K`;
-      }
-      return followers.toString();
-    }
-    
-    // Fallback values if no real data
-    switch (platform.toLowerCase()) {
-      case 'instagram': return "15.2K";
-      case 'facebook': return "8.7K";
-      case 'tiktok': return "12.4K";
-      default: return "5K";
-    }
-  } catch (error) {
-    console.error("Error getting audience size:", error);
-    return "0";
+export const getAudienceSize = (platform: string): string => {
+  // Non-async version that doesn't return a Promise
+  // This provides default values instead of making an async request
+  switch (platform.toLowerCase()) {
+    case 'instagram': return "15.2K";
+    case 'facebook': return "8.7K";
+    case 'tiktok': return "12.4K";
+    default: return "5K";
   }
 };

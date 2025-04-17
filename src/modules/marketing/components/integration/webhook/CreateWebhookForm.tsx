@@ -1,282 +1,169 @@
-import React, { useState } from 'react';
-import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+
+import React from 'react';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { AlertCircle, Code, Globe, KeyRound } from "lucide-react";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import EventTypeSelector, { EventType } from "./EventTypeSelector";
+
+const formSchema = z.object({
+  name: z.string().min(3, { message: "الاسم يجب أن يكون 3 أحرف على الأقل" }),
+  endpoint: z.string().url({ message: "الرابط غير صالح" }),
+  description: z.string().optional(),
+  eventTypes: z.array(z.string()).min(1, { message: "يرجى اختيار نوع حدث واحد على الأقل" }),
+});
+
+const eventTypeOptions = [
+  { id: "post.created", label: "إنشاء منشور جديد" },
+  { id: "post.scheduled", label: "جدولة منشور" },
+  { id: "post.published", label: "نشر منشور" },
+  { id: "comment.created", label: "إنشاء تعليق جديد" },
+  { id: "comment.replied", label: "الرد على تعليق" },
+  { id: "profile.updated", label: "تحديث الملف الشخصي" },
+  { id: "campaign.started", label: "بدء حملة" },
+  { id: "campaign.ended", label: "انتهاء حملة" },
+  { id: "analytics.daily", label: "تقارير يومية" },
+  { id: "analytics.weekly", label: "تقارير أسبوعية" },
+];
 
 interface CreateWebhookFormProps {
-  onCancel: () => void;
-  onSubmit: (webhook: {
+  onSubmit: (data: {
     name: string;
     endpoint: string;
     eventTypes: string[];
     description?: string;
   }) => void;
+  onCancel: () => void;
 }
 
-const CreateWebhookForm: React.FC<CreateWebhookFormProps> = ({ onCancel, onSubmit }) => {
-  const [activeTab, setActiveTab] = useState('basic');
-  const [selectedEventTypes, setSelectedEventTypes] = useState<string[]>([]);
-  const [webhookUrl, setWebhookUrl] = useState('');
-  const [webhookName, setWebhookName] = useState('');
-  const [description, setDescription] = useState('');
-  const [formErrors, setFormErrors] = useState<{
-    name?: string;
-    url?: string;
-    events?: string;
-  }>({});
-
-  const eventTypes: EventType[] = [
-    { id: 'content_created', name: 'إنشاء محتوى', description: 'يتم تشغيله عند إنشاء محتوى جديد', category: 'المحتوى' },
-    { id: 'content_updated', name: 'تحديث محتوى', description: 'يتم تشغيله عند تحديث محتوى موجود', category: 'المحتوى' },
-    { id: 'content_published', name: 'نشر محتوى', description: 'يتم تشغيله عند نشر محتوى', category: 'المحتوى' },
-    { id: 'content_interaction', name: 'تفاعل مع محتوى', description: 'يتم تشغيله عند تفاعل المستخدم مع المحتوى', category: 'المحتوى' },
-    { id: 'user_registered', name: 'تسجيل مستخدم', description: 'يتم تشغيله عند تسجيل مستخدم جديد', category: 'المستخدمون' },
-    { id: 'user_login', name: 'تسجيل دخول', description: 'يتم تشغيله عند تسجيل دخول مستخدم', category: 'المستخدمون' },
-    { id: 'user_updated', name: 'تحديث بيانات المستخدم', description: 'يتم تشغيله عند تحديث بيانات مستخدم', category: 'المستخدمون' },
-    { id: 'product_created', name: 'إنشاء منتج', description: 'يتم تشغيله عند إضافة منتج جديد', category: 'المنتجات' },
-    { id: 'product_updated', name: 'تحديث منتج', description: 'يتم تشغيله عند تحديث منتج', category: 'المنتجات' },
-    { id: 'order_created', name: 'إنشاء طلب', description: 'يتم تشغيله عند إنشاء طلب جديد', category: 'الطلبات' },
-    { id: 'order_updated', name: 'تحديث طلب', description: 'يتم تشغيله عند تحديث حالة طلب', category: 'الطلبات' },
-    { id: 'payment_received', name: 'استلام دفعة', description: 'يتم تشغيله عند استلام دفعة جديدة', category: 'المدفوعات' },
-  ];
-
-  const validateForm = () => {
-    const errors: {
-      name?: string;
-      url?: string;
-      events?: string;
-    } = {};
-    
-    if (!webhookName.trim()) {
-      errors.name = 'يجب إدخال اسم الويب هوك';
-    }
-    
-    if (!webhookUrl.trim()) {
-      errors.url = 'يجب إدخال رابط URL للويب هوك';
-    } else if (!webhookUrl.startsWith('http://') && !webhookUrl.startsWith('https://')) {
-      errors.url = 'يجب أن يبدأ الرابط بـ http:// أو https://';
-    }
-    
-    if (selectedEventTypes.length === 0) {
-      errors.events = 'يجب اختيار نوع واحد على الأقل من الأحداث';
-    }
-    
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const handleSubmit = () => {
-    if (!validateForm()) return;
-    
-    onSubmit({
-      name: webhookName,
-      endpoint: webhookUrl,
-      eventTypes: selectedEventTypes,
-      description: description.trim() || undefined
-    });
-  };
-
-  const goToNextTab = () => {
-    if (activeTab === 'basic') {
-      if (webhookName.trim() && webhookUrl.trim()) {
-        setActiveTab('events');
-      } else {
-        validateForm();
-      }
-    } else if (activeTab === 'events') {
-      if (selectedEventTypes.length > 0) {
-        setActiveTab('advanced');
-      } else {
-        setFormErrors(prev => ({ ...prev, events: 'يجب اختيار نوع واحد على الأقل من الأحداث' }));
-      }
-    }
-  };
+const CreateWebhookForm: React.FC<CreateWebhookFormProps> = ({ onSubmit, onCancel }) => {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      endpoint: "",
+      description: "",
+      eventTypes: [],
+    },
+  });
 
   return (
-    <Card className="shadow-sm">
+    <Card className="border shadow-sm">
       <CardHeader>
         <CardTitle>إنشاء ويب هوك جديد</CardTitle>
-        <CardDescription>أدخل بيانات الويب هوك وحدد الأحداث التي تريد مراقبتها</CardDescription>
+        <CardDescription>
+          قم بإنشاء ويب هوك جديد لربط منصتك مع خدمات وتطبيقات خارجية
+        </CardDescription>
       </CardHeader>
-      <CardContent>
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid grid-cols-3 mb-8">
-            <TabsTrigger value="basic" className="relative">
-              <span className="flex items-center gap-2">
-                <Globe className="h-4 w-4" />
-                معلومات أساسية
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="events">
-              <span className="flex items-center gap-2">
-                <KeyRound className="h-4 w-4" />
-                الأحداث
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="advanced">
-              <span className="flex items-center gap-2">
-                <Code className="h-4 w-4" />
-                إعدادات إضافية
-              </span>
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="basic" className="space-y-4">
-            <div className="grid grid-cols-1 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="webhookName">اسم الويب هوك</Label>
-                <Input 
-                  id="webhookName"
-                  placeholder="أدخل اسماً وصفياً للويب هوك" 
-                  value={webhookName}
-                  onChange={(e) => {
-                    setWebhookName(e.target.value);
-                    if (formErrors.name) {
-                      setFormErrors(prev => ({ ...prev, name: undefined }));
-                    }
-                  }}
-                  className={formErrors.name ? "border-red-500" : ""}
-                />
-                {formErrors.name && (
-                  <p className="text-red-500 text-xs">{formErrors.name}</p>
-                )}
-                <p className="text-xs text-muted-foreground">
-                  استخدم اسمًا وصفيًا سيساعدك على تذكر الغرض من هذا الويب هوك.
-                </p>
-              </div>
-              
-              <div className="space-y-2 mt-4">
-                <Label htmlFor="webhookUrl">عنوان الويب هوك URL</Label>
-                <Input 
-                  id="webhookUrl"
-                  placeholder="https://example.com/webhook" 
-                  value={webhookUrl}
-                  onChange={(e) => {
-                    setWebhookUrl(e.target.value);
-                    if (formErrors.url) {
-                      setFormErrors(prev => ({ ...prev, url: undefined }));
-                    }
-                  }}
-                  className={formErrors.url ? "border-red-500" : ""}
-                />
-                {formErrors.url && (
-                  <p className="text-red-500 text-xs">{formErrors.url}</p>
-                )}
-                <p className="text-xs text-muted-foreground">
-                  سيتم إرسال بيانات الأحداث إلى هذا العنوان عندما تحدث.
-                </p>
-              </div>
-              
-              <div className="space-y-2 mt-4">
-                <Label htmlFor="webhookDescription">وصف (اختياري)</Label>
-                <Textarea 
-                  id="webhookDescription"
-                  placeholder="أدخل وصفًا للويب هوك..." 
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-            </div>
-            
-            <div className="mt-8 text-right">
-              <Button 
-                onClick={goToNextTab}
-                disabled={!webhookName.trim() || !webhookUrl.trim()}
-              >
-                التالي: تحديد الأحداث
-              </Button>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="events" className="space-y-4">
-            <EventTypeSelector
-              eventTypes={eventTypes}
-              selectedEventTypes={selectedEventTypes}
-              onSelectEventType={(eventTypes) => {
-                setSelectedEventTypes(eventTypes);
-                if (formErrors.events && eventTypes.length > 0) {
-                  setFormErrors(prev => ({ ...prev, events: undefined }));
-                }
-              }}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <CardContent className="space-y-6">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>اسم الويب هوك</FormLabel>
+                  <FormControl>
+                    <Input placeholder="أدخل اسماً وصفياً لهذا الويب هوك" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            
-            {formErrors.events && (
-              <p className="text-red-500 text-xs">{formErrors.events}</p>
-            )}
-            
-            <Alert className="mt-6 bg-muted/50">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                سيتم إرسال إشعار إلى الويب هوك عندما يحدث أي من الأحداث المحددة. يمكنك تغيير هذه الإعدادات في أي وقت.
-              </AlertDescription>
-            </Alert>
-            
-            <div className="mt-8 flex justify-between">
-              <Button 
-                variant="outline" 
-                onClick={() => setActiveTab('basic')}
-              >
-                العودة: المعلومات الأساسية
-              </Button>
-              <Button 
-                onClick={goToNextTab}
-                disabled={selectedEventTypes.length === 0}
-              >
-                التالي: إعدادات إضافية
-              </Button>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="advanced" className="space-y-4">
-            <Alert className="mb-6 bg-primary/10 border-primary/20">
-              <AlertDescription>
-                <div className="flex flex-col space-y-2">
-                  <p>عند إنشاء الويب هوك، سيتم إنشاء مفتاح سري خاص به.</p>
-                  <p>هذا المفتاح ضروري للتحقق من صحة الطلبات الواردة من نظامنا.</p>
-                  <p>سيتم عرض المفتاح السري مرة واحدة فقط بعد الإنشاء، فتأكد من تخزينه في مكان آمن.</p>
-                </div>
-              </AlertDescription>
-            </Alert>
-            
-            <div className="mt-8 flex justify-between">
-              <Button 
-                variant="outline" 
-                onClick={() => setActiveTab('events')}
-              >
-                العودة: تحديد الأحداث
-              </Button>
-              <Button 
-                onClick={handleSubmit}
-                disabled={!webhookName || !webhookUrl || selectedEventTypes.length === 0}
-              >
-                إنشاء الويب هوك
-              </Button>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-      <CardFooter className="flex justify-between border-t pt-4">
-        <Button 
-          variant="ghost" 
-          onClick={onCancel}
-        >
-          إلغاء
-        </Button>
-        {activeTab !== 'advanced' && (
-          <Button 
-            onClick={handleSubmit}
-            disabled={!webhookName || !webhookUrl || selectedEventTypes.length === 0}
-          >
-            إنشاء الويب هوك
-          </Button>
-        )}
-      </CardFooter>
+            <FormField
+              control={form.control}
+              name="endpoint"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>نقطة النهاية URL</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://example.com/webhook" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>الوصف (اختياري)</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="أدخل وصفاً لهذا الويب هوك..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="eventTypes"
+              render={() => (
+                <FormItem>
+                  <div className="mb-4">
+                    <FormLabel>أنواع الأحداث</FormLabel>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {eventTypeOptions.map((option) => (
+                      <FormField
+                        key={option.id}
+                        control={form.control}
+                        name="eventTypes"
+                        render={({ field }) => {
+                          return (
+                            <FormItem
+                              key={option.id}
+                              className="flex flex-row items-start space-x-3 space-x-reverse rtl:space-x-reverse space-y-0"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.includes(option.id)}
+                                  onCheckedChange={(checked) => {
+                                    return checked
+                                      ? field.onChange([...field.value, option.id])
+                                      : field.onChange(
+                                          field.value?.filter(
+                                            (value) => value !== option.id
+                                          )
+                                        )
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel className="text-sm font-normal cursor-pointer">
+                                {option.label}
+                              </FormLabel>
+                            </FormItem>
+                          )
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            <Button variant="outline" type="button" onClick={onCancel}>
+              إلغاء
+            </Button>
+            <Button type="submit">إنشاء</Button>
+          </CardFooter>
+        </form>
+      </Form>
     </Card>
   );
 };

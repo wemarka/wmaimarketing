@@ -50,18 +50,20 @@ export const useCampaigns = () => {
             budget,
             start_date,
             end_date,
-            target_audience,
-            profiles:user_id (
-              first_name,
-              last_name,
-              avatar_url
-            )
+            target_audience
           `)
           .eq('user_id', userData.user.id)
           .order('created_at', { ascending: false });
         
         if (error) throw error;
-        
+
+        // Fetch user profile separately
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('first_name, last_name, avatar_url')
+          .eq('id', userData.user.id)
+          .single();
+          
         // To calculate progress and spent amounts (this would come from real data in a production app)
         const calculateProgress = (startDate: string, endDate: string): number => {
           const start = new Date(startDate).getTime();
@@ -83,6 +85,16 @@ export const useCampaigns = () => {
           const progress = calculateProgress(camp.start_date, camp.end_date);
           const spent = calculateSpent(camp.budget, progress);
           
+          // Set default owner info
+          let ownerName = 'مستخدم';
+          let ownerAvatar: string | undefined = undefined;
+          
+          // If profile data exists, use it
+          if (profileData && !profileError) {
+            ownerName = `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim() || 'مستخدم';
+            ownerAvatar = profileData.avatar_url;
+          }
+          
           return {
             id: camp.id,
             title: camp.name,
@@ -96,10 +108,8 @@ export const useCampaigns = () => {
             target: camp.target_audience ? camp.target_audience.join(', ') : '',
             audience: camp.target_audience ? camp.target_audience.join(', ') : '',
             owner: {
-              name: camp.profiles 
-                ? `${camp.profiles.first_name || ''} ${camp.profiles.last_name || ''}`.trim() || 'مستخدم'
-                : 'مستخدم',
-              avatar: camp.profiles?.avatar_url
+              name: ownerName,
+              avatar: ownerAvatar
             }
           };
         });

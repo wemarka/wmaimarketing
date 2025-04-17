@@ -1,4 +1,6 @@
 
+// Social media related types
+
 export interface SocialAccount {
   id: string;
   platform: string;
@@ -34,7 +36,14 @@ export interface SchedulePostParams {
   content: string;
   platform: string;
   scheduledAt: string;
-  mediaUrls: string[];
+  mediaUrls?: string[];
   campaignId?: string;
   crossPostAccountIds?: string[];
+}
+
+export interface PostResponse {
+  status: "success" | "error";
+  platform: string;
+  postId?: string;
+  error?: string;
 }

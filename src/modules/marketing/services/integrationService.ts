@@ -2,7 +2,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { BaseService } from "./BaseService";
 import { toast } from "@/components/ui/use-toast";
-import { SocialAccount, ConnectAccountParams, schedulePost } from "../types/socialTypes";
+import { SocialAccount, ConnectAccountParams, SchedulePostParams } from "../types/socialTypes";
 
 // Class-based implementation of social integration service
 export class SocialIntegrationService extends BaseService {
@@ -108,6 +108,164 @@ export class SocialIntegrationService extends BaseService {
       this.handleError(error, 'disconnecting account');
     }
   }
+
+  async getPlatformStats(): Promise<any[]> {
+    try {
+      const userId = await this.getCurrentUserId();
+      
+      const { data: accounts, error: accountsError } = await supabase
+        .from('social_accounts')
+        .select('*')
+        .eq('user_id', userId);
+        
+      if (accountsError) throw accountsError;
+      
+      // Transform account data into platform stats
+      const stats = accounts.map(account => {
+        const insights = account.insights as Record<string, any> || {};
+        return {
+          platform: account.platform,
+          posts: Number(insights.postCount || 0),
+          engagement: Number(insights.engagement || 0),
+          followers: Number(insights.followers || 0),
+          growth: Math.random() * 10 - 5, // Random growth between -5% and 5%
+          lastUpdated: account.updated_at
+        };
+      });
+      
+      return stats;
+    } catch (error) {
+      return this.handleError(error, 'fetching platform stats');
+    }
+  }
+
+  async getSuggestedPostingTimes(platform: string): Promise<any[]> {
+    try {
+      // This would normally call an AI service or analytics API
+      // For now, return mock data
+      const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+      const times = [];
+      
+      for (let i = 0; i < 5; i++) {
+        times.push({
+          day: days[Math.floor(Math.random() * days.length)],
+          hour: Math.floor(Math.random() * 24),
+          score: Math.random() * 100
+        });
+      }
+      
+      return times.sort((a, b) => b.score - a.score);
+    } catch (error) {
+      return this.handleError(error, 'fetching suggested posting times');
+    }
+  }
+
+  async schedulePost(params: SchedulePostParams): Promise<any> {
+    try {
+      const userId = await this.getCurrentUserId();
+      
+      const postData = {
+        title: params.title,
+        content: params.content,
+        platform: params.platform,
+        scheduled_at: params.scheduledAt,
+        media_url: params.mediaUrls || [],
+        status: 'scheduled',
+        user_id: userId,
+        campaign_id: params.campaignId
+      };
+      
+      const { data, error } = await supabase
+        .from('posts')
+        .insert(postData)
+        .select()
+        .single();
+        
+      if (error) throw error;
+      
+      // Handle cross-posting
+      if (params.crossPostAccountIds && params.crossPostAccountIds.length > 0) {
+        await this.createCrossPosts(params, data.id, userId);
+      }
+      
+      return data;
+    } catch (error) {
+      return this.handleError(error, 'scheduling post');
+    }
+  }
+
+  private async createCrossPosts(params: SchedulePostParams, originalPostId: string, userId: string) {
+    try {
+      const { data: accounts } = await supabase
+        .from('social_accounts')
+        .select('id, platform')
+        .in('id', params.crossPostAccountIds || []);
+        
+      if (accounts && accounts.length > 0) {
+        const crossPosts = accounts.map(account => ({
+          title: params.title,
+          content: params.content,
+          platform: account.platform,
+          scheduled_at: params.scheduledAt,
+          media_url: params.mediaUrls || [],
+          status: 'scheduled',
+          campaign_id: params.campaignId,
+          user_id: userId,
+          parent_post_id: originalPostId
+        }));
+        
+        await supabase.from('posts').insert(crossPosts);
+      }
+    } catch (error) {
+      console.error("Error creating cross posts:", error);
+    }
+  }
+
+  async crossPostContent(content: string, mediaUrls: string[], platforms: string[]): Promise<any[]> {
+    try {
+      const userId = await this.getCurrentUserId();
+      
+      const { data: accounts } = await supabase
+        .from('social_accounts')
+        .select('id, platform')
+        .in('platform', platforms)
+        .eq('user_id', userId)
+        .eq('status', 'connected');
+        
+      if (!accounts || accounts.length === 0) {
+        return [];
+      }
+      
+      // For each account, create a post
+      const now = new Date().toISOString();
+      const posts = accounts.map(account => ({
+        title: content.substring(0, 50) + (content.length > 50 ? '...' : ''),
+        content: content,
+        platform: account.platform,
+        scheduled_at: now,
+        media_url: mediaUrls,
+        status: 'published',
+        published_at: now,
+        user_id: userId
+      }));
+      
+      const { data, error } = await supabase
+        .from('posts')
+        .insert(posts)
+        .select();
+        
+      if (error) throw error;
+      
+      return accounts.map((account, index) => ({
+        status: "success",
+        platform: account.platform,
+        postId: data && data[index] ? data[index].id : undefined
+      }));
+    } catch (error) {
+      console.error("Error cross-posting content:", error);
+      return [];
+    }
+  }
 }
 
 // Create a singleton instance of the service
@@ -125,3 +283,22 @@ export const connectAccount = async (params: ConnectAccountParams): Promise<Soci
 export const disconnectAccount = async (accountId: string): Promise<void> => {
   return socialIntegrationService.disconnectAccount(accountId);
 };
+
+export const getPlatformStats = async () => {
+  return socialIntegrationService.getPlatformStats();
+};
+
+export const getSuggestedPostingTimes = async (platform: string) => {
+  return socialIntegrationService.getSuggestedPostingTimes(platform);
+};
+
+export const schedulePost = async (params: SchedulePostParams) => {
+  return socialIntegrationService.schedulePost(params);
+};
+
+export const crossPostContent = async (content: string, mediaUrls: string[], platforms: string[]) => {
+  return socialIntegrationService.crossPostContent(content, mediaUrls, platforms);
+};
+
+// Export types for use in other files
+export type { SocialAccount, ConnectAccountParams, PlatformStats, SchedulePostParams };

@@ -21,19 +21,29 @@ const routeTitles: Record<string, string> = {
   '/social-integration': 'ربط منصات التواصل',
   '/image-upload': 'رفع الصور',
   '/video-generator': 'مولد الفيديو',
+  '/webhook-integration': 'إدارة ويب هوك',
 };
 
-interface PageTitleDisplayProps {
+export interface PageTitleDisplayProps {
   className?: string;
+  // Optional pageTitle prop to allow direct title setting
+  pageTitle?: string;
+  pathname?: string;
+  breadcrumbs?: { label: string; path: string }[];
 }
 
-const PageTitleDisplay: React.FC<PageTitleDisplayProps> = ({ className }) => {
+const PageTitleDisplay: React.FC<PageTitleDisplayProps> = ({ 
+  className,
+  pageTitle,
+  pathname: providedPathname,
+  breadcrumbs
+}) => {
   const { t } = useTranslation();
   const location = useLocation();
-  const pathName = location.pathname;
+  const pathName = providedPathname || location.pathname;
   
-  // Get the title for the current path, or use the pathname as fallback
-  const title = routeTitles[pathName] || pathName.split('/').pop()?.replace('-', ' ');
+  // Get the title for the current path, or use the provided pageTitle, or use the pathname as fallback
+  const title = pageTitle || routeTitles[pathName] || pathName.split('/').pop()?.replace('-', ' ');
   
   return (
     <motion.h1

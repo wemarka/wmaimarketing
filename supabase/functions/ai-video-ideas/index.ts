@@ -1,89 +1,99 @@
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { OpenAI } from "https://esm.sh/openai@4.0.0";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import { OpenAI } from "https://esm.sh/openai@4.20.1";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+// Handle CORS preflight requests
+export const corsResponse = () => {
+  return new Response(null, {
+    headers: corsHeaders
+  });
 };
 
-serve(async (req) => {
-  // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
-
+export const generateVideoIdea = async (productType: string, platform: string, duration: string, style: string) => {
+  const openai = new OpenAI({
+    apiKey: Deno.env.get('OPENAI_API_KEY'),
+  });
+  
   try {
-    const apiKey = Deno.env.get('OPENAI_API_KEY');
-    if (!apiKey) {
-      throw new Error("OpenAI API key is missing");
-    }
+    const prompt = `أنت خبير تسويق محترف متخصص في صناعة فيديوهات للمنتجات الجمالية.
+يرجى إنشاء فكرة فيديو قوية لمنتج من نوع "${productType}" ليتم نشرها على "${platform}".
+مدة الفيديو المطلوبة: "${duration}" ثانية.
+الأسلوب المفضل: "${style}".
 
-    const openai = new OpenAI({
-      apiKey: apiKey,
+يجب أن تتضمن فكرة الفيديو:
+1. مفهوم إبداعي للعرض
+2. سيناريو مختصر للفيديو
+3. نصائح للتصوير واختيار الإضاءة
+4. توصيات للصوت أو الموسيقى الخلفية
+5. أفكار للنص والشعارات التي يمكن استخدامها
+
+كن محدداً وعملياً بحيث يمكن تطبيق أفكارك بسهولة. يجب أن تُظهر فكرة الفيديو المنتج بطريقة جذابة وتناسب جمهور المنصة المستهدفة.`;
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "أنت مساعد ذكي متخصص في استراتيجيات التسويق بالفيديو للمنتجات الجمالية. أنت تقدم أفكاراً عملية وإبداعية."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.8,
+      max_tokens: 1000,
     });
 
-    const body = await req.json();
-    const { productType, platform, duration, style } = body;
+    return {
+      videoIdea: response.choices[0].message.content,
+    };
+  } catch (error) {
+    console.error("OpenAI API Error:", error);
+    throw new Error(`خطأ في إنشاء فكرة الفيديو: ${error.message || error}`);
+  }
+};
 
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return corsResponse();
+  }
+  
+  try {
+    // Get request body
+    const requestData = await req.json();
+    const { productType, platform, duration, style } = requestData;
+    
+    // Validate request data
     if (!productType) {
       return new Response(
-        JSON.stringify({
-          error: "Missing required field: productType is required",
-        }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        JSON.stringify({ error: "نوع المنتج مطلوب" }),
+        { headers: { 'Content-Type': 'application/json', ...corsHeaders }, status: 400 }
       );
     }
-
-    const prompt = `
-      أنت خبير في تسويق منتجات التجميل عبر وسائل التواصل الاجتماعي.
-      اقترح فكرة مفصلة لفيديو مبتكر وإبداعي لمنتج ${productType} يمكن استخدامه على ${platform}.
-      
-      المدة: ${duration} ثانية
-      الأسلوب: ${style}
-      
-      قدم اقتراحًا مفصلاً يتضمن:
-      1. عنوان جذاب للفيديو
-      2. المشهد الافتتاحي
-      3. تسلسل المشاهد والحركة
-      4. النص المقترح والتعليق الصوتي
-      5. الرسالة الرئيسية والدعوة للعمل
-      6. نصائح تقنية للتصوير والإضاءة والخلفية المناسبة
-      
-      قدم الإجابة باللغة العربية وبأسلوب احترافي.
-    `;
-
-    const chatCompletion = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [{ role: "user", content: prompt }],
-    });
-
-    const videoIdea = chatCompletion.choices[0]?.message?.content || '';
-
-    // Log activity in the database
-    // This would require Supabase client but for Edge Functions that's not easily possible
-    // Instead you could use a custom endpoint to log activity
-
-    return new Response(
-      JSON.stringify({ videoIdea }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+    
+    // Generate video idea
+    const result = await generateVideoIdea(
+      productType, 
+      platform || "Instagram", 
+      duration || "15-30", 
+      style || "عصري وجذاب"
     );
-
-  } catch (error) {
-    console.error("Error generating video idea:", error);
+    
     return new Response(
-      JSON.stringify({ error: `Error generating video idea: ${error.message}` }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      JSON.stringify(result),
+      { headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+    );
+  } catch (error) {
+    console.error("Error:", error);
+    return new Response(
+      JSON.stringify({ error: error.message || "حدث خطأ أثناء إنشاء فكرة الفيديو" }),
+      { headers: { 'Content-Type': 'application/json', ...corsHeaders }, status: 500 }
     );
   }
 });
