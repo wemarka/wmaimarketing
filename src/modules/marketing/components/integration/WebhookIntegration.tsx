@@ -1,123 +1,56 @@
 
 import React, { useState } from 'react';
-import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Webhook, RefreshCw, Layers } from 'lucide-react';
-import WebhookEventLogList from './WebhookEventLogList';
+import { mockWebhookEvents } from './data';
 import WebhookEventTypeList from './WebhookEventTypeList';
-import { toast } from "sonner";
-import { mockWebhookEvents } from './mockData';
+import WebhookEventLogList from './WebhookEventLogList';
+import { Plus } from 'lucide-react';
 
 const WebhookIntegration = () => {
-  const [webhookUrl, setWebhookUrl] = useState('https://example.com/webhook');
-  const [webhookSecret, setWebhookSecret] = useState('whsec_XXxXXxxXXxXXxxXX');
-  const [isLoading, setIsLoading] = useState(false);
-  const [events, setEvents] = useState(mockWebhookEvents);
-
-  const handleSaveSettings = () => {
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success("تم حفظ إعدادات الـ Webhook بنجاح");
-    }, 1000);
-  };
-
-  const handleGenerateSecret = () => {
-    const newSecret = 'whsec_' + Array.from({ length: 16 }, () => 
-      Math.floor(Math.random() * 36).toString(36)
-    ).join('');
-    setWebhookSecret(newSecret);
-    toast.info("تم إنشاء مفتاح سر جديد");
-  };
-
-  const handleRefreshEvents = () => {
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success("تم تحديث سجل الأحداث");
-    }, 800);
-  };
-
+  const [selectedEventType, setSelectedEventType] = useState<string | null>(null);
+  
   return (
-    <Card className="shadow-lg border-beauty-purple/10">
-      <CardHeader className="bg-gradient-to-r from-beauty-purple/10 to-beauty-lightpurple/10">
-        <CardTitle className="flex items-center gap-2">
-          <Webhook className="h-5 w-5 text-beauty-purple" />
-          إعداد Webhooks
-        </CardTitle>
-        <CardDescription>
-          إعداد نقاط نهاية لاستقبال الأحداث من النظام في الوقت الفعلي
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pt-6">
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="webhook-url">عنوان URL للـ Webhook</Label>
-              <Input 
-                id="webhook-url" 
-                placeholder="https://example.com/webhook"
-                value={webhookUrl}
-                onChange={(e) => setWebhookUrl(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="webhook-secret">مفتاح السر</Label>
-              <div className="relative">
-                <Input 
-                  id="webhook-secret" 
-                  placeholder="whsec_XXxXXxxXXxXXxxXX"
-                  value={webhookSecret}
-                  onChange={(e) => setWebhookSecret(e.target.value)}
-                />
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="absolute left-1 top-1/2 -translate-y-1/2 h-8"
-                  onClick={handleGenerateSecret}
-                >
-                  توليد
-                </Button>
-              </div>
-            </div>
-          </div>
-          
-          <WebhookEventTypeList />
-          
-          <WebhookEventLogList 
-            events={events} 
-            onRefresh={handleRefreshEvents} 
-            isLoading={isLoading} 
-          />
-          
-          <div className="flex justify-end pt-4">
-            <Button variant="outline" className="ml-2 rtl:mr-2">إلغاء</Button>
-            <Button 
-              className="gap-2 bg-beauty-purple hover:bg-beauty-purple/90"
-              onClick={handleSaveSettings}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <RefreshCw className="h-4 w-4 animate-spin" />
-                  جارِ الحفظ...
-                </>
-              ) : (
-                <>
-                  <Layers className="h-4 w-4" />
-                  حفظ الإعدادات
-                </>
-              )}
-            </Button>
-          </div>
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h2 className="text-2xl font-bold">تكامل وب هوك API</h2>
+          <p className="text-muted-foreground">إعداد وإدارة تكاملات API مع منصات التواصل الاجتماعي</p>
         </div>
-      </CardContent>
-    </Card>
+        <Button className="bg-beauty-purple hover:bg-beauty-purple/90">
+          <Plus className="mr-2 h-4 w-4" /> إضافة وب هوك جديد
+        </Button>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-1">
+          <Card>
+            <CardHeader>
+              <CardTitle>أنواع الأحداث</CardTitle>
+              <CardDescription>الأحداث المتاحة للإشتراك</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <WebhookEventTypeList 
+                selectedEventType={selectedEventType}
+                onSelectEventType={setSelectedEventType}
+              />
+            </CardContent>
+          </Card>
+        </div>
+        
+        <div className="md:col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>سجل الأحداث</CardTitle>
+              <CardDescription>آخر الأحداث المسجلة</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <WebhookEventLogList events={mockWebhookEvents} />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 };
 

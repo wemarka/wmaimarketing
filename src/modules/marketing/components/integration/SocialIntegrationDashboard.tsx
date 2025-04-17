@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings, RefreshCw } from 'lucide-react';
-import { platformData, engagementData, upcomingPostsData, tabItems } from './mockData';
+import { platformData, engagementData, upcomingPostsData, tabItems } from './data';
 import PlatformCard from './PlatformCard';
 import EngagementChart from './EngagementChart';
 import UpcomingPosts from './UpcomingPosts';
