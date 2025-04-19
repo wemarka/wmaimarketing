@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 interface RecentSearchesProps {
   searchHistory: string[];
   onSearchSelect: (query: string) => void;
-  onRemoveFromHistory: (item: string, e: React.MouseEvent) => void;
+  onRemoveFromHistory: (item: string, e?: React.MouseEvent) => void;
 }
 
 const RecentSearches: React.FC<RecentSearchesProps> = ({ 

@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 interface SearchDropdownProps {
   searchHistory: string[];
   onSearchSelect: (term: string) => void;
-  onRemoveFromHistory: (term: string) => void;
+  onRemoveFromHistory: (term: string, e?: React.MouseEvent) => void;
   rtl?: boolean;
 }
 
@@ -80,7 +80,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
           size="icon"
           onClick={(e) => {
             e.stopPropagation();
-            onRemoveFromHistory(term);
+            onRemoveFromHistory(term, e);
           }}
           className="h-6 w-6 text-white/60 hover:text-white hover:bg-white/10"
         >
