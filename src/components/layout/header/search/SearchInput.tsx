@@ -1,10 +1,9 @@
 
-import React from 'react';
-import { Search, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import React from "react";
+import { Search, X } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface SearchInputProps {
   searchQuery: string;
@@ -26,54 +25,74 @@ const SearchInput: React.FC<SearchInputProps> = ({
   rtl = false
 }) => {
   const { t } = useTranslation();
+  
+  // Animation variants
+  const inputVariants = {
+    focused: { boxShadow: "0 0 0 2px rgba(255, 255, 255, 0.1)" },
+    blurred: { boxShadow: "none" }
+  };
+  
+  const iconVariants = {
+    initial: { scale: 1 },
+    hover: { scale: 1.1, rotate: 15, transition: { type: "spring", stiffness: 400 } }
+  };
 
   return (
-    <div className={cn(
-      "flex items-center relative bg-white/10 rounded-full border border-white/20",
-      isFocused ? "bg-white/15 border-white/30" : "",
-      rtl ? "flex-row-reverse" : ""
-    )}>
+    <motion.div 
+      className={cn(
+        "relative flex items-center rounded-md bg-white/10",
+        "shadow-sm transition-all duration-300",
+        isFocused && "bg-white/15"
+      )}
+      animate={isFocused ? "focused" : "blurred"}
+      variants={inputVariants}
+    >
       <div className={cn(
-        "h-8 w-10 flex items-center justify-center text-white/70",
-        rtl ? "rotate-0" : ""
+        "flex items-center px-2.5",
+        rtl ? "order-last" : "order-first"
       )}>
-        <Search className="h-4 w-4" />
+        <motion.div
+          initial="initial"
+          whileHover="hover"
+          variants={iconVariants}
+        >
+          <Search className="h-4 w-4 text-white" />
+        </motion.div>
       </div>
-
+      
       <input
         type="text"
-        ref={inputRef}
+        placeholder={t("search.placeholder", "بحث...")}
         value={searchQuery}
         onChange={onChange}
         onFocus={onFocus}
-        placeholder={t('common.search', 'البحث...')}
+        ref={inputRef}
         className={cn(
-          "h-8 flex-grow bg-transparent outline-none text-sm text-white placeholder:text-white/60",
-          rtl ? "text-right pl-2 pr-0" : "text-left pr-2 pl-0"
+          "bg-transparent border-0 outline-none text-sm text-white placeholder:text-white/60",
+          "py-1.5 w-full focus:ring-0",
+          rtl ? "text-right pr-0 pl-2" : "text-left pl-0 pr-2"
         )}
         dir={rtl ? "rtl" : "ltr"}
       />
-
+      
       {searchQuery && (
-        <motion.div 
-          initial={{ scale: 0 }} 
-          animate={{ scale: 1 }} 
-          exit={{ scale: 0 }}
-          className="mr-2"
+        <motion.button
+          type="button"
+          onClick={onClear}
+          className={cn(
+            "p-1 text-white/60 hover:text-white rounded-full mr-1",
+            "focus:outline-none focus:ring-1 focus:ring-white/30"
+          )}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }}
+          whileTap={{ scale: 0.95 }}
         >
-          <Button 
-            type="button" 
-            variant="ghost"
-            size="icon" 
-            onClick={onClear}
-            className="h-6 w-6 text-white/70 hover:text-white hover:bg-white/10"
-          >
-            <X className="h-3.5 w-3.5" />
-            <span className="sr-only">Clear search</span>
-          </Button>
-        </motion.div>
+          <X className="h-3.5 w-3.5" />
+        </motion.button>
       )}
-    </div>
+    </motion.div>
   );
 };
 

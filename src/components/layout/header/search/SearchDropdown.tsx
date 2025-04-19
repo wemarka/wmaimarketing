@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Clock, Search, X } from 'lucide-react';
@@ -63,7 +64,8 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
       <motion.div
         key={`${term}-${index}`}
         variants={itemVariants}
-        className="flex items-center justify-between px-3 py-2 hover:bg-white/10 transition-colors"
+        whileHover={{ backgroundColor: "rgba(255,255,255,0.15)" }}
+        className="flex items-center justify-between px-3 py-2 transition-colors rounded-sm"
       >
         <button
           onClick={() => onSearchSelect(term)}
@@ -83,10 +85,10 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
             e.stopPropagation();
             onRemoveFromHistory(term, e);
           }}
-          className="h-6 w-6 text-white/60 hover:text-white hover:bg-white/10"
+          className="h-6 w-6 text-white/60 hover:text-white hover:bg-white/10 rounded-full"
         >
           <X className="h-3 w-3" />
-          <span className="sr-only">إزالة</span>
+          <span className="sr-only">{t('search.remove', 'إزالة')}</span>
         </Button>
       </motion.div>
     ));
