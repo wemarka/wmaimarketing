@@ -8,6 +8,7 @@ import CompactUserInfo from "./header/CompactUserInfo";
 import { motion } from "framer-motion";
 import { useSidebarStore } from "@/stores/sidebarStore";
 import LanguageToggle from "@/components/common/LanguageToggle";
+import HeaderActions from "./header/HeaderActions";
 
 interface HeaderProps {
   bgColor?: string;
@@ -24,8 +25,8 @@ const Header: React.FC<HeaderProps> = ({ bgColor }) => {
     <motion.header 
       className={cn(
         "sticky top-0 z-20 w-full border-b border-white/10",
-        bgColor || "bg-[#3a7a89] text-white",
-        "transition-colors duration-300 ease-in-out"
+        bgColor || "bg-[#3a7a89] text-white backdrop-blur-md bg-opacity-90",
+        "transition-colors duration-300 ease-in-out shadow-sm"
       )}
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
@@ -40,6 +41,7 @@ const Header: React.FC<HeaderProps> = ({ bgColor }) => {
         />
         
         <div className="flex items-center gap-3">
+          <HeaderActions />
           <LanguageToggle />
           <CompactUserInfo />
         </div>

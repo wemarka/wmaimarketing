@@ -1,9 +1,10 @@
 
-import React from "react";
-import { Search, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { Search, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 
 interface SearchInputProps {
   searchQuery: string;
@@ -12,6 +13,7 @@ interface SearchInputProps {
   onFocus: () => void;
   onClear: () => void;
   inputRef: React.RefObject<HTMLInputElement>;
+  rtl?: boolean;
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({
@@ -21,39 +23,56 @@ const SearchInput: React.FC<SearchInputProps> = ({
   onFocus,
   onClear,
   inputRef,
+  rtl = false
 }) => {
+  const { t } = useTranslation();
+
   return (
-    <div className="relative">
-      <Input 
-        placeholder="بحث سريع..."
-        className={cn(
-          "h-9 pl-9 transition-all duration-300 pr-4",
-          isFocused 
-            ? "rounded-xl bg-background border-beauty-purple/30 shadow-sm" 
-            : "rounded-full bg-muted/30 border-muted"
-        )}
+    <div className={cn(
+      "flex items-center relative bg-white/10 rounded-full border border-white/20",
+      isFocused ? "bg-white/15 border-white/30" : "",
+      rtl ? "flex-row-reverse" : ""
+    )}>
+      <div className={cn(
+        "h-8 w-10 flex items-center justify-center text-white/70",
+        rtl ? "rotate-0" : ""
+      )}>
+        <Search className="h-4 w-4" />
+      </div>
+
+      <input
+        type="text"
+        ref={inputRef}
         value={searchQuery}
         onChange={onChange}
         onFocus={onFocus}
-        ref={inputRef}
-      />
-      <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-      
-      <AnimatePresence>
-        {searchQuery && (
-          <motion.button 
-            type="button"
-            onClick={onClear}
-            className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.15 }}
-          >
-            <X className="h-4 w-4" />
-          </motion.button>
+        placeholder={t('common.search', 'البحث...')}
+        className={cn(
+          "h-8 flex-grow bg-transparent outline-none text-sm text-white placeholder:text-white/60",
+          rtl ? "text-right pl-2 pr-0" : "text-left pr-2 pl-0"
         )}
-      </AnimatePresence>
+        dir={rtl ? "rtl" : "ltr"}
+      />
+
+      {searchQuery && (
+        <motion.div 
+          initial={{ scale: 0 }} 
+          animate={{ scale: 1 }} 
+          exit={{ scale: 0 }}
+          className="mr-2"
+        >
+          <Button 
+            type="button" 
+            variant="ghost"
+            size="icon" 
+            onClick={onClear}
+            className="h-6 w-6 text-white/70 hover:text-white hover:bg-white/10"
+          >
+            <X className="h-3.5 w-3.5" />
+            <span className="sr-only">Clear search</span>
+          </Button>
+        </motion.div>
+      )}
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { useSearch } from "./search/useSearch";
 import SearchInput from "./search/SearchInput";
 import SearchDropdown from "./search/SearchDropdown";
 import MobileSearchButton from "./search/MobileSearchButton";
+import { useTranslation } from "react-i18next";
 
 const SearchBar: React.FC = () => {
   const {
@@ -21,6 +22,9 @@ const SearchBar: React.FC = () => {
     inputRef,
     handleSearch
   } = useSearch();
+  
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
 
   return (
     <div className="relative" ref={searchContainerRef}>
@@ -30,6 +34,7 @@ const SearchBar: React.FC = () => {
           "relative hidden md:block transition-all duration-300",
           isFocused ? "w-[280px] lg:w-[350px]" : "w-[200px] lg:w-[250px]"
         )}
+        dir={isRTL ? "rtl" : "ltr"}
       >
         <SearchInput 
           searchQuery={searchQuery}
@@ -38,6 +43,7 @@ const SearchBar: React.FC = () => {
           onFocus={() => setIsFocused(true)}
           onClear={clearSearch}
           inputRef={inputRef}
+          rtl={isRTL}
         />
         
         <AnimatePresence>
@@ -46,6 +52,7 @@ const SearchBar: React.FC = () => {
               searchHistory={searchHistory}
               onSearchSelect={handleSearch}
               onRemoveFromHistory={removeFromHistory}
+              rtl={isRTL}
             />
           )}
         </AnimatePresence>

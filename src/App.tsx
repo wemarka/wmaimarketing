@@ -8,6 +8,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 import '@/styles/responsive.css';
+import '@/styles/app.css';
 
 function App() {
   const { i18n } = useTranslation();
@@ -20,6 +21,16 @@ function App() {
     document.documentElement.lang = lang;
     // Add a data attribute for CSS selectors
     document.documentElement.setAttribute('data-direction', direction);
+    document.documentElement.setAttribute('data-language', lang);
+    
+    // Add a class for RTL layout adjustments
+    if (direction === "rtl") {
+      document.documentElement.classList.add("rtl");
+      document.documentElement.classList.remove("ltr");
+    } else {
+      document.documentElement.classList.add("ltr");
+      document.documentElement.classList.remove("rtl");
+    }
   }, [direction, lang]);
 
   return (

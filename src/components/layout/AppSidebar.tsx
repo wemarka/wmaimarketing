@@ -46,7 +46,7 @@ const AppSidebar = () => {
       initial={false}
       animate={expanded ? "expanded" : "collapsed"}
       className={cn(
-        "z-50 min-h-screen fixed",
+        "z-50 min-h-screen fixed shadow-lg",
         isRTL ? "right-0" : "left-0"
       )}
     >
@@ -61,7 +61,7 @@ const AppSidebar = () => {
           />
         </ShadcnSidebarHeader>
         
-        <ShadcnSidebarContent>
+        <ShadcnSidebarContent className="custom-scrollbar">
           <SidebarNavContent 
             expanded={expanded}
             activePath={useSidebarStore(state => state.activePath)}

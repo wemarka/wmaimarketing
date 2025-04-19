@@ -38,19 +38,41 @@ const PageTitleDisplay: React.FC<PageTitleDisplayProps> = ({
   pathname: providedPathname,
   breadcrumbs
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const pathName = providedPathname || location.pathname;
+  const isRTL = i18n.language === "ar";
   
   // Get the title for the current path, or use the provided pageTitle, or use the pathname as fallback
   const title = pageTitle || routeTitles[pathName] || pathName.split('/').pop()?.replace('-', ' ');
   
+  // Animation variants - direction aware
+  const titleVariants = {
+    hidden: { 
+      opacity: 0, 
+      x: isRTL ? 20 : -20 
+    },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: {
+        duration: 0.4,
+        ease: "easeOut"
+      }
+    }
+  };
+  
   return (
     <motion.h1
-      initial={{ opacity: 0, y: -5 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className={cn("text-2xl font-bold tracking-tight", className)}
+      initial="hidden"
+      animate="visible"
+      variants={titleVariants}
+      key={`page-title-${i18n.language}`}
+      className={cn(
+        "text-xl md:text-2xl font-bold tracking-tight", 
+        isRTL ? "font-arabic" : "font-sans",
+        className
+      )}
     >
       {t(title)}
     </motion.h1>

@@ -126,3 +126,55 @@ html[dir="ltr"] .rtl-only {
 .padding-inline-end {
   padding-inline-end: 1rem;
 }
+
+/* Add enhanced card styles */
+.card-enhanced {
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card-enhanced:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.15);
+}
+
+/* Improve RTL padding */
+html[dir="rtl"] .rtl-padding-fix {
+  padding-right: var(--padding-start, 1rem);
+  padding-left: var(--padding-end, 1rem);
+}
+
+html[dir="ltr"] .rtl-padding-fix {
+  padding-left: var(--padding-start, 1rem);
+  padding-right: var(--padding-end, 1rem);
+}
+
+/* Button pulse effect */
+.btn-pulse {
+  position: relative;
+}
+
+.btn-pulse::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  opacity: 0;
+  background-color: currentColor;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.1;
+  }
+}

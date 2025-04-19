@@ -19,7 +19,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className={cn(
-      "flex min-h-screen w-full",
+      "flex min-h-screen w-full overflow-hidden",
       isRTL ? "flex-row-reverse" : ""
     )}>
       <AppSidebar />
@@ -35,7 +35,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <SidebarInset className="w-full transition-all duration-300">
             <Header />
             <motion.main 
-              className="p-4 md:p-6"
+              className="p-4 md:p-6 overflow-y-auto max-h-[calc(100vh-64px)]"
               initial={{ y: 10, opacity: 0.8 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.1 }}

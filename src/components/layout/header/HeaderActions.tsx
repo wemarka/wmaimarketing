@@ -5,21 +5,30 @@ import ThemeToggle from "./ThemeToggle";
 import NotificationsPopover from "./NotificationsPopover";
 import UserPreferencesButton from "./UserPreferencesButton";
 import SearchBar from "./SearchBar";
-import { useNotificationsStore } from "@/stores/notificationsStore";
+import { Bell } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 const HeaderActions: React.FC = () => {
   const isMobile = useMediaQuery("(max-width: 640px)");
-  const { unreadCount } = useNotificationsStore();
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
   
   return (
-    <div className="flex items-center gap-1 md:gap-2">
+    <div className={cn(
+      "flex items-center gap-1 md:gap-2", 
+      isRTL ? "flex-row-reverse" : "flex-row"
+    )}>
       {!isMobile && <SearchBar />}
       
-      <UserPreferencesButton />
+      <div className="hidden md:block">
+        <ThemeToggle />
+      </div>
       
-      <ThemeToggle />
-      
-      <NotificationsPopover />
+      <Button variant="ghost" size="icon" className="text-white">
+        <Bell className="h-5 w-5" />
+      </Button>
     </div>
   );
 };
