@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Clock, Search, X } from 'lucide-react';
@@ -21,7 +20,6 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  // Animation variants
   const dropdownVariants = {
     hidden: { opacity: 0, y: -10 },
     visible: {
@@ -51,9 +49,12 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
       return (
         <motion.div 
           variants={itemVariants}
-          className="py-3 px-4 text-center text-sm text-white/60"
+          className="py-6 px-4 text-center"
         >
-          {t('search.noHistory', 'لا يوجد تاريخ بحث')}
+          <div className="flex flex-col items-center gap-2 text-white/60">
+            <Search className="h-5 w-5" />
+            <p>{t('search.noHistory', 'لا يوجد تاريخ بحث')}</p>
+          </div>
         </motion.div>
       );
     }
@@ -62,7 +63,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
       <motion.div
         key={`${term}-${index}`}
         variants={itemVariants}
-        className="flex items-center justify-between px-3 py-2 hover:bg-white/10"
+        className="flex items-center justify-between px-3 py-2 hover:bg-white/10 transition-colors"
       >
         <button
           onClick={() => onSearchSelect(term)}
@@ -85,7 +86,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
           className="h-6 w-6 text-white/60 hover:text-white hover:bg-white/10"
         >
           <X className="h-3 w-3" />
-          <span className="sr-only">Remove</span>
+          <span className="sr-only">إزالة</span>
         </Button>
       </motion.div>
     ));
@@ -97,7 +98,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="absolute top-full mt-1.5 left-0 right-0 z-50 bg-[#3a7a89] shadow-md rounded-md overflow-hidden border border-white/20"
+      className="absolute top-full mt-1.5 left-0 right-0 z-50 bg-[#3a7a89]/95 backdrop-blur-md shadow-lg rounded-md overflow-hidden border border-white/20"
       dir={rtl ? "rtl" : "ltr"}
     >
       <div className={cn(
@@ -110,7 +111,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
         </div>
       </div>
 
-      <div className="max-h-64 overflow-y-auto custom-scrollbar">
+      <div className="max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
         {renderHistoryItems()}
       </div>
     </motion.div>
