@@ -1,9 +1,11 @@
+
 import React from "react";
-import { motion } from "framer-motion";
-import { AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
-import { cn } from "@/lib/utils";
+import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { NavSection } from "@/modules/dashboard/utils/types/sidebarTypes";
 import SidebarNavItem from "../SidebarNavItem";
+import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
 
 interface NavigationSectionAccordionProps {
   section: NavSection;
@@ -13,22 +15,7 @@ interface NavigationSectionAccordionProps {
   handleSectionToggle: (section: string) => void;
 }
 
-const sectionVariants = {
-  expanded: { 
-    opacity: 1, 
-    height: "auto",
-    transition: { 
-      duration: 0.3,
-      type: "spring",
-      stiffness: 300,
-      damping: 30
-    }
-  },
-  collapsed: { 
-    opacity: 0.8, 
-    height: "auto" 
-  }
-};
+const staggerDelay = 0.05;
 
 const NavigationSectionAccordion: React.FC<NavigationSectionAccordionProps> = ({
   section,
@@ -37,43 +24,63 @@ const NavigationSectionAccordion: React.FC<NavigationSectionAccordionProps> = ({
   expandedSection,
   handleSectionToggle
 }) => {
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar" || document.dir === "rtl";
+  const isExpanded = expandedSection === section.title;
+  
+  const navItemVariants = {
+    hidden: { opacity: 0, x: isRTL ? 20 : -20 },
+    visible: (i: number) => ({
+      opacity: 1,
+      x: 0,
+      transition: {
+        delay: i * staggerDelay,
+        duration: 0.2,
+        ease: "easeOut"
+      }
+    })
+  };
+
   return (
-    <motion.div
-      key={section.title}
-      variants={sectionVariants}
-      initial="collapsed"
-      animate="expanded"
-      transition={{ delay: index * 0.05 }}
+    <AccordionItem
+      value={section.title}
+      className="border-b-0 last:border-0"
+      data-state={isExpanded ? "open" : "closed"}
     >
-      <AccordionItem 
-        value={section.title}
-        className="border-b-0 last:border-0"
+      <AccordionTrigger
+        onClick={() => handleSectionToggle(section.title)}
+        className={cn(
+          "py-3 px-3 text-sm hover:bg-white/5 rounded-md transition-all",
+          "text-white/70 hover:text-white no-underline hover:no-underline",
+          isExpanded ? "font-medium text-white" : "font-normal"
+        )}
       >
-        <AccordionTrigger 
-          className={cn(
-            "py-2 px-3 text-sm font-semibold hover:bg-white/5 rounded-md",
-            "text-white/90 hover:text-white no-underline hover:no-underline",
-            "data-[state=open]:bg-white/10",
-            "transition-all duration-200"
-          )}
-          onClick={() => handleSectionToggle(section.title)}
-        >
+        <span className={cn("text-xs font-medium uppercase tracking-wider", isRTL && "ml-auto")}>
           {section.title}
-        </AccordionTrigger>
-        <AccordionContent className="pt-1 transition-all">
-          <div className="space-y-1">
-            {section.items.map((item) => (
+        </span>
+      </AccordionTrigger>
+      
+      <AccordionContent className="pb-1 pt-1">
+        <div className={cn("space-y-1", isRTL && "text-right")}>
+          {section.items.map((item, i) => (
+            <motion.div
+              key={item.to}
+              custom={i}
+              variants={navItemVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+            >
               <SidebarNavItem
-                key={item.id}
                 item={item}
                 isActive={checkIsActive(item.to)}
                 expanded={true}
               />
-            ))}
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    </motion.div>
+            </motion.div>
+          ))}
+        </div>
+      </AccordionContent>
+    </AccordionItem>
   );
 };
 

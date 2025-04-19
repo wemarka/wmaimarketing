@@ -7,6 +7,7 @@ import CompactHeader from "./header/CompactHeader";
 import CompactUserInfo from "./header/CompactUserInfo";
 import { motion } from "framer-motion";
 import { useSidebarStore } from "@/stores/sidebarStore";
+import LanguageToggle from "@/components/common/LanguageToggle";
 
 interface HeaderProps {
   bgColor?: string;
@@ -38,7 +39,10 @@ const Header: React.FC<HeaderProps> = ({ bgColor }) => {
           sidebarExpanded={expanded}
         />
         
-        <CompactUserInfo />
+        <div className="flex items-center gap-3">
+          <LanguageToggle />
+          <CompactUserInfo />
+        </div>
       </div>
     </motion.header>
   );

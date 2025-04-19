@@ -7,6 +7,7 @@ import Dashboard from '@/pages/Dashboard';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
+import '@/styles/responsive.css';
 
 function App() {
   const { i18n } = useTranslation();
@@ -17,6 +18,8 @@ function App() {
   useEffect(() => {
     document.dir = direction;
     document.documentElement.lang = lang;
+    // Add a data attribute for CSS selectors
+    document.documentElement.setAttribute('data-direction', direction);
   }, [direction, lang]);
 
   return (
@@ -25,7 +28,16 @@ function App() {
         <html dir={direction} lang={lang} />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </Helmet>
-      <Toaster richColors position={direction === "rtl" ? "bottom-right" : "bottom-left"} />
+      <Toaster 
+        richColors 
+        position={direction === "rtl" ? "bottom-right" : "bottom-left"}
+        closeButton
+        visibleToasts={6}
+        toastOptions={{
+          className: "toast-enhanced",
+          duration: 5000
+        }}
+      />
       <SidebarProvider>
         <Router>
           <Routes>

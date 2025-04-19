@@ -1,0 +1,128 @@
+
+/* Main application styles */
+@import './responsive.css';
+
+/* Enhanced UI elements */
+.toast-enhanced {
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+/* RTL specific overrides */
+html[dir="rtl"] .ltr-only {
+  display: none !important;
+}
+
+html[dir="ltr"] .rtl-only {
+  display: none !important;
+}
+
+/* Improved transitions */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-transition-exit {
+  opacity: 1;
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Improved mobile experience */
+@media (max-width: 768px) {
+  .sidebar-open {
+    overflow: hidden;
+  }
+  
+  .mobile-nav-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+    backdrop-filter: blur(4px);
+  }
+}
+
+/* Enhanced focus states */
+:focus-visible {
+  outline: 2px solid rgba(58, 122, 137, 0.6);
+  outline-offset: 2px;
+}
+
+/* Glassmorphism effects */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Improved scroll behavior */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+/* Animation utilities */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Direction-aware spacing utilities */
+.margin-inline-start {
+  margin-inline-start: 1rem;
+}
+
+.margin-inline-end {
+  margin-inline-end: 1rem;
+}
+
+.padding-inline-start {
+  padding-inline-start: 1rem;
+}
+
+.padding-inline-end {
+  padding-inline-end: 1rem;
+}

@@ -1,124 +1,138 @@
-@import "./styles/responsive.css";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import './styles/app.css';
 
+/* Base styles */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
+    --primary: 183 47% 47%;
+    --primary-foreground: 0 0% 100%;
     
-    --beauty-purple: 262.1 83.3% 57.8%;
-    --beauty-pink: 327.4 73.9% 52.5%;
-    --beauty-coral: 13.1 77.1% 71.1%;
-    --beauty-blue: 199.8 88.9% 47.8%;
-    --beauty-gold: 41.8 75.9% 53.9%;
+    --background: 210 20% 98%;
+    --foreground: 215 28% 17%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 215 28% 17%;
+    
+    --border: 215 28% 88%;
+    --input: 215 28% 88%;
+    
+    --accent: 210 40% 96%;
+    --accent-foreground: 215 28% 17%;
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+  html[data-direction="rtl"] {
+    text-align: right;
   }
-}
-
-@layer base {
-  * {
-    @apply border-border;
+  
+  html[data-direction="ltr"] {
+    text-align: left;
   }
+  
   body {
-    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
-@layer utilities {
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Hide scrollbar for IE, Edge and Firefox */
-  .no-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
-  
-  /* Alternating row styles */
-  .alternating-rows > *:nth-child(odd) {
-    @apply bg-slate-50 dark:bg-slate-900/50;
-  }
-  
-  /* Gradient text */
-  .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-beauty-purple to-beauty-pink;
-  }
+/* Custom scroll behavior */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
-/* Animations */
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-in-out forwards;
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+/* Animation utilities */
 @keyframes fadeIn {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* Responsive grid adjustments */
-@media (max-width: 768px) {
-  .responsive-grid {
-    grid-template-columns: 1fr !important;
-  }
+@keyframes slideIn {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.slide-in {
+  animation: slideIn 0.5s ease forwards;
+}
+
+/* RTL specific utilities */
+.rtl-rotate-180 {
+  transform: rotate(180deg);
+}
+
+html[dir="rtl"] .rtl-mirror {
+  transform: scaleX(-1);
+}
+
+/* Improved focus states for accessibility */
+*:focus-visible {
+  outline: 2px solid rgb(58, 122, 137);
+  outline-offset: 2px;
+}
+
+/* Enhanced button interactions */
+.btn-hover-effect {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.btn-hover-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: width 0.3s ease;
+  z-index: -1;
+}
+
+.btn-hover-effect:hover::before {
+  width: 100%;
+}
+
+/* Hero section enhancements */
+.hero-glow {
+  position: relative;
+}
+
+.hero-glow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 40px rgba(58, 122, 137, 0.4);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.hero-glow:hover::after {
+  opacity: 1;
 }
