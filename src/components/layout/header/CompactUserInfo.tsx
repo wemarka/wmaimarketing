@@ -13,8 +13,12 @@ const CompactUserInfo = () => {
   const isRTL = i18n.language === "ar" || document.dir === "rtl";
 
   const getUserInitials = () => {
-    if (!profile?.name) return 'U';
-    return profile.name.charAt(0).toUpperCase();
+    if (!profile?.first_name && !profile?.last_name) return 'U';
+    
+    const firstName = profile?.first_name || '';
+    const lastName = profile?.last_name || '';
+    
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || 'U';
   };
 
   return (
@@ -26,8 +30,8 @@ const CompactUserInfo = () => {
       <DropdownMenu>
         <DropdownMenuTrigger className="focus:outline-none">
           <Avatar className="h-9 w-9 bg-white/10 hover:bg-white/20 transition-colors cursor-pointer">
-            {profile?.avatar ? (
-              <AvatarImage src={profile.avatar} alt={profile?.name || 'User'} />
+            {profile?.avatar_url ? (
+              <AvatarImage src={profile.avatar_url} alt={`${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || 'User'} />
             ) : (
               <AvatarFallback className="bg-gradient-to-br from-teal-400 to-teal-600 text-white">
                 {getUserInitials()}
@@ -42,7 +46,9 @@ const CompactUserInfo = () => {
             isRTL && "text-right"
           )}
         >
-          <DropdownMenuLabel>{profile?.name || t('sidebar.trialUser', 'Trial User')}</DropdownMenuLabel>
+          <DropdownMenuLabel>
+            {`${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || t('sidebar.trialUser', 'Trial User')}
+          </DropdownMenuLabel>
           <DropdownMenuSeparator className="bg-white/10" />
           <DropdownMenuItem className="cursor-pointer hover:bg-white/10">
             {t('profile.tabs.account', 'Profile')}
