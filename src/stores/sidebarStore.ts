@@ -7,6 +7,7 @@ interface SidebarStoreState {
   expanded: boolean;
   activePath: string;
   toggleExpanded: () => void;
+  setExpanded: (value: boolean) => void;
   setActivePath: (path: string) => void;
 }
 
@@ -16,6 +17,7 @@ export const useSidebarStore = create<SidebarStoreState>()(
       expanded: true,
       activePath: '/',
       toggleExpanded: () => set({ expanded: !get().expanded }),
+      setExpanded: (value: boolean) => set({ expanded: value }),
       setActivePath: (path: string) => set({ activePath: path }),
     }),
     {

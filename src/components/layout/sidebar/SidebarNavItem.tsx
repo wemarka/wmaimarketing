@@ -27,19 +27,24 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ item, isActive, expande
               "relative flex items-center rounded-md px-2 py-2 text-sm font-medium transition-all duration-200",
               isActive
                 ? "bg-white/10 text-white"
-                : "text-white/70 hover:bg-white/10 hover:text-white"
+                : "text-white/70 hover:bg-white/10 hover:text-white",
+              isRTL && "flex-row-reverse"
             )}
           >
-            {/* Properly position icon based on RTL */}
             <span className={cn(
-              isRTL ? expanded ? "ml-2" : "mx-auto" : expanded ? "mr-2" : "mx-auto"
-            )}>{item.icon}</span>
+              expanded 
+                ? isRTL ? "ml-2" : "mr-2" 
+                : "mx-auto"
+            )}>
+              {item.icon}
+            </span>
             
             {expanded && <span className="truncate">{item.label}</span>}
             
             {expanded && item.badgeText && (
               <span className={cn(
-                "ml-auto rounded-full px-1.5 py-0.5 text-xs",
+                "rounded-full px-1.5 py-0.5 text-xs",
+                isRTL ? "mr-auto" : "ml-auto",
                 item.variant === "outline" ? "border border-white/20" : "bg-white/20"
               )}>
                 {item.badgeText}
@@ -68,7 +73,8 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ item, isActive, expande
             <span>{item.tooltip || item.label}</span>
             {item.badgeText && (
               <span className={cn(
-                "ml-2 rounded-full px-1.5 py-0.5 text-xs",
+                isRTL ? "mr-2" : "ml-2",
+                "rounded-full px-1.5 py-0.5 text-xs",
                 item.variant === "outline" ? "border border-white/20" : "bg-white/20"
               )}>
                 {item.badgeText}

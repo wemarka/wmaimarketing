@@ -1,79 +1,74 @@
 
-import React from "react";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import React, { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 
 interface PageHeaderProps {
   title: string;
   description?: string;
+  variant?: 'default' | 'gradient';
+  icon?: ReactNode;
+  actions?: ReactNode;
   className?: string;
-  icon?: React.ReactNode;
-  actions?: React.ReactNode;
-  variant?: "default" | "gradient" | "subtle" | "minimal";
 }
 
 const PageHeader = ({
   title,
   description,
-  className,
+  variant = 'default',
   icon,
   actions,
-  variant = "default"
+  className,
 }: PageHeaderProps) => {
-  const variants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        duration: 0.5,
-        type: "spring",
-        stiffness: 100
-      }
-    }
-  };
-
-  // Define styles based on variant
-  const variantStyles = {
-    default: "bg-card border rounded-lg p-6 mb-6",
-    gradient: "bg-gradient-to-r from-slate-50/80 to-slate-100/30 dark:from-slate-900/80 dark:to-slate-800/30 border rounded-lg p-6 mb-6",
-    subtle: "border-b pb-6 mb-6",
-    minimal: "mb-6"
-  };
-
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar' || document.dir === 'rtl';
+  
   return (
     <motion.div
-      className={cn(variantStyles[variant], className)}
-      initial="hidden"
-      animate="visible"
-      variants={variants}
+      className={cn(
+        'mb-8 flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0',
+        className
+      )}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
     >
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+      <div className={cn(
+        'flex flex-col gap-1',
+        isRTL && 'text-right'
+      )}>
+        <div className="flex items-center gap-2">
           {icon && (
-            <div className="p-2 bg-primary/10 rounded-lg text-primary">
+            <span className={cn(
+              'flex h-8 w-8 items-center justify-center rounded-md border bg-background',
+              isRTL ? 'order-last' : 'order-first'
+            )}>
               {icon}
-            </div>
+            </span>
           )}
-          <div>
-            <h1 className="text-2xl font-bold">{title}</h1>
-            {description && (
-              <p className="text-muted-foreground mt-1">{description}</p>
-            )}
-          </div>
+          <h1 className={cn(
+            'text-xl font-semibold tracking-tight',
+            variant === 'gradient' && 'bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent'
+          )}>
+            {title}
+          </h1>
         </div>
-        
-        {actions && (
-          <motion.div 
-            className="flex items-center gap-2"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            {actions}
-          </motion.div>
+        {description && (
+          <p className="text-sm text-muted-foreground">
+            {description}
+          </p>
         )}
       </div>
+      
+      {actions && (
+        <div className={cn(
+          'flex flex-wrap items-center gap-2',
+          isRTL && 'justify-end'
+        )}>
+          {actions}
+        </div>
+      )}
     </motion.div>
   );
 };

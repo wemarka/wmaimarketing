@@ -36,6 +36,7 @@ const CollapsedViewSection: React.FC<CollapsedViewSectionProps> = ({
       initial="hidden"
       animate="visible"
       transition={{ staggerChildren: 0.1, delayChildren: 0.05 }}
+      className={isRTL ? "text-right" : "text-left"}
     >
       {navigationSections.map((section, index) => (
         <motion.div
