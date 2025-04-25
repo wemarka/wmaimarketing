@@ -26,7 +26,6 @@ const SearchInput: React.FC<SearchInputProps> = ({
 }) => {
   const { t } = useTranslation();
   
-  // Animation variants
   const inputVariants = {
     focused: { boxShadow: "0 0 0 2px rgba(255, 255, 255, 0.1)" },
     blurred: { boxShadow: "none" }
@@ -34,7 +33,8 @@ const SearchInput: React.FC<SearchInputProps> = ({
   
   const iconVariants = {
     initial: { scale: 1 },
-    hover: { scale: 1.1, rotate: 15, transition: { type: "spring", stiffness: 400 } }
+    hover: { scale: 1.1, rotate: 15 },
+    tap: { scale: 0.95 }
   };
 
   return (
@@ -47,18 +47,17 @@ const SearchInput: React.FC<SearchInputProps> = ({
       animate={isFocused ? "focused" : "blurred"}
       variants={inputVariants}
     >
-      <div className={cn(
-        "flex items-center px-2.5",
-        rtl ? "order-last" : "order-first"
-      )}>
-        <motion.div
-          initial="initial"
-          whileHover="hover"
-          variants={iconVariants}
-        >
-          <Search className="h-4 w-4 text-white" />
-        </motion.div>
-      </div>
+      <motion.div 
+        className={cn(
+          "flex items-center px-2.5",
+          rtl ? "order-last" : "order-first"
+        )}
+        whileHover="hover"
+        whileTap="tap"
+        variants={iconVariants}
+      >
+        <Search className="h-4 w-4 text-white" />
+      </motion.div>
       
       <input
         type="text"
@@ -75,23 +74,25 @@ const SearchInput: React.FC<SearchInputProps> = ({
         dir={rtl ? "rtl" : "ltr"}
       />
       
-      {searchQuery && (
-        <motion.button
-          type="button"
-          onClick={onClear}
-          className={cn(
-            "p-1 text-white/60 hover:text-white rounded-full mr-1",
-            "focus:outline-none focus:ring-1 focus:ring-white/30"
-          )}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <X className="h-3.5 w-3.5" />
-        </motion.button>
-      )}
+      <AnimatePresence>
+        {searchQuery && (
+          <motion.button
+            type="button"
+            onClick={onClear}
+            className={cn(
+              "p-1 text-white/60 hover:text-white rounded-full mr-1",
+              "focus:outline-none focus:ring-1 focus:ring-white/30"
+            )}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.1)" }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <X className="h-3.5 w-3.5" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
